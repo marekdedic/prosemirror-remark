@@ -5,9 +5,15 @@ import {exampleSetup} from "prosemirror-example-setup";
 import "prosemirror-view/style/prosemirror.css";
 import "prosemirror-example-setup/style/style.css";
 import "prosemirror-menu/style/menu.css";
+import {unified} from 'unified'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import rehypeSanitize from 'rehype-sanitize'
+import rehypeStringify from 'rehype-stringify'
 
 const editor = document.querySelector("#editor")!;
 const preview = document.querySelector("#preview-container")!;
+const defaultContent = "Hello World from **markdown**";
 
 class ProseMirrorView {
   private readonly view: EditorView;
@@ -20,8 +26,7 @@ class ProseMirrorView {
       }),
       dispatchTransaction: (tr) => {
         this.view.updateState(this.view.state.apply(tr));
-        //current state as json in text area
-        preview.innerHTML = this.content;
+        updatePreview(this.content);
       }
     })
   }
@@ -33,5 +38,16 @@ class ProseMirrorView {
   destroy() { this.view.destroy() }
 }
 
+async function updatePreview(source: string) {
+  const file = await unified()
+    .use(remarkParse)
+    .use(remarkRehype)
+    .use(rehypeSanitize)
+    .use(rehypeStringify)
+    .process(source);
 
-new ProseMirrorView(editor, "Hello World from **markdown**");
+  preview.innerHTML = String(file);
+}
+
+new ProseMirrorView(editor, defaultContent);
+updatePreview(defaultContent);
