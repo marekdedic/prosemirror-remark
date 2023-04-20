@@ -15,20 +15,6 @@ ___\n\
 \n\
 ***\n\
 \n\
-\n\
-## Typographic replacements\n\
-\n\
-Enable typographer option to see result.\n\
-\n\
-(c) (C) (r) (R) (tm) (TM) (p) (P) +-\n\
-\n\
-test.. test... test..... test?..... test!....\n\
-\n\
-!!!!!! ???? ,,  -- ---\n\
-\n\
-\n\"Smartypants, double quotes\n\" and 'single quotes'\n\
-\n\
-\n\
 ## Emphasis\n\
 \n\
 **This is bold text**\n\
@@ -96,16 +82,6 @@ Block code \n\"fences\n\"\n\
 Sample text here...\n\
 ```\n\
 \n\
-Syntax highlighting\n\
-\n\
-``` js\n\
-var foo = function (bar) {\n\
-  return bar++;\n\
-};\n\
-\n\
-console.log(foo(5));\n\
-```\n\
-\n\
 ## Tables\n\
 \n\
 | Option | Description |\n\
@@ -145,91 +121,4 @@ With a reference later in the document defining the URL location:\n\
 \n\
 [id]: https://octodex.github.com/images/dojocat.jpg  \n\"The Dojocat\n\"\n\
 \n\
-\n\
-## Plugins\n\
-\n\
-The killer feature of `markdown-it` is very effective support of\n\
-[syntax plugins](https://www.npmjs.org/browse/keyword/markdown-it-plugin).\n\
-\n\
-\n\
-### [Emojies](https://github.com/markdown-it/markdown-it-emoji)\n\
-\n\
-> Classic markup: :wink: :crush: :cry: :tear: :laughing: :yum:\n\
->\n\
-> Shortcuts (emoticons): :-) :-( 8-) ;)\n\
-\n\
-see [how to change output](https://github.com/markdown-it/markdown-it-emoji#change-output) with twemoji.\n\
-\n\
-\n\
-### [Subscript](https://github.com/markdown-it/markdown-it-sub) / [Superscript](https://github.com/markdown-it/markdown-it-sup)\n\
-\n\
-- 19^th^\n\
-- H~2~O\n\
-\n\
-\n\
-### [\n\<ins>](https://github.com/markdown-it/markdown-it-ins)\n\
-\n\
-++Inserted text++\n\
-\n\
-\n\
-### [\n\<mark>](https://github.com/markdown-it/markdown-it-mark)\n\
-\n\
-==Marked text==\n\
-\n\
-\n\
-### [Footnotes](https://github.com/markdown-it/markdown-it-footnote)\n\
-\n\
-Footnote 1 link[^first].\n\
-\n\
-Footnote 2 link[^second].\n\
-\n\
-Inline footnote^[Text of inline footnote] definition.\n\
-\n\
-Duplicated footnote reference[^second].\n\
-\n\
-[^first]: Footnote **can have markup**\n\
-\n\
-    and multiple paragraphs.\n\
-\n\
-[^second]: Footnote text.\n\
-\n\
-\n\
-### [Definition lists](https://github.com/markdown-it/markdown-it-deflist)\n\
-\n\
-Term 1\n\
-\n\
-:   Definition 1\n\
-with lazy continuation.\n\
-\n\
-Term 2 with *inline markup*\n\
-\n\
-:   Definition 2\n\
-\n\
-        { some code, part of Definition 2 }\n\
-\n\
-    Third paragraph of definition 2.\n\
-\n\
-_Compact style:_\n\
-\n\
-Term 1\n\
-  ~ Definition 1\n\
-\n\
-Term 2\n\
-  ~ Definition 2a\n\
-  ~ Definition 2b\n\
-\n\
-\n\
-### [Abbreviations](https://github.com/markdown-it/markdown-it-abbr)\n\
-\n\
-This is HTML abbreviation example.\n\
-\n\
-It converts \n\"HTML\n\", but keep intact partial entries like \n\"xxxHTMLyyy\n\" and so on.\n\
-\n\
-*[HTML]: Hyper Text Markup Language\n\
-\n\
-### [Custom containers](https://github.com/markdown-it/markdown-it-container)\n\
-\n\
-::: warning\n\
-*here be dragons*\n\
-:::\n\
 ";
