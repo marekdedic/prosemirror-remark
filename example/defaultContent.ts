@@ -1,4 +1,5 @@
-export const defaultContent = "\n\
+export const defaultContent =
+  '\n\
 # h1 Heading 8-)\n\
 ## h2 Headin\n\
 ### h3 Heading\n\n\n\
@@ -76,7 +77,7 @@ Indented code\n\
     line 3 of code\n\
 \n\
 \n\
-Block code \n\"fences\n\"\n\
+Block code "fences"\n\
 \n\
 ```\n\
 Sample text here...\n\
@@ -103,7 +104,7 @@ Right aligned columns\n\
 \n\
 [link text](http://dev.nodeca.com)\n\
 \n\
-[link with title](http://nodeca.github.io/pica/demo/ \n\"title text!\n\")\n\
+[link with title](http://nodeca.github.io/pica/demo/ "title text!")\n\
 \n\
 Autoconverted link https://github.com/nodeca/pica (enable linkify to see)\n\
 \n\
@@ -111,7 +112,7 @@ Autoconverted link https://github.com/nodeca/pica (enable linkify to see)\n\
 ## Images\n\
 \n\
 ![Minion](https://octodex.github.com/images/minion.png)\n\
-![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg \n\"The Stormtroopocat\n\")\n\
+![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg "The Stormtroopocat")\n\
 \n\
 Like links, Images also have a footnote style syntax\n\
 \n\
@@ -119,6 +120,6 @@ Like links, Images also have a footnote style syntax\n\
 \n\
 With a reference later in the document defining the URL location:\n\
 \n\
-[id]: https://octodex.github.com/images/dojocat.jpg  \n\"The Dojocat\n\"\n\
+[id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"\n\
 \n\
-";
+';
