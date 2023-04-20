@@ -16,10 +16,25 @@
     "type": "git",
     "url": "git+https://github.com/marekdedic/prosemirror-remark.git"
   },
-  "devDependencies": {
-  },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack"
+  },
+  "peerDependencies": {
+    "prosemirror-model": "^1.19.0",
+    "prosemirror-state": "^1.4.2",
+    "prosemirror-view": "^1.30.2"
+  },
+  "devDependencies": {
+    "css-loader": "^6.7.3",
+    "html-webpack-plugin": "^5.5.1",
+    "mini-css-extract-plugin": "^2.7.5",
+    "prosemirror-example-setup": "^1.2.1",
+    "prosemirror-markdown": "^1.10.1",
+    "prosemirror-schema-basic": "^1.2.1",
+    "ts-loader": "^9.4.2",
+    "webpack": "^5.80.0",
+    "webpack-cli": "^5.0.1",
+    "webpack-subresource-integrity": "^5.2.0-rc.1"
   }
 }
