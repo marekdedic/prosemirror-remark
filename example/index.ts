@@ -3,11 +3,6 @@ import "prosemirror-example-setup/style/style.css";
 import "prosemirror-menu/style/menu.css";
 
 import { exampleSetup } from "prosemirror-example-setup";
-import {
-  defaultMarkdownParser,
-  defaultMarkdownSerializer,
-  schema,
-} from "prosemirror-markdown";
 import { EditorState } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import rehypeSanitize from "rehype-sanitize";
@@ -17,10 +12,13 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
+import { ProseMirrorRemarkAdapter } from "../src/index";
 import { defaultContent } from "./defaultContent";
 
 const editor = document.querySelector("#editor")!;
 const preview = document.querySelector("#preview-container")!;
+
+const adapter = new ProseMirrorRemarkAdapter();
 
 class ProseMirrorView {
   private readonly view: EditorView;
@@ -28,14 +26,12 @@ class ProseMirrorView {
   public constructor(target: Element, content: string) {
     this.view = new EditorView(target, {
       state: EditorState.create({
-        doc: defaultMarkdownParser.parse(content)!,
-        plugins: exampleSetup({ schema }),
+        doc: adapter.parse(content)!,
+        plugins: exampleSetup({ schema: adapter.schema() }),
       }),
       dispatchTransaction: (tr): void => {
         this.view.updateState(this.view.state.apply(tr));
-        void updatePreview(
-          defaultMarkdownSerializer.serialize(this.view.state.doc)
-        );
+        void updatePreview(adapter.serialize(this.view.state.doc));
       },
     });
   }
