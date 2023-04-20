@@ -1,0 +1,25 @@
+{
+  "name": "prosemirror-remark",
+  "version": "0.1.0",
+  "description": "ProseMirror Remark integration",
+  "keywords": [
+    "prosemirror",
+    "remark"
+  ],
+  "homepage": "https://github.com/marekdedic/prosemirror-remark#readme",
+  "bugs": {
+    "url": "https://github.com/marekdedic/prosemirror-remark/issues"
+  },
+  "license": "MIT",
+  "author": "Marek Dědič",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marekdedic/prosemirror-remark.git"
+  },
+  "devDependencies": {
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
