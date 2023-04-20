@@ -32,6 +32,9 @@ module.exports = () => {
         },
       ],
     },
+    resolve: {
+      extensions: [".ts", ".js"],
+    },
     entry: "./example/index.ts",
     output: {
       filename: "[name].js",

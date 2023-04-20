@@ -8,12 +8,13 @@ import "prosemirror-menu/style/menu.css";
 import {unified} from 'unified'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
+import remarkGfm from 'remark-gfm'
 import rehypeSanitize from 'rehype-sanitize'
 import rehypeStringify from 'rehype-stringify'
+import { defaultContent } from "./defaultContent";
 
 const editor = document.querySelector("#editor")!;
 const preview = document.querySelector("#preview-container")!;
-const defaultContent = "Hello World from **markdown**";
 
 class ProseMirrorView {
   private readonly view: EditorView;
@@ -41,6 +42,7 @@ class ProseMirrorView {
 async function updatePreview(source: string) {
   const file = await unified()
     .use(remarkParse)
+    .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeSanitize)
     .use(rehypeStringify)
