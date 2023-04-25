@@ -1,7 +1,4 @@
-import {
-  defaultMarkdownParser,
-  defaultMarkdownSerializer,
-} from "prosemirror-markdown";
+import { defaultMarkdownSerializer } from "prosemirror-markdown";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import remarkParse from "remark-parse";
 import { type Processor, unified } from "unified";
@@ -27,7 +24,7 @@ export class ProseMirrorRemarkAdapter {
     const mdast = this.parser.runSync(this.parser.parse(markdown));
     const ret = this.mdastToProseMirrorConverter.convert(mdast, this.schema());
     console.log(ret);
-    return defaultMarkdownParser.parse(markdown);
+    return ret;
   }
 
   // TODO: Replace "string" with a string literal
