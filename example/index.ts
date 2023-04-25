@@ -14,6 +14,7 @@ import { unified } from "unified";
 
 import { ParagraphExtension } from "../src/extensions/ParagraphExtension";
 import { RootExtension } from "../src/extensions/RootExtension";
+import { StrongExtension } from "../src/extensions/StrongExtension";
 import { TextExtension } from "../src/extensions/TextExtension";
 import { ProseMirrorRemarkAdapter } from "../src/index";
 import { defaultContent } from "./defaultContent";
@@ -22,6 +23,7 @@ const editor = document.querySelector("#editor")!;
 const preview = document.querySelector("#preview-container")!;
 
 const adapter = new ProseMirrorRemarkAdapter([
+  new StrongExtension(),
   new ParagraphExtension(),
   new RootExtension(),
   new TextExtension(),
