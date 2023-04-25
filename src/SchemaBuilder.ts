@@ -1,19 +1,28 @@
 import { type MarkSpec, type NodeSpec, Schema } from "prosemirror-model";
 
-type Nodes = string;
+import type { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
+
 type Marks = string;
 
 export class SchemaBuilder {
-  private readonly nodes: Record<Nodes, NodeSpec> = {};
+  private readonly nodes: Record<string, NodeSpec> = {};
   private readonly marks: Record<Marks, MarkSpec> = {};
 
-  public constructor() {
+  public constructor(extensions: Array<ProseMirrorRemarkExtension>) {
     this.nodes["text"] = {};
-    this.nodes["doc"] = { content: "text*" };
+    for (const extension of extensions) {
+      const extensionSchema = extension.schema();
+      if (extensionSchema.marks !== undefined) {
+        this.marks = { ...this.marks, ...extensionSchema.marks };
+      }
+      if (extensionSchema.nodes !== undefined) {
+        this.nodes = { ...this.nodes, ...extensionSchema.nodes };
+      }
+    }
   }
 
-  public build(): Schema<Nodes, Marks> {
-    return new Schema<Nodes, Marks>({
+  public build(): Schema<string, Marks> {
+    return new Schema<string, Marks>({
       nodes: this.nodes,
       marks: this.marks,
     });

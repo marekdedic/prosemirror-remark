@@ -13,26 +13,26 @@ import { SchemaBuilder } from "./SchemaBuilder";
 export class ProseMirrorRemarkAdapter {
   private readonly mdastToProseMirrorConverter: MdastToProseMirrorConverter;
   private readonly parser: Processor;
-  private readonly schemaBuilder: SchemaBuilder;
+  private readonly builtSchema: Schema<string, string>;
 
   public constructor(extensions: Array<ProseMirrorRemarkExtension> = []) {
     this.parser = unified().use(remarkParse);
     this.mdastToProseMirrorConverter = new MdastToProseMirrorConverter(
       extensions
     );
-    this.schemaBuilder = new SchemaBuilder();
+    this.builtSchema = new SchemaBuilder(extensions).build();
   }
 
   public parse(markdown: string): ProseMirrorNode | null {
     const mdast = this.parser.runSync(this.parser.parse(markdown));
-    const ret = this.mdastToProseMirrorConverter.convert(mdast);
+    const ret = this.mdastToProseMirrorConverter.convert(mdast, this.schema());
     console.log(ret);
     return defaultMarkdownParser.parse(markdown);
   }
 
   // TODO: Replace "string" with a string literal
   public schema(): Schema<string, string> {
-    return this.schemaBuilder.build();
+    return this.builtSchema;
   }
 
   public serialize(doc: ProseMirrorNode): string {

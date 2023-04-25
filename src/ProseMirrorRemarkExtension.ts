@@ -1,8 +1,15 @@
-import type { Node as ProseMirrorNode } from "prosemirror-model";
+import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-export abstract class ProseMirrorRemarkExtension {
-  public abstract readonly matchingMdastNodes: Array<string>;
+import type { SchemaExtension } from "./SchemaExtension";
 
-  public abstract mdastNodeToProseMirrorNode(node: UnistNode): ProseMirrorNode;
+export abstract class ProseMirrorRemarkExtension {
+  public abstract matchingMdastNodes(): Array<string>;
+
+  public abstract schema(): SchemaExtension;
+
+  public abstract mdastNodeToProseMirrorNode(
+    node: UnistNode,
+    schema: Schema
+  ): ProseMirrorNode | null;
 }
