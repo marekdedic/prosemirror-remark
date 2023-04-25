@@ -7,6 +7,7 @@ import remarkParse from "remark-parse";
 import { type Processor, unified } from "unified";
 
 import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
+import type { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
 import { SchemaBuilder } from "./SchemaBuilder";
 
 export class ProseMirrorRemarkAdapter {
@@ -14,9 +15,11 @@ export class ProseMirrorRemarkAdapter {
   private readonly parser: Processor;
   private readonly schemaBuilder: SchemaBuilder;
 
-  public constructor() {
+  public constructor(extensions: Array<ProseMirrorRemarkExtension> = []) {
     this.parser = unified().use(remarkParse);
-    this.mdastToProseMirrorConverter = new MdastToProseMirrorConverter();
+    this.mdastToProseMirrorConverter = new MdastToProseMirrorConverter(
+      extensions
+    );
     this.schemaBuilder = new SchemaBuilder();
   }
 
