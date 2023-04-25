@@ -32,7 +32,14 @@ export class ParagraphExtension extends ProseMirrorRemarkExtension {
     _: UnistNode,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
-  ): ProseMirrorNode | null {
-    return schema.nodes["paragraph"].createAndFill({}, convertedChildren);
+  ): Array<ProseMirrorNode> {
+    const proseMirrorNode = schema.nodes["paragraph"].createAndFill(
+      {},
+      convertedChildren
+    );
+    if (proseMirrorNode === null) {
+      return [];
+    }
+    return [proseMirrorNode];
   }
 }

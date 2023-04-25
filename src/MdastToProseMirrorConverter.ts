@@ -15,20 +15,25 @@ export class MdastToProseMirrorConverter {
   }
 
   // TODO: Move schema to a property?
+  // TODO: Better error handling?
   public convert(mdast: UnistNode, schema: Schema): ProseMirrorNode | null {
-    return this.convertNode(mdast, schema);
+    const rootNode = this.convertNode(mdast, schema);
+    if (rootNode.length !== 1) {
+      return null;
+    }
+    return rootNode[0];
   }
 
-  private convertNode(node: UnistNode, schema: Schema): ProseMirrorNode | null {
+  private convertNode(node: UnistNode, schema: Schema): Array<ProseMirrorNode> {
     for (const extension of this.extensions) {
       if (!extension.matchingMdastNodes().includes(node.type)) {
         continue;
       }
       let convertedChildren: Array<ProseMirrorNode> = [];
       if (MdastToProseMirrorConverter.mdastNodeIsParent(node)) {
-        convertedChildren = node.children
-          .map((child) => this.convertNode(child, schema))
-          .filter((child): child is ProseMirrorNode => child !== null);
+        convertedChildren = node.children.flatMap((child) =>
+          this.convertNode(child, schema)
+        );
       }
       return extension.mdastNodeToProseMirrorNode(
         node,
@@ -41,6 +46,6 @@ export class MdastToProseMirrorConverter {
         node.type +
         '" to a ProseMirror node.'
     );
-    return null;
+    return [];
   }
 }

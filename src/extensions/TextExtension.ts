@@ -23,7 +23,7 @@ export class TextExtension extends ProseMirrorRemarkExtension {
     node: Text,
     _: Array<ProseMirrorNode>,
     schema: Schema
-  ): ProseMirrorNode | null {
-    return schema.text(node.value);
+  ): Array<ProseMirrorNode> {
+    return [schema.text(node.value)];
   }
 }

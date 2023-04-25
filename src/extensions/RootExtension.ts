@@ -17,7 +17,14 @@ export class RootExtension extends ProseMirrorRemarkExtension {
     _: UnistNode,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
-  ): ProseMirrorNode | null {
-    return schema.nodes["doc"].createAndFill({}, convertedChildren);
+  ): Array<ProseMirrorNode> {
+    const proseMirrorNode = schema.nodes["doc"].createAndFill(
+      {},
+      convertedChildren
+    );
+    if (proseMirrorNode === null) {
+      return [];
+    }
+    return [proseMirrorNode];
   }
 }
