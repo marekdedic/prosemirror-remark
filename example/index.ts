@@ -12,13 +12,14 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
+import { RootExtension } from "../src/extensions/RootExtension";
 import { ProseMirrorRemarkAdapter } from "../src/index";
 import { defaultContent } from "./defaultContent";
 
 const editor = document.querySelector("#editor")!;
 const preview = document.querySelector("#preview-container")!;
 
-const adapter = new ProseMirrorRemarkAdapter();
+const adapter = new ProseMirrorRemarkAdapter([new RootExtension()]);
 
 class ProseMirrorView {
   private readonly view: EditorView;
