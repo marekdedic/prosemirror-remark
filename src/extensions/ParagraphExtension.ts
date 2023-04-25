@@ -1,16 +1,32 @@
-import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type {
+  DOMOutputSpec,
+  Node as ProseMirrorNode,
+  Schema,
+} from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
 import { ProseMirrorRemarkExtension } from "../ProseMirrorRemarkExtension";
 import type { SchemaExtension } from "../SchemaExtension";
 
-export class RootExtension extends ProseMirrorRemarkExtension {
+export class ParagraphExtension extends ProseMirrorRemarkExtension {
   public matchingMdastNodes(): Array<string> {
-    return ["root"];
+    return ["paragraph"];
   }
 
   public schema(): SchemaExtension {
-    return { nodes: { doc: { content: "block+" } } };
+    return {
+      nodes: {
+        paragraph: {
+          // TODO: This is incorrect
+          content: "text*",
+          group: "block",
+          parseDOM: [{ tag: "p" }],
+          toDOM(): DOMOutputSpec {
+            return ["p", 0];
+          },
+        },
+      },
+    };
   }
 
   public mdastNodeToProseMirrorNode(

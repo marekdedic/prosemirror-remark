@@ -12,6 +12,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
+import { ParagraphExtension } from "../src/extensions/ParagraphExtension";
 import { RootExtension } from "../src/extensions/RootExtension";
 import { ProseMirrorRemarkAdapter } from "../src/index";
 import { defaultContent } from "./defaultContent";
@@ -19,16 +20,21 @@ import { defaultContent } from "./defaultContent";
 const editor = document.querySelector("#editor")!;
 const preview = document.querySelector("#preview-container")!;
 
-const adapter = new ProseMirrorRemarkAdapter([new RootExtension()]);
+const adapter = new ProseMirrorRemarkAdapter([
+  new RootExtension(),
+  new ParagraphExtension(),
+]);
 
 class ProseMirrorView {
   private readonly view: EditorView;
 
   public constructor(target: Element, content: string) {
+    const schema = adapter.schema();
     this.view = new EditorView(target, {
       state: EditorState.create({
         doc: adapter.parse(content)!,
-        plugins: exampleSetup({ schema: adapter.schema() }),
+        plugins: exampleSetup({ schema: schema }),
+        schema,
       }),
       dispatchTransaction: (tr): void => {
         this.view.updateState(this.view.state.apply(tr));

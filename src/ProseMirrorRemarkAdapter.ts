@@ -22,9 +22,7 @@ export class ProseMirrorRemarkAdapter {
 
   public parse(markdown: string): ProseMirrorNode | null {
     const mdast = this.parser.runSync(this.parser.parse(markdown));
-    const ret = this.mdastToProseMirrorConverter.convert(mdast, this.schema());
-    console.log(ret);
-    return ret;
+    return this.mdastToProseMirrorConverter.convert(mdast, this.schema());
   }
 
   // TODO: Replace "string" with a string literal
