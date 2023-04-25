@@ -1,5 +1,5 @@
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
-import type { Node as UnistNode } from "unist";
+import type { Node as UnistNode, Parent } from "unist";
 
 import type { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
 
@@ -10,6 +10,11 @@ export class MdastToProseMirrorConverter {
     this.extensions = extensions;
   }
 
+  private static mdastNodeIsParent(node: UnistNode): node is Parent {
+    return "children" in node;
+  }
+
+  // TODO: Move schema to a property?
   public convert(mdast: UnistNode, schema: Schema): ProseMirrorNode | null {
     return this.convertNode(mdast, schema);
   }
@@ -19,7 +24,17 @@ export class MdastToProseMirrorConverter {
       if (!extension.matchingMdastNodes().includes(node.type)) {
         continue;
       }
-      return extension.mdastNodeToProseMirrorNode(node, schema);
+      let convertedChildren: Array<ProseMirrorNode> = [];
+      if (MdastToProseMirrorConverter.mdastNodeIsParent(node)) {
+        convertedChildren = node.children
+          .map((child) => this.convertNode(child, schema))
+          .filter((child): child is ProseMirrorNode => child !== null);
+      }
+      return extension.mdastNodeToProseMirrorNode(
+        node,
+        convertedChildren,
+        schema
+      );
     }
     console.warn(
       "Couldn't find any way to convert mdast node of type \"" +

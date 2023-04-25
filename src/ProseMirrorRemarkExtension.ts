@@ -10,6 +10,7 @@ export abstract class ProseMirrorRemarkExtension {
 
   public abstract mdastNodeToProseMirrorNode(
     node: UnistNode,
+    convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
   ): ProseMirrorNode | null;
 }

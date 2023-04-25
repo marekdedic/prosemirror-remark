@@ -16,8 +16,9 @@ export class RootExtension extends ProseMirrorRemarkExtension {
 
   public mdastNodeToProseMirrorNode(
     _: UnistNode,
+    convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
   ): ProseMirrorNode | null {
-    return schema.nodes["doc"].createAndFill();
+    return schema.nodes["doc"].createAndFill({}, convertedChildren);
   }
 }
