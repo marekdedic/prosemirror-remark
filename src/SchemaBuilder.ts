@@ -9,7 +9,6 @@ export class SchemaBuilder {
   private readonly marks: Record<Marks, MarkSpec> = {};
 
   public constructor(extensions: Array<ProseMirrorRemarkExtension>) {
-    this.nodes["text"] = {};
     for (const extension of extensions) {
       const extensionSchema = extension.schema();
       if (extensionSchema.marks !== undefined) {

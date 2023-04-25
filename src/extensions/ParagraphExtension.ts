@@ -17,8 +17,7 @@ export class ParagraphExtension extends ProseMirrorRemarkExtension {
     return {
       nodes: {
         paragraph: {
-          // TODO: This is incorrect
-          content: "text*",
+          content: "inline*",
           group: "block",
           parseDOM: [{ tag: "p" }],
           toDOM(): DOMOutputSpec {
@@ -34,6 +33,6 @@ export class ParagraphExtension extends ProseMirrorRemarkExtension {
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
   ): ProseMirrorNode | null {
-    return schema.nodes["doc"].createAndFill({}, convertedChildren);
+    return schema.nodes["paragraph"].createAndFill({}, convertedChildren);
   }
 }
