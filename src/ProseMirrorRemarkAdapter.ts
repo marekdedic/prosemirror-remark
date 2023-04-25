@@ -10,12 +10,14 @@ import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
 
 export class ProseMirrorRemarkAdapter {
-  private readonly parser: Processor;
   private readonly mdastToProseMirrorConverter: MdastToProseMirrorConverter;
+  private readonly parser: Processor;
+  private readonly schemaBuilder: SchemaBuilder;
 
   public constructor() {
     this.parser = unified().use(remarkParse);
     this.mdastToProseMirrorConverter = new MdastToProseMirrorConverter();
+    this.schemaBuilder = new SchemaBuilder();
   }
 
   public parse(markdown: string): ProseMirrorNode | null {
@@ -27,7 +29,7 @@ export class ProseMirrorRemarkAdapter {
 
   // TODO: Replace "string" with a string literal
   public schema(): Schema<string, string> {
-    return new SchemaBuilder().build();
+    return this.schemaBuilder.build();
   }
 
   public serialize(doc: ProseMirrorNode): string {
