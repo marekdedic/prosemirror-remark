@@ -1,8 +1,8 @@
-import { defaultMarkdownSerializer } from "prosemirror-markdown";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import remarkParse from "remark-parse";
 import remarkStringify from "remark-stringify";
 import { type Processor, unified } from "unified";
+import type { Node as UnistNode } from "unist";
 
 import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
 import type { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
@@ -13,7 +13,7 @@ export class ProseMirrorRemarkAdapter {
   private readonly builtSchema: Schema<string, string>;
   private readonly mdastToProseMirrorConverter: MdastToProseMirrorConverter;
   private readonly proseMirrorToMdastConverter: ProseMirrorToMdastConverter;
-  private readonly remark: Processor;
+  private readonly remark: Processor<UnistNode, UnistNode, UnistNode, string>;
 
   public constructor(extensions: Array<ProseMirrorRemarkExtension> = []) {
     this.builtSchema = new SchemaBuilder(extensions).build();
@@ -39,6 +39,12 @@ export class ProseMirrorRemarkAdapter {
   }
 
   public serialize(doc: ProseMirrorNode): string {
-    return defaultMarkdownSerializer.serialize(doc);
+    const mdast = this.proseMirrorToMdastConverter.convert(doc);
+    if (mdast === null) {
+      return "";
+    }
+    const markdown: string = this.remark.stringify(mdast);
+    console.log(markdown);
+    return markdown;
   }
 }
