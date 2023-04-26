@@ -14,6 +14,7 @@ export abstract class ProseMirrorRemarkExtension {
   public abstract schema(): SchemaExtension;
 
   // TODO: There is some code duplication in the specializations of this method
+  // TODO: Make this generic
   public abstract mdastNodeToProseMirrorNode(
     node: UnistNode,
     convertedChildren: Array<ProseMirrorNode>,
@@ -21,6 +22,7 @@ export abstract class ProseMirrorRemarkExtension {
   ): Array<ProseMirrorNode>;
 
   // TODO: There is some code duplication in the specializations of this method
+  // TODO: Make this generic
   public abstract proseMirrorNodeToMdastNode(
     node: ProseMirrorNode,
     convertedChildren: Array<UnistNode>
