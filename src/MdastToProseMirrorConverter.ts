@@ -35,7 +35,7 @@ export class MdastToProseMirrorConverter {
           this.convertNode(child, schema)
         );
       }
-      return extension.mdastNodeToProseMirrorNode(
+      return extension.mdastNodeToProseMirrorNodes(
         node,
         convertedChildren,
         schema

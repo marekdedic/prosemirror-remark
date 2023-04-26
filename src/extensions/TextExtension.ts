@@ -22,7 +22,7 @@ export class TextExtension extends ProseMirrorRemarkNodeExtension {
     };
   }
 
-  public mdastNodeToProseMirrorNode(
+  public mdastNodeToProseMirrorNodes(
     node: Text,
     _: Array<ProseMirrorNode>,
     schema: Schema
@@ -30,7 +30,7 @@ export class TextExtension extends ProseMirrorRemarkNodeExtension {
     return [schema.text(node.value)];
   }
 
-  public proseMirrorNodeToMdastNode(node: ProseMirrorNode): Array<Text> {
+  public proseMirrorNodeToMdastNodes(node: ProseMirrorNode): Array<Text> {
     return [{ type: this.mdastNodeName(), value: node.text ?? "" }];
   }
 }

@@ -8,17 +8,16 @@ import type { Node as UnistNode } from "unist";
 import { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
 
 export abstract class ProseMirrorRemarkNodeExtension extends ProseMirrorRemarkExtension {
-  // TODO: Maybe just one string?
   public abstract mdastNodeName(): string;
 
-  // TODO: Maybe just one string?
   public abstract proseMirrorNodeName(): string;
 
   public abstract proseMirrorNodeSpec(): NodeSpec;
 
   // TODO: There is some code duplication in the specializations of this method
   // TODO: Make this generic
-  public abstract mdastNodeToProseMirrorNode(
+  // TODO: Maybe return just a single node
+  public abstract mdastNodeToProseMirrorNodes(
     node: UnistNode,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
@@ -26,7 +25,8 @@ export abstract class ProseMirrorRemarkNodeExtension extends ProseMirrorRemarkEx
 
   // TODO: There is some code duplication in the specializations of this method
   // TODO: Make this generic
-  public abstract proseMirrorNodeToMdastNode(
+  // TODO: Maybe return just a single node
+  public abstract proseMirrorNodeToMdastNodes(
     node: ProseMirrorNode,
     convertedChildren: Array<UnistNode>
   ): Array<UnistNode>;

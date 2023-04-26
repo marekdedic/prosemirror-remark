@@ -29,7 +29,7 @@ export class ParagraphExtension extends ProseMirrorRemarkNodeExtension {
     };
   }
 
-  public mdastNodeToProseMirrorNode(
+  public mdastNodeToProseMirrorNodes(
     _: UnistNode,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
@@ -43,7 +43,7 @@ export class ParagraphExtension extends ProseMirrorRemarkNodeExtension {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNode(
+  public proseMirrorNodeToMdastNodes(
     _: ProseMirrorNode,
     convertedChildren: Array<PhrasingContent>
   ): Array<Paragraph> {

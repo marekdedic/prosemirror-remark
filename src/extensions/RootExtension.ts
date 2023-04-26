@@ -21,7 +21,7 @@ export class RootExtension extends ProseMirrorRemarkNodeExtension {
     return { content: "block+" };
   }
 
-  public mdastNodeToProseMirrorNode(
+  public mdastNodeToProseMirrorNodes(
     _: UnistNode,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
@@ -35,7 +35,7 @@ export class RootExtension extends ProseMirrorRemarkNodeExtension {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNode(
+  public proseMirrorNodeToMdastNodes(
     _: ProseMirrorNode,
     convertedChildren: Array<Content>
   ): Array<Root> {

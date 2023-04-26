@@ -31,7 +31,7 @@ export class ProseMirrorToMdastConverter {
           this.convertNode(node.child(i))
         );
       }
-      return extension.proseMirrorNodeToMdastNode(node, convertedChildren);
+      return extension.proseMirrorNodeToMdastNodes(node, convertedChildren);
     }
     console.warn(
       "Couldn't find any way to convert ProseMirror node of type \"" +
