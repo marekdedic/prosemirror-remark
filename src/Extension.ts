@@ -1,7 +1,7 @@
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-export abstract class ProseMirrorRemarkExtension {
+export abstract class Extension {
   public abstract mdastNodeName(): string;
 
   // TODO: There is some code duplication in the specializations of this method

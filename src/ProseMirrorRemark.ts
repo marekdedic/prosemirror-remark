@@ -5,20 +5,20 @@ import { type Processor, unified } from "unified";
 import type { Node as UnistNode } from "unist";
 
 import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
-import type { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
+import type { Extension } from "./Extension";
 import { ProseMirrorRemarkMarkExtension } from "./ProseMirrorRemarkMarkExtension";
 import { ProseMirrorRemarkNodeExtension } from "./ProseMirrorRemarkNodeExtension";
 import { ProseMirrorToMdastConverter } from "./ProseMirrorToMdastConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
 
 function isNodeExtension(
-  extension: ProseMirrorRemarkExtension
+  extension: Extension
 ): extension is ProseMirrorRemarkNodeExtension {
   return extension instanceof ProseMirrorRemarkNodeExtension;
 }
 
 function isMarkExtension(
-  extension: ProseMirrorRemarkExtension
+  extension: Extension
 ): extension is ProseMirrorRemarkMarkExtension {
   return extension instanceof ProseMirrorRemarkMarkExtension;
 }
@@ -29,7 +29,7 @@ export class ProseMirrorRemark {
   private readonly proseMirrorToMdastConverter: ProseMirrorToMdastConverter;
   private readonly remark: Processor<UnistNode, UnistNode, UnistNode, string>;
 
-  public constructor(extensions: Array<ProseMirrorRemarkExtension> = []) {
+  public constructor(extensions: Array<Extension> = []) {
     const nodeExtensions = extensions.filter(isNodeExtension);
     const markExtensions = extensions.filter(isMarkExtension);
     this.builtSchema = new SchemaBuilder(

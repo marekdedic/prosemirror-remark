@@ -1,9 +1,9 @@
 import type { Node as ProseMirrorNode, NodeSpec } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
+import { Extension } from "./Extension";
 
-export abstract class ProseMirrorRemarkNodeExtension extends ProseMirrorRemarkExtension {
+export abstract class ProseMirrorRemarkNodeExtension extends Extension {
   public abstract proseMirrorNodeName(): string;
 
   public abstract proseMirrorNodeSpec(): NodeSpec;
