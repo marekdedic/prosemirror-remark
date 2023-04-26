@@ -1,13 +1,13 @@
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Node as UnistNode, Parent } from "unist";
 
-import type { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
+import type { ProseMirrorRemarkNodeExtension } from "./ProseMirrorRemarkNodeExtension";
 
 export class MdastToProseMirrorConverter {
-  private readonly extensions: Array<ProseMirrorRemarkExtension>;
+  private readonly nodeExtensions: Array<ProseMirrorRemarkNodeExtension>;
 
-  public constructor(extensions: Array<ProseMirrorRemarkExtension>) {
-    this.extensions = extensions;
+  public constructor(nodeExtensions: Array<ProseMirrorRemarkNodeExtension>) {
+    this.nodeExtensions = nodeExtensions;
   }
 
   private static mdastNodeIsParent(node: UnistNode): node is Parent {
@@ -25,8 +25,8 @@ export class MdastToProseMirrorConverter {
   }
 
   private convertNode(node: UnistNode, schema: Schema): Array<ProseMirrorNode> {
-    for (const extension of this.extensions) {
-      if (!extension.matchingMdastNodes().includes(node.type)) {
+    for (const extension of this.nodeExtensions) {
+      if (extension.mdastNodeName() !== node.type) {
         continue;
       }
       let convertedChildren: Array<ProseMirrorNode> = [];

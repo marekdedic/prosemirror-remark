@@ -2,33 +2,29 @@ import type { Paragraph, PhrasingContent } from "mdast";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
+  NodeSpec,
   Schema,
 } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import { ProseMirrorRemarkExtension } from "../ProseMirrorRemarkExtension";
-import type { SchemaExtension } from "../SchemaExtension";
+import { ProseMirrorRemarkNodeExtension } from "../ProseMirrorRemarkNodeExtension";
 
-export class ParagraphExtension extends ProseMirrorRemarkExtension {
-  public matchingMdastNodes(): Array<string> {
-    return ["paragraph"];
+export class ParagraphExtension extends ProseMirrorRemarkNodeExtension {
+  public mdastNodeName(): "paragraph" {
+    return "paragraph";
   }
 
-  public matchingProseMirrorNodes(): Array<string> {
-    return ["paragraph"];
+  public proseMirrorNodeName(): string {
+    return "paragraph";
   }
 
-  public schema(): SchemaExtension {
+  public proseMirrorNodeSpec(): NodeSpec {
     return {
-      nodes: {
-        paragraph: {
-          content: "inline*",
-          group: "block",
-          parseDOM: [{ tag: "p" }],
-          toDOM(): DOMOutputSpec {
-            return ["p", 0];
-          },
-        },
+      content: "inline*",
+      group: "block",
+      parseDOM: [{ tag: "p" }],
+      toDOM(): DOMOutputSpec {
+        return ["p", 0];
       },
     };
   }
@@ -38,10 +34,9 @@ export class ParagraphExtension extends ProseMirrorRemarkExtension {
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = schema.nodes["paragraph"].createAndFill(
-      {},
-      convertedChildren
-    );
+    const proseMirrorNode = schema.nodes[
+      this.proseMirrorNodeName()
+    ].createAndFill({}, convertedChildren);
     if (proseMirrorNode === null) {
       return [];
     }
@@ -52,6 +47,6 @@ export class ParagraphExtension extends ProseMirrorRemarkExtension {
     _: ProseMirrorNode,
     convertedChildren: Array<PhrasingContent>
   ): Array<Paragraph> {
-    return [{ type: "paragraph", children: convertedChildren }];
+    return [{ type: this.mdastNodeName(), children: convertedChildren }];
   }
 }

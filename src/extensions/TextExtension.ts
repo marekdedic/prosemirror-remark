@@ -1,25 +1,24 @@
 import type { Text } from "mdast";
-import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type {
+  Node as ProseMirrorNode,
+  NodeSpec,
+  Schema,
+} from "prosemirror-model";
 
-import { ProseMirrorRemarkExtension } from "../ProseMirrorRemarkExtension";
-import type { SchemaExtension } from "../SchemaExtension";
+import { ProseMirrorRemarkNodeExtension } from "../ProseMirrorRemarkNodeExtension";
 
-export class TextExtension extends ProseMirrorRemarkExtension {
-  public matchingMdastNodes(): Array<string> {
-    return ["text"];
+export class TextExtension extends ProseMirrorRemarkNodeExtension {
+  public mdastNodeName(): "text" {
+    return "text";
   }
 
-  public matchingProseMirrorNodes(): Array<string> {
-    return ["text"];
+  public proseMirrorNodeName(): string {
+    return "text";
   }
 
-  public schema(): SchemaExtension {
+  public proseMirrorNodeSpec(): NodeSpec {
     return {
-      nodes: {
-        text: {
-          group: "inline",
-        },
-      },
+      group: "inline",
     };
   }
 
@@ -32,6 +31,6 @@ export class TextExtension extends ProseMirrorRemarkExtension {
   }
 
   public proseMirrorNodeToMdastNode(node: ProseMirrorNode): Array<Text> {
-    return [{ type: "text", value: node.text ?? "" }];
+    return [{ type: this.mdastNodeName(), value: node.text ?? "" }];
   }
 }

@@ -1,6 +1,6 @@
 import { type MarkSpec, type NodeSpec, Schema } from "prosemirror-model";
 
-import type { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
+import type { ProseMirrorRemarkNodeExtension } from "./ProseMirrorRemarkNodeExtension";
 
 type Marks = string;
 
@@ -8,15 +8,10 @@ export class SchemaBuilder {
   private readonly nodes: Record<string, NodeSpec> = {};
   private readonly marks: Record<Marks, MarkSpec> = {};
 
-  public constructor(extensions: Array<ProseMirrorRemarkExtension>) {
-    for (const extension of extensions) {
-      const extensionSchema = extension.schema();
-      if (extensionSchema.marks !== undefined) {
-        this.marks = { ...this.marks, ...extensionSchema.marks };
-      }
-      if (extensionSchema.nodes !== undefined) {
-        this.nodes = { ...this.nodes, ...extensionSchema.nodes };
-      }
+  public constructor(nodeExtensions: Array<ProseMirrorRemarkNodeExtension>) {
+    for (const extension of nodeExtensions) {
+      this.nodes[extension.proseMirrorNodeName()] =
+        extension.proseMirrorNodeSpec();
     }
   }
 

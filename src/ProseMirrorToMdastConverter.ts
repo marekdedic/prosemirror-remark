@@ -1,13 +1,13 @@
 import type { Node as ProseMirrorNode } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import type { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
+import type { ProseMirrorRemarkNodeExtension } from "./ProseMirrorRemarkNodeExtension";
 
 export class ProseMirrorToMdastConverter {
-  private readonly extensions: Array<ProseMirrorRemarkExtension>;
+  private readonly nodeExtensions: Array<ProseMirrorRemarkNodeExtension>;
 
-  public constructor(extensions: Array<ProseMirrorRemarkExtension>) {
-    this.extensions = extensions;
+  public constructor(nodeExtensions: Array<ProseMirrorRemarkNodeExtension>) {
+    this.nodeExtensions = nodeExtensions;
   }
 
   // TODO: Move schema to a property?
@@ -21,8 +21,8 @@ export class ProseMirrorToMdastConverter {
   }
 
   private convertNode(node: ProseMirrorNode): Array<UnistNode> {
-    for (const extension of this.extensions) {
-      if (!extension.matchingProseMirrorNodes().includes(node.type.name)) {
+    for (const extension of this.nodeExtensions) {
+      if (extension.proseMirrorNodeName() !== node.type.name) {
         continue;
       }
       let convertedChildren: Array<UnistNode> = [];

@@ -1,21 +1,24 @@
 import type { Content, Root } from "mdast";
-import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type {
+  Node as ProseMirrorNode,
+  NodeSpec,
+  Schema,
+} from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import { ProseMirrorRemarkExtension } from "../ProseMirrorRemarkExtension";
-import type { SchemaExtension } from "../SchemaExtension";
+import { ProseMirrorRemarkNodeExtension } from "../ProseMirrorRemarkNodeExtension";
 
-export class RootExtension extends ProseMirrorRemarkExtension {
-  public matchingMdastNodes(): Array<string> {
-    return ["root"];
+export class RootExtension extends ProseMirrorRemarkNodeExtension {
+  public mdastNodeName(): "root" {
+    return "root";
   }
 
-  public matchingProseMirrorNodes(): Array<string> {
-    return ["doc"];
+  public proseMirrorNodeName(): string {
+    return "doc";
   }
 
-  public schema(): SchemaExtension {
-    return { nodes: { doc: { content: "block+" } } };
+  public proseMirrorNodeSpec(): NodeSpec {
+    return { content: "block+" };
   }
 
   public mdastNodeToProseMirrorNode(
@@ -23,10 +26,9 @@ export class RootExtension extends ProseMirrorRemarkExtension {
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = schema.nodes["doc"].createAndFill(
-      {},
-      convertedChildren
-    );
+    const proseMirrorNode = schema.nodes[
+      this.proseMirrorNodeName()
+    ].createAndFill({}, convertedChildren);
     if (proseMirrorNode === null) {
       return [];
     }
@@ -37,6 +39,6 @@ export class RootExtension extends ProseMirrorRemarkExtension {
     _: ProseMirrorNode,
     convertedChildren: Array<Content>
   ): Array<Root> {
-    return [{ type: "root", children: convertedChildren }];
+    return [{ type: this.mdastNodeName(), children: convertedChildren }];
   }
 }
