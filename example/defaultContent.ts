@@ -26,6 +26,8 @@ __This is bold text__\n\
 \n\
 _This is italic text_\n\
 \n\
+***This is bold italic text***\n\
+\n\
 ~~Strikethrough~~\n\
 \n\
 \n\
