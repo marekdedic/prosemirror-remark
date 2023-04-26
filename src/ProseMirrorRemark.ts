@@ -5,9 +5,9 @@ import { type Processor, unified } from "unified";
 import type { Node as UnistNode } from "unist";
 
 import type { Extension } from "./Extension";
+import { MarkExtension } from "./MarkExtension";
 import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
 import { NodeExtension } from "./NodeExtension";
-import { ProseMirrorRemarkMarkExtension } from "./ProseMirrorRemarkMarkExtension";
 import { ProseMirrorToMdastConverter } from "./ProseMirrorToMdastConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
 
@@ -15,10 +15,8 @@ function isNodeExtension(extension: Extension): extension is NodeExtension {
   return extension instanceof NodeExtension;
 }
 
-function isMarkExtension(
-  extension: Extension
-): extension is ProseMirrorRemarkMarkExtension {
-  return extension instanceof ProseMirrorRemarkMarkExtension;
+function isMarkExtension(extension: Extension): extension is MarkExtension {
+  return extension instanceof MarkExtension;
 }
 
 export class ProseMirrorRemark {

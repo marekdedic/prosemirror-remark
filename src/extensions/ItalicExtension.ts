@@ -6,9 +6,9 @@ import type {
   Schema,
 } from "prosemirror-model";
 
-import { ProseMirrorRemarkMarkExtension } from "../ProseMirrorRemarkMarkExtension";
+import { MarkExtension } from "../MarkExtension";
 
-export class ItalicExtension extends ProseMirrorRemarkMarkExtension {
+export class ItalicExtension extends MarkExtension {
   public mdastNodeName(): string {
     return "emphasis";
   }
