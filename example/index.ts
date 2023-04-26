@@ -13,6 +13,7 @@ import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
 import { BoldExtension } from "../src/extensions/BoldExtension";
+import { ItalicExtension } from "../src/extensions/ItalicExtension";
 import { ParagraphExtension } from "../src/extensions/ParagraphExtension";
 import { RootExtension } from "../src/extensions/RootExtension";
 import { TextExtension } from "../src/extensions/TextExtension";
@@ -24,6 +25,7 @@ const preview = document.querySelector("#preview-container")!;
 
 const adapter = new ProseMirrorRemarkAdapter([
   new BoldExtension(),
+  new ItalicExtension(),
   new ParagraphExtension(),
   new RootExtension(),
   new TextExtension(),
