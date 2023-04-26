@@ -1,52 +1,40 @@
 import type { Strong } from "mdast";
 import type {
   DOMOutputSpec,
+  MarkSpec,
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
-import type { Node as UnistNode } from "unist";
 
-import { ProseMirrorRemarkExtension } from "../ProseMirrorRemarkExtension";
-import type { SchemaExtension } from "../SchemaExtension";
+import { ProseMirrorRemarkMarkExtension } from "../ProseMirrorRemarkMarkExtension";
 
-export class BoldExtension extends ProseMirrorRemarkExtension {
-  public matchingMdastNodes(): Array<string> {
-    return ["strong"];
+export class BoldExtension extends ProseMirrorRemarkMarkExtension {
+  public mdastNodeName(): string {
+    return "strong";
   }
 
-  // TODO
-  public matchingProseMirrorNodes(): Array<string> {
-    return [];
+  public proseMirrorMarkName(): string {
+    return "strong";
   }
 
-  public schema(): SchemaExtension {
+  public proseMirrorMarkSpec(): MarkSpec {
     return {
-      marks: {
-        strong: {
-          parseDOM: [{ tag: "b" }, { tag: "strong" }],
-          toDOM(): DOMOutputSpec {
-            return ["strong"];
-          },
-        },
+      parseDOM: [{ tag: "b" }, { tag: "strong" }],
+      toDOM(): DOMOutputSpec {
+        return ["strong"];
       },
     };
   }
 
-  public mdastNodeToProseMirrorNode(
+  public mdastNodeToProseMirrorNodes(
     _: Strong,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
-      child.mark(child.marks.concat([schema.marks["strong"].create()]))
+      child.mark(
+        child.marks.concat([schema.marks[this.proseMirrorMarkName()].create()])
+      )
     );
-  }
-
-  // TODO
-  public proseMirrorNodeToMdastNode(
-    _node: ProseMirrorNode,
-    _convertedChildren: Array<UnistNode>
-  ): Array<UnistNode> {
-    return [];
   }
 }
