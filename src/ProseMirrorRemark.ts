@@ -23,7 +23,7 @@ function isMarkExtension(
   return extension instanceof ProseMirrorRemarkMarkExtension;
 }
 
-export class ProseMirrorRemarkAdapter {
+export class ProseMirrorRemark {
   private readonly builtSchema: Schema<string, string>;
   private readonly mdastToProseMirrorConverter: MdastToProseMirrorConverter;
   private readonly proseMirrorToMdastConverter: ProseMirrorToMdastConverter;

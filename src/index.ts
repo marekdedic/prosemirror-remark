@@ -1,1 +1,1 @@
-export { ProseMirrorRemarkAdapter } from "./ProseMirrorRemarkAdapter";
+export { ProseMirrorRemark } from "./ProseMirrorRemark";
