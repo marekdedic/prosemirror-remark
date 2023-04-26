@@ -4,12 +4,12 @@ import type {
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
-import { Node as UnistNode } from "unist";
+import type { Node as UnistNode } from "unist";
 
 import { ProseMirrorRemarkExtension } from "../ProseMirrorRemarkExtension";
 import type { SchemaExtension } from "../SchemaExtension";
 
-export class StrongExtension extends ProseMirrorRemarkExtension {
+export class BoldExtension extends ProseMirrorRemarkExtension {
   public matchingMdastNodes(): Array<string> {
     return ["strong"];
   }
