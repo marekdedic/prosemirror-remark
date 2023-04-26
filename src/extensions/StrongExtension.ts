@@ -4,6 +4,7 @@ import type {
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
+import { Node as UnistNode } from "unist";
 
 import { ProseMirrorRemarkExtension } from "../ProseMirrorRemarkExtension";
 import type { SchemaExtension } from "../SchemaExtension";
@@ -11,6 +12,11 @@ import type { SchemaExtension } from "../SchemaExtension";
 export class StrongExtension extends ProseMirrorRemarkExtension {
   public matchingMdastNodes(): Array<string> {
     return ["strong"];
+  }
+
+  // TODO
+  public matchingProseMirrorNodes(): Array<string> {
+    return [];
   }
 
   public schema(): SchemaExtension {
@@ -34,5 +40,13 @@ export class StrongExtension extends ProseMirrorRemarkExtension {
     return convertedChildren.map((child) =>
       child.mark(child.marks.concat([schema.marks["strong"].create()]))
     );
+  }
+
+  // TODO
+  public proseMirrorNodeToMdastNode(
+    _node: ProseMirrorNode,
+    _convertedChildren: Array<UnistNode>
+  ): Array<UnistNode> {
+    return [];
   }
 }
