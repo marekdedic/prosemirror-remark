@@ -37,8 +37,7 @@ export class ProseMirrorRemarkAdapter {
       markExtensions
     ).build();
     this.mdastToProseMirrorConverter = new MdastToProseMirrorConverter(
-      nodeExtensions,
-      markExtensions
+      extensions
     );
     this.proseMirrorToMdastConverter = new ProseMirrorToMdastConverter(
       nodeExtensions
