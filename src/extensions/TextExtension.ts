@@ -9,6 +9,10 @@ export class TextExtension extends ProseMirrorRemarkExtension {
     return ["text"];
   }
 
+  public matchingProseMirrorNodes(): Array<string> {
+    return ["text"];
+  }
+
   public schema(): SchemaExtension {
     return {
       nodes: {
@@ -25,5 +29,9 @@ export class TextExtension extends ProseMirrorRemarkExtension {
     schema: Schema
   ): Array<ProseMirrorNode> {
     return [schema.text(node.value)];
+  }
+
+  public proseMirrorNodeToMdastNode(node: ProseMirrorNode): Array<Text> {
+    return [{ type: "text", value: node.text ?? "" }];
   }
 }

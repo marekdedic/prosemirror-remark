@@ -1,3 +1,4 @@
+import type { Content, Root } from "mdast";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
@@ -7,6 +8,10 @@ import type { SchemaExtension } from "../SchemaExtension";
 export class RootExtension extends ProseMirrorRemarkExtension {
   public matchingMdastNodes(): Array<string> {
     return ["root"];
+  }
+
+  public matchingProseMirrorNodes(): Array<string> {
+    return ["doc"];
   }
 
   public schema(): SchemaExtension {
@@ -26,5 +31,12 @@ export class RootExtension extends ProseMirrorRemarkExtension {
       return [];
     }
     return [proseMirrorNode];
+  }
+
+  public proseMirrorNodeToMdastNode(
+    _: ProseMirrorNode,
+    convertedChildren: Array<Content>
+  ): Array<Root> {
+    return [{ type: "root", children: convertedChildren }];
   }
 }

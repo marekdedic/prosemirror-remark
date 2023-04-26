@@ -1,3 +1,4 @@
+import type { Paragraph, PhrasingContent } from "mdast";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -10,6 +11,10 @@ import type { SchemaExtension } from "../SchemaExtension";
 
 export class ParagraphExtension extends ProseMirrorRemarkExtension {
   public matchingMdastNodes(): Array<string> {
+    return ["paragraph"];
+  }
+
+  public matchingProseMirrorNodes(): Array<string> {
     return ["paragraph"];
   }
 
@@ -41,5 +46,12 @@ export class ParagraphExtension extends ProseMirrorRemarkExtension {
       return [];
     }
     return [proseMirrorNode];
+  }
+
+  public proseMirrorNodeToMdastNode(
+    _: ProseMirrorNode,
+    convertedChildren: Array<PhrasingContent>
+  ): Array<Paragraph> {
+    return [{ type: "paragraph", children: convertedChildren }];
   }
 }

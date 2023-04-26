@@ -7,6 +7,9 @@ export abstract class ProseMirrorRemarkExtension {
   // TODO: Maybe just one string?
   public abstract matchingMdastNodes(): Array<string>;
 
+  // TODO: Maybe just one string?
+  public abstract matchingProseMirrorNodes(): Array<string>;
+
   // TODO: Maybe just either one node or one mark?
   public abstract schema(): SchemaExtension;
 
@@ -16,4 +19,10 @@ export abstract class ProseMirrorRemarkExtension {
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
   ): Array<ProseMirrorNode>;
+
+  // TODO: There is some code duplication in the specializations of this method
+  public abstract proseMirrorNodeToMdastNode(
+    node: ProseMirrorNode,
+    convertedChildren: Array<UnistNode>
+  ): Array<UnistNode>;
 }

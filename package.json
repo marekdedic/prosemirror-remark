@@ -46,6 +46,7 @@
     "remark-gfm": "^3.0.1",
     "remark-parse": "^10.0.1",
     "remark-rehype": "^10.1.0",
+    "remark-stringify": "^10.0.2",
     "ts-loader": "^9.4.2",
     "unified": "^10.1.2",
     "webpack": "^5.80.0",
