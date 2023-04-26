@@ -1,13 +1,19 @@
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Node as UnistNode, Parent } from "unist";
 
+import type { ProseMirrorRemarkMarkExtension } from "./ProseMirrorRemarkMarkExtension";
 import type { ProseMirrorRemarkNodeExtension } from "./ProseMirrorRemarkNodeExtension";
 
 export class MdastToProseMirrorConverter {
   private readonly nodeExtensions: Array<ProseMirrorRemarkNodeExtension>;
+  private readonly markExtensions: Array<ProseMirrorRemarkMarkExtension>;
 
-  public constructor(nodeExtensions: Array<ProseMirrorRemarkNodeExtension>) {
+  public constructor(
+    nodeExtensions: Array<ProseMirrorRemarkNodeExtension>,
+    markExtensions: Array<ProseMirrorRemarkMarkExtension>
+  ) {
     this.nodeExtensions = nodeExtensions;
+    this.markExtensions = markExtensions;
   }
 
   private static mdastNodeIsParent(node: UnistNode): node is Parent {
@@ -25,7 +31,24 @@ export class MdastToProseMirrorConverter {
   }
 
   private convertNode(node: UnistNode, schema: Schema): Array<ProseMirrorNode> {
+    // TODO: Deduplicate
     for (const extension of this.nodeExtensions) {
+      if (extension.mdastNodeName() !== node.type) {
+        continue;
+      }
+      let convertedChildren: Array<ProseMirrorNode> = [];
+      if (MdastToProseMirrorConverter.mdastNodeIsParent(node)) {
+        convertedChildren = node.children.flatMap((child) =>
+          this.convertNode(child, schema)
+        );
+      }
+      return extension.mdastNodeToProseMirrorNodes(
+        node,
+        convertedChildren,
+        schema
+      );
+    }
+    for (const extension of this.markExtensions) {
       if (extension.mdastNodeName() !== node.type) {
         continue;
       }

@@ -6,6 +6,7 @@ import type { Node as UnistNode } from "unist";
 
 import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
 import type { ProseMirrorRemarkExtension } from "./ProseMirrorRemarkExtension";
+import { ProseMirrorRemarkMarkExtension } from "./ProseMirrorRemarkMarkExtension";
 import { ProseMirrorRemarkNodeExtension } from "./ProseMirrorRemarkNodeExtension";
 import { ProseMirrorToMdastConverter } from "./ProseMirrorToMdastConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
@@ -16,6 +17,12 @@ function isNodeExtension(
   return extension instanceof ProseMirrorRemarkNodeExtension;
 }
 
+function isMarkExtension(
+  extension: ProseMirrorRemarkExtension
+): extension is ProseMirrorRemarkMarkExtension {
+  return extension instanceof ProseMirrorRemarkMarkExtension;
+}
+
 export class ProseMirrorRemarkAdapter {
   private readonly builtSchema: Schema<string, string>;
   private readonly mdastToProseMirrorConverter: MdastToProseMirrorConverter;
@@ -23,11 +30,15 @@ export class ProseMirrorRemarkAdapter {
   private readonly remark: Processor<UnistNode, UnistNode, UnistNode, string>;
 
   public constructor(extensions: Array<ProseMirrorRemarkExtension> = []) {
-    const nodeExtensions: Array<ProseMirrorRemarkNodeExtension> =
-      extensions.filter(isNodeExtension);
-    this.builtSchema = new SchemaBuilder(nodeExtensions).build();
+    const nodeExtensions = extensions.filter(isNodeExtension);
+    const markExtensions = extensions.filter(isMarkExtension);
+    this.builtSchema = new SchemaBuilder(
+      nodeExtensions,
+      markExtensions
+    ).build();
     this.mdastToProseMirrorConverter = new MdastToProseMirrorConverter(
-      nodeExtensions
+      nodeExtensions,
+      markExtensions
     );
     this.proseMirrorToMdastConverter = new ProseMirrorToMdastConverter(
       nodeExtensions
