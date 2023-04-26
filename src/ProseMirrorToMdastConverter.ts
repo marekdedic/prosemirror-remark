@@ -1,13 +1,19 @@
 import type { Node as ProseMirrorNode } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
+import type { MarkExtension } from "./MarkExtension";
 import type { NodeExtension } from "./NodeExtension";
 
 export class ProseMirrorToMdastConverter {
   private readonly nodeExtensions: Array<NodeExtension>;
+  private readonly markExtensions: Array<MarkExtension>;
 
-  public constructor(nodeExtensions: Array<NodeExtension>) {
+  public constructor(
+    nodeExtensions: Array<NodeExtension>,
+    markExtensions: Array<MarkExtension>
+  ) {
     this.nodeExtensions = nodeExtensions;
+    this.markExtensions = markExtensions;
   }
 
   // TODO: Move schema to a property?
@@ -22,7 +28,9 @@ export class ProseMirrorToMdastConverter {
   }
 
   private convertNode(node: ProseMirrorNode): Array<UnistNode> {
+    let convertedNodes: Array<UnistNode> | null = null;
     for (const extension of this.nodeExtensions) {
+      // TODO: This is needlessly slow, a map would be better
       if (extension.proseMirrorNodeName() !== node.type.name) {
         continue;
       }
@@ -32,13 +40,30 @@ export class ProseMirrorToMdastConverter {
           this.convertNode(node.child(i))
         );
       }
-      return extension.proseMirrorNodeToMdastNodes(node, convertedChildren);
+      convertedNodes = extension.proseMirrorNodeToMdastNodes(
+        node,
+        convertedChildren
+      );
     }
-    console.warn(
-      "Couldn't find any way to convert ProseMirror node of type \"" +
-        node.type.name +
-        '" to an mdast node.'
-    );
-    return [];
+    if (convertedNodes === null) {
+      console.warn(
+        "Couldn't find any way to convert ProseMirror node of type \"" +
+          node.type.name +
+          '" to an mdast node.'
+      );
+      return [];
+    }
+    return convertedNodes.map((convertedNode) => {
+      for (const mark of node.marks) {
+        for (const extension of this.markExtensions) {
+          // TODO: This is needlessly slow, a map would be better
+          if (extension.proseMirrorMarkName() !== mark.type.name) {
+            continue;
+          }
+          convertedNode = extension.modifyMdastNode(convertedNode);
+        }
+      }
+      return convertedNode;
+    });
   }
 }

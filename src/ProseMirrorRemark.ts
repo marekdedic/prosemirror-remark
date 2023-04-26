@@ -36,7 +36,8 @@ export class ProseMirrorRemark {
       extensions
     );
     this.proseMirrorToMdastConverter = new ProseMirrorToMdastConverter(
-      nodeExtensions
+      nodeExtensions,
+      markExtensions
     );
     this.remark = unified().use(remarkParse).use(remarkStringify);
   }

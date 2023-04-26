@@ -1,4 +1,4 @@
-import type { Strong } from "mdast";
+import type { Strong, Text } from "mdast";
 import type {
   DOMOutputSpec,
   MarkSpec,
@@ -9,7 +9,7 @@ import type {
 import { MarkExtension } from "../MarkExtension";
 
 export class BoldExtension extends MarkExtension {
-  public mdastNodeName(): string {
+  public mdastNodeName(): "strong" {
     return "strong";
   }
 
@@ -36,5 +36,9 @@ export class BoldExtension extends MarkExtension {
         child.marks.concat([schema.marks[this.proseMirrorMarkName()].create()])
       )
     );
+  }
+
+  public modifyMdastNode(node: Text): Strong {
+    return { type: this.mdastNodeName(), children: [node] };
   }
 }

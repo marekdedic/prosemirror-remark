@@ -1,4 +1,4 @@
-import type { Emphasis } from "mdast";
+import type { Emphasis, Text } from "mdast";
 import type {
   DOMOutputSpec,
   MarkSpec,
@@ -9,7 +9,7 @@ import type {
 import { MarkExtension } from "../MarkExtension";
 
 export class ItalicExtension extends MarkExtension {
-  public mdastNodeName(): string {
+  public mdastNodeName(): "emphasis" {
     return "emphasis";
   }
 
@@ -36,5 +36,9 @@ export class ItalicExtension extends MarkExtension {
         child.marks.concat([schema.marks[this.proseMirrorMarkName()].create()])
       )
     );
+  }
+
+  public modifyMdastNode(node: Text): Emphasis {
+    return { type: this.mdastNodeName(), children: [node] };
   }
 }
