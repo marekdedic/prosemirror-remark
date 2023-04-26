@@ -1,12 +1,12 @@
 import type { Node as ProseMirrorNode } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import type { ProseMirrorRemarkNodeExtension } from "./ProseMirrorRemarkNodeExtension";
+import type { NodeExtension } from "./NodeExtension";
 
 export class ProseMirrorToMdastConverter {
-  private readonly nodeExtensions: Array<ProseMirrorRemarkNodeExtension>;
+  private readonly nodeExtensions: Array<NodeExtension>;
 
-  public constructor(nodeExtensions: Array<ProseMirrorRemarkNodeExtension>) {
+  public constructor(nodeExtensions: Array<NodeExtension>) {
     this.nodeExtensions = nodeExtensions;
   }
 

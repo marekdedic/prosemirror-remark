@@ -7,9 +7,9 @@ import type {
 } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import { ProseMirrorRemarkNodeExtension } from "../ProseMirrorRemarkNodeExtension";
+import { NodeExtension } from "../NodeExtension";
 
-export class ParagraphExtension extends ProseMirrorRemarkNodeExtension {
+export class ParagraphExtension extends NodeExtension {
   public mdastNodeName(): "paragraph" {
     return "paragraph";
   }

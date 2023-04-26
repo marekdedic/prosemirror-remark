@@ -4,17 +4,15 @@ import remarkStringify from "remark-stringify";
 import { type Processor, unified } from "unified";
 import type { Node as UnistNode } from "unist";
 
-import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
 import type { Extension } from "./Extension";
+import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
+import { NodeExtension } from "./NodeExtension";
 import { ProseMirrorRemarkMarkExtension } from "./ProseMirrorRemarkMarkExtension";
-import { ProseMirrorRemarkNodeExtension } from "./ProseMirrorRemarkNodeExtension";
 import { ProseMirrorToMdastConverter } from "./ProseMirrorToMdastConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
 
-function isNodeExtension(
-  extension: Extension
-): extension is ProseMirrorRemarkNodeExtension {
-  return extension instanceof ProseMirrorRemarkNodeExtension;
+function isNodeExtension(extension: Extension): extension is NodeExtension {
+  return extension instanceof NodeExtension;
 }
 
 function isMarkExtension(

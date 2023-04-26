@@ -5,9 +5,9 @@ import type {
   Schema,
 } from "prosemirror-model";
 
-import { ProseMirrorRemarkNodeExtension } from "../ProseMirrorRemarkNodeExtension";
+import { NodeExtension } from "../NodeExtension";
 
-export class TextExtension extends ProseMirrorRemarkNodeExtension {
+export class TextExtension extends NodeExtension {
   public mdastNodeName(): "text" {
     return "text";
   }

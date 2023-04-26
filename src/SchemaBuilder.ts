@@ -1,7 +1,7 @@
 import { type MarkSpec, type NodeSpec, Schema } from "prosemirror-model";
 
+import type { NodeExtension } from "./NodeExtension";
 import type { ProseMirrorRemarkMarkExtension } from "./ProseMirrorRemarkMarkExtension";
-import type { ProseMirrorRemarkNodeExtension } from "./ProseMirrorRemarkNodeExtension";
 
 type Marks = string;
 
@@ -10,7 +10,7 @@ export class SchemaBuilder {
   private readonly marks: Record<Marks, MarkSpec> = {};
 
   public constructor(
-    nodeExtensions: Array<ProseMirrorRemarkNodeExtension>,
+    nodeExtensions: Array<NodeExtension>,
     markExtensions: Array<ProseMirrorRemarkMarkExtension>
   ) {
     for (const extension of nodeExtensions) {

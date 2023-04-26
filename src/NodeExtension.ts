@@ -3,7 +3,7 @@ import type { Node as UnistNode } from "unist";
 
 import { Extension } from "./Extension";
 
-export abstract class ProseMirrorRemarkNodeExtension extends Extension {
+export abstract class NodeExtension extends Extension {
   public abstract proseMirrorNodeName(): string;
 
   public abstract proseMirrorNodeSpec(): NodeSpec;
