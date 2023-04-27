@@ -17,6 +17,7 @@ import { BoldExtension } from "../src/extensions/BoldExtension";
 import { HeadingExtension } from "../src/extensions/HeadingExtension";
 import { HorizontalRuleExtension } from "../src/extensions/HorizontalRuleExtension";
 import { ItalicExtension } from "../src/extensions/ItalicExtension";
+import { ListItemExtension } from "../src/extensions/ListItemExtension";
 import { ParagraphExtension } from "../src/extensions/ParagraphExtension";
 import { RootExtension } from "../src/extensions/RootExtension";
 import { TextExtension } from "../src/extensions/TextExtension";
@@ -32,6 +33,7 @@ const adapter = new ProseMirrorRemark([
   new HeadingExtension(),
   new HorizontalRuleExtension(),
   new ItalicExtension(),
+  new ListItemExtension(),
   new ParagraphExtension(),
   new RootExtension(),
   new TextExtension(),
