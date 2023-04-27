@@ -27,7 +27,7 @@ export class MdastToProseMirrorConverter {
   private convertNode(node: UnistNode, schema: Schema): Array<ProseMirrorNode> {
     for (const extension of this.extensions) {
       // TODO: This is needlessly slow, a map would be better
-      if (extension.mdastNodeName() !== node.type) {
+      if (!extension.mdastNodeMatches(node)) {
         continue;
       }
       let convertedChildren: Array<ProseMirrorNode> = [];
