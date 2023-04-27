@@ -14,6 +14,7 @@ import { unified } from "unified";
 
 import { BoldExtension } from "../src/extensions/BoldExtension";
 import { HeadingExtension } from "../src/extensions/HeadingExtension";
+import { HorizontalRuleExtension } from "../src/extensions/HorizontalRuleExtension";
 import { ItalicExtension } from "../src/extensions/ItalicExtension";
 import { ParagraphExtension } from "../src/extensions/ParagraphExtension";
 import { RootExtension } from "../src/extensions/RootExtension";
@@ -27,6 +28,7 @@ const preview = document.querySelector("#preview-container")!;
 const adapter = new ProseMirrorRemark([
   new BoldExtension(),
   new HeadingExtension(),
+  new HorizontalRuleExtension(),
   new ItalicExtension(),
   new ParagraphExtension(),
   new RootExtension(),
