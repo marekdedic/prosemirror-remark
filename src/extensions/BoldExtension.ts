@@ -38,7 +38,7 @@ export class BoldExtension extends MarkExtension {
     );
   }
 
-  public modifyMdastNode(node: Text): Strong {
-    return { type: this.mdastNodeName(), children: [node] };
+  public modifyMdastNode(convertedNode: Text): Strong {
+    return { type: this.mdastNodeName(), children: [convertedNode] };
   }
 }

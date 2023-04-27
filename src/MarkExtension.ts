@@ -1,4 +1,4 @@
-import type { MarkSpec } from "prosemirror-model";
+import type { Mark, MarkSpec } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
 import { Extension } from "./Extension";
@@ -11,5 +11,8 @@ export abstract class MarkExtension extends Extension {
   // TODO: There is some code duplication in the specializations of this method
   // TODO: Make this generic
   // TODO: Add a for compatible source nodes
-  public abstract modifyMdastNode(node: UnistNode): UnistNode;
+  public abstract modifyMdastNode(
+    convertedNode: UnistNode,
+    originalMark: Mark
+  ): UnistNode;
 }

@@ -60,7 +60,7 @@ export class ProseMirrorToMdastConverter {
           if (extension.proseMirrorMarkName() !== mark.type.name) {
             continue;
           }
-          convertedNode = extension.modifyMdastNode(convertedNode);
+          convertedNode = extension.modifyMdastNode(convertedNode, mark);
         }
       }
       return convertedNode;

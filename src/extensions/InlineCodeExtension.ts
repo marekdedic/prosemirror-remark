@@ -39,7 +39,7 @@ export class InlineCodeExtension extends MarkExtension {
     ];
   }
 
-  public modifyMdastNode(node: Text): InlineCode {
-    return { type: this.mdastNodeName(), value: node.value };
+  public modifyMdastNode(convertedNode: Text): InlineCode {
+    return { type: this.mdastNodeName(), value: convertedNode.value };
   }
 }

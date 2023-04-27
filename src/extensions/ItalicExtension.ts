@@ -38,7 +38,7 @@ export class ItalicExtension extends MarkExtension {
     );
   }
 
-  public modifyMdastNode(node: Text): Emphasis {
-    return { type: this.mdastNodeName(), children: [node] };
+  public modifyMdastNode(convertedNode: Text): Emphasis {
+    return { type: this.mdastNodeName(), children: [convertedNode] };
   }
 }
