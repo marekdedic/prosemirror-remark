@@ -1,7 +1,5 @@
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
-import remarkParse from "remark-parse";
-import remarkStringify from "remark-stringify";
-import { type Processor, unified } from "unified";
+import { type Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
 import type { Extension } from "./Extension";
@@ -10,6 +8,7 @@ import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
 import { NodeExtension } from "./NodeExtension";
 import { ProseMirrorToMdastConverter } from "./ProseMirrorToMdastConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
+import { UnifiedBuilder } from "./UnifiedBuilder";
 
 function isNodeExtension(extension: Extension): extension is NodeExtension {
   return extension instanceof NodeExtension;
@@ -39,7 +38,7 @@ export class ProseMirrorRemark {
       nodeExtensions,
       markExtensions
     );
-    this.remark = unified().use(remarkParse).use(remarkStringify);
+    this.remark = new UnifiedBuilder(extensions).build();
   }
 
   public parse(markdown: string): ProseMirrorNode | null {

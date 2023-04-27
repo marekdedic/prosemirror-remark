@@ -1,7 +1,14 @@
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
 export abstract class Extension {
+  public initializeUnified(
+    processor: Processor<UnistNode, UnistNode, UnistNode, string>
+  ): Processor<UnistNode, UnistNode, UnistNode, string> {
+    return processor;
+  }
+
   public mdastNodeMatches(node: UnistNode): boolean {
     return node.type === this.mdastNodeName();
   }
