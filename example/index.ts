@@ -21,6 +21,7 @@ import { ListItemExtension } from "../src/extensions/ListItemExtension";
 import { ParagraphExtension } from "../src/extensions/ParagraphExtension";
 import { RootExtension } from "../src/extensions/RootExtension";
 import { TextExtension } from "../src/extensions/TextExtension";
+import { UnorderedListExtension } from "../src/extensions/UnorderedListExtension";
 import { ProseMirrorRemark } from "../src/index";
 import { defaultContent } from "./defaultContent";
 
@@ -37,6 +38,7 @@ const adapter = new ProseMirrorRemark([
   new ParagraphExtension(),
   new RootExtension(),
   new TextExtension(),
+  new UnorderedListExtension(),
 ]);
 
 class ProseMirrorView {
