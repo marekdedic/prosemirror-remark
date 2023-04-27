@@ -7,7 +7,7 @@ import { EditorState } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import rehypeSanitize from "rehype-sanitize";
 import rehypeStringify from "rehype-stringify";
-import remarkGfm from "remark-gfm";
+//import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
@@ -63,7 +63,7 @@ class ProseMirrorView {
 async function updatePreview(source: string): Promise<void> {
   const file = await unified()
     .use(remarkParse)
-    .use(remarkGfm)
+    //.use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeSanitize)
     .use(rehypeStringify)
