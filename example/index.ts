@@ -12,6 +12,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
+import { BlockquoteExtension } from "../src/extensions/BlockquoteExtension";
 import { BoldExtension } from "../src/extensions/BoldExtension";
 import { HeadingExtension } from "../src/extensions/HeadingExtension";
 import { HorizontalRuleExtension } from "../src/extensions/HorizontalRuleExtension";
@@ -26,6 +27,7 @@ const editor = document.querySelector("#editor")!;
 const preview = document.querySelector("#preview-container")!;
 
 const adapter = new ProseMirrorRemark([
+  new BlockquoteExtension(),
   new BoldExtension(),
   new HeadingExtension(),
   new HorizontalRuleExtension(),
