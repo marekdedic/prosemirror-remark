@@ -2,6 +2,8 @@ import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
+import type { ConverterContext } from "./ConverterContext";
+
 export abstract class Extension {
   public unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, string>
@@ -20,6 +22,9 @@ export abstract class Extension {
   public abstract mdastNodeToProseMirrorNodes(
     node: UnistNode,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema
+    schema: Schema,
+    context: ConverterContext
   ): Array<ProseMirrorNode>;
+
+  public postMdastToProseMirrorHook(_context: ConverterContext): void {}
 }

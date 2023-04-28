@@ -1,6 +1,7 @@
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Node as UnistNode, Parent } from "unist";
 
+import type { ConverterContext } from "./ConverterContext";
 import type { Extension } from "./Extension";
 
 export class MdastToProseMirrorConverter {
@@ -17,14 +18,22 @@ export class MdastToProseMirrorConverter {
   // TODO: Move schema to a property?
   // TODO: Better error handling?
   public convert(mdast: UnistNode, schema: Schema): ProseMirrorNode | null {
-    const rootNode = this.convertNode(mdast, schema);
+    const context: ConverterContext = {};
+    const rootNode = this.convertNode(mdast, schema, context);
+    for (const extension of this.extensions) {
+      extension.postMdastToProseMirrorHook(context);
+    }
     if (rootNode.length !== 1) {
       return null;
     }
     return rootNode[0];
   }
 
-  private convertNode(node: UnistNode, schema: Schema): Array<ProseMirrorNode> {
+  private convertNode(
+    node: UnistNode,
+    schema: Schema,
+    context: ConverterContext
+  ): Array<ProseMirrorNode> {
     for (const extension of this.extensions) {
       // TODO: This is needlessly slow, a map would be better
       if (!extension.mdastNodeMatches(node)) {
@@ -33,13 +42,14 @@ export class MdastToProseMirrorConverter {
       let convertedChildren: Array<ProseMirrorNode> = [];
       if (MdastToProseMirrorConverter.mdastNodeIsParent(node)) {
         convertedChildren = node.children.flatMap((child) =>
-          this.convertNode(child, schema)
+          this.convertNode(child, schema, context)
         );
       }
       return extension.mdastNodeToProseMirrorNodes(
         node,
         convertedChildren,
-        schema
+        schema,
+        context
       );
     }
     console.warn(
