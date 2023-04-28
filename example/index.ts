@@ -15,9 +15,11 @@ import { unified } from "unified";
 import { BlockquoteExtension } from "../src/extensions/BlockquoteExtension";
 import { BoldExtension } from "../src/extensions/BoldExtension";
 import { CodeBlockExtension } from "../src/extensions/CodeBlockExtension";
+import { DefinitionExtension } from "../src/extensions/DefinitionExtension";
 import { HeadingExtension } from "../src/extensions/HeadingExtension";
 import { HorizontalRuleExtension } from "../src/extensions/HorizontalRuleExtension";
 import { ImageExtension } from "../src/extensions/ImageExtension";
+import { ImageReferenceExtension } from "../src/extensions/ImageReferenceExtension";
 import { InlineCodeExtension } from "../src/extensions/InlineCodeExtension";
 import { ItalicExtension } from "../src/extensions/ItalicExtension";
 import { LinkExtension } from "../src/extensions/LinkExtension";
@@ -37,9 +39,11 @@ const adapter = new ProseMirrorRemark([
   new BlockquoteExtension(),
   new BoldExtension(),
   new CodeBlockExtension(),
+  new DefinitionExtension(),
   new HeadingExtension(),
   new HorizontalRuleExtension(),
   new ImageExtension(),
+  new ImageReferenceExtension(),
   new InlineCodeExtension(),
   new ItalicExtension(),
   new LinkExtension(),
