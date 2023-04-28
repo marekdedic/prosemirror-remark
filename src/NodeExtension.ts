@@ -4,9 +4,9 @@ import type { Node as UnistNode } from "unist";
 import { Extension } from "./Extension";
 
 export abstract class NodeExtension extends Extension {
-  public abstract proseMirrorNodeName(): string;
+  public abstract proseMirrorNodeName(): string | null;
 
-  public abstract proseMirrorNodeSpec(): NodeSpec;
+  public abstract proseMirrorNodeSpec(): NodeSpec | null;
 
   // TODO: There is some code duplication in the specializations of this method
   // TODO: Make this generic

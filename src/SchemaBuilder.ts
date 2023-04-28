@@ -14,8 +14,11 @@ export class SchemaBuilder {
     markExtensions: Array<MarkExtension>
   ) {
     for (const extension of nodeExtensions) {
-      this.nodes[extension.proseMirrorNodeName()] =
-        extension.proseMirrorNodeSpec();
+      const name = extension.proseMirrorNodeName();
+      const spec = extension.proseMirrorNodeSpec();
+      if (name !== null && spec !== null) {
+        this.nodes[name] = spec;
+      }
     }
     for (const extension of markExtensions) {
       this.marks[extension.proseMirrorMarkName()] =
