@@ -5,11 +5,19 @@ import type {
   NodeSpec,
   Schema,
 } from "prosemirror-model";
+import remarkUnwrapImages from "remark-unwrap-images";
+import type { Processor } from "unified";
+import type { Node as UnistNode } from "unist";
 
 import { NodeExtension } from "../NodeExtension";
 
-// TODO: Image inside paragraph doesn't work
 export class ImageExtension extends NodeExtension {
+  public unifiedInitializationHook(
+    processor: Processor<UnistNode, UnistNode, UnistNode, string>
+  ): Processor<UnistNode, UnistNode, UnistNode, string> {
+    return processor.use(remarkUnwrapImages);
+  }
+
   public mdastNodeName(): "image" {
     return "image";
   }

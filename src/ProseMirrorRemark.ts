@@ -1,3 +1,4 @@
+import type { Root } from "mdast";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import { type Processor } from "unified";
 import type { Node as UnistNode } from "unist";
@@ -43,6 +44,10 @@ export class ProseMirrorRemark {
 
   public parse(markdown: string): ProseMirrorNode | null {
     const mdast = this.remark.runSync(this.remark.parse(markdown));
+    // TODO: Fix remark-unwrap-images to not put text nodes in root
+    (mdast as Root).children = (mdast as Root).children.filter(
+      (child) => child.type !== "text"
+    );
     const ret = this.mdastToProseMirrorConverter.convert(mdast, this.schema());
     console.log(ret);
     return ret;
@@ -59,7 +64,7 @@ export class ProseMirrorRemark {
       return "";
     }
     const markdown: string = this.remark.stringify(mdast);
-    console.log(markdown);
+    console.log(mdast);
     return markdown;
   }
 }
