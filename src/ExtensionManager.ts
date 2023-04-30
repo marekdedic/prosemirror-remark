@@ -39,19 +39,7 @@ export class ExtensionManager {
     this.otherExtensionList = {};
 
     for (const extension of extensions) {
-      if (isMarkExtension(extension)) {
-        this.markExtensionList[extension.constructor.name] = extension;
-        continue;
-      }
-      if (isNodeExtension(extension)) {
-        this.nodeExtensionList[extension.constructor.name] = extension;
-        continue;
-      }
-      if (isSyntaxExtension(extension)) {
-        this.otherSyntaxExtensionList[extension.constructor.name] = extension;
-        continue;
-      }
-      this.otherExtensionList[extension.constructor.name] = extension;
+      this.add(extension);
     }
   }
 
@@ -74,5 +62,21 @@ export class ExtensionManager {
       this.markExtensions(),
       this.nodeExtensions()
     );
+  }
+
+  private add(extension: Extension): void {
+    if (isMarkExtension(extension)) {
+      this.markExtensionList[extension.constructor.name] = extension;
+      return;
+    }
+    if (isNodeExtension(extension)) {
+      this.nodeExtensionList[extension.constructor.name] = extension;
+      return;
+    }
+    if (isSyntaxExtension(extension)) {
+      this.otherSyntaxExtensionList[extension.constructor.name] = extension;
+      return;
+    }
+    this.otherExtensionList[extension.constructor.name] = extension;
   }
 }
