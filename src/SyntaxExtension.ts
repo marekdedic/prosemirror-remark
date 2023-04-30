@@ -18,8 +18,7 @@ export abstract class SyntaxExtension<
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   ): void {}
 
-  // TODO: Use node type instead of string?
-  public abstract mdastNodeName(): string;
+  public abstract mdastNodeName(): UNode["type"];
 
   // TODO: There is some code duplication in the specializations of this method
   // TODO: Specialize schema generic
