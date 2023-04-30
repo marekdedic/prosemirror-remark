@@ -36,11 +36,10 @@ export class UnorderedListExtension extends NodeExtension<List> {
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
-    _: List,
+    _node: List,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

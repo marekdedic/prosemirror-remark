@@ -22,11 +22,10 @@ export class TextExtension extends NodeExtension<Text> {
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: Text,
-    _: Array<ProseMirrorNode>,
-    schema: Schema
+    _convertedChildren: Array<ProseMirrorNode>,
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     return [schema.text(node.value)];
   }

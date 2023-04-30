@@ -37,11 +37,10 @@ export class HeadingExtension extends NodeExtension<Heading> {
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: Heading,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

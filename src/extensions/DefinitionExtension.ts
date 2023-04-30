@@ -24,11 +24,10 @@ export class DefinitionExtension extends NodeExtension<Definition> {
     return null;
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: Definition,
-    _1: Array<ProseMirrorNode>,
-    _2: Schema,
+    _convertedChildren: Array<ProseMirrorNode>,
+    _schema: Schema<string, string>,
     context: ConverterContext<{
       DefinitionExtension: DefinitionExtensionContext;
     }>

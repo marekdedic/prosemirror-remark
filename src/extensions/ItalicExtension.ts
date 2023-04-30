@@ -26,11 +26,10 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
-    _: Emphasis,
+    _node: Emphasis,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(

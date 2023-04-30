@@ -21,11 +21,10 @@ export abstract class SyntaxExtension<
   public abstract mdastNodeName(): UNode["type"];
 
   // TODO: There is some code duplication in the specializations of this method
-  // TODO: Specialize schema generic
   public abstract mdastNodeToProseMirrorNodes(
     node: UNode,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema,
+    schema: Schema<string, string>,
     context: ConverterContext<Context>
   ): Array<ProseMirrorNode>;
 }

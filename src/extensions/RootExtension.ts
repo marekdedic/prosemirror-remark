@@ -4,7 +4,6 @@ import type {
   NodeSpec,
   Schema,
 } from "prosemirror-model";
-import type { Node as UnistNode } from "unist";
 
 import { NodeExtension } from "../NodeExtension";
 
@@ -21,11 +20,10 @@ export class RootExtension extends NodeExtension<Root> {
     return { content: "block+" };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
-    _: UnistNode,
+    _node: Root,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

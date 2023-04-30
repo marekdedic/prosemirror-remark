@@ -28,11 +28,10 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
-    _: Blockquote,
+    _node: Blockquote,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

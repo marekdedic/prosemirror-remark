@@ -59,11 +59,10 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
     };
   }
 
-  // TODO: Specialize Schema generic
   public mdastNodeToProseMirrorNodes(
     node: Image,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

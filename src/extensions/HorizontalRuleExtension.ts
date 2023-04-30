@@ -27,11 +27,10 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
-    _: ThematicBreak,
+    _node: ThematicBreak,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

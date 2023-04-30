@@ -67,11 +67,10 @@ export class ImageReferenceExtension extends NodeExtension<
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: ImageReference,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema,
+    schema: Schema<string, string>,
     context: ConverterContext<{
       ImageReferenceExtension: ImageReferenceExtensionContext;
     }>

@@ -4,11 +4,9 @@ import type { Node as UnistNode } from "unist";
 import type { MarkExtension } from "./MarkExtension";
 import type { NodeExtension } from "./NodeExtension";
 
-type Marks = string;
-
 export class SchemaBuilder {
   private readonly nodes: Record<string, NodeSpec> = {};
-  private readonly marks: Record<Marks, MarkSpec> = {};
+  private readonly marks: Record<string, MarkSpec> = {};
 
   public constructor(
     nodeExtensions: Array<NodeExtension<UnistNode>>,
@@ -27,9 +25,8 @@ export class SchemaBuilder {
     }
   }
 
-  // TODO: stricter generic types?
-  public build(): Schema<string, Marks> {
-    return new Schema<string, Marks>({
+  public build(): Schema<string, string> {
+    return new Schema<string, string>({
       nodes: this.nodes,
       marks: this.marks,
     });

@@ -50,11 +50,10 @@ export class LinkReferenceExtension extends MarkExtension<
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: LinkReference,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema,
+    schema: Schema<string, string>,
     context: ConverterContext<{
       LinkReferenceExtension: LinkReferenceExtensionContext;
     }>

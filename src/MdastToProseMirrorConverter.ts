@@ -17,8 +17,10 @@ export class MdastToProseMirrorConverter {
 
   // TODO: Move schema to a property?
   // TODO: Better error handling?
-  // TODO: Specialize schema generic
-  public convert(mdast: UnistNode, schema: Schema): ProseMirrorNode | null {
+  public convert(
+    mdast: UnistNode,
+    schema: Schema<string, string>
+  ): ProseMirrorNode | null {
     const context: ConverterContext<unknown> = {};
     const rootNode = this.convertNode(mdast, schema, context);
     for (const extension of this.extensions) {
@@ -30,10 +32,9 @@ export class MdastToProseMirrorConverter {
     return rootNode[0];
   }
 
-  // TODO: Specialize schema generic
   private convertNode(
     node: UnistNode,
-    schema: Schema,
+    schema: Schema<string, string>,
     context: ConverterContext<unknown>
   ): Array<ProseMirrorNode> {
     for (const extension of this.extensions) {

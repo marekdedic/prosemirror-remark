@@ -31,11 +31,10 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: Code,
-    _: Array<ProseMirrorNode>,
-    schema: Schema
+    _convertedChildren: Array<ProseMirrorNode>,
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

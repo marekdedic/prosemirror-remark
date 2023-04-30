@@ -31,7 +31,6 @@ function isMarkExtension<UNode extends UnistNode>(
 }
 
 export class ProseMirrorRemark {
-  // TODO: Specialize schema generic
   private readonly builtSchema: Schema<string, string>;
   private readonly mdastToProseMirrorConverter: MdastToProseMirrorConverter;
   private readonly proseMirrorToMdastConverter: ProseMirrorToMdastConverter;
@@ -67,7 +66,6 @@ export class ProseMirrorRemark {
     return ret;
   }
 
-  // TODO: Replace "string" with a string literal
   public schema(): Schema<string, string> {
     return this.builtSchema;
   }

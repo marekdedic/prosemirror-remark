@@ -42,11 +42,10 @@ export class LinkExtension extends MarkExtension<Link> {
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: Link,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(

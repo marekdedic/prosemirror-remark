@@ -26,11 +26,10 @@ export class BoldExtension extends MarkExtension<Strong> {
     };
   }
 
-  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
-    _: Strong,
+    _node: Strong,
     convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema
+    schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(
