@@ -39,7 +39,7 @@ export class UnistToProseMirrorConverter {
   ): Array<ProseMirrorNode> {
     for (const extension of this.extensionManager.syntaxExtensions()) {
       // TODO: This is needlessly slow, a map would be better
-      if (!extension.mdastNodeMatches(node)) {
+      if (!extension.unistNodeMatches(node)) {
         continue;
       }
       let convertedChildren: Array<ProseMirrorNode> = [];

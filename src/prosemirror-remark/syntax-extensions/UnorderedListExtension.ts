@@ -15,7 +15,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
     return "list";
   }
 
-  public mdastNodeMatches(node: UnistNode): boolean {
+  public unistNodeMatches(node: UnistNode): boolean {
     return (
       node.type === this.unistNodeName() && (node as List).ordered !== true
     );
