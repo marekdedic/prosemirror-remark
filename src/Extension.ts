@@ -17,6 +17,9 @@ export abstract class Extension {
     return node.type === this.mdastNodeName();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
+  public postMdastToProseMirrorHook(_context: ConverterContext): void {}
+
   public abstract mdastNodeName(): string;
 
   // TODO: There is some code duplication in the specializations of this method
@@ -29,6 +32,4 @@ export abstract class Extension {
     schema: Schema,
     context: ConverterContext
   ): Array<ProseMirrorNode>;
-
-  public postMdastToProseMirrorHook(_context: ConverterContext): void {}
 }
