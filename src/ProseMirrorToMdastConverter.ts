@@ -1,19 +1,13 @@
 import type { Node as ProseMirrorNode } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import type { MarkExtension } from "./MarkExtension";
-import type { NodeExtension } from "./NodeExtension";
+import type { ExtensionManager } from "./ExtensionManager";
 
 export class ProseMirrorToMdastConverter {
-  private readonly nodeExtensions: Array<NodeExtension<UnistNode>>;
-  private readonly markExtensions: Array<MarkExtension<UnistNode>>;
+  private readonly extensionManager: ExtensionManager;
 
-  public constructor(
-    nodeExtensions: Array<NodeExtension<UnistNode>>,
-    markExtensions: Array<MarkExtension<UnistNode>>
-  ) {
-    this.nodeExtensions = nodeExtensions;
-    this.markExtensions = markExtensions;
+  public constructor(extensionManager: ExtensionManager) {
+    this.extensionManager = extensionManager;
   }
 
   // TODO: Move schema to a property?
@@ -29,7 +23,7 @@ export class ProseMirrorToMdastConverter {
 
   private convertNode(node: ProseMirrorNode): Array<UnistNode> {
     let convertedNodes: Array<UnistNode> | null = null;
-    for (const extension of this.nodeExtensions) {
+    for (const extension of this.extensionManager.nodeExtensions()) {
       // TODO: This is needlessly slow, a map would be better
       if (extension.proseMirrorNodeName() !== node.type.name) {
         continue;
@@ -55,7 +49,7 @@ export class ProseMirrorToMdastConverter {
     }
     return convertedNodes.map((convertedNode) => {
       for (const mark of node.marks) {
-        for (const extension of this.markExtensions) {
+        for (const extension of this.extensionManager.markExtensions()) {
           // TODO: This is needlessly slow, a map would be better
           if (extension.proseMirrorMarkName() !== mark.type.name) {
             continue;

@@ -4,31 +4,11 @@ import { type Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
 import type { Extension } from "./Extension";
-import { MarkExtension } from "./MarkExtension";
+import { ExtensionManager } from "./ExtensionManager";
 import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
-import { NodeExtension } from "./NodeExtension";
 import { ProseMirrorToMdastConverter } from "./ProseMirrorToMdastConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
-import { SyntaxExtension } from "./SyntaxExtension";
 import { UnifiedBuilder } from "./UnifiedBuilder";
-
-function isSyntaxExtension(
-  extension: Extension
-): extension is SyntaxExtension<UnistNode> {
-  return extension instanceof SyntaxExtension;
-}
-
-function isNodeExtension<UNode extends UnistNode>(
-  extension: SyntaxExtension<UNode>
-): extension is NodeExtension<UNode> {
-  return extension instanceof NodeExtension;
-}
-
-function isMarkExtension<UNode extends UnistNode>(
-  extension: SyntaxExtension<UNode>
-): extension is MarkExtension<UNode> {
-  return extension instanceof MarkExtension;
-}
 
 export class ProseMirrorRemark {
   private readonly builtSchema: Schema<string, string>;
@@ -37,21 +17,15 @@ export class ProseMirrorRemark {
   private readonly remark: Processor<UnistNode, UnistNode, UnistNode, string>;
 
   public constructor(extensions: Array<Extension> = []) {
-    const syntaxExtensions = extensions.filter(isSyntaxExtension);
-    const nodeExtensions = syntaxExtensions.filter(isNodeExtension);
-    const markExtensions = syntaxExtensions.filter(isMarkExtension);
-    this.builtSchema = new SchemaBuilder(
-      nodeExtensions,
-      markExtensions
-    ).build();
+    const extensionManager = new ExtensionManager(extensions);
+    this.builtSchema = new SchemaBuilder(extensionManager).build();
     this.mdastToProseMirrorConverter = new MdastToProseMirrorConverter(
-      syntaxExtensions
+      extensionManager
     );
     this.proseMirrorToMdastConverter = new ProseMirrorToMdastConverter(
-      nodeExtensions,
-      markExtensions
+      extensionManager
     );
-    this.remark = new UnifiedBuilder(extensions).build();
+    this.remark = new UnifiedBuilder(extensionManager).build();
   }
 
   public parse(markdown: string): ProseMirrorNode | null {

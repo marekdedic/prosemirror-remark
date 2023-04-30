@@ -3,13 +3,13 @@ import remarkStringify from "remark-stringify";
 import { type Processor, unified } from "unified";
 import type { Node as UnistNode } from "unist";
 
-import type { Extension } from "./Extension";
+import type { ExtensionManager } from "./ExtensionManager";
 
 export class UnifiedBuilder {
-  private readonly extensions: Array<Extension>;
+  private readonly extensionManager: ExtensionManager;
 
-  public constructor(extensions: Array<Extension>) {
-    this.extensions = extensions;
+  public constructor(extensionManager: ExtensionManager) {
+    this.extensionManager = extensionManager;
   }
 
   public build(): Processor<UnistNode, UnistNode, UnistNode, string> {
@@ -17,7 +17,7 @@ export class UnifiedBuilder {
       unified()
         .use(remarkParse)
         .use(remarkStringify, { fences: true, resourceLink: true, rule: "-" });
-    for (const extension of this.extensions) {
+    for (const extension of this.extensionManager.extensions()) {
       processor = extension.unifiedInitializationHook(processor);
     }
     return processor;

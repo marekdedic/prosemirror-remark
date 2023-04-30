@@ -2,13 +2,13 @@ import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Node as UnistNode, Parent } from "unist";
 
 import type { ConverterContext } from "./ConverterContext";
-import type { SyntaxExtension } from "./SyntaxExtension";
+import type { ExtensionManager } from "./ExtensionManager";
 
 export class MdastToProseMirrorConverter {
-  private readonly extensions: Array<SyntaxExtension<UnistNode>>;
+  private readonly extensionManager: ExtensionManager;
 
-  public constructor(extensions: Array<SyntaxExtension<UnistNode>>) {
-    this.extensions = extensions;
+  public constructor(extensionManager: ExtensionManager) {
+    this.extensionManager = extensionManager;
   }
 
   private static mdastNodeIsParent(node: UnistNode): node is Parent {
@@ -23,7 +23,7 @@ export class MdastToProseMirrorConverter {
   ): ProseMirrorNode | null {
     const context: ConverterContext<unknown> = {};
     const rootNode = this.convertNode(mdast, schema, context);
-    for (const extension of this.extensions) {
+    for (const extension of this.extensionManager.syntaxExtensions()) {
       extension.postMdastToProseMirrorHook(context);
     }
     if (rootNode.length !== 1) {
@@ -37,7 +37,7 @@ export class MdastToProseMirrorConverter {
     schema: Schema<string, string>,
     context: ConverterContext<unknown>
   ): Array<ProseMirrorNode> {
-    for (const extension of this.extensions) {
+    for (const extension of this.extensionManager.syntaxExtensions()) {
       // TODO: This is needlessly slow, a map would be better
       if (!extension.mdastNodeMatches(node)) {
         continue;
