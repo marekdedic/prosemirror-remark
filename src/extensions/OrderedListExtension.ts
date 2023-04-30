@@ -16,7 +16,6 @@ export class OrderedListExtension extends NodeExtension {
     return "list";
   }
 
-  // TODO: UnistNode is a generic
   public mdastNodeMatches(node: UnistNode): boolean {
     return (
       node.type === this.mdastNodeName() && (node as List).ordered === true

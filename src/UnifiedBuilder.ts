@@ -12,7 +12,6 @@ export class UnifiedBuilder {
     this.extensions = extensions;
   }
 
-  // TODO: UnistNode is a generic
   // TODO: Maybe more specific Processor types?
   public build(): Processor<UnistNode, UnistNode, UnistNode, string> {
     let processor: Processor<UnistNode, UnistNode, UnistNode, string> =

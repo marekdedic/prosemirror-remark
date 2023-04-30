@@ -21,7 +21,6 @@ export abstract class SyntaxExtension<
 
   // TODO: There is some code duplication in the specializations of this method
   // TODO: Make this generic
-  // TODO: UnistNode is a generic
   // TODO: Specialize schema generic
   public abstract mdastNodeToProseMirrorNodes(
     node: UnistNode,

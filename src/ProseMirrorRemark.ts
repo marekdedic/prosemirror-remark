@@ -33,7 +33,6 @@ export class ProseMirrorRemark {
   private readonly builtSchema: Schema<string, string>;
   private readonly mdastToProseMirrorConverter: MdastToProseMirrorConverter;
   private readonly proseMirrorToMdastConverter: ProseMirrorToMdastConverter;
-  // TODO: UnistNode is a generic
   // TODO: Maybe more specific types?
   private readonly remark: Processor<UnistNode, UnistNode, UnistNode, string>;
 

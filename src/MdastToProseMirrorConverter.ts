@@ -11,14 +11,12 @@ export class MdastToProseMirrorConverter {
     this.extensions = extensions;
   }
 
-  // TODO: UnistNode is a generic
   private static mdastNodeIsParent(node: UnistNode): node is Parent {
     return "children" in node;
   }
 
   // TODO: Move schema to a property?
   // TODO: Better error handling?
-  // TODO: UnistNode is a generic
   // TODO: Specialize schema generic
   public convert(mdast: UnistNode, schema: Schema): ProseMirrorNode | null {
     const context: ConverterContext<unknown> = {};
@@ -32,7 +30,6 @@ export class MdastToProseMirrorConverter {
     return rootNode[0];
   }
 
-  // TODO: UnistNode is a generic
   // TODO: Specialize schema generic
   private convertNode(
     node: UnistNode,

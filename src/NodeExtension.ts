@@ -11,7 +11,6 @@ export abstract class NodeExtension extends SyntaxExtension {
   // TODO: There is some code duplication in the specializations of this method
   // TODO: Make this generic
   // TODO: Maybe return just a single node
-  // TODO: UnistNode is a generic
   public abstract proseMirrorNodeToMdastNodes(
     node: ProseMirrorNode,
     convertedChildren: Array<UnistNode>
