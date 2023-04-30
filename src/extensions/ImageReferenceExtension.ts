@@ -1,4 +1,4 @@
-import type { Image, ImageReference } from "mdast";
+import type { ImageReference, Paragraph } from "mdast";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -85,13 +85,19 @@ export class ImageReferenceExtension extends NodeExtension {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNodes(node: ProseMirrorNode): Array<Image> {
+  public proseMirrorNodeToMdastNodes(node: ProseMirrorNode): Array<Paragraph> {
     return [
+      // The paragraph is needed to counter-balance remark-unwrap-images, otherwise stringification breaks
       {
-        type: "image",
-        url: node.attrs.src as string,
-        title: node.attrs.title as string | null,
-        alt: node.attrs.alt as string | null,
+        type: "paragraph",
+        children: [
+          {
+            type: "image",
+            url: node.attrs.src as string,
+            title: node.attrs.title as string | null,
+            alt: node.attrs.alt as string | null,
+          },
+        ],
       },
     ];
   }
