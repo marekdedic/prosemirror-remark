@@ -7,9 +7,11 @@ import type {
   Schema,
 } from "prosemirror-model";
 
-import type { ConverterContext } from "../ConverterContext";
-import type { Extension } from "../Extension";
-import { MarkExtension } from "../MarkExtension";
+import {
+  type ConverterContext,
+  type Extension,
+  MarkExtension,
+} from "../../prosemirror-unified";
 import {
   DefinitionExtension,
   type DefinitionExtensionContext,

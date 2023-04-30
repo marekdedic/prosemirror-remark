@@ -1,8 +1,10 @@
 import type { Definition } from "mdast";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 
-import type { ConverterContext } from "../ConverterContext";
-import { NodeExtension } from "../NodeExtension";
+import {
+  type ConverterContext,
+  NodeExtension,
+} from "../../prosemirror-unified";
 
 export interface DefinitionExtensionContext {
   definitions: Record<

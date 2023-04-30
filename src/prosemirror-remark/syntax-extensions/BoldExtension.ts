@@ -1,4 +1,4 @@
-import type { Emphasis, Text } from "mdast";
+import type { Strong, Text } from "mdast";
 import type {
   DOMOutputSpec,
   MarkSpec,
@@ -6,28 +6,28 @@ import type {
   Schema,
 } from "prosemirror-model";
 
-import { MarkExtension } from "../MarkExtension";
+import { MarkExtension } from "../../prosemirror-unified";
 
-export class ItalicExtension extends MarkExtension<Emphasis> {
-  public mdastNodeName(): "emphasis" {
-    return "emphasis";
+export class BoldExtension extends MarkExtension<Strong> {
+  public mdastNodeName(): "strong" {
+    return "strong";
   }
 
   public proseMirrorMarkName(): string {
-    return "em";
+    return "strong";
   }
 
   public proseMirrorMarkSpec(): MarkSpec {
     return {
-      parseDOM: [{ tag: "i" }, { tag: "em" }],
+      parseDOM: [{ tag: "b" }, { tag: "strong" }],
       toDOM(): DOMOutputSpec {
-        return ["em"];
+        return ["strong"];
       },
     };
   }
 
   public mdastNodeToProseMirrorNodes(
-    _node: Emphasis,
+    _node: Strong,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
@@ -38,7 +38,7 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
     );
   }
 
-  public modifyMdastNode(convertedNode: Text): Emphasis {
+  public modifyMdastNode(convertedNode: Text): Strong {
     return { type: this.mdastNodeName(), children: [convertedNode] };
   }
 }

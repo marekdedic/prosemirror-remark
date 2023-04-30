@@ -6,7 +6,7 @@ import type {
   Schema,
 } from "prosemirror-model";
 
-import { NodeExtension } from "../NodeExtension";
+import { NodeExtension } from "../../prosemirror-unified";
 
 export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
   public mdastNodeName(): "thematicBreak" {

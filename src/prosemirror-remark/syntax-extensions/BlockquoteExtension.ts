@@ -1,44 +1,35 @@
-import type { List, ListContent } from "mdast";
+import type { BlockContent, Blockquote, DefinitionContent } from "mdast";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
   Schema,
 } from "prosemirror-model";
-import type { Node as UnistNode } from "unist";
 
-import { NodeExtension } from "../NodeExtension";
+import { NodeExtension } from "../../prosemirror-unified";
 
-// TODO: Add support for starting from number other than 1
-// TODO: Item spacing
-export class OrderedListExtension extends NodeExtension<List> {
-  public mdastNodeName(): "list" {
-    return "list";
-  }
-
-  public mdastNodeMatches(node: UnistNode): boolean {
-    return (
-      node.type === this.mdastNodeName() && (node as List).ordered === true
-    );
+export class BlockquoteExtension extends NodeExtension<Blockquote> {
+  public mdastNodeName(): "blockquote" {
+    return "blockquote";
   }
 
   public proseMirrorNodeName(): string {
-    return "ordered_list";
+    return "blockquote";
   }
 
   public proseMirrorNodeSpec(): NodeSpec {
     return {
-      content: "list_item+",
+      content: "block+",
       group: "block",
-      parseDOM: [{ tag: "ol" }],
+      parseDOM: [{ tag: "blockquote" }],
       toDOM(): DOMOutputSpec {
-        return ["ol", 0];
+        return ["blockquote", 0];
       },
     };
   }
 
   public mdastNodeToProseMirrorNodes(
-    _node: List,
+    _node: Blockquote,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
@@ -53,12 +44,11 @@ export class OrderedListExtension extends NodeExtension<List> {
 
   public proseMirrorNodeToMdastNodes(
     _node: ProseMirrorNode,
-    convertedChildren: Array<ListContent>
-  ): Array<List> {
+    convertedChildren: Array<BlockContent | DefinitionContent>
+  ): Array<Blockquote> {
     return [
       {
         type: this.mdastNodeName(),
-        ordered: true,
         children: convertedChildren,
       },
     ];

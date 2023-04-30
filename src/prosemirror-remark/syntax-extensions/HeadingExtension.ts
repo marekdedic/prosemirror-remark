@@ -6,7 +6,7 @@ import type {
   Schema,
 } from "prosemirror-model";
 
-import { NodeExtension } from "../NodeExtension";
+import { NodeExtension } from "../../prosemirror-unified";
 
 export class HeadingExtension extends NodeExtension<Heading> {
   public mdastNodeName(): "heading" {

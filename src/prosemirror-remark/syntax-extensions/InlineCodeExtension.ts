@@ -6,7 +6,7 @@ import type {
   Schema,
 } from "prosemirror-model";
 
-import { MarkExtension } from "../MarkExtension";
+import { MarkExtension } from "../../prosemirror-unified";
 
 export class InlineCodeExtension extends MarkExtension<InlineCode> {
   public mdastNodeName(): "inlineCode" {

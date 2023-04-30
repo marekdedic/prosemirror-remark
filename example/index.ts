@@ -12,52 +12,14 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
-import { BlockquoteExtension } from "../src/extensions/BlockquoteExtension";
-import { BoldExtension } from "../src/extensions/BoldExtension";
-import { BreakExtension } from "../src/extensions/BreakExtension";
-import { CodeBlockExtension } from "../src/extensions/CodeBlockExtension";
-import { DefinitionExtension } from "../src/extensions/DefinitionExtension";
-import { HeadingExtension } from "../src/extensions/HeadingExtension";
-import { HorizontalRuleExtension } from "../src/extensions/HorizontalRuleExtension";
-import { ImageExtension } from "../src/extensions/ImageExtension";
-import { ImageReferenceExtension } from "../src/extensions/ImageReferenceExtension";
-import { InlineCodeExtension } from "../src/extensions/InlineCodeExtension";
-import { ItalicExtension } from "../src/extensions/ItalicExtension";
-import { LinkExtension } from "../src/extensions/LinkExtension";
-import { LinkReferenceExtension } from "../src/extensions/LinkReferenceExtension";
-import { ListItemExtension } from "../src/extensions/ListItemExtension";
-import { OrderedListExtension } from "../src/extensions/OrderedListExtension";
-import { ParagraphExtension } from "../src/extensions/ParagraphExtension";
-import { RootExtension } from "../src/extensions/RootExtension";
-import { TextExtension } from "../src/extensions/TextExtension";
-import { UnorderedListExtension } from "../src/extensions/UnorderedListExtension";
-import { ProseMirrorRemark } from "../src/index";
+import { MarkdownExtension } from "../src/prosemirror-remark";
+import { ProseMirrorUnified } from "../src/prosemirror-unified";
 import { defaultContent } from "./defaultContent";
 
 const editor = document.querySelector("#editor")!;
 const preview = document.querySelector("#preview-container")!;
 
-const adapter = new ProseMirrorRemark([
-  new BlockquoteExtension(),
-  new BoldExtension(),
-  new BreakExtension(),
-  new CodeBlockExtension(),
-  new DefinitionExtension(),
-  new HeadingExtension(),
-  new HorizontalRuleExtension(),
-  new ImageExtension(),
-  new ImageReferenceExtension(),
-  new InlineCodeExtension(),
-  new ItalicExtension(),
-  new LinkExtension(),
-  new LinkReferenceExtension(),
-  new ListItemExtension(),
-  new OrderedListExtension(),
-  new ParagraphExtension(),
-  new RootExtension(),
-  new TextExtension(),
-  new UnorderedListExtension(),
-]);
+const adapter = new ProseMirrorUnified([new MarkdownExtension()]);
 
 class ProseMirrorView {
   private readonly view: EditorView;

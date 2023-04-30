@@ -1,4 +1,4 @@
-import type { Image, Paragraph } from "mdast";
+import type { ImageReference, Paragraph } from "mdast";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -9,17 +9,35 @@ import remarkUnwrapImages from "remark-unwrap-images";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
-import { NodeExtension } from "../NodeExtension";
+import {
+  type ConverterContext,
+  type Extension,
+  NodeExtension,
+} from "../../prosemirror-unified";
+import {
+  DefinitionExtension,
+  type DefinitionExtensionContext,
+} from "./DefinitionExtension";
 
-export class ImageExtension extends NodeExtension<Image | Paragraph> {
+export interface ImageReferenceExtensionContext {
+  proseMirrorNodes: Record<string, ProseMirrorNode>;
+}
+
+export class ImageReferenceExtension extends NodeExtension<
+  ImageReference | Paragraph
+> {
+  public dependencies(): Array<Extension> {
+    return [new DefinitionExtension()];
+  }
+
   public unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, string>
   ): Processor<UnistNode, UnistNode, UnistNode, string> {
     return processor.use(remarkUnwrapImages);
   }
 
-  public mdastNodeName(): "image" {
-    return "image";
+  public mdastNodeName(): "imageReference" {
+    return "imageReference";
   }
 
   public proseMirrorNodeName(): string {
@@ -59,22 +77,31 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
   }
 
   public mdastNodeToProseMirrorNodes(
-    node: Image,
+    node: ImageReference,
     schema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
+    context: ConverterContext<{
+      ImageReferenceExtension: ImageReferenceExtensionContext;
+    }>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()
     ].createAndFill(
-      { src: node.url, alt: node.alt, title: node.title },
+      { src: "", alt: node.alt, title: node.label },
       convertedChildren
     );
     if (proseMirrorNode === null) {
       return [];
     }
+    if (context.ImageReferenceExtension === undefined) {
+      context.ImageReferenceExtension = { proseMirrorNodes: {} };
+    }
+    context.ImageReferenceExtension.proseMirrorNodes[node.identifier] =
+      proseMirrorNode;
     return [proseMirrorNode];
   }
 
+  // TODO: This shouldn't be called at all
   public proseMirrorNodeToMdastNodes(node: ProseMirrorNode): Array<Paragraph> {
     return [
       // The paragraph is needed to counter-balance remark-unwrap-images, otherwise stringification breaks
@@ -82,7 +109,7 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
         type: "paragraph",
         children: [
           {
-            type: this.mdastNodeName(),
+            type: "image",
             url: node.attrs.src as string,
             title: node.attrs.title as string | null,
             alt: node.attrs.alt as string | null,
@@ -90,5 +117,35 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
         ],
       },
     ];
+  }
+
+  public postMdastToProseMirrorHook(
+    context: ConverterContext<{
+      DefinitionExtension: DefinitionExtensionContext;
+      ImageReferenceExtension: ImageReferenceExtensionContext;
+    }>
+  ): void {
+    if (
+      context.ImageReferenceExtension === undefined ||
+      context.DefinitionExtension === undefined
+    ) {
+      return;
+    }
+    for (const id in context.ImageReferenceExtension.proseMirrorNodes) {
+      if (!(id in context.DefinitionExtension.definitions)) {
+        continue;
+      }
+      const definition = context.DefinitionExtension.definitions[id];
+      const attrs = context.ImageReferenceExtension.proseMirrorNodes[id]
+        .attrs as Record<
+        string,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        any
+      >;
+      attrs.src = definition.url;
+      if (definition.title !== undefined) {
+        attrs.title = definition.title;
+      }
+    }
   }
 }

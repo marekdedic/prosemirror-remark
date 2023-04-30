@@ -10,7 +10,7 @@ import { ProseMirrorToMdastConverter } from "./ProseMirrorToMdastConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
 import { UnifiedBuilder } from "./UnifiedBuilder";
 
-export class ProseMirrorRemark {
+export class ProseMirrorUnified {
   private readonly builtSchema: Schema<string, string>;
   private readonly mdastToProseMirrorConverter: MdastToProseMirrorConverter;
   private readonly proseMirrorToMdastConverter: ProseMirrorToMdastConverter;

@@ -1,27 +1,35 @@
-import type { Content, Root } from "mdast";
+import type { Break } from "mdast";
 import type {
+  DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
   Schema,
 } from "prosemirror-model";
 
-import { NodeExtension } from "../NodeExtension";
+import { NodeExtension } from "../../prosemirror-unified";
 
-export class RootExtension extends NodeExtension<Root> {
-  public mdastNodeName(): "root" {
-    return "root";
+export class BreakExtension extends NodeExtension<Break> {
+  public mdastNodeName(): "break" {
+    return "break";
   }
 
   public proseMirrorNodeName(): string {
-    return "doc";
+    return "hard_break";
   }
 
   public proseMirrorNodeSpec(): NodeSpec {
-    return { content: "block+" };
+    return {
+      inline: true,
+      group: "inline",
+      parseDOM: [{ tag: "br" }],
+      toDOM(): DOMOutputSpec {
+        return ["br"];
+      },
+    };
   }
 
   public mdastNodeToProseMirrorNodes(
-    _node: Root,
+    _node: Break,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
@@ -34,10 +42,7 @@ export class RootExtension extends NodeExtension<Root> {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNodes(
-    _node: ProseMirrorNode,
-    convertedChildren: Array<Content>
-  ): Array<Root> {
-    return [{ type: this.mdastNodeName(), children: convertedChildren }];
+  public proseMirrorNodeToMdastNodes(): Array<Break> {
+    return [{ type: this.mdastNodeName() }];
   }
 }

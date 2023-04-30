@@ -1,4 +1,4 @@
-import type { BlockContent, Blockquote, DefinitionContent } from "mdast";
+import type { Paragraph, PhrasingContent } from "mdast";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -6,30 +6,30 @@ import type {
   Schema,
 } from "prosemirror-model";
 
-import { NodeExtension } from "../NodeExtension";
+import { NodeExtension } from "../../prosemirror-unified";
 
-export class BlockquoteExtension extends NodeExtension<Blockquote> {
-  public mdastNodeName(): "blockquote" {
-    return "blockquote";
+export class ParagraphExtension extends NodeExtension<Paragraph> {
+  public mdastNodeName(): "paragraph" {
+    return "paragraph";
   }
 
   public proseMirrorNodeName(): string {
-    return "blockquote";
+    return "paragraph";
   }
 
   public proseMirrorNodeSpec(): NodeSpec {
     return {
-      content: "block+",
+      content: "inline*",
       group: "block",
-      parseDOM: [{ tag: "blockquote" }],
+      parseDOM: [{ tag: "p" }],
       toDOM(): DOMOutputSpec {
-        return ["blockquote", 0];
+        return ["p", 0];
       },
     };
   }
 
   public mdastNodeToProseMirrorNodes(
-    _node: Blockquote,
+    _node: Paragraph,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
@@ -44,13 +44,8 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
 
   public proseMirrorNodeToMdastNodes(
     _node: ProseMirrorNode,
-    convertedChildren: Array<BlockContent | DefinitionContent>
-  ): Array<Blockquote> {
-    return [
-      {
-        type: this.mdastNodeName(),
-        children: convertedChildren,
-      },
-    ];
+    convertedChildren: Array<PhrasingContent>
+  ): Array<Paragraph> {
+    return [{ type: this.mdastNodeName(), children: convertedChildren }];
   }
 }

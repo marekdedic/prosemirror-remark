@@ -7,7 +7,7 @@ import type {
 } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import { NodeExtension } from "../NodeExtension";
+import { NodeExtension } from "../../prosemirror-unified";
 
 // TODO: Item spacing
 export class UnorderedListExtension extends NodeExtension<List> {
