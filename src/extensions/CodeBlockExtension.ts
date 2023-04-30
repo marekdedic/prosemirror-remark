@@ -46,7 +46,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
   }
 
   public proseMirrorNodeToMdastNodes(
-    _: ProseMirrorNode,
+    _node: ProseMirrorNode,
     convertedChildren: Array<Text>
   ): Array<Code> {
     return [

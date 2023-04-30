@@ -43,7 +43,7 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
   }
 
   public proseMirrorNodeToMdastNodes(
-    _: ProseMirrorNode,
+    _node: ProseMirrorNode,
     convertedChildren: Array<PhrasingContent>
   ): Array<Paragraph> {
     return [{ type: this.mdastNodeName(), children: convertedChildren }];

@@ -51,7 +51,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
   }
 
   public proseMirrorNodeToMdastNodes(
-    _: ProseMirrorNode,
+    _node: ProseMirrorNode,
     convertedChildren: Array<ListContent>
   ): Array<List> {
     return [
