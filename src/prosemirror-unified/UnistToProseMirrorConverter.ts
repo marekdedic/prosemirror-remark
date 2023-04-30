@@ -4,7 +4,7 @@ import type { Node as UnistNode, Parent } from "unist";
 import type { ConverterContext } from "./ConverterContext";
 import type { ExtensionManager } from "./ExtensionManager";
 
-export class MdastToProseMirrorConverter {
+export class UnistToProseMirrorConverter {
   private readonly extensionManager: ExtensionManager;
 
   public constructor(extensionManager: ExtensionManager) {
@@ -43,7 +43,7 @@ export class MdastToProseMirrorConverter {
         continue;
       }
       let convertedChildren: Array<ProseMirrorNode> = [];
-      if (MdastToProseMirrorConverter.mdastNodeIsParent(node)) {
+      if (UnistToProseMirrorConverter.mdastNodeIsParent(node)) {
         convertedChildren = node.children.flatMap((child) =>
           this.convertNode(child, schema, context)
         );

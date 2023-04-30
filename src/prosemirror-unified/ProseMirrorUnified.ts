@@ -5,36 +5,36 @@ import type { Node as UnistNode } from "unist";
 
 import type { Extension } from "./Extension";
 import { ExtensionManager } from "./ExtensionManager";
-import { MdastToProseMirrorConverter } from "./MdastToProseMirrorConverter";
-import { ProseMirrorToMdastConverter } from "./ProseMirrorToMdastConverter";
+import { ProseMirrorToUnistConverter } from "./ProseMirrorToUnistConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
 import { UnifiedBuilder } from "./UnifiedBuilder";
+import { UnistToProseMirrorConverter } from "./UnistToProseMirrorConverter";
 
 export class ProseMirrorUnified {
   private readonly builtSchema: Schema<string, string>;
-  private readonly mdastToProseMirrorConverter: MdastToProseMirrorConverter;
-  private readonly proseMirrorToMdastConverter: ProseMirrorToMdastConverter;
+  private readonly unistToProseMirrorConverter: UnistToProseMirrorConverter;
+  private readonly proseMirrorToUnistConverter: ProseMirrorToUnistConverter;
   private readonly remark: Processor<UnistNode, UnistNode, UnistNode, string>;
 
   public constructor(extensions: Array<Extension> = []) {
     const extensionManager = new ExtensionManager(extensions);
     this.builtSchema = new SchemaBuilder(extensionManager).build();
-    this.mdastToProseMirrorConverter = new MdastToProseMirrorConverter(
+    this.unistToProseMirrorConverter = new UnistToProseMirrorConverter(
       extensionManager
     );
-    this.proseMirrorToMdastConverter = new ProseMirrorToMdastConverter(
+    this.proseMirrorToUnistConverter = new ProseMirrorToUnistConverter(
       extensionManager
     );
     this.remark = new UnifiedBuilder(extensionManager).build();
   }
 
   public parse(markdown: string): ProseMirrorNode | null {
-    const mdast = this.remark.runSync(this.remark.parse(markdown));
+    const unist = this.remark.runSync(this.remark.parse(markdown));
     // TODO: Fix remark-unwrap-images to not put text nodes in root
-    (mdast as Root).children = (mdast as Root).children.filter(
+    (unist as Root).children = (unist as Root).children.filter(
       (child) => child.type !== "text"
     );
-    const ret = this.mdastToProseMirrorConverter.convert(mdast, this.schema());
+    const ret = this.unistToProseMirrorConverter.convert(unist, this.schema());
     console.log(ret);
     return ret;
   }
@@ -44,12 +44,12 @@ export class ProseMirrorUnified {
   }
 
   public serialize(doc: ProseMirrorNode): string {
-    const mdast = this.proseMirrorToMdastConverter.convert(doc);
-    if (mdast === null) {
+    const unist = this.proseMirrorToUnistConverter.convert(doc);
+    if (unist === null) {
       return "";
     }
-    const markdown: string = this.remark.stringify(mdast);
-    console.log(mdast);
+    const markdown: string = this.remark.stringify(unist);
+    console.log(unist);
     return markdown;
   }
 }

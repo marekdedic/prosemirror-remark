@@ -3,7 +3,7 @@ import type { Node as UnistNode } from "unist";
 
 import type { ExtensionManager } from "./ExtensionManager";
 
-export class ProseMirrorToMdastConverter {
+export class ProseMirrorToUnistConverter {
   private readonly extensionManager: ExtensionManager;
 
   public constructor(extensionManager: ExtensionManager) {
