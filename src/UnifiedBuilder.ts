@@ -14,7 +14,9 @@ export class UnifiedBuilder {
 
   public build(): Processor<UnistNode, UnistNode, UnistNode, string> {
     let processor: Processor<UnistNode, UnistNode, UnistNode, string> =
-      unified().use(remarkParse).use(remarkStringify);
+      unified()
+        .use(remarkParse)
+        .use(remarkStringify, { fences: true, resourceLink: true, rule: "-" });
     for (const extension of this.extensions) {
       processor = extension.unifiedInitializationHook(processor);
     }

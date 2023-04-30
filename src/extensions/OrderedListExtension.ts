@@ -10,6 +10,7 @@ import type { Node as UnistNode } from "unist";
 import { NodeExtension } from "../NodeExtension";
 
 // TODO: Add support for starting from number other than 1
+// TODO: Item spacing
 export class OrderedListExtension extends NodeExtension {
   public mdastNodeName(): "list" {
     return "list";
