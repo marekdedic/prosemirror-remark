@@ -43,7 +43,7 @@ export class ProseMirrorToUnistConverter {
       console.warn(
         "Couldn't find any way to convert ProseMirror node of type \"" +
           node.type.name +
-          '" to an mdast node.'
+          '" to a unist node.'
       );
       return [];
     }
