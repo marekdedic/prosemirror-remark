@@ -10,8 +10,12 @@ import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
 import type { ConverterContext } from "../ConverterContext";
+import type { Extension } from "../Extension";
 import { NodeExtension } from "../NodeExtension";
-import type { DefinitionExtensionContext } from "./DefinitionExtension";
+import {
+  DefinitionExtension,
+  type DefinitionExtensionContext,
+} from "./DefinitionExtension";
 
 export interface ImageReferenceExtensionContext {
   proseMirrorNodes: Record<string, ProseMirrorNode>;
@@ -20,6 +24,10 @@ export interface ImageReferenceExtensionContext {
 export class ImageReferenceExtension extends NodeExtension<
   ImageReference | Paragraph
 > {
+  public dependencies(): Array<Extension> {
+    return [new DefinitionExtension()];
+  }
+
   public unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, string>
   ): Processor<UnistNode, UnistNode, UnistNode, string> {

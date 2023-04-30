@@ -65,6 +65,10 @@ export class ExtensionManager {
   }
 
   private add(extension: Extension): void {
+    for (const dependency of extension.dependencies()) {
+      this.add(dependency);
+    }
+
     if (isMarkExtension(extension)) {
       this.markExtensionList[extension.constructor.name] = extension;
       return;

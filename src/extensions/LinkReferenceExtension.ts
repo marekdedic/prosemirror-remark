@@ -8,8 +8,12 @@ import type {
 } from "prosemirror-model";
 
 import type { ConverterContext } from "../ConverterContext";
+import type { Extension } from "../Extension";
 import { MarkExtension } from "../MarkExtension";
-import type { DefinitionExtensionContext } from "./DefinitionExtension";
+import {
+  DefinitionExtension,
+  type DefinitionExtensionContext,
+} from "./DefinitionExtension";
 
 export interface LinkReferenceExtensionContext {
   marks: Record<string, Mark>;
@@ -18,6 +22,9 @@ export interface LinkReferenceExtensionContext {
 export class LinkReferenceExtension extends MarkExtension<
   Link | LinkReference
 > {
+  public dependencies(): Array<Extension> {
+    return [new DefinitionExtension()];
+  }
   public mdastNodeName(): "linkReference" {
     return "linkReference";
   }
