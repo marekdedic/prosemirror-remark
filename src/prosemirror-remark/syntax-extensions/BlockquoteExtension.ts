@@ -28,7 +28,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     _node: Blockquote,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

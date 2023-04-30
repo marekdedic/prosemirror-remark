@@ -26,7 +26,7 @@ export class DefinitionExtension extends NodeExtension<Definition> {
     return null;
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     node: Definition,
     _schema: Schema<string, string>,
     _convertedChildren: Array<ProseMirrorNode>,

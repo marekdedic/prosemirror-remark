@@ -21,7 +21,7 @@ export abstract class SyntaxExtension<
   public abstract mdastNodeName(): UNode["type"];
 
   // TODO: There is some code duplication in the specializations of this method
-  public abstract mdastNodeToProseMirrorNodes(
+  public abstract unistNodeToProseMirrorNodes(
     node: UNode,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,

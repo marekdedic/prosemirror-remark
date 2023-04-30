@@ -27,7 +27,7 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     node: InlineCode,
     schema: Schema<string, string>
   ): Array<ProseMirrorNode> {

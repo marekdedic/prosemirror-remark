@@ -26,7 +26,7 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     _node: Emphasis,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

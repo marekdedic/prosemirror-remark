@@ -20,7 +20,7 @@ export class RootExtension extends NodeExtension<Root> {
     return { content: "block+" };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     _node: Root,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

@@ -27,7 +27,7 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     _node: ThematicBreak,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

@@ -22,7 +22,7 @@ export class TextExtension extends NodeExtension<Text> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     node: Text,
     schema: Schema<string, string>
   ): Array<ProseMirrorNode> {

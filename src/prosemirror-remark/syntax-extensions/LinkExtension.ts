@@ -42,7 +42,7 @@ export class LinkExtension extends MarkExtension<Link> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     node: Link,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

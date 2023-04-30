@@ -37,7 +37,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     node: Heading,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

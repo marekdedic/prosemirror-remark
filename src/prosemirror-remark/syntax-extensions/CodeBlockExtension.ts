@@ -31,7 +31,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     node: Code,
     schema: Schema<string, string>
   ): Array<ProseMirrorNode> {

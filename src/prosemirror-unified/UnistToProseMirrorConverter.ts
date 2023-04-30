@@ -48,7 +48,7 @@ export class UnistToProseMirrorConverter {
           this.convertNode(child, schema, context)
         );
       }
-      return extension.mdastNodeToProseMirrorNodes(
+      return extension.unistNodeToProseMirrorNodes(
         node,
         schema,
         convertedChildren,

@@ -59,7 +59,7 @@ export class LinkReferenceExtension extends MarkExtension<
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     node: LinkReference,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,

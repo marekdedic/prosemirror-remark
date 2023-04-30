@@ -28,7 +28,7 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     _node: Paragraph,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

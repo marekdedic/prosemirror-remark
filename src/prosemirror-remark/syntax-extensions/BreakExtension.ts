@@ -28,7 +28,7 @@ export class BreakExtension extends NodeExtension<Break> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     _node: Break,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

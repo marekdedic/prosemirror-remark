@@ -76,7 +76,7 @@ export class ImageReferenceExtension extends NodeExtension<
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     node: ImageReference,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,

@@ -58,7 +58,7 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     node: Image,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

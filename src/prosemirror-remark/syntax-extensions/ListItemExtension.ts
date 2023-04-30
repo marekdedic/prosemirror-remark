@@ -28,7 +28,7 @@ export class ListItemExtension extends NodeExtension<ListItem> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     _node: ListItem,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

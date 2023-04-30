@@ -37,7 +37,7 @@ export class OrderedListExtension extends NodeExtension<List> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     _node: List,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>

@@ -26,7 +26,7 @@ export class BoldExtension extends MarkExtension<Strong> {
     };
   }
 
-  public mdastNodeToProseMirrorNodes(
+  public unistNodeToProseMirrorNodes(
     _node: Strong,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
