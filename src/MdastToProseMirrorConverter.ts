@@ -2,12 +2,12 @@ import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Node as UnistNode, Parent } from "unist";
 
 import type { ConverterContext } from "./ConverterContext";
-import type { Extension } from "./Extension";
+import type { SyntaxExtension } from "./SyntaxExtension";
 
 export class MdastToProseMirrorConverter {
-  private readonly extensions: Array<Extension>;
+  private readonly extensions: Array<SyntaxExtension>;
 
-  public constructor(extensions: Array<Extension>) {
+  public constructor(extensions: Array<SyntaxExtension>) {
     this.extensions = extensions;
   }
 

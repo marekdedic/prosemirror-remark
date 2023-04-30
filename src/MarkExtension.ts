@@ -1,9 +1,9 @@
 import type { Mark, MarkSpec } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import { Extension } from "./Extension";
+import { SyntaxExtension } from "./SyntaxExtension";
 
-export abstract class MarkExtension extends Extension {
+export abstract class MarkExtension extends SyntaxExtension {
   public abstract proseMirrorMarkName(): string;
 
   public abstract proseMirrorMarkSpec(): MarkSpec;
