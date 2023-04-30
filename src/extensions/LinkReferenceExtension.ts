@@ -93,10 +93,10 @@ export class LinkReferenceExtension extends MarkExtension {
       return;
     }
     for (const id in context.LinkReferenceExtension.marks) {
-      const definition = context.DefinitionExtension.definitions[id];
-      if (definition === undefined) {
+      if (!(id in context.DefinitionExtension.definitions)) {
         continue;
       }
+      const definition = context.DefinitionExtension.definitions[id];
       const attrs = context.LinkReferenceExtension.marks[id].attrs as Record<
         string,
         any

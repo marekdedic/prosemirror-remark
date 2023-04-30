@@ -123,10 +123,10 @@ export class ImageReferenceExtension extends NodeExtension {
       return;
     }
     for (const id in context.ImageReferenceExtension.proseMirrorNodes) {
-      const definition = context.DefinitionExtension.definitions[id];
-      if (definition === undefined) {
+      if (!(id in context.DefinitionExtension.definitions)) {
         continue;
       }
+      const definition = context.DefinitionExtension.definitions[id];
       const attrs = context.ImageReferenceExtension.proseMirrorNodes[id]
         .attrs as Record<string, any>;
       attrs.src = definition.url;
