@@ -9,7 +9,7 @@ import type {
 import { MarkExtension } from "../../prosemirror-unified";
 
 export class ItalicExtension extends MarkExtension<Emphasis> {
-  public mdastNodeName(): "emphasis" {
+  public unistNodeName(): "emphasis" {
     return "emphasis";
   }
 
@@ -39,6 +39,6 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
   }
 
   public modifyMdastNode(convertedNode: Text): Emphasis {
-    return { type: this.mdastNodeName(), children: [convertedNode] };
+    return { type: this.unistNodeName(), children: [convertedNode] };
   }
 }

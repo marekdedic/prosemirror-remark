@@ -9,7 +9,7 @@ import type {
 import { NodeExtension } from "../../prosemirror-unified";
 
 export class BlockquoteExtension extends NodeExtension<Blockquote> {
-  public mdastNodeName(): "blockquote" {
+  public unistNodeName(): "blockquote" {
     return "blockquote";
   }
 
@@ -48,7 +48,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
   ): Array<Blockquote> {
     return [
       {
-        type: this.mdastNodeName(),
+        type: this.unistNodeName(),
         children: convertedChildren,
       },
     ];

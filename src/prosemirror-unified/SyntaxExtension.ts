@@ -9,7 +9,7 @@ export abstract class SyntaxExtension<
   Context = Record<string, never>
 > extends Extension {
   public mdastNodeMatches(node: UnistNode): boolean {
-    return node.type === this.mdastNodeName();
+    return node.type === this.unistNodeName();
   }
 
   public postMdastToProseMirrorHook(
@@ -18,7 +18,7 @@ export abstract class SyntaxExtension<
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   ): void {}
 
-  public abstract mdastNodeName(): UNode["type"];
+  public abstract unistNodeName(): UNode["type"];
 
   // TODO: There is some code duplication in the specializations of this method
   public abstract unistNodeToProseMirrorNodes(

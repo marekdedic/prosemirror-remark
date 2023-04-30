@@ -9,7 +9,7 @@ import type {
 import { NodeExtension } from "../../prosemirror-unified";
 
 export class HeadingExtension extends NodeExtension<Heading> {
-  public mdastNodeName(): "heading" {
+  public unistNodeName(): "heading" {
     return "heading";
   }
 
@@ -57,7 +57,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
   ): Array<Heading> {
     return [
       {
-        type: this.mdastNodeName(),
+        type: this.unistNodeName(),
         depth: node.attrs.level as 1 | 2 | 3 | 4 | 5 | 6,
         children: convertedChildren,
       },

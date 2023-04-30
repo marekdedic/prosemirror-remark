@@ -9,7 +9,7 @@ import type {
 import { NodeExtension } from "../../prosemirror-unified";
 
 export class ParagraphExtension extends NodeExtension<Paragraph> {
-  public mdastNodeName(): "paragraph" {
+  public unistNodeName(): "paragraph" {
     return "paragraph";
   }
 
@@ -46,6 +46,6 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
     _node: ProseMirrorNode,
     convertedChildren: Array<PhrasingContent>
   ): Array<Paragraph> {
-    return [{ type: this.mdastNodeName(), children: convertedChildren }];
+    return [{ type: this.unistNodeName(), children: convertedChildren }];
   }
 }

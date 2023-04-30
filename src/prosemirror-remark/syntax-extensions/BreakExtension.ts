@@ -9,7 +9,7 @@ import type {
 import { NodeExtension } from "../../prosemirror-unified";
 
 export class BreakExtension extends NodeExtension<Break> {
-  public mdastNodeName(): "break" {
+  public unistNodeName(): "break" {
     return "break";
   }
 
@@ -43,6 +43,6 @@ export class BreakExtension extends NodeExtension<Break> {
   }
 
   public proseMirrorNodeToMdastNodes(): Array<Break> {
-    return [{ type: this.mdastNodeName() }];
+    return [{ type: this.unistNodeName() }];
   }
 }

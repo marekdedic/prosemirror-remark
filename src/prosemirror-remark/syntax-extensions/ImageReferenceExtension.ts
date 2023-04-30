@@ -36,7 +36,7 @@ export class ImageReferenceExtension extends NodeExtension<
     return processor.use(remarkUnwrapImages);
   }
 
-  public mdastNodeName(): "imageReference" {
+  public unistNodeName(): "imageReference" {
     return "imageReference";
   }
 

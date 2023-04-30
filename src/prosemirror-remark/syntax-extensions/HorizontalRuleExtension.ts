@@ -9,7 +9,7 @@ import type {
 import { NodeExtension } from "../../prosemirror-unified";
 
 export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
-  public mdastNodeName(): "thematicBreak" {
+  public unistNodeName(): "thematicBreak" {
     return "thematicBreak";
   }
 
@@ -44,7 +44,7 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
   public proseMirrorNodeToMdastNodes(): Array<ThematicBreak> {
     return [
       {
-        type: this.mdastNodeName(),
+        type: this.unistNodeName(),
       },
     ];
   }

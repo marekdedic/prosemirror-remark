@@ -9,7 +9,7 @@ import type {
 import { NodeExtension } from "../../prosemirror-unified";
 
 export class CodeBlockExtension extends NodeExtension<Code> {
-  public mdastNodeName(): "code" {
+  public unistNodeName(): "code" {
     return "code";
   }
 
@@ -50,7 +50,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
   ): Array<Code> {
     return [
       {
-        type: this.mdastNodeName(),
+        type: this.unistNodeName(),
         value: convertedChildren.map((child) => child.value).join(""),
       },
     ];

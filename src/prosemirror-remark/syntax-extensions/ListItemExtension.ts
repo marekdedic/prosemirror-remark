@@ -9,7 +9,7 @@ import type {
 import { NodeExtension } from "../../prosemirror-unified";
 
 export class ListItemExtension extends NodeExtension<ListItem> {
-  public mdastNodeName(): "listItem" {
+  public unistNodeName(): "listItem" {
     return "listItem";
   }
 
@@ -48,7 +48,7 @@ export class ListItemExtension extends NodeExtension<ListItem> {
   ): Array<ListItem> {
     return [
       {
-        type: this.mdastNodeName(),
+        type: this.unistNodeName(),
         children: convertedChildren,
       },
     ];

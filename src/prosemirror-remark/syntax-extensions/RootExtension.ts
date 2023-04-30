@@ -8,7 +8,7 @@ import type {
 import { NodeExtension } from "../../prosemirror-unified";
 
 export class RootExtension extends NodeExtension<Root> {
-  public mdastNodeName(): "root" {
+  public unistNodeName(): "root" {
     return "root";
   }
 
@@ -38,6 +38,6 @@ export class RootExtension extends NodeExtension<Root> {
     _node: ProseMirrorNode,
     convertedChildren: Array<Content>
   ): Array<Root> {
-    return [{ type: this.mdastNodeName(), children: convertedChildren }];
+    return [{ type: this.unistNodeName(), children: convertedChildren }];
   }
 }

@@ -10,7 +10,7 @@ import type {
 import { MarkExtension } from "../../prosemirror-unified";
 
 export class LinkExtension extends MarkExtension<Link> {
-  public mdastNodeName(): "link" {
+  public unistNodeName(): "link" {
     return "link";
   }
 
@@ -61,7 +61,7 @@ export class LinkExtension extends MarkExtension<Link> {
 
   public modifyMdastNode(convertedNode: Text, originalMark: Mark): Link {
     return {
-      type: this.mdastNodeName(),
+      type: this.unistNodeName(),
       url: originalMark.attrs.href as string,
       title: originalMark.attrs.title as string | null,
       children: [convertedNode],

@@ -8,7 +8,7 @@ import type {
 import { NodeExtension } from "../../prosemirror-unified";
 
 export class TextExtension extends NodeExtension<Text> {
-  public mdastNodeName(): "text" {
+  public unistNodeName(): "text" {
     return "text";
   }
 
@@ -30,6 +30,6 @@ export class TextExtension extends NodeExtension<Text> {
   }
 
   public proseMirrorNodeToMdastNodes(node: ProseMirrorNode): Array<Text> {
-    return [{ type: this.mdastNodeName(), value: node.text ?? "" }];
+    return [{ type: this.unistNodeName(), value: node.text ?? "" }];
   }
 }

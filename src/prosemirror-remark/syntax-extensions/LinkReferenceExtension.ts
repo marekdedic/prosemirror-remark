@@ -27,7 +27,8 @@ export class LinkReferenceExtension extends MarkExtension<
   public dependencies(): Array<Extension> {
     return [new DefinitionExtension()];
   }
-  public mdastNodeName(): "linkReference" {
+
+  public unistNodeName(): "linkReference" {
     return "linkReference";
   }
 

@@ -18,7 +18,7 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
     return processor.use(remarkUnwrapImages);
   }
 
-  public mdastNodeName(): "image" {
+  public unistNodeName(): "image" {
     return "image";
   }
 
@@ -82,7 +82,7 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
         type: "paragraph",
         children: [
           {
-            type: this.mdastNodeName(),
+            type: this.unistNodeName(),
             url: node.attrs.src as string,
             title: node.attrs.title as string | null,
             alt: node.attrs.alt as string | null,

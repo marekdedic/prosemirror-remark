@@ -11,13 +11,13 @@ import { NodeExtension } from "../../prosemirror-unified";
 
 // TODO: Item spacing
 export class UnorderedListExtension extends NodeExtension<List> {
-  public mdastNodeName(): "list" {
+  public unistNodeName(): "list" {
     return "list";
   }
 
   public mdastNodeMatches(node: UnistNode): boolean {
     return (
-      node.type === this.mdastNodeName() && (node as List).ordered !== true
+      node.type === this.unistNodeName() && (node as List).ordered !== true
     );
   }
 
@@ -56,7 +56,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
   ): Array<List> {
     return [
       {
-        type: this.mdastNodeName(),
+        type: this.unistNodeName(),
         ordered: false,
         children: convertedChildren,
       },

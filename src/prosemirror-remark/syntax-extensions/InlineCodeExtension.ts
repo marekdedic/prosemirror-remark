@@ -9,7 +9,7 @@ import type {
 import { MarkExtension } from "../../prosemirror-unified";
 
 export class InlineCodeExtension extends MarkExtension<InlineCode> {
-  public mdastNodeName(): "inlineCode" {
+  public unistNodeName(): "inlineCode" {
     return "inlineCode";
   }
 
@@ -39,6 +39,6 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
   }
 
   public modifyMdastNode(convertedNode: Text): InlineCode {
-    return { type: this.mdastNodeName(), value: convertedNode.value };
+    return { type: this.unistNodeName(), value: convertedNode.value };
   }
 }
