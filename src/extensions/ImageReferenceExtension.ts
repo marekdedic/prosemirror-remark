@@ -121,6 +121,10 @@ export class ImageReferenceExtension extends NodeExtension {
       }
       context.ImageReferenceExtension.proseMirrorNodes[id].attrs.src =
         definition.url;
+      if (definition.title !== undefined) {
+        context.ImageReferenceExtension.proseMirrorNodes[id].attrs.title =
+          definition.title;
+      }
     }
   }
 }
