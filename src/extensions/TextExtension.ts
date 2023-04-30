@@ -24,7 +24,6 @@ export class TextExtension extends NodeExtension<Text> {
 
   public mdastNodeToProseMirrorNodes(
     node: Text,
-    _convertedChildren: Array<ProseMirrorNode>,
     schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     return [schema.text(node.value)];

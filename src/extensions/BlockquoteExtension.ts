@@ -30,8 +30,8 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
 
   public mdastNodeToProseMirrorNodes(
     _node: Blockquote,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

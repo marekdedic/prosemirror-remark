@@ -30,8 +30,8 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
 
   public mdastNodeToProseMirrorNodes(
     _node: Paragraph,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

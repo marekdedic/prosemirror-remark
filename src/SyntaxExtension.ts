@@ -23,8 +23,8 @@ export abstract class SyntaxExtension<
   // TODO: There is some code duplication in the specializations of this method
   public abstract mdastNodeToProseMirrorNodes(
     node: UNode,
-    convertedChildren: Array<ProseMirrorNode>,
     schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>,
     context: ConverterContext<Context>
   ): Array<ProseMirrorNode>;
 }

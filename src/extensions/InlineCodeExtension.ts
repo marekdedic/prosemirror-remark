@@ -29,7 +29,6 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
 
   public mdastNodeToProseMirrorNodes(
     node: InlineCode,
-    _convertedChildren: Array<ProseMirrorNode>,
     schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     return [

@@ -52,8 +52,8 @@ export class LinkReferenceExtension extends MarkExtension<
 
   public mdastNodeToProseMirrorNodes(
     node: LinkReference,
-    convertedChildren: Array<ProseMirrorNode>,
     schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>,
     context: ConverterContext<{
       LinkReferenceExtension: LinkReferenceExtensionContext;
     }>

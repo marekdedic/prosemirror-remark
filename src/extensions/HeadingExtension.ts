@@ -39,8 +39,8 @@ export class HeadingExtension extends NodeExtension<Heading> {
 
   public mdastNodeToProseMirrorNodes(
     node: Heading,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

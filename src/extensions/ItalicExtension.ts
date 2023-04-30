@@ -28,8 +28,8 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
 
   public mdastNodeToProseMirrorNodes(
     _node: Emphasis,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(

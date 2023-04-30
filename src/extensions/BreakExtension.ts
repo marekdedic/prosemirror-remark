@@ -30,8 +30,8 @@ export class BreakExtension extends NodeExtension<Break> {
 
   public mdastNodeToProseMirrorNodes(
     _node: Break,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

@@ -44,8 +44,8 @@ export class LinkExtension extends MarkExtension<Link> {
 
   public mdastNodeToProseMirrorNodes(
     node: Link,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(

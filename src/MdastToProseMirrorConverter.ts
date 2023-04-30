@@ -50,8 +50,8 @@ export class MdastToProseMirrorConverter {
       }
       return extension.mdastNodeToProseMirrorNodes(
         node,
-        convertedChildren,
         schema,
+        convertedChildren,
         context
       );
     }

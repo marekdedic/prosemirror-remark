@@ -39,8 +39,8 @@ export class OrderedListExtension extends NodeExtension<List> {
 
   public mdastNodeToProseMirrorNodes(
     _node: List,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

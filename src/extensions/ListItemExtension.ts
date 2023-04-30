@@ -30,8 +30,8 @@ export class ListItemExtension extends NodeExtension<ListItem> {
 
   public mdastNodeToProseMirrorNodes(
     _node: ListItem,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

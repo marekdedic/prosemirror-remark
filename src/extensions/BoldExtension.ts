@@ -28,8 +28,8 @@ export class BoldExtension extends MarkExtension<Strong> {
 
   public mdastNodeToProseMirrorNodes(
     _node: Strong,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(

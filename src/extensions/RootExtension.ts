@@ -22,8 +22,8 @@ export class RootExtension extends NodeExtension<Root> {
 
   public mdastNodeToProseMirrorNodes(
     _node: Root,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

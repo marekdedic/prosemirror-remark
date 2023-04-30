@@ -61,8 +61,8 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
 
   public mdastNodeToProseMirrorNodes(
     node: Image,
-    convertedChildren: Array<ProseMirrorNode>,
-    schema: Schema<string, string>
+    schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()

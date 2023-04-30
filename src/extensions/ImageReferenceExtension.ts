@@ -69,8 +69,8 @@ export class ImageReferenceExtension extends NodeExtension<
 
   public mdastNodeToProseMirrorNodes(
     node: ImageReference,
-    convertedChildren: Array<ProseMirrorNode>,
     schema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>,
     context: ConverterContext<{
       ImageReferenceExtension: ImageReferenceExtensionContext;
     }>

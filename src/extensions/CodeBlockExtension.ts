@@ -33,7 +33,6 @@ export class CodeBlockExtension extends NodeExtension<Code> {
 
   public mdastNodeToProseMirrorNodes(
     node: Code,
-    _convertedChildren: Array<ProseMirrorNode>,
     schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
