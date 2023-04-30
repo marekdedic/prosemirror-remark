@@ -42,7 +42,7 @@ export class BreakExtension extends NodeExtension<Break> {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNodes(): Array<Break> {
+  public proseMirrorNodeToUnistNodes(): Array<Break> {
     return [{ type: this.unistNodeName() }];
   }
 }

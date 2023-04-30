@@ -75,7 +75,7 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNodes(node: ProseMirrorNode): Array<Paragraph> {
+  public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<Paragraph> {
     return [
       // The paragraph is needed to counter-balance remark-unwrap-images, otherwise stringification breaks
       {

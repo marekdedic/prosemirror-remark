@@ -42,7 +42,7 @@ export class ListItemExtension extends NodeExtension<ListItem> {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNodes(
+  public proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
     convertedChildren: Array<BlockContent | DefinitionContent>
   ): Array<ListItem> {

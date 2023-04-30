@@ -42,7 +42,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNodes(
+  public proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
     convertedChildren: Array<BlockContent | DefinitionContent>
   ): Array<Blockquote> {

@@ -34,7 +34,7 @@ export class ProseMirrorToUnistConverter {
           this.convertNode(node.child(i))
         );
       }
-      convertedNodes = extension.proseMirrorNodeToMdastNodes(
+      convertedNodes = extension.proseMirrorNodeToUnistNodes(
         node,
         convertedChildren
       );

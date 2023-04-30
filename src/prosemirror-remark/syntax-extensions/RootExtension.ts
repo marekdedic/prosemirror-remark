@@ -34,7 +34,7 @@ export class RootExtension extends NodeExtension<Root> {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNodes(
+  public proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
     convertedChildren: Array<Content>
   ): Array<Root> {

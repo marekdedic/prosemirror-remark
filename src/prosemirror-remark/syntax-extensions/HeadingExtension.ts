@@ -51,7 +51,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNodes(
+  public proseMirrorNodeToUnistNodes(
     node: ProseMirrorNode,
     convertedChildren: Array<PhrasingContent>
   ): Array<Heading> {

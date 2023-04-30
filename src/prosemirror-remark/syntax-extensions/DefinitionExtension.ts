@@ -44,7 +44,7 @@ export class DefinitionExtension extends NodeExtension<Definition> {
     return [];
   }
 
-  public proseMirrorNodeToMdastNodes(): Array<Definition> {
+  public proseMirrorNodeToUnistNodes(): Array<Definition> {
     return [];
   }
 }

@@ -29,7 +29,7 @@ export class TextExtension extends NodeExtension<Text> {
     return [schema.text(node.value)];
   }
 
-  public proseMirrorNodeToMdastNodes(node: ProseMirrorNode): Array<Text> {
+  public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<Text> {
     return [{ type: this.unistNodeName(), value: node.text ?? "" }];
   }
 }

@@ -41,7 +41,7 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToMdastNodes(): Array<ThematicBreak> {
+  public proseMirrorNodeToUnistNodes(): Array<ThematicBreak> {
     return [
       {
         type: this.unistNodeName(),
