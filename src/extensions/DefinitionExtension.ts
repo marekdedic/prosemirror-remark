@@ -4,6 +4,13 @@ import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { ConverterContext } from "../ConverterContext";
 import { NodeExtension } from "../NodeExtension";
 
+export interface DefinitionExtensionContext {
+  definitions: Record<
+    string,
+    { url: string; title: string | null | undefined }
+  >;
+}
+
 export class DefinitionExtension extends NodeExtension {
   public mdastNodeName(): "definition" {
     return "definition";
@@ -22,13 +29,12 @@ export class DefinitionExtension extends NodeExtension {
     node: Definition,
     _1: Array<ProseMirrorNode>,
     _2: Schema,
-    context: ConverterContext
+    context: ConverterContext<{
+      DefinitionExtension: DefinitionExtensionContext;
+    }>
   ): Array<ProseMirrorNode> {
     if (context.DefinitionExtension === undefined) {
-      context.DefinitionExtension = {};
-    }
-    if (context.DefinitionExtension.definitions === undefined) {
-      context.DefinitionExtension.definitions = {};
+      context.DefinitionExtension = { definitions: {} };
     }
     context.DefinitionExtension.definitions[node.identifier] = {
       title: node.title,

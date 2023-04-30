@@ -11,6 +11,11 @@ import type { Node as UnistNode } from "unist";
 
 import type { ConverterContext } from "../ConverterContext";
 import { NodeExtension } from "../NodeExtension";
+import type { DefinitionExtensionContext } from "./DefinitionExtension";
+
+export interface ImageReferenceExtensionContext {
+  proseMirrorNodes: Record<string, ProseMirrorNode>;
+}
 
 export class ImageReferenceExtension extends NodeExtension {
   // TODO: UnistNode is a generic
@@ -66,7 +71,9 @@ export class ImageReferenceExtension extends NodeExtension {
     node: ImageReference,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema,
-    context: ConverterContext
+    context: ConverterContext<{
+      ImageReferenceExtension: ImageReferenceExtensionContext;
+    }>
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = schema.nodes[
       this.proseMirrorNodeName()
@@ -78,10 +85,7 @@ export class ImageReferenceExtension extends NodeExtension {
       return [];
     }
     if (context.ImageReferenceExtension === undefined) {
-      context.ImageReferenceExtension = {};
-    }
-    if (context.ImageReferenceExtension.proseMirrorNodes === undefined) {
-      context.ImageReferenceExtension.proseMirrorNodes = {};
+      context.ImageReferenceExtension = { proseMirrorNodes: {} };
     }
     context.ImageReferenceExtension.proseMirrorNodes[node.identifier] =
       proseMirrorNode;
@@ -106,28 +110,28 @@ export class ImageReferenceExtension extends NodeExtension {
     ];
   }
 
-  public postMdastToProseMirrorHook(context: ConverterContext): void {
+  public postMdastToProseMirrorHook(
+    context: ConverterContext<{
+      DefinitionExtension: DefinitionExtensionContext;
+      ImageReferenceExtension: ImageReferenceExtensionContext;
+    }>
+  ): void {
     if (
       context.ImageReferenceExtension === undefined ||
-      context.ImageReferenceExtension.proseMirrorNodes === undefined ||
-      context.DefinitionExtension === undefined ||
-      context.DefinitionExtension.definitions === undefined
+      context.DefinitionExtension === undefined
     ) {
       return;
     }
-    for (const id in context.ImageReferenceExtension.proseMirrorNodes as Record<
-      string,
-      ProseMirrorNode
-    >) {
+    for (const id in context.ImageReferenceExtension.proseMirrorNodes) {
       const definition = context.DefinitionExtension.definitions[id];
       if (definition === undefined) {
         continue;
       }
-      context.ImageReferenceExtension.proseMirrorNodes[id].attrs.src =
-        definition.url;
+      const attrs = context.ImageReferenceExtension.proseMirrorNodes[id]
+        .attrs as Record<string, any>;
+      attrs.src = definition.url;
       if (definition.title !== undefined) {
-        context.ImageReferenceExtension.proseMirrorNodes[id].attrs.title =
-          definition.title;
+        attrs.title = definition.title;
       }
     }
   }

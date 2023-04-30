@@ -21,7 +21,7 @@ export class MdastToProseMirrorConverter {
   // TODO: UnistNode is a generic
   // TODO: Specialize schema generic
   public convert(mdast: UnistNode, schema: Schema): ProseMirrorNode | null {
-    const context: ConverterContext = {};
+    const context: ConverterContext<unknown> = {};
     const rootNode = this.convertNode(mdast, schema, context);
     for (const extension of this.extensions) {
       extension.postMdastToProseMirrorHook(context);
@@ -37,7 +37,7 @@ export class MdastToProseMirrorConverter {
   private convertNode(
     node: UnistNode,
     schema: Schema,
-    context: ConverterContext
+    context: ConverterContext<unknown>
   ): Array<ProseMirrorNode> {
     for (const extension of this.extensions) {
       // TODO: This is needlessly slow, a map would be better

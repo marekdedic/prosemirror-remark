@@ -1,2 +1,1 @@
-// TODO: Better type?
-export type ConverterContext = Record<string, any>;
+export type ConverterContext<T> = Partial<T>;

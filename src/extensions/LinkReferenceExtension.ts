@@ -9,6 +9,11 @@ import type {
 
 import type { ConverterContext } from "../ConverterContext";
 import { MarkExtension } from "../MarkExtension";
+import type { DefinitionExtensionContext } from "./DefinitionExtension";
+
+export interface LinkReferenceExtensionContext {
+  marks: Record<string, Mark>;
+}
 
 export class LinkReferenceExtension extends MarkExtension {
   public mdastNodeName(): "linkReference" {
@@ -48,17 +53,16 @@ export class LinkReferenceExtension extends MarkExtension {
     node: LinkReference,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema,
-    context: ConverterContext
+    context: ConverterContext<{
+      LinkReferenceExtension: LinkReferenceExtensionContext;
+    }>
   ): Array<ProseMirrorNode> {
     const mark = schema.marks[this.proseMirrorMarkName()].create({
       href: null,
       title: null,
     });
     if (context.LinkReferenceExtension === undefined) {
-      context.LinkReferenceExtension = {};
-    }
-    if (context.LinkReferenceExtension.marks === undefined) {
-      context.LinkReferenceExtension.marks = {};
+      context.LinkReferenceExtension = { marks: {} };
     }
     context.LinkReferenceExtension.marks[node.identifier] = mark;
     return convertedChildren.map((child) =>
@@ -76,26 +80,30 @@ export class LinkReferenceExtension extends MarkExtension {
     };
   }
 
-  public postMdastToProseMirrorHook(context: ConverterContext): void {
+  public postMdastToProseMirrorHook(
+    context: ConverterContext<{
+      DefinitionExtension: DefinitionExtensionContext;
+      LinkReferenceExtension: LinkReferenceExtensionContext;
+    }>
+  ): void {
     if (
       context.LinkReferenceExtension === undefined ||
-      context.LinkReferenceExtension.marks === undefined ||
-      context.DefinitionExtension === undefined ||
-      context.DefinitionExtension.definitions === undefined
+      context.DefinitionExtension === undefined
     ) {
       return;
     }
-    for (const id in context.LinkReferenceExtension.marks as Record<
-      string,
-      Mark
-    >) {
+    for (const id in context.LinkReferenceExtension.marks) {
       const definition = context.DefinitionExtension.definitions[id];
       if (definition === undefined) {
         continue;
       }
-      context.LinkReferenceExtension.marks[id].attrs.href = definition.url;
+      const attrs = context.LinkReferenceExtension.marks[id].attrs as Record<
+        string,
+        any
+      >;
+      attrs.href = definition.url;
       if (definition.title !== undefined) {
-        context.LinkReferenceExtension.marks[id].attrs.title = definition.title;
+        attrs.title = definition.title;
       }
     }
   }

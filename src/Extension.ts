@@ -4,7 +4,7 @@ import type { Node as UnistNode } from "unist";
 
 import type { ConverterContext } from "./ConverterContext";
 
-export abstract class Extension {
+export abstract class Extension<Context = {}> {
   // TODO: UnistNode is a generic
   // TODO: Maybe more specific Processor types?
   public unifiedInitializationHook(
@@ -18,7 +18,9 @@ export abstract class Extension {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-  public postMdastToProseMirrorHook(_context: ConverterContext): void {}
+  public postMdastToProseMirrorHook(
+    _context: ConverterContext<Context>
+  ): void {}
 
   public abstract mdastNodeName(): string;
 
@@ -30,6 +32,6 @@ export abstract class Extension {
     node: UnistNode,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema,
-    context: ConverterContext
+    context: ConverterContext<Context>
   ): Array<ProseMirrorNode>;
 }
