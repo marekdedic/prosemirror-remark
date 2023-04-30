@@ -11,18 +11,18 @@ export class UnistToProseMirrorConverter {
     this.extensionManager = extensionManager;
   }
 
-  private static mdastNodeIsParent(node: UnistNode): node is Parent {
+  private static unistNodeIsParent(node: UnistNode): node is Parent {
     return "children" in node;
   }
 
   // TODO: Move schema to a property?
   // TODO: Better error handling?
   public convert(
-    mdast: UnistNode,
+    unist: UnistNode,
     schema: Schema<string, string>
   ): ProseMirrorNode | null {
     const context: ConverterContext<unknown> = {};
-    const rootNode = this.convertNode(mdast, schema, context);
+    const rootNode = this.convertNode(unist, schema, context);
     for (const extension of this.extensionManager.syntaxExtensions()) {
       extension.postMdastToProseMirrorHook(context);
     }
@@ -43,7 +43,7 @@ export class UnistToProseMirrorConverter {
         continue;
       }
       let convertedChildren: Array<ProseMirrorNode> = [];
-      if (UnistToProseMirrorConverter.mdastNodeIsParent(node)) {
+      if (UnistToProseMirrorConverter.unistNodeIsParent(node)) {
         convertedChildren = node.children.flatMap((child) =>
           this.convertNode(child, schema, context)
         );
@@ -56,7 +56,7 @@ export class UnistToProseMirrorConverter {
       );
     }
     console.warn(
-      "Couldn't find any way to convert mdast node of type \"" +
+      "Couldn't find any way to convert unist node of type \"" +
         node.type +
         '" to a ProseMirror node.'
     );

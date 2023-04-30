@@ -14,7 +14,7 @@ export class ProseMirrorUnified {
   private readonly builtSchema: Schema<string, string>;
   private readonly unistToProseMirrorConverter: UnistToProseMirrorConverter;
   private readonly proseMirrorToUnistConverter: ProseMirrorToUnistConverter;
-  private readonly remark: Processor<UnistNode, UnistNode, UnistNode, string>;
+  private readonly unified: Processor<UnistNode, UnistNode, UnistNode, string>;
 
   public constructor(extensions: Array<Extension> = []) {
     const extensionManager = new ExtensionManager(extensions);
@@ -25,11 +25,11 @@ export class ProseMirrorUnified {
     this.proseMirrorToUnistConverter = new ProseMirrorToUnistConverter(
       extensionManager
     );
-    this.remark = new UnifiedBuilder(extensionManager).build();
+    this.unified = new UnifiedBuilder(extensionManager).build();
   }
 
   public parse(markdown: string): ProseMirrorNode | null {
-    const unist = this.remark.runSync(this.remark.parse(markdown));
+    const unist = this.unified.runSync(this.unified.parse(markdown));
     // TODO: Fix remark-unwrap-images to not put text nodes in root
     (unist as Root).children = (unist as Root).children.filter(
       (child) => child.type !== "text"
@@ -48,7 +48,7 @@ export class ProseMirrorUnified {
     if (unist === null) {
       return "";
     }
-    const markdown: string = this.remark.stringify(unist);
+    const markdown: string = this.unified.stringify(unist);
     console.log(unist);
     return markdown;
   }
