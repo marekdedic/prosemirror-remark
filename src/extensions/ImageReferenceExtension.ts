@@ -128,7 +128,11 @@ export class ImageReferenceExtension extends NodeExtension {
       }
       const definition = context.DefinitionExtension.definitions[id];
       const attrs = context.ImageReferenceExtension.proseMirrorNodes[id]
-        .attrs as Record<string, any>;
+        .attrs as Record<
+        string,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        any
+      >;
       attrs.src = definition.url;
       if (definition.title !== undefined) {
         attrs.title = definition.title;
