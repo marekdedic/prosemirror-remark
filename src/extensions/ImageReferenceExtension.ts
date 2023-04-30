@@ -20,7 +20,6 @@ export interface ImageReferenceExtensionContext {
 export class ImageReferenceExtension extends NodeExtension<
   ImageReference | Paragraph
 > {
-  // TODO: Maybe more specific Processor types?
   public unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, string>
   ): Processor<UnistNode, UnistNode, UnistNode, string> {
