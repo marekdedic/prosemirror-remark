@@ -26,10 +26,14 @@ __This is bold text__\n\
 \n\
 _This is italic text_\n\
 \n\
+<i class="Hello">HTML italic</i>\n\
+\n\
 ***This is bold italic text***\n\
 \n\
 ~~Strikethrough~~\n\
 \n\
+Hard break  \n\
+between lines\n\
 \n\
 ## Blockquotes\n\
 \n\
