@@ -1,3 +1,8 @@
+import remarkParse from "remark-parse";
+import remarkStringify from "remark-stringify";
+import type { Processor } from "unified";
+import type { Node as UnistNode } from "unist";
+
 import { Extension } from "../prosemirror-unified";
 import { BlockquoteExtension } from "./syntax-extensions/BlockquoteExtension";
 import { BoldExtension } from "./syntax-extensions/BoldExtension";
@@ -43,5 +48,13 @@ export class MarkdownExtension extends Extension {
       new TextExtension(),
       new UnorderedListExtension(),
     ];
+  }
+
+  public unifiedInitializationHook(
+    processor: Processor<UnistNode, UnistNode, UnistNode, string>
+  ): Processor<UnistNode, UnistNode, UnistNode, string> {
+    return processor
+      .use(remarkParse)
+      .use(remarkStringify, { fences: true, resourceLink: true, rule: "-" });
   }
 }
