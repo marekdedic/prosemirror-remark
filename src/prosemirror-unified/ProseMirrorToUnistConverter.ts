@@ -54,7 +54,7 @@ export class ProseMirrorToUnistConverter {
           if (extension.proseMirrorMarkName() !== mark.type.name) {
             continue;
           }
-          convertedNode = extension.modifyMdastNode(convertedNode, mark);
+          convertedNode = extension.modifyUnistNode(convertedNode, mark);
           // TODO: This is here due to interference between LinkExtension and LinkReferenceExtension - that should be handled better
           break;
         }

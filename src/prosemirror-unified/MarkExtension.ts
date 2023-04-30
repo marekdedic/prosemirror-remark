@@ -12,7 +12,7 @@ export abstract class MarkExtension<
 
   // TODO: There is some code duplication in the specializations of this method
   // TODO: Add a check for compatible source nodes
-  public abstract modifyMdastNode(
+  public abstract modifyUnistNode(
     convertedNode: UnistNode,
     originalMark: Mark
   ): UNode;

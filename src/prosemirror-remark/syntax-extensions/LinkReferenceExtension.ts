@@ -82,7 +82,7 @@ export class LinkReferenceExtension extends MarkExtension<
   }
 
   // TODO: This shouldn't be called at all
-  public modifyMdastNode(convertedNode: Text, originalMark: Mark): Link {
+  public modifyUnistNode(convertedNode: Text, originalMark: Mark): Link {
     return {
       type: "link",
       url: originalMark.attrs.href as string,

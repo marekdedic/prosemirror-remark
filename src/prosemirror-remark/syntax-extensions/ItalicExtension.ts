@@ -38,7 +38,7 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
     );
   }
 
-  public modifyMdastNode(convertedNode: Text): Emphasis {
+  public modifyUnistNode(convertedNode: Text): Emphasis {
     return { type: this.unistNodeName(), children: [convertedNode] };
   }
 }

@@ -59,7 +59,7 @@ export class LinkExtension extends MarkExtension<Link> {
     );
   }
 
-  public modifyMdastNode(convertedNode: Text, originalMark: Mark): Link {
+  public modifyUnistNode(convertedNode: Text, originalMark: Mark): Link {
     return {
       type: this.unistNodeName(),
       url: originalMark.attrs.href as string,
