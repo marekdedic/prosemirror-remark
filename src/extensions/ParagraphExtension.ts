@@ -8,7 +8,7 @@ import type {
 
 import { NodeExtension } from "../NodeExtension";
 
-export class ParagraphExtension extends NodeExtension {
+export class ParagraphExtension extends NodeExtension<Paragraph> {
   public mdastNodeName(): "paragraph" {
     return "paragraph";
   }

@@ -8,7 +8,7 @@ import type {
 
 import { NodeExtension } from "../NodeExtension";
 
-export class CodeBlockExtension extends NodeExtension {
+export class CodeBlockExtension extends NodeExtension<Code> {
   public mdastNodeName(): "code" {
     return "code";
   }

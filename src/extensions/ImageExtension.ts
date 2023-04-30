@@ -11,7 +11,7 @@ import type { Node as UnistNode } from "unist";
 
 import { NodeExtension } from "../NodeExtension";
 
-export class ImageExtension extends NodeExtension {
+export class ImageExtension extends NodeExtension<Image | Paragraph> {
   // TODO: Maybe more specific Processor types?
   public unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, string>

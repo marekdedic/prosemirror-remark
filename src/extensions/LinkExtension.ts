@@ -9,7 +9,7 @@ import type {
 
 import { MarkExtension } from "../MarkExtension";
 
-export class LinkExtension extends MarkExtension {
+export class LinkExtension extends MarkExtension<Link> {
   public mdastNodeName(): "link" {
     return "link";
   }

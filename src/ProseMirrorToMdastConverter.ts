@@ -5,12 +5,12 @@ import type { MarkExtension } from "./MarkExtension";
 import type { NodeExtension } from "./NodeExtension";
 
 export class ProseMirrorToMdastConverter {
-  private readonly nodeExtensions: Array<NodeExtension>;
-  private readonly markExtensions: Array<MarkExtension>;
+  private readonly nodeExtensions: Array<NodeExtension<UnistNode>>;
+  private readonly markExtensions: Array<MarkExtension<UnistNode>>;
 
   public constructor(
-    nodeExtensions: Array<NodeExtension>,
-    markExtensions: Array<MarkExtension>
+    nodeExtensions: Array<NodeExtension<UnistNode>>,
+    markExtensions: Array<MarkExtension<UnistNode>>
   ) {
     this.nodeExtensions = nodeExtensions;
     this.markExtensions = markExtensions;

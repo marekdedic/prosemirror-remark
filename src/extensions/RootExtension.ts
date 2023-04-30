@@ -8,7 +8,7 @@ import type { Node as UnistNode } from "unist";
 
 import { NodeExtension } from "../NodeExtension";
 
-export class RootExtension extends NodeExtension {
+export class RootExtension extends NodeExtension<Root> {
   public mdastNodeName(): "root" {
     return "root";
   }

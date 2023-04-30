@@ -15,7 +15,9 @@ export interface LinkReferenceExtensionContext {
   marks: Record<string, Mark>;
 }
 
-export class LinkReferenceExtension extends MarkExtension {
+export class LinkReferenceExtension extends MarkExtension<
+  Link | LinkReference
+> {
   public mdastNodeName(): "linkReference" {
     return "linkReference";
   }

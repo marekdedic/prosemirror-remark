@@ -7,7 +7,7 @@ import type {
 
 import { NodeExtension } from "../NodeExtension";
 
-export class TextExtension extends NodeExtension {
+export class TextExtension extends NodeExtension<Text> {
   public mdastNodeName(): "text" {
     return "text";
   }

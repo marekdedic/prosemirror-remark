@@ -11,7 +11,7 @@ export interface DefinitionExtensionContext {
   >;
 }
 
-export class DefinitionExtension extends NodeExtension {
+export class DefinitionExtension extends NodeExtension<Definition> {
   public mdastNodeName(): "definition" {
     return "definition";
   }

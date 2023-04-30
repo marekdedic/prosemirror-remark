@@ -8,7 +8,7 @@ import type {
 
 import { NodeExtension } from "../NodeExtension";
 
-export class BreakExtension extends NodeExtension {
+export class BreakExtension extends NodeExtension<Break> {
   public mdastNodeName(): "break" {
     return "break";
   }

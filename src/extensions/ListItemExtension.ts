@@ -8,7 +8,7 @@ import type {
 
 import { NodeExtension } from "../NodeExtension";
 
-export class ListItemExtension extends NodeExtension {
+export class ListItemExtension extends NodeExtension<ListItem> {
   public mdastNodeName(): "listItem" {
     return "listItem";
   }

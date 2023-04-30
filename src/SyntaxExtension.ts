@@ -5,6 +5,7 @@ import type { ConverterContext } from "./ConverterContext";
 import { Extension } from "./Extension";
 
 export abstract class SyntaxExtension<
+  UNode extends UnistNode,
   Context = Record<string, never>
 > extends Extension {
   public mdastNodeMatches(node: UnistNode): boolean {
@@ -17,13 +18,13 @@ export abstract class SyntaxExtension<
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   ): void {}
 
+  // TODO: Use node type instead of string?
   public abstract mdastNodeName(): string;
 
   // TODO: There is some code duplication in the specializations of this method
-  // TODO: Make this generic
   // TODO: Specialize schema generic
   public abstract mdastNodeToProseMirrorNodes(
-    node: UnistNode,
+    node: UNode,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema,
     context: ConverterContext<Context>

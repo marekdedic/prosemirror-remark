@@ -8,7 +8,7 @@ import type {
 
 import { NodeExtension } from "../NodeExtension";
 
-export class HorizontalRuleExtension extends NodeExtension {
+export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
   public mdastNodeName(): "thematicBreak" {
     return "thematicBreak";
   }

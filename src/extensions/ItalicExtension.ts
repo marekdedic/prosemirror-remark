@@ -8,7 +8,7 @@ import type {
 
 import { MarkExtension } from "../MarkExtension";
 
-export class ItalicExtension extends MarkExtension {
+export class ItalicExtension extends MarkExtension<Emphasis> {
   public mdastNodeName(): "emphasis" {
     return "emphasis";
   }

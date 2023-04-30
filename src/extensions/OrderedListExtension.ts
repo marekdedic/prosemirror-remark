@@ -11,7 +11,7 @@ import { NodeExtension } from "../NodeExtension";
 
 // TODO: Add support for starting from number other than 1
 // TODO: Item spacing
-export class OrderedListExtension extends NodeExtension {
+export class OrderedListExtension extends NodeExtension<List> {
   public mdastNodeName(): "list" {
     return "list";
   }

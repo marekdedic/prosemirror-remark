@@ -12,19 +12,21 @@ import { SchemaBuilder } from "./SchemaBuilder";
 import { SyntaxExtension } from "./SyntaxExtension";
 import { UnifiedBuilder } from "./UnifiedBuilder";
 
-function isSyntaxExtension(extension: Extension): extension is SyntaxExtension {
+function isSyntaxExtension(
+  extension: Extension
+): extension is SyntaxExtension<UnistNode> {
   return extension instanceof SyntaxExtension;
 }
 
-function isNodeExtension(
-  extension: SyntaxExtension
-): extension is NodeExtension {
+function isNodeExtension<UNode extends UnistNode>(
+  extension: SyntaxExtension<UNode>
+): extension is NodeExtension<UNode> {
   return extension instanceof NodeExtension;
 }
 
-function isMarkExtension(
-  extension: SyntaxExtension
-): extension is MarkExtension {
+function isMarkExtension<UNode extends UnistNode>(
+  extension: SyntaxExtension<UNode>
+): extension is MarkExtension<UNode> {
   return extension instanceof MarkExtension;
 }
 

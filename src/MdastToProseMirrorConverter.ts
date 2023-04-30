@@ -5,9 +5,9 @@ import type { ConverterContext } from "./ConverterContext";
 import type { SyntaxExtension } from "./SyntaxExtension";
 
 export class MdastToProseMirrorConverter {
-  private readonly extensions: Array<SyntaxExtension>;
+  private readonly extensions: Array<SyntaxExtension<UnistNode>>;
 
-  public constructor(extensions: Array<SyntaxExtension>) {
+  public constructor(extensions: Array<SyntaxExtension<UnistNode>>) {
     this.extensions = extensions;
   }
 

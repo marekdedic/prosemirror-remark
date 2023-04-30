@@ -8,7 +8,7 @@ import type {
 
 import { NodeExtension } from "../NodeExtension";
 
-export class BlockquoteExtension extends NodeExtension {
+export class BlockquoteExtension extends NodeExtension<Blockquote> {
   public mdastNodeName(): "blockquote" {
     return "blockquote";
   }
