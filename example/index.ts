@@ -14,6 +14,7 @@ import { unified } from "unified";
 
 import { BlockquoteExtension } from "../src/extensions/BlockquoteExtension";
 import { BoldExtension } from "../src/extensions/BoldExtension";
+import { BreakExtension } from "../src/extensions/BreakExtension";
 import { CodeBlockExtension } from "../src/extensions/CodeBlockExtension";
 import { DefinitionExtension } from "../src/extensions/DefinitionExtension";
 import { HeadingExtension } from "../src/extensions/HeadingExtension";
@@ -39,6 +40,7 @@ const preview = document.querySelector("#preview-container")!;
 const adapter = new ProseMirrorRemark([
   new BlockquoteExtension(),
   new BoldExtension(),
+  new BreakExtension(),
   new CodeBlockExtension(),
   new DefinitionExtension(),
   new HeadingExtension(),
