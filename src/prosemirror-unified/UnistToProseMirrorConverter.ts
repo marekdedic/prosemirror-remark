@@ -24,7 +24,7 @@ export class UnistToProseMirrorConverter {
     const context: ConverterContext<unknown> = {};
     const rootNode = this.convertNode(unist, schema, context);
     for (const extension of this.extensionManager.syntaxExtensions()) {
-      extension.postMdastToProseMirrorHook(context);
+      extension.postUnistToProseMirrorHook(context);
     }
     if (rootNode.length !== 1) {
       return null;

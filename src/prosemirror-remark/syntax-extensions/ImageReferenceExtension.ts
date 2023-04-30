@@ -119,7 +119,7 @@ export class ImageReferenceExtension extends NodeExtension<
     ];
   }
 
-  public postMdastToProseMirrorHook(
+  public postUnistToProseMirrorHook(
     context: ConverterContext<{
       DefinitionExtension: DefinitionExtensionContext;
       ImageReferenceExtension: ImageReferenceExtensionContext;

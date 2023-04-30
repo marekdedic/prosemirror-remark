@@ -12,7 +12,7 @@ export abstract class SyntaxExtension<
     return node.type === this.unistNodeName();
   }
 
-  public postMdastToProseMirrorHook(
+  public postUnistToProseMirrorHook(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _context: ConverterContext<Context>
     // eslint-disable-next-line @typescript-eslint/no-empty-function

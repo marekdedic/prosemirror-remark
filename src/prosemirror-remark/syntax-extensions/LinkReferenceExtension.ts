@@ -91,7 +91,7 @@ export class LinkReferenceExtension extends MarkExtension<
     };
   }
 
-  public postMdastToProseMirrorHook(
+  public postUnistToProseMirrorHook(
     context: ConverterContext<{
       DefinitionExtension: DefinitionExtensionContext;
       LinkReferenceExtension: LinkReferenceExtensionContext;
