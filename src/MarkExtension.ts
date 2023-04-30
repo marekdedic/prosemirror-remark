@@ -11,6 +11,7 @@ export abstract class MarkExtension extends Extension {
   // TODO: There is some code duplication in the specializations of this method
   // TODO: Make this generic
   // TODO: Add a for compatible source nodes
+  // TODO: UnistNode is a generic
   public abstract modifyMdastNode(
     convertedNode: UnistNode,
     originalMark: Mark

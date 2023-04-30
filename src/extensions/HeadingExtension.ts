@@ -37,6 +37,7 @@ export class HeadingExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: Heading,
     convertedChildren: Array<ProseMirrorNode>,

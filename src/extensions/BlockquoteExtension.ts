@@ -28,6 +28,7 @@ export class BlockquoteExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     _: Blockquote,
     convertedChildren: Array<ProseMirrorNode>,

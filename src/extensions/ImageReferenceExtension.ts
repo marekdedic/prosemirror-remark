@@ -13,6 +13,8 @@ import type { ConverterContext } from "../ConverterContext";
 import { NodeExtension } from "../NodeExtension";
 
 export class ImageReferenceExtension extends NodeExtension {
+  // TODO: UnistNode is a generic
+  // TODO: Maybe more specific Processor types?
   public unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, string>
   ): Processor<UnistNode, UnistNode, UnistNode, string> {
@@ -59,6 +61,7 @@ export class ImageReferenceExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: ImageReference,
     convertedChildren: Array<ProseMirrorNode>,

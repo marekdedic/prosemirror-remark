@@ -5,7 +5,6 @@ import type {
   NodeSpec,
   Schema,
 } from "prosemirror-model";
-import type { Node as UnistNode } from "unist";
 
 import { NodeExtension } from "../NodeExtension";
 
@@ -29,8 +28,9 @@ export class ParagraphExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
-    _: UnistNode,
+    _: Paragraph,
     convertedChildren: Array<ProseMirrorNode>,
     schema: Schema
   ): Array<ProseMirrorNode> {

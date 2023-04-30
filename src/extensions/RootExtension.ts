@@ -21,6 +21,8 @@ export class RootExtension extends NodeExtension {
     return { content: "block+" };
   }
 
+  // TODO: UnistNode is a generic
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     _: UnistNode,
     convertedChildren: Array<ProseMirrorNode>,

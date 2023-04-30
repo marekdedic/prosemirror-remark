@@ -16,6 +16,7 @@ export class OrderedListExtension extends NodeExtension {
     return "list";
   }
 
+  // TODO: UnistNode is a generic
   public mdastNodeMatches(node: UnistNode): boolean {
     return (
       node.type === this.mdastNodeName() && (node as List).ordered === true
@@ -37,6 +38,7 @@ export class OrderedListExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     _: List,
     convertedChildren: Array<ProseMirrorNode>,

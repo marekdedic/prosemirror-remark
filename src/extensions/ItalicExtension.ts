@@ -26,6 +26,7 @@ export class ItalicExtension extends MarkExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     _: Emphasis,
     convertedChildren: Array<ProseMirrorNode>,

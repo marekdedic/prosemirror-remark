@@ -20,9 +20,12 @@ function isMarkExtension(extension: Extension): extension is MarkExtension {
 }
 
 export class ProseMirrorRemark {
+  // TODO: Specialize schema generic
   private readonly builtSchema: Schema<string, string>;
   private readonly mdastToProseMirrorConverter: MdastToProseMirrorConverter;
   private readonly proseMirrorToMdastConverter: ProseMirrorToMdastConverter;
+  // TODO: UnistNode is a generic
+  // TODO: Maybe more specific types?
   private readonly remark: Processor<UnistNode, UnistNode, UnistNode, string>;
 
   public constructor(extensions: Array<Extension> = []) {

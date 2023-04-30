@@ -27,6 +27,7 @@ export class HorizontalRuleExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     _: ThematicBreak,
     convertedChildren: Array<ProseMirrorNode>,

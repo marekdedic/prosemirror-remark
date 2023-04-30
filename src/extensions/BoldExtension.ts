@@ -26,6 +26,7 @@ export class BoldExtension extends MarkExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     _: Strong,
     convertedChildren: Array<ProseMirrorNode>,

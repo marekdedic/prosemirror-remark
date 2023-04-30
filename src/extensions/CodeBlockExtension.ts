@@ -31,6 +31,7 @@ export class CodeBlockExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: Code,
     _: Array<ProseMirrorNode>,

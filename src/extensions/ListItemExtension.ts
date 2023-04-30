@@ -28,6 +28,7 @@ export class ListItemExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     _: ListItem,
     convertedChildren: Array<ProseMirrorNode>,

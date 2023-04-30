@@ -12,6 +12,8 @@ import type { Node as UnistNode } from "unist";
 import { NodeExtension } from "../NodeExtension";
 
 export class ImageExtension extends NodeExtension {
+  // TODO: UnistNode is a generic
+  // TODO: Maybe more specific Processor types?
   public unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, string>
   ): Processor<UnistNode, UnistNode, UnistNode, string> {
@@ -58,6 +60,7 @@ export class ImageExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize Schema generic
   public mdastNodeToProseMirrorNodes(
     node: Image,
     convertedChildren: Array<ProseMirrorNode>,

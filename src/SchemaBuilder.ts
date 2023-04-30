@@ -26,6 +26,7 @@ export class SchemaBuilder {
     }
   }
 
+  // TODO: stricter generic types?
   public build(): Schema<string, Marks> {
     return new Schema<string, Marks>({
       nodes: this.nodes,

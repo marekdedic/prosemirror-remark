@@ -22,6 +22,7 @@ export class TextExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: Text,
     _: Array<ProseMirrorNode>,

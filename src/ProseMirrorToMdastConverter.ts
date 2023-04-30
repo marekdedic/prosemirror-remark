@@ -19,6 +19,7 @@ export class ProseMirrorToMdastConverter {
   // TODO: Move schema to a property?
   // TODO: Better error handling?
   // TODO: Support marks
+  // TODO: UnistNode is a generic
   public convert(node: ProseMirrorNode): UnistNode | null {
     const rootNode = this.convertNode(node);
     if (rootNode.length !== 1) {
@@ -27,6 +28,7 @@ export class ProseMirrorToMdastConverter {
     return rootNode[0];
   }
 
+  // TODO: UnistNode is a generic
   private convertNode(node: ProseMirrorNode): Array<UnistNode> {
     let convertedNodes: Array<UnistNode> | null = null;
     for (const extension of this.nodeExtensions) {
@@ -34,6 +36,7 @@ export class ProseMirrorToMdastConverter {
       if (extension.proseMirrorNodeName() !== node.type.name) {
         continue;
       }
+      // TODO: UnistNode is a generic
       let convertedChildren: Array<UnistNode> = [];
       for (let i = 0; i < node.childCount; ++i) {
         convertedChildren = convertedChildren.concat(

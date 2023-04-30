@@ -27,6 +27,7 @@ export class InlineCodeExtension extends MarkExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     node: InlineCode,
     _: Array<ProseMirrorNode>,

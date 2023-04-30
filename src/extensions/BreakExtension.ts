@@ -28,6 +28,7 @@ export class BreakExtension extends NodeExtension {
     };
   }
 
+  // TODO: Specialize schema generic
   public mdastNodeToProseMirrorNodes(
     _: Break,
     convertedChildren: Array<ProseMirrorNode>,
