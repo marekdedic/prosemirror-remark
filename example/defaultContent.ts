@@ -108,6 +108,10 @@ Right aligned columns\n\
 \n\
 [link with title](http://nodeca.github.io/pica/demo/ "title text!")\n\
 \n\
+[refence link with title][linkId]\n\
+\n\
+[linkId]: http://nodeca.github.io/pica/demo/ "title text!"\n\
+\n\
 Autoconverted link https://github.com/nodeca/pica (enable linkify to see)\n\
 \n\
 \n\
