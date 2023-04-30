@@ -26,10 +26,10 @@ export class DefinitionExtension extends NodeExtension {
     if (context.DefinitionExtension === undefined) {
       context.DefinitionExtension = {};
     }
-    if (context.DefinitionExtension.imageDefinitions === undefined) {
-      context.DefinitionExtension.imageDefinitions = {};
+    if (context.DefinitionExtension.definitions === undefined) {
+      context.DefinitionExtension.definitions = {};
     }
-    context.DefinitionExtension.imageDefinitions[node.identifier] = {
+    context.DefinitionExtension.definitions[node.identifier] = {
       title: node.title,
       url: node.url,
     };

@@ -107,7 +107,7 @@ export class ImageReferenceExtension extends NodeExtension {
       context.ImageReferenceExtension === undefined ||
       context.ImageReferenceExtension.proseMirrorNodes === undefined ||
       context.DefinitionExtension === undefined ||
-      context.DefinitionExtension.imageDefinitions === undefined
+      context.DefinitionExtension.definitions === undefined
     ) {
       return;
     }
@@ -115,7 +115,7 @@ export class ImageReferenceExtension extends NodeExtension {
       string,
       ProseMirrorNode
     >) {
-      const definition = context.DefinitionExtension.imageDefinitions[id];
+      const definition = context.DefinitionExtension.definitions[id];
       if (definition === undefined) {
         continue;
       }
