@@ -1,4 +1,4 @@
-import type { ImageReference, Paragraph } from "mdast";
+import type { ImageReference } from "mdast";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import remarkUnwrapImages from "remark-unwrap-images";
 import type { Processor } from "unified";
@@ -19,9 +19,7 @@ export interface ImageReferenceExtensionContext {
   proseMirrorNodes: Record<string, ProseMirrorNode>;
 }
 
-export class ImageReferenceExtension extends NodeExtension<
-  ImageReference | Paragraph
-> {
+export class ImageReferenceExtension extends NodeExtension<ImageReference> {
   public dependencies(): Array<Extension> {
     return [new DefinitionExtension(), new ImageExtension()];
   }
@@ -71,10 +69,8 @@ export class ImageReferenceExtension extends NodeExtension<
     return false;
   }
 
-  public proseMirrorNodeToUnistNodes(): Array<Paragraph> {
-    throw new Error(
-      "ImageReferenceExtension should never convert from ProseMirror to Unist."
-    );
+  public proseMirrorNodeToUnistNodes(): Array<ImageReference> {
+    return [];
   }
 
   public postUnistToProseMirrorHook(

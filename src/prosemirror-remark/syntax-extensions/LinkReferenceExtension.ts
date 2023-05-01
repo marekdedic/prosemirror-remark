@@ -1,4 +1,4 @@
-import type { Link, LinkReference } from "mdast";
+import type { LinkReference } from "mdast";
 import type { Mark, Node as ProseMirrorNode, Schema } from "prosemirror-model";
 
 import {
@@ -16,9 +16,7 @@ export interface LinkReferenceExtensionContext {
   marks: Record<string, Mark>;
 }
 
-export class LinkReferenceExtension extends MarkExtension<
-  Link | LinkReference
-> {
+export class LinkReferenceExtension extends MarkExtension<LinkReference> {
   public dependencies(): Array<Extension> {
     return [new DefinitionExtension(), new LinkExtension()];
   }
@@ -60,10 +58,10 @@ export class LinkReferenceExtension extends MarkExtension<
     return false;
   }
 
-  public processConvertedUnistNode(): Link {
-    throw new Error(
-      "LinkReferenceExtension should never convert from ProseMirror to Unist."
-    );
+  public processConvertedUnistNode(
+    convertedNode: LinkReference
+  ): LinkReference {
+    return convertedNode;
   }
 
   public postUnistToProseMirrorHook(

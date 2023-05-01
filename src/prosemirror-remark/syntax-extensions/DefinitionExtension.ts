@@ -19,7 +19,7 @@ export class DefinitionExtension extends NodeExtension<Definition> {
   }
 
   public proseMirrorNodeName(): null {
-    return null; // TODO
+    return null;
   }
 
   public proseMirrorNodeSpec(): null {
