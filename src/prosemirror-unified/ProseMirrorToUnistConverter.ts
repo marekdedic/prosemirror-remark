@@ -22,8 +22,7 @@ export class ProseMirrorToUnistConverter {
   private convertNode(node: ProseMirrorNode): Array<UnistNode> {
     let convertedNodes: Array<UnistNode> | null = null;
     for (const extension of this.extensionManager.nodeExtensions()) {
-      // TODO: This is needlessly slow, a map would be better
-      if (extension.proseMirrorNodeName() !== node.type.name) {
+      if (!extension.proseMirrorToUnistTest(node)) {
         continue;
       }
       let convertedChildren: Array<UnistNode> = [];

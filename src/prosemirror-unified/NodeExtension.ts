@@ -11,6 +11,10 @@ import { SyntaxExtension } from "./SyntaxExtension";
 export abstract class NodeExtension<
   UNode extends UnistNode
 > extends SyntaxExtension<UNode> {
+  public proseMirrorToUnistTest(node: ProseMirrorNode): boolean {
+    return this.proseMirrorNodeName() === node.type.name;
+  }
+
   protected createProseMirrorNodeHelper(
     schema: Schema<string, string>,
     children: Array<ProseMirrorNode>,

@@ -38,7 +38,6 @@ export class UnistToProseMirrorConverter {
     context: ConverterContext<unknown>
   ): Array<ProseMirrorNode> {
     for (const extension of this.extensionManager.syntaxExtensions()) {
-      // TODO: This is needlessly slow, a map would be better
       if (!extension.unistToProseMirrorTest(node)) {
         continue;
       }
