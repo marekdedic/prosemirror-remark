@@ -1,11 +1,5 @@
-import type { Link, LinkReference, Text } from "mdast";
-import type {
-  DOMOutputSpec,
-  Mark,
-  MarkSpec,
-  Node as ProseMirrorNode,
-  Schema,
-} from "prosemirror-model";
+import type { Link, LinkReference } from "mdast";
+import type { Mark, Node as ProseMirrorNode, Schema } from "prosemirror-model";
 
 import {
   type ConverterContext,
@@ -16,6 +10,7 @@ import {
   DefinitionExtension,
   type DefinitionExtensionContext,
 } from "./DefinitionExtension";
+import { LinkExtension } from "./LinkExtension";
 
 export interface LinkReferenceExtensionContext {
   marks: Record<string, Mark>;
@@ -25,39 +20,19 @@ export class LinkReferenceExtension extends MarkExtension<
   Link | LinkReference
 > {
   public dependencies(): Array<Extension> {
-    return [new DefinitionExtension()];
+    return [new DefinitionExtension(), new LinkExtension()];
   }
 
   public unistNodeName(): "linkReference" {
     return "linkReference";
   }
 
-  public proseMirrorMarkName(): string {
-    return "link";
+  public proseMirrorMarkName(): null {
+    return null;
   }
 
-  public proseMirrorMarkSpec(): MarkSpec {
-    return {
-      attrs: { href: {}, title: { default: null } },
-      inclusive: false,
-      parseDOM: [
-        {
-          tag: "a[href]",
-          getAttrs(dom: Node | string): {
-            href: string | null;
-            title: string | null;
-          } {
-            return {
-              href: (dom as HTMLElement).getAttribute("href"),
-              title: (dom as HTMLElement).getAttribute("title"),
-            };
-          },
-        },
-      ],
-      toDOM(node: Mark): DOMOutputSpec {
-        return ["a", node.attrs];
-      },
-    };
+  public proseMirrorMarkSpec(): null {
+    return null;
   }
 
   public unistNodeToProseMirrorNodes(
@@ -68,7 +43,7 @@ export class LinkReferenceExtension extends MarkExtension<
       LinkReferenceExtension: LinkReferenceExtensionContext;
     }>
   ): Array<ProseMirrorNode> {
-    const mark = schema.marks[this.proseMirrorMarkName()].create({
+    const mark = schema.marks["link"].create({
       href: null,
       title: null,
     });
@@ -81,17 +56,14 @@ export class LinkReferenceExtension extends MarkExtension<
     );
   }
 
-  // TODO: This shouldn't be called at all
-  public processConvertedUnistNode(
-    convertedNode: Text,
-    originalMark: Mark
-  ): Link {
-    return {
-      type: "link",
-      url: originalMark.attrs.href as string,
-      title: originalMark.attrs.title as string | null,
-      children: [convertedNode],
-    };
+  public proseMirrorToUnistTest(): boolean {
+    return false;
+  }
+
+  public processConvertedUnistNode(): Link {
+    throw new Error(
+      "LinkReferenceExtension should never convert from ProseMirror to Unist."
+    );
   }
 
   public postUnistToProseMirrorHook(
