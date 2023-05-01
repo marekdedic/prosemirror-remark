@@ -1,10 +1,5 @@
 import type { ImageReference, Paragraph } from "mdast";
-import type {
-  DOMOutputSpec,
-  Node as ProseMirrorNode,
-  NodeSpec,
-  Schema,
-} from "prosemirror-model";
+import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import remarkUnwrapImages from "remark-unwrap-images";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
@@ -18,6 +13,7 @@ import {
   DefinitionExtension,
   type DefinitionExtensionContext,
 } from "./DefinitionExtension";
+import { ImageExtension } from "./ImageExtension";
 
 export interface ImageReferenceExtensionContext {
   proseMirrorNodes: Record<string, ProseMirrorNode>;
@@ -27,7 +23,7 @@ export class ImageReferenceExtension extends NodeExtension<
   ImageReference | Paragraph
 > {
   public dependencies(): Array<Extension> {
-    return [new DefinitionExtension()];
+    return [new DefinitionExtension(), new ImageExtension()];
   }
 
   public unifiedInitializationHook(
@@ -40,40 +36,12 @@ export class ImageReferenceExtension extends NodeExtension<
     return "imageReference";
   }
 
-  public proseMirrorNodeName(): string {
-    return "image";
+  public proseMirrorNodeName(): null {
+    return null;
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
-    return {
-      inline: false,
-      attrs: {
-        src: {},
-        alt: { default: null },
-        title: { default: null },
-      },
-      group: "block",
-      draggable: true,
-      parseDOM: [
-        {
-          getAttrs(dom: Node | string): {
-            src: string | null;
-            alt: string | null;
-            title: string | null;
-          } {
-            return {
-              src: (dom as HTMLElement).getAttribute("src"),
-              alt: (dom as HTMLElement).getAttribute("alt"),
-              title: (dom as HTMLElement).getAttribute("title"),
-            };
-          },
-          tag: "img[src]",
-        },
-      ],
-      toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return ["img", node.attrs];
-      },
-    };
+  public proseMirrorNodeSpec(): null {
+    return null;
   }
 
   public unistNodeToProseMirrorNodes(
@@ -84,37 +52,29 @@ export class ImageReferenceExtension extends NodeExtension<
       ImageReferenceExtension: ImageReferenceExtensionContext;
     }>
   ): Array<ProseMirrorNode> {
-    const proseMirrorNodes = this.createProseMirrorNodeHelper(
-      schema,
-      convertedChildren,
-      { src: "", alt: node.alt, title: node.label }
+    const proseMirrorNode = schema.nodes["image"].createAndFill(
+      { src: "", alt: node.alt, title: node.label },
+      convertedChildren
     );
-    if (proseMirrorNodes.length == 1) {
-      if (context.ImageReferenceExtension === undefined) {
-        context.ImageReferenceExtension = { proseMirrorNodes: {} };
-      }
-      context.ImageReferenceExtension.proseMirrorNodes[node.identifier] =
-        proseMirrorNodes[0];
+    if (proseMirrorNode === null) {
+      return [];
     }
-    return proseMirrorNodes;
+    if (context.ImageReferenceExtension === undefined) {
+      context.ImageReferenceExtension = { proseMirrorNodes: {} };
+    }
+    context.ImageReferenceExtension.proseMirrorNodes[node.identifier] =
+      proseMirrorNode;
+    return [proseMirrorNode];
   }
 
-  // TODO: This shouldn't be called at all
-  public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<Paragraph> {
-    return [
-      // The paragraph is needed to counter-balance remark-unwrap-images, otherwise stringification breaks
-      {
-        type: "paragraph",
-        children: [
-          {
-            type: "image",
-            url: node.attrs.src as string,
-            title: node.attrs.title as string | null,
-            alt: node.attrs.alt as string | null,
-          },
-        ],
-      },
-    ];
+  public proseMirrorToUnistTest(): boolean {
+    return false;
+  }
+
+  public proseMirrorNodeToUnistNodes(): Array<Paragraph> {
+    throw new Error(
+      "ImageReferenceExtension should never convert from ProseMirror to Unist."
+    );
   }
 
   public postUnistToProseMirrorHook(
