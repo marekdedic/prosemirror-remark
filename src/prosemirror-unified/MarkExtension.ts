@@ -6,8 +6,10 @@ import { SyntaxExtension } from "./SyntaxExtension";
 export abstract class MarkExtension<
   UNode extends UnistNode
 > extends SyntaxExtension<UNode> {
-  public proseMirrorToUnistTest(node: UnistNode): boolean {
-    return node.type === "text";
+  public proseMirrorToUnistTest(node: UnistNode, mark: Mark): boolean {
+    return (
+      node.type === "text" && mark.type.name === this.proseMirrorMarkName()
+    );
   }
 
   public abstract proseMirrorMarkName(): string;
