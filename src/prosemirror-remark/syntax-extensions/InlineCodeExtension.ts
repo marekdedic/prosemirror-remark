@@ -38,7 +38,7 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
     ];
   }
 
-  public modifyUnistNode(convertedNode: Text): InlineCode {
+  public processConvertedUnistNode(convertedNode: Text): InlineCode {
     return { type: this.unistNodeName(), value: convertedNode.value };
   }
 }

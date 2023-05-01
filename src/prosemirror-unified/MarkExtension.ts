@@ -14,7 +14,7 @@ export abstract class MarkExtension<
 
   public abstract proseMirrorMarkSpec(): MarkSpec;
 
-  public abstract modifyUnistNode(
+  public abstract processConvertedUnistNode(
     convertedNode: UnistNode,
     originalMark: Mark
   ): UNode;

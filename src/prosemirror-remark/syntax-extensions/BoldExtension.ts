@@ -38,7 +38,7 @@ export class BoldExtension extends MarkExtension<Strong> {
     );
   }
 
-  public modifyUnistNode(convertedNode: Text): Strong {
+  public processConvertedUnistNode(convertedNode: Text): Strong {
     return { type: this.unistNodeName(), children: [convertedNode] };
   }
 }

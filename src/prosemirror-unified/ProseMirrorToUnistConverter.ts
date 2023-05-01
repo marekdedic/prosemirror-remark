@@ -55,7 +55,10 @@ export class ProseMirrorToUnistConverter {
           ) {
             continue;
           }
-          convertedNode = extension.modifyUnistNode(convertedNode, mark);
+          convertedNode = extension.processConvertedUnistNode(
+            convertedNode,
+            mark
+          );
           // TODO: This is here due to interference between LinkExtension and LinkReferenceExtension - that should be handled better
           break;
         }
