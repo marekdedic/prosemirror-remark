@@ -51,7 +51,10 @@ export class ProseMirrorToUnistConverter {
       for (const mark of node.marks) {
         for (const extension of this.extensionManager.markExtensions()) {
           // TODO: This is needlessly slow, a map would be better
-          if (extension.proseMirrorMarkName() !== mark.type.name) {
+          if (
+            extension.proseMirrorMarkName() !== mark.type.name ||
+            !extension.unistNodeMatches(convertedNode)
+          ) {
             continue;
           }
           convertedNode = extension.modifyUnistNode(convertedNode, mark);
