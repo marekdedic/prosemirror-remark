@@ -20,7 +20,8 @@ export class ProseMirrorUnified {
     const extensionManager = new ExtensionManager(extensions);
     this.builtSchema = new SchemaBuilder(extensionManager).build();
     this.unistToProseMirrorConverter = new UnistToProseMirrorConverter(
-      extensionManager
+      extensionManager,
+      this.schema()
     );
     this.proseMirrorToUnistConverter = new ProseMirrorToUnistConverter(
       extensionManager
@@ -34,7 +35,7 @@ export class ProseMirrorUnified {
     (unist as Root).children = (unist as Root).children.filter(
       (child) => child.type !== "text"
     );
-    const ret = this.unistToProseMirrorConverter.convert(unist, this.schema());
+    const ret = this.unistToProseMirrorConverter.convert(unist);
     console.log(ret);
     return ret;
   }

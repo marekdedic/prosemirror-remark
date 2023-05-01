@@ -6,23 +6,24 @@ import type { ExtensionManager } from "./ExtensionManager";
 
 export class UnistToProseMirrorConverter {
   private readonly extensionManager: ExtensionManager;
+  private readonly schema: Schema<string, string>;
 
-  public constructor(extensionManager: ExtensionManager) {
+  public constructor(
+    extensionManager: ExtensionManager,
+    schema: Schema<string, string>
+  ) {
     this.extensionManager = extensionManager;
+    this.schema = schema;
   }
 
   private static unistNodeIsParent(node: UnistNode): node is Parent {
     return "children" in node;
   }
 
-  // TODO: Move schema to a property?
   // TODO: Better error handling?
-  public convert(
-    unist: UnistNode,
-    schema: Schema<string, string>
-  ): ProseMirrorNode | null {
+  public convert(unist: UnistNode): ProseMirrorNode | null {
     const context: ConverterContext<unknown> = {};
-    const rootNode = this.convertNode(unist, schema, context);
+    const rootNode = this.convertNode(unist, context);
     for (const extension of this.extensionManager.syntaxExtensions()) {
       extension.postUnistToProseMirrorHook(context);
     }
@@ -34,7 +35,6 @@ export class UnistToProseMirrorConverter {
 
   private convertNode(
     node: UnistNode,
-    schema: Schema<string, string>,
     context: ConverterContext<unknown>
   ): Array<ProseMirrorNode> {
     for (const extension of this.extensionManager.syntaxExtensions()) {
@@ -45,12 +45,12 @@ export class UnistToProseMirrorConverter {
       let convertedChildren: Array<ProseMirrorNode> = [];
       if (UnistToProseMirrorConverter.unistNodeIsParent(node)) {
         convertedChildren = node.children.flatMap((child) =>
-          this.convertNode(child, schema, context)
+          this.convertNode(child, context)
         );
       }
       return extension.unistNodeToProseMirrorNodes(
         node,
-        schema,
+        this.schema,
         convertedChildren,
         context
       );
