@@ -42,13 +42,9 @@ export class HeadingExtension extends NodeExtension<Heading> {
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = schema.nodes[
-      this.proseMirrorNodeName()
-    ].createAndFill({ level: node.depth }, convertedChildren);
-    if (proseMirrorNode === null) {
-      return [];
-    }
-    return [proseMirrorNode];
+    return this.createProseMirrorNodeHelper(schema, convertedChildren, {
+      level: node.depth,
+    });
   }
 
   public proseMirrorNodeToUnistNodes(

@@ -41,13 +41,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = schema.nodes[
-      this.proseMirrorNodeName()
-    ].createAndFill({}, convertedChildren);
-    if (proseMirrorNode === null) {
-      return [];
-    }
-    return [proseMirrorNode];
+    return this.createProseMirrorNodeHelper(schema, convertedChildren);
   }
 
   public proseMirrorNodeToUnistNodes(

@@ -63,16 +63,11 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = schema.nodes[
-      this.proseMirrorNodeName()
-    ].createAndFill(
-      { src: node.url, alt: node.alt, title: node.title },
-      convertedChildren
-    );
-    if (proseMirrorNode === null) {
-      return [];
-    }
-    return [proseMirrorNode];
+    return this.createProseMirrorNodeHelper(schema, convertedChildren, {
+      src: node.url,
+      alt: node.alt,
+      title: node.title,
+    });
   }
 
   public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<Paragraph> {

@@ -84,21 +84,19 @@ export class ImageReferenceExtension extends NodeExtension<
       ImageReferenceExtension: ImageReferenceExtensionContext;
     }>
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = schema.nodes[
-      this.proseMirrorNodeName()
-    ].createAndFill(
-      { src: "", alt: node.alt, title: node.label },
-      convertedChildren
+    const proseMirrorNodes = this.createProseMirrorNodeHelper(
+      schema,
+      convertedChildren,
+      { src: "", alt: node.alt, title: node.label }
     );
-    if (proseMirrorNode === null) {
-      return [];
+    if (proseMirrorNodes.length == 1) {
+      if (context.ImageReferenceExtension === undefined) {
+        context.ImageReferenceExtension = { proseMirrorNodes: {} };
+      }
+      context.ImageReferenceExtension.proseMirrorNodes[node.identifier] =
+        proseMirrorNodes[0];
     }
-    if (context.ImageReferenceExtension === undefined) {
-      context.ImageReferenceExtension = { proseMirrorNodes: {} };
-    }
-    context.ImageReferenceExtension.proseMirrorNodes[node.identifier] =
-      proseMirrorNode;
-    return [proseMirrorNode];
+    return proseMirrorNodes;
   }
 
   // TODO: This shouldn't be called at all

@@ -35,13 +35,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     node: Code,
     schema: Schema<string, string>
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = schema.nodes[
-      this.proseMirrorNodeName()
-    ].createAndFill({}, [schema.text(node.value)]);
-    if (proseMirrorNode === null) {
-      return [];
-    }
-    return [proseMirrorNode];
+    return this.createProseMirrorNodeHelper(schema, [schema.text(node.value)]);
   }
 
   public proseMirrorNodeToUnistNodes(
