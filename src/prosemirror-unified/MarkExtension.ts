@@ -10,6 +10,7 @@ export abstract class MarkExtension<
 
   public abstract proseMirrorMarkSpec(): MarkSpec;
 
+  // TODO: There is some code duplication in the specializations of this method
   // TODO: Add a check for compatible source nodes
   public abstract modifyUnistNode(
     convertedNode: UnistNode,

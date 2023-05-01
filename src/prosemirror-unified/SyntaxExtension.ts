@@ -20,7 +20,6 @@ export abstract class SyntaxExtension<
 
   public abstract unistNodeName(): UNode["type"];
 
-  // TODO: There is some code duplication in the specializations of this method
   public abstract unistNodeToProseMirrorNodes(
     node: UNode,
     schema: Schema<string, string>,
