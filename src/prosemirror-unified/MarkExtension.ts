@@ -12,9 +12,9 @@ export abstract class MarkExtension<
     );
   }
 
-  public abstract proseMirrorMarkName(): string;
+  public abstract proseMirrorMarkName(): string | null;
 
-  public abstract proseMirrorMarkSpec(): MarkSpec;
+  public abstract proseMirrorMarkSpec(): MarkSpec | null;
 
   public abstract processConvertedUnistNode(
     convertedNode: UnistNode,

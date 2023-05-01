@@ -15,8 +15,11 @@ export class SchemaBuilder {
       }
     }
     for (const extension of extensionManager.markExtensions()) {
-      this.marks[extension.proseMirrorMarkName()] =
-        extension.proseMirrorMarkSpec();
+      const name = extension.proseMirrorMarkName();
+      const spec = extension.proseMirrorMarkSpec();
+      if (name !== null && spec !== null) {
+        this.marks[name] = spec;
+      }
     }
   }
 
