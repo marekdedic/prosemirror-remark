@@ -11,7 +11,6 @@ import { SyntaxExtension } from "./SyntaxExtension";
 export abstract class NodeExtension<
   UNode extends UnistNode
 > extends SyntaxExtension<UNode> {
-  // TODO: Return just one node
   protected createProseMirrorNodeHelper(
     schema: Schema<string, string>,
     children: Array<ProseMirrorNode>,
