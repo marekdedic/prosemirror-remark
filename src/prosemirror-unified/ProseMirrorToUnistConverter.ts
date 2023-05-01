@@ -10,9 +10,7 @@ export class ProseMirrorToUnistConverter {
     this.extensionManager = extensionManager;
   }
 
-  // TODO: Move schema to a property?
   // TODO: Better error handling?
-  // TODO: Support marks
   public convert(node: ProseMirrorNode): UnistNode | null {
     const rootNode = this.convertNode(node);
     if (rootNode.length !== 1) {
