@@ -34,7 +34,6 @@ export abstract class NodeExtension<
 
   public abstract proseMirrorNodeSpec(): NodeSpec | null;
 
-  // TODO: There is some code duplication in the specializations of this method
   public abstract proseMirrorNodeToUnistNodes(
     node: ProseMirrorNode,
     convertedChildren: Array<UnistNode>
