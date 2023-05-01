@@ -8,7 +8,7 @@ export abstract class SyntaxExtension<
   UNode extends UnistNode,
   Context = Record<string, never>
 > extends Extension {
-  public unistNodeMatches(node: UnistNode): boolean {
+  public unistToProseMirrorTest(node: UnistNode): boolean {
     return node.type === this.unistNodeName();
   }
 

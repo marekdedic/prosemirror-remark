@@ -6,7 +6,7 @@ import { SyntaxExtension } from "./SyntaxExtension";
 export abstract class MarkExtension<
   UNode extends UnistNode
 > extends SyntaxExtension<UNode> {
-  public unistNodeMatches(node: UnistNode): boolean {
+  public proseMirrorToUnistTest(node: UnistNode): boolean {
     return node.type === "text";
   }
 

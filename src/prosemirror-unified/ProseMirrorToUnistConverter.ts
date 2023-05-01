@@ -51,7 +51,7 @@ export class ProseMirrorToUnistConverter {
           // TODO: This is needlessly slow, a map would be better
           if (
             extension.proseMirrorMarkName() !== mark.type.name ||
-            !extension.unistNodeMatches(convertedNode)
+            !extension.proseMirrorToUnistTest(convertedNode)
           ) {
             continue;
           }

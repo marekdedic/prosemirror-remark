@@ -16,7 +16,7 @@ export class OrderedListExtension extends NodeExtension<List> {
     return "list";
   }
 
-  public unistNodeMatches(node: UnistNode): boolean {
+  public unistToProseMirrorTest(node: UnistNode): boolean {
     return (
       node.type === this.unistNodeName() && (node as List).ordered === true
     );
