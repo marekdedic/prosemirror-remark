@@ -29,7 +29,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
       code: true,
       defining: true,
       marks: "",
-      parseDOM: [{ tag: "pre" }],
+      parseDOM: [{ tag: "pre", preserveWhitespace: "full" }],
       toDOM(): DOMOutputSpec {
         return ["pre", ["code", 0]];
       },
