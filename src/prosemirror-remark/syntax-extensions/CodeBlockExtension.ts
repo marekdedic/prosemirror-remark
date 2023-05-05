@@ -6,9 +6,14 @@ import type {
   Schema,
 } from "prosemirror-model";
 
-import { NodeExtension } from "../../prosemirror-unified";
+import { type Extension, NodeExtension } from "../../prosemirror-unified";
+import { TextExtension } from "./TextExtension";
 
 export class CodeBlockExtension extends NodeExtension<Code> {
+  public dependencies(): Array<Extension> {
+    return [new TextExtension()];
+  }
+
   public unistNodeName(): "code" {
     return "code";
   }

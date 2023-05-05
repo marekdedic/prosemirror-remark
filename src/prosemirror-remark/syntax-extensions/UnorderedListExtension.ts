@@ -7,9 +7,14 @@ import type {
 } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import { NodeExtension } from "../../prosemirror-unified";
+import { type Extension, NodeExtension } from "../../prosemirror-unified";
+import { ListItemExtension } from "./ListItemExtension";
 
 export class UnorderedListExtension extends NodeExtension<List> {
+  public dependencies(): Array<Extension> {
+    return [new ListItemExtension()];
+  }
+
   public unistNodeName(): "list" {
     return "list";
   }

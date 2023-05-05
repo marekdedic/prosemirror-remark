@@ -9,9 +9,14 @@ import remarkUnwrapImages from "remark-unwrap-images";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
-import { NodeExtension } from "../../prosemirror-unified";
+import { type Extension, NodeExtension } from "../../prosemirror-unified";
+import { ParagraphExtension } from "./ParagraphExtension";
 
 export class ImageExtension extends NodeExtension<Image | Paragraph> {
+  public dependencies(): Array<Extension> {
+    return [new ParagraphExtension()];
+  }
+
   public unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, string>
   ): Processor<UnistNode, UnistNode, UnistNode, string> {

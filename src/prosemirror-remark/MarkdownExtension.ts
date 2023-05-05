@@ -26,7 +26,6 @@ import { UnorderedListExtension } from "./syntax-extensions/UnorderedListExtensi
 
 export class MarkdownExtension extends Extension {
   public dependencies(): Array<Extension> {
-    // TODO: Check all extensions for whether they should declare any dependencies
     return [
       new BlockquoteExtension(),
       new BoldExtension(),
