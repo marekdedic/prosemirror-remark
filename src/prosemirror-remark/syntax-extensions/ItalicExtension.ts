@@ -19,7 +19,14 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
 
   public proseMirrorMarkSpec(): MarkSpec {
     return {
-      parseDOM: [{ tag: "i" }, { tag: "em" }],
+      parseDOM: [
+        { tag: "i" },
+        { tag: "em" },
+        {
+          style: "font-style",
+          getAttrs: (value) => value === "italic" && null,
+        },
+      ],
       toDOM(): DOMOutputSpec {
         return ["em"];
       },
