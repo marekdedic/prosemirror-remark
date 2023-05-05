@@ -19,7 +19,15 @@ export class BoldExtension extends MarkExtension<Strong> {
 
   public proseMirrorMarkSpec(): MarkSpec {
     return {
-      parseDOM: [{ tag: "b" }, { tag: "strong" }],
+      parseDOM: [
+        { tag: "b" },
+        { tag: "strong" },
+        {
+          style: "font-weight",
+          getAttrs: (value) =>
+            /^(bold(er)?|[5-9]\d{2,})$/.test(value as string) && null,
+        },
+      ],
       toDOM(): DOMOutputSpec {
         return ["strong"];
       },
