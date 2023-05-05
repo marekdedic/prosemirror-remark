@@ -9,7 +9,6 @@ import type { Node as UnistNode } from "unist";
 
 import { NodeExtension } from "../../prosemirror-unified";
 
-// TODO: Item spacing
 export class OrderedListExtension extends NodeExtension<List> {
   public unistNodeName(): "list" {
     return "list";
@@ -29,18 +28,29 @@ export class OrderedListExtension extends NodeExtension<List> {
     return {
       content: "list_item+",
       group: "block",
-      attrs: { start: { default: 1 } },
+      attrs: { spread: { default: false }, start: { default: 1 } },
       parseDOM: [
         {
-          getAttrs(dom: Node | string): { start: number } {
+          getAttrs(dom: Node | string): { spread: boolean; start: number } {
             const start = (dom as HTMLElement).getAttribute("start");
-            return { start: start !== null ? parseInt(start) : 1 };
+            return {
+              spread:
+                (dom as HTMLElement).getAttribute("data-spread") === "true",
+              start: start !== null ? parseInt(start) : 1,
+            };
           },
           tag: "ol",
         },
       ],
       toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return ["ol", { start: node.attrs.start as number }, 0];
+        return [
+          "ol",
+          {
+            "data-spread": node.attrs.spread as boolean,
+            start: node.attrs.start as number,
+          },
+          0,
+        ];
       },
     };
   }
@@ -51,6 +61,7 @@ export class OrderedListExtension extends NodeExtension<List> {
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     return this.createProseMirrorNodeHelper(schema, convertedChildren, {
+      spread: node.spread,
       start: node.start ?? 1,
     });
   }
@@ -59,12 +70,17 @@ export class OrderedListExtension extends NodeExtension<List> {
     node: ProseMirrorNode,
     convertedChildren: Array<ListContent>
   ): Array<List> {
+    const spread = node.attrs.spread as boolean;
     return [
       {
         type: this.unistNodeName(),
         ordered: true,
+        spread,
         start: node.attrs.start as number,
-        children: convertedChildren,
+        children: convertedChildren.map((child) => {
+          child.spread = spread;
+          return child;
+        }),
       },
     ];
   }

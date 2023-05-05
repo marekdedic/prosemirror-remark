@@ -9,7 +9,6 @@ import type { Node as UnistNode } from "unist";
 
 import { NodeExtension } from "../../prosemirror-unified";
 
-// TODO: Item spacing
 export class UnorderedListExtension extends NodeExtension<List> {
   public unistNodeName(): "list" {
     return "list";
@@ -29,30 +28,48 @@ export class UnorderedListExtension extends NodeExtension<List> {
     return {
       content: "list_item+",
       group: "block",
-      parseDOM: [{ tag: "ul" }],
-      toDOM(): DOMOutputSpec {
-        return ["ul", 0];
+      attrs: { spread: { default: false } },
+      parseDOM: [
+        {
+          getAttrs(dom: Node | string): { spread: boolean } {
+            return {
+              spread:
+                (dom as HTMLElement).getAttribute("data-spread") === "true",
+            };
+          },
+          tag: "ul",
+        },
+      ],
+      toDOM(node: ProseMirrorNode): DOMOutputSpec {
+        return ["ul", { "data-spread": node.attrs.spread as boolean }, 0];
       },
     };
   }
 
   public unistNodeToProseMirrorNodes(
-    _node: List,
+    node: List,
     schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(schema, convertedChildren);
+    return this.createProseMirrorNodeHelper(schema, convertedChildren, {
+      spread: node.spread,
+    });
   }
 
   public proseMirrorNodeToUnistNodes(
-    _node: ProseMirrorNode,
+    node: ProseMirrorNode,
     convertedChildren: Array<ListContent>
   ): Array<List> {
+    const spread = node.attrs.spread as boolean;
     return [
       {
         type: this.unistNodeName(),
         ordered: false,
-        children: convertedChildren,
+        spread,
+        children: convertedChildren.map((child) => {
+          child.spread = spread;
+          return child;
+        }),
       },
     ];
   }
