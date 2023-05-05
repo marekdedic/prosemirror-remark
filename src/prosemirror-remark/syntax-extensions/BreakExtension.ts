@@ -21,6 +21,7 @@ export class BreakExtension extends NodeExtension<Break> {
     return {
       inline: true,
       group: "inline",
+      selectable: false,
       parseDOM: [{ tag: "br" }],
       toDOM(): DOMOutputSpec {
         return ["br"];
