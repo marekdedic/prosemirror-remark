@@ -1,4 +1,5 @@
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type { Command } from "prosemirror-state";
 import type { Node as UnistNode } from "unist";
 
 import type { ConverterContext } from "./ConverterContext";
@@ -17,6 +18,14 @@ export abstract class SyntaxExtension<
     _context: ConverterContext<Context>
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   ): void {}
+
+  // TODO: Remove schema parameter from both here and conversion
+  public proseMirrorKeymap(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _schema: Schema<string, string>
+  ): Record<string, Command> {
+    return {};
+  }
 
   public abstract unistNodeName(): UNode["type"];
 

@@ -1,10 +1,12 @@
 import type { Root } from "mdast";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
-import { type Processor } from "unified";
+import type { Plugin } from "prosemirror-state";
+import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
 import type { Extension } from "./Extension";
 import { ExtensionManager } from "./ExtensionManager";
+import { KeymapBuilder } from "./KeymapBuilder";
 import { ProseMirrorToUnistConverter } from "./ProseMirrorToUnistConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
 import { UnifiedBuilder } from "./UnifiedBuilder";
@@ -12,6 +14,7 @@ import { UnistToProseMirrorConverter } from "./UnistToProseMirrorConverter";
 
 export class ProseMirrorUnified {
   private readonly builtSchema: Schema<string, string>;
+  private readonly keymapBuilder: KeymapBuilder;
   private readonly unistToProseMirrorConverter: UnistToProseMirrorConverter;
   private readonly proseMirrorToUnistConverter: ProseMirrorToUnistConverter;
   private readonly unified: Processor<UnistNode, UnistNode, UnistNode, string>;
@@ -19,6 +22,7 @@ export class ProseMirrorUnified {
   public constructor(extensions: Array<Extension> = []) {
     const extensionManager = new ExtensionManager(extensions);
     this.builtSchema = new SchemaBuilder(extensionManager).build();
+    this.keymapBuilder = new KeymapBuilder(extensionManager, this.schema());
     this.unistToProseMirrorConverter = new UnistToProseMirrorConverter(
       extensionManager,
       this.schema()
@@ -42,6 +46,10 @@ export class ProseMirrorUnified {
 
   public schema(): Schema<string, string> {
     return this.builtSchema;
+  }
+
+  public plugins(): Array<Plugin> {
+    return [this.keymapBuilder.build()];
   }
 
   public serialize(doc: ProseMirrorNode): string {
