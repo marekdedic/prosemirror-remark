@@ -12,7 +12,6 @@ export abstract class MarkExtension<
     );
   }
 
-  // TODO: Is this needed?
   public abstract proseMirrorMarkName(): string | null;
 
   public abstract proseMirrorMarkSpec(): MarkSpec | null;

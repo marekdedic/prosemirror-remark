@@ -31,7 +31,6 @@ export abstract class NodeExtension<
     return [proseMirrorNode];
   }
 
-  // TODO: Is this needed?
   public abstract proseMirrorNodeName(): string | null;
 
   public abstract proseMirrorNodeSpec(): NodeSpec | null;
