@@ -14,14 +14,12 @@ export abstract class SyntaxExtension<
   }
 
   public postUnistToProseMirrorHook(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _context: ConverterContext<Context>
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   ): void {}
 
   // TODO: Remove schema parameter from both here and conversion
   public proseMirrorKeymap(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _schema: Schema<string, string>
   ): Record<string, Command> {
     return {};
