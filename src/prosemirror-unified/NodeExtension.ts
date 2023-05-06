@@ -2,7 +2,6 @@ import type {
   Attrs,
   Node as ProseMirrorNode,
   NodeSpec,
-  Schema,
 } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
@@ -16,7 +15,6 @@ export abstract class NodeExtension<
   }
 
   protected createProseMirrorNodeHelper(
-    schema: Schema<string, string>,
     children: Array<ProseMirrorNode>,
     attrs: Attrs = {}
   ): Array<ProseMirrorNode> {
@@ -24,16 +22,16 @@ export abstract class NodeExtension<
     if (nodeName === null) {
       return [];
     }
-    const proseMirrorNode = schema.nodes[nodeName].createAndFill(
-      attrs,
-      children
-    );
+    const proseMirrorNode = this.proseMirrorSchema().nodes[
+      nodeName
+    ].createAndFill(attrs, children);
     if (proseMirrorNode === null) {
       return [];
     }
     return [proseMirrorNode];
   }
 
+  // TODO: Is this needed?
   public abstract proseMirrorNodeName(): string | null;
 
   public abstract proseMirrorNodeSpec(): NodeSpec | null;

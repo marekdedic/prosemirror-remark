@@ -3,7 +3,6 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
-  Schema,
 } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
@@ -53,10 +52,9 @@ export class UnorderedListExtension extends NodeExtension<List> {
 
   public unistNodeToProseMirrorNodes(
     node: List,
-    schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(schema, convertedChildren, {
+    return this.createProseMirrorNodeHelper(convertedChildren, {
       spread: node.spread,
     });
   }

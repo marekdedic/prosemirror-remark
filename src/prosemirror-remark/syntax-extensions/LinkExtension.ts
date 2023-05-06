@@ -4,7 +4,6 @@ import type {
   Mark,
   MarkSpec,
   Node as ProseMirrorNode,
-  Schema,
 } from "prosemirror-model";
 
 import { MarkExtension } from "../../prosemirror-unified";
@@ -44,13 +43,12 @@ export class LinkExtension extends MarkExtension<Link> {
 
   public unistNodeToProseMirrorNodes(
     node: Link,
-    schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(
         child.marks.concat([
-          schema.marks[this.proseMirrorMarkName()].create({
+          this.proseMirrorSchema().marks[this.proseMirrorMarkName()].create({
             href: node.url,
             title: node.title,
           }),

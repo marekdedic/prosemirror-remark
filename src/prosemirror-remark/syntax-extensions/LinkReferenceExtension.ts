@@ -1,5 +1,5 @@
 import type { LinkReference } from "mdast";
-import type { Mark, Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type { Mark, Node as ProseMirrorNode } from "prosemirror-model";
 
 import {
   type ConverterContext,
@@ -35,13 +35,12 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
 
   public unistNodeToProseMirrorNodes(
     node: LinkReference,
-    schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
     context: ConverterContext<{
       LinkReferenceExtension: LinkReferenceExtensionContext;
     }>
   ): Array<ProseMirrorNode> {
-    const mark = schema.marks["link"].create({
+    const mark = this.proseMirrorSchema().marks["link"].create({
       href: null,
       title: null,
     });

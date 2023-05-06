@@ -3,7 +3,6 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
-  Schema,
 } from "prosemirror-model";
 
 import { type Extension, NodeExtension } from "../../prosemirror-unified";
@@ -36,11 +35,10 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(
-    node: Code,
-    schema: Schema<string, string>
-  ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(schema, [schema.text(node.value)]);
+  public unistNodeToProseMirrorNodes(node: Code): Array<ProseMirrorNode> {
+    return this.createProseMirrorNodeHelper([
+      this.proseMirrorSchema().text(node.value),
+    ]);
   }
 
   public proseMirrorNodeToUnistNodes(

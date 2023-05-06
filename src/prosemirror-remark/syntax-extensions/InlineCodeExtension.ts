@@ -3,7 +3,6 @@ import type {
   DOMOutputSpec,
   MarkSpec,
   Node as ProseMirrorNode,
-  Schema,
 } from "prosemirror-model";
 
 import { MarkExtension } from "../../prosemirror-unified";
@@ -27,14 +26,13 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(
-    node: InlineCode,
-    schema: Schema<string, string>
-  ): Array<ProseMirrorNode> {
+  public unistNodeToProseMirrorNodes(node: InlineCode): Array<ProseMirrorNode> {
     return [
-      schema
+      this.proseMirrorSchema()
         .text(node.value)
-        .mark([schema.marks[this.proseMirrorMarkName()].create()]),
+        .mark([
+          this.proseMirrorSchema().marks[this.proseMirrorMarkName()].create(),
+        ]),
     ];
   }
 

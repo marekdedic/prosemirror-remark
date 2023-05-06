@@ -1,5 +1,5 @@
 import type { ImageReference } from "mdast";
-import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type { Node as ProseMirrorNode } from "prosemirror-model";
 import remarkUnwrapImages from "remark-unwrap-images";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
@@ -44,13 +44,14 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
 
   public unistNodeToProseMirrorNodes(
     node: ImageReference,
-    schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
     context: ConverterContext<{
       ImageReferenceExtension: ImageReferenceExtensionContext;
     }>
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = schema.nodes["image"].createAndFill(
+    const proseMirrorNode = this.proseMirrorSchema().nodes[
+      "image"
+    ].createAndFill(
       { src: "", alt: node.alt, title: node.label },
       convertedChildren
     );

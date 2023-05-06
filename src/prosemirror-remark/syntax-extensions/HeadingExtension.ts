@@ -3,7 +3,6 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
-  Schema,
 } from "prosemirror-model";
 
 import { type Extension, NodeExtension } from "../../prosemirror-unified";
@@ -44,10 +43,9 @@ export class HeadingExtension extends NodeExtension<Heading> {
 
   public unistNodeToProseMirrorNodes(
     node: Heading,
-    schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(schema, convertedChildren, {
+    return this.createProseMirrorNodeHelper(convertedChildren, {
       level: node.depth,
     });
   }

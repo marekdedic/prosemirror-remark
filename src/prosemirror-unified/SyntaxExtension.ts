@@ -9,8 +9,18 @@ export abstract class SyntaxExtension<
   UNode extends UnistNode,
   Context = Record<string, never>
 > extends Extension {
+  private schema: Schema<string, string> | undefined;
+
+  public setProseMirrorSchema(schema: Schema<string, string>): void {
+    this.schema = schema;
+  }
+
   public unistToProseMirrorTest(node: UnistNode): boolean {
     return node.type === this.unistNodeName();
+  }
+
+  public proseMirrorKeymap(): Record<string, Command> {
+    return {};
   }
 
   public postUnistToProseMirrorHook(
@@ -18,18 +28,14 @@ export abstract class SyntaxExtension<
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   ): void {}
 
-  // TODO: Remove schema parameter from both here and conversion
-  public proseMirrorKeymap(
-    _schema: Schema<string, string>
-  ): Record<string, Command> {
-    return {};
+  protected proseMirrorSchema(): Schema<string, string> {
+    return this.schema!;
   }
 
   public abstract unistNodeName(): UNode["type"];
 
   public abstract unistNodeToProseMirrorNodes(
     node: UNode,
-    schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
     context: ConverterContext<Context>
   ): Array<ProseMirrorNode>;

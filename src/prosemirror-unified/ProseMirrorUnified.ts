@@ -22,10 +22,10 @@ export class ProseMirrorUnified {
   public constructor(extensions: Array<Extension> = []) {
     const extensionManager = new ExtensionManager(extensions);
     this.builtSchema = new SchemaBuilder(extensionManager).build();
-    this.keymapBuilder = new KeymapBuilder(extensionManager, this.schema());
+    extensionManager.setSchema(this.schema());
+    this.keymapBuilder = new KeymapBuilder(extensionManager);
     this.unistToProseMirrorConverter = new UnistToProseMirrorConverter(
-      extensionManager,
-      this.schema()
+      extensionManager
     );
     this.proseMirrorToUnistConverter = new ProseMirrorToUnistConverter(
       extensionManager

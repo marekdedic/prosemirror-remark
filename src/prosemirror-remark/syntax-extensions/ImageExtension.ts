@@ -3,7 +3,6 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
-  Schema,
 } from "prosemirror-model";
 import remarkUnwrapImages from "remark-unwrap-images";
 import type { Processor } from "unified";
@@ -65,10 +64,9 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
 
   public unistNodeToProseMirrorNodes(
     node: Image,
-    schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(schema, convertedChildren, {
+    return this.createProseMirrorNodeHelper(convertedChildren, {
       src: node.url,
       alt: node.alt,
       title: node.title,

@@ -3,7 +3,6 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
-  Schema,
 } from "prosemirror-model";
 
 import { NodeExtension } from "../../prosemirror-unified";
@@ -30,10 +29,9 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
 
   public unistNodeToProseMirrorNodes(
     _node: Blockquote,
-    schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(schema, convertedChildren);
+    return this.createProseMirrorNodeHelper(convertedChildren);
   }
 
   public proseMirrorNodeToUnistNodes(

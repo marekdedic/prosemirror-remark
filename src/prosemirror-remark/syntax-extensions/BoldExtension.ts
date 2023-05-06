@@ -3,7 +3,6 @@ import type {
   DOMOutputSpec,
   MarkSpec,
   Node as ProseMirrorNode,
-  Schema,
 } from "prosemirror-model";
 
 import { MarkExtension } from "../../prosemirror-unified";
@@ -36,12 +35,13 @@ export class BoldExtension extends MarkExtension<Strong> {
 
   public unistNodeToProseMirrorNodes(
     _node: Strong,
-    schema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(
-        child.marks.concat([schema.marks[this.proseMirrorMarkName()].create()])
+        child.marks.concat([
+          this.proseMirrorSchema().marks[this.proseMirrorMarkName()].create(),
+        ])
       )
     );
   }
