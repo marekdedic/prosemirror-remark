@@ -4,6 +4,7 @@ import type {
   Node as ProseMirrorNode,
   NodeSpec,
 } from "prosemirror-model";
+import type { Command } from "prosemirror-state";
 
 import { NodeExtension } from "../../prosemirror-unified";
 
@@ -22,6 +23,25 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
       parseDOM: [{ tag: "hr" }],
       toDOM(): DOMOutputSpec {
         return ["div", ["hr"]];
+      },
+    };
+  }
+
+  public proseMirrorKeymap(): Record<string, Command> {
+    return {
+      "Mod-_": (state, dispatch): true => {
+        if (dispatch) {
+          dispatch(
+            state.tr
+              .replaceSelectionWith(
+                this.proseMirrorSchema().nodes[
+                  this.proseMirrorNodeName()
+                ].create()
+              )
+              .scrollIntoView()
+          );
+        }
+        return true;
       },
     };
   }

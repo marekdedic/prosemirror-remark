@@ -4,6 +4,8 @@ import type {
   Node as ProseMirrorNode,
   NodeSpec,
 } from "prosemirror-model";
+import { wrapInList } from "prosemirror-schema-list";
+import type { Command } from "prosemirror-state";
 import type { Node as UnistNode } from "unist";
 
 import { type Extension, NodeExtension } from "../../prosemirror-unified";
@@ -47,6 +49,14 @@ export class UnorderedListExtension extends NodeExtension<List> {
       toDOM(node: ProseMirrorNode): DOMOutputSpec {
         return ["ul", { "data-spread": node.attrs.spread as boolean }, 0];
       },
+    };
+  }
+
+  public proseMirrorKeymap(): Record<string, Command> {
+    return {
+      "Shift-Mod-8": wrapInList(
+        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+      ),
     };
   }
 

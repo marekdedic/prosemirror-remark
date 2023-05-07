@@ -1,9 +1,11 @@
 import type { BlockContent, Blockquote, DefinitionContent } from "mdast";
+import { setBlockType } from "prosemirror-commands";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
 } from "prosemirror-model";
+import type { Command } from "prosemirror-state";
 
 import { NodeExtension } from "../../prosemirror-unified";
 
@@ -24,6 +26,14 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
       toDOM(): DOMOutputSpec {
         return ["blockquote", 0];
       },
+    };
+  }
+
+  public proseMirrorKeymap(): Record<string, Command> {
+    return {
+      "Mod->": setBlockType(
+        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+      ),
     };
   }
 

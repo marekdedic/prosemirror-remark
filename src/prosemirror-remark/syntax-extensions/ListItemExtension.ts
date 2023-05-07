@@ -4,6 +4,12 @@ import type {
   Node as ProseMirrorNode,
   NodeSpec,
 } from "prosemirror-model";
+import {
+  liftListItem,
+  sinkListItem,
+  splitListItem,
+} from "prosemirror-schema-list";
+import type { Command } from "prosemirror-state";
 
 import { NodeExtension } from "../../prosemirror-unified";
 
@@ -24,6 +30,15 @@ export class ListItemExtension extends NodeExtension<ListItem> {
       toDOM(): DOMOutputSpec {
         return ["li", 0];
       },
+    };
+  }
+
+  public proseMirrorKeymap(): Record<string, Command> {
+    const nodeType = this.proseMirrorSchema().nodes[this.proseMirrorNodeName()];
+    return {
+      Enter: splitListItem(nodeType),
+      "Shift-Tab": liftListItem(nodeType),
+      Tab: sinkListItem(nodeType),
     };
   }
 
