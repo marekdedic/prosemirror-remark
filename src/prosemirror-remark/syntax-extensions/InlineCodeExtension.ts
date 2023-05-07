@@ -1,9 +1,11 @@
 import type { InlineCode, Text } from "mdast";
+import { toggleMark } from "prosemirror-commands";
 import type {
   DOMOutputSpec,
   MarkSpec,
   Node as ProseMirrorNode,
 } from "prosemirror-model";
+import type { Command } from "prosemirror-state";
 
 import { MarkExtension } from "../../prosemirror-unified";
 
@@ -23,6 +25,13 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
       toDOM(): DOMOutputSpec {
         return ["code"];
       },
+    };
+  }
+
+  public proseMirrorKeymap(): Record<string, Command> {
+    const markType = this.proseMirrorSchema().marks[this.proseMirrorMarkName()];
+    return {
+      "Ctrl-`": toggleMark(markType),
     };
   }
 

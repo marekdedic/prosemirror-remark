@@ -1,9 +1,11 @@
 import type { Strong, Text } from "mdast";
+import { toggleMark } from "prosemirror-commands";
 import type {
   DOMOutputSpec,
   MarkSpec,
   Node as ProseMirrorNode,
 } from "prosemirror-model";
+import type { Command } from "prosemirror-state";
 
 import { MarkExtension } from "../../prosemirror-unified";
 
@@ -30,6 +32,14 @@ export class BoldExtension extends MarkExtension<Strong> {
       toDOM(): DOMOutputSpec {
         return ["strong"];
       },
+    };
+  }
+
+  public proseMirrorKeymap(): Record<string, Command> {
+    const markType = this.proseMirrorSchema().marks[this.proseMirrorMarkName()];
+    return {
+      "Mod-b": toggleMark(markType),
+      "Mod-B": toggleMark(markType),
     };
   }
 
