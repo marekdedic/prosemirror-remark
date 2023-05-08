@@ -1,16 +1,34 @@
 import type { Heading, PhrasingContent } from "mdast";
+import { setBlockType } from "prosemirror-commands";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
 } from "prosemirror-model";
+import type { Command, EditorState } from "prosemirror-state";
+import type { EditorView } from "prosemirror-view";
 
 import { type Extension, NodeExtension } from "../../prosemirror-unified";
+import { ParagraphExtension } from "./ParagraphExtension";
 import { TextExtension } from "./TextExtension";
 
 export class HeadingExtension extends NodeExtension<Heading> {
+  private static isAtStart(
+    state: EditorState,
+    view: EditorView | undefined
+  ): boolean {
+    if (!state.selection.empty) {
+      return false;
+    }
+    if (view !== undefined) {
+      return view.endOfTextblock("backward", state);
+    } else {
+      return state.selection.$anchor.parentOffset > 0;
+    }
+  }
+
   public dependencies(): Array<Extension> {
-    return [new TextExtension()];
+    return [new ParagraphExtension(), new TextExtension()];
   }
 
   public unistNodeName(): "heading" {
@@ -41,6 +59,24 @@ export class HeadingExtension extends NodeExtension<Heading> {
     };
   }
 
+  public proseMirrorKeymap(): Record<string, Command> {
+    const keymap: Record<string, Command> = {
+      Tab: this.headingLevelCommandBuilder(+1, false),
+      "#": this.headingLevelCommandBuilder(+1, true),
+      "Shift-Tab": this.headingLevelCommandBuilder(-1, false),
+      Backspace: this.headingLevelCommandBuilder(-1, true),
+    };
+
+    for (let i = 1; i <= 6; i++) {
+      keymap[`Shift-Mod-${i}`] = setBlockType(
+        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()],
+        { level: i }
+      );
+    }
+
+    return keymap;
+  }
+
   public unistNodeToProseMirrorNodes(
     node: Heading,
     convertedChildren: Array<ProseMirrorNode>
@@ -61,5 +97,48 @@ export class HeadingExtension extends NodeExtension<Heading> {
         children: convertedChildren,
       },
     ];
+  }
+
+  private headingLevelCommandBuilder(
+    levelUpdate: -1 | 1,
+    onlyAtStart: boolean
+  ): Command {
+    return (state, dispatch, view) => {
+      if (onlyAtStart && !HeadingExtension.isAtStart(state, view)) {
+        return false;
+      }
+
+      const { $anchor } = state.selection;
+      const headingNode = $anchor.parent;
+      if (headingNode.type.name !== "heading") {
+        return false;
+      }
+
+      if (dispatch === undefined) {
+        return true;
+      }
+
+      const headingPosition = $anchor.before($anchor.depth);
+      const newHeadingLevel = Math.min(
+        6,
+        Math.max(0, (headingNode.attrs.level as number) + levelUpdate)
+      );
+
+      if (newHeadingLevel > 0) {
+        dispatch(
+          state.tr.setNodeMarkup(headingPosition, undefined, {
+            level: newHeadingLevel,
+          })
+        );
+      } else {
+        dispatch(
+          state.tr.setNodeMarkup(
+            headingPosition,
+            this.proseMirrorSchema().nodes["paragraph"]
+          )
+        );
+      }
+      return true;
+    };
   }
 }
