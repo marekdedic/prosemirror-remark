@@ -1,9 +1,11 @@
 import type { Break } from "mdast";
+import { chainCommands, exitCode } from "prosemirror-commands";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
 } from "prosemirror-model";
+import type { Command } from "prosemirror-state";
 
 import { NodeExtension } from "../../prosemirror-unified";
 
@@ -25,6 +27,34 @@ export class BreakExtension extends NodeExtension<Break> {
       toDOM(): DOMOutputSpec {
         return ["br"];
       },
+    };
+  }
+
+  public proseMirrorKeymap(): Record<string, Command> {
+    const command = chainCommands(exitCode, (state, dispatch) => {
+      if (dispatch) {
+        dispatch(
+          state.tr
+            .replaceSelectionWith(
+              this.proseMirrorSchema().nodes[
+                this.proseMirrorNodeName()
+              ].create()
+            )
+            .scrollIntoView()
+        );
+      }
+      return true;
+    });
+
+    const isMac =
+      typeof navigator != "undefined"
+        ? navigator.platform.includes("Mac") // eslint-disable-line deprecation/deprecation
+        : false;
+
+    return {
+      "Mod-Enter": command,
+      "Shift-Enter": command,
+      ...(isMac && { "Ctrl-Enter": command }),
     };
   }
 
