@@ -60,10 +60,11 @@ export class HeadingExtension extends NodeExtension<Heading> {
   }
 
   public proseMirrorKeymap(): Record<string, Command> {
-    // TODO: Doesn't work (browser shortcut used instead)
     const keymap: Record<string, Command> = {
+      // TODO: Doesn't work (browser shortcut used instead)
       Tab: this.headingLevelCommandBuilder(+1, false),
       "#": this.headingLevelCommandBuilder(+1, true),
+      // TODO: Doesn't work (browser shortcut used instead)
       "Shift-Tab": this.headingLevelCommandBuilder(-1, false),
       // TODO: Breaks backspace even for regular linebreaks
       // Backspace: this.headingLevelCommandBuilder(-1, true),

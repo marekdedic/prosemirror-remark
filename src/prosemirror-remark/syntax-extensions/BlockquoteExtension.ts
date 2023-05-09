@@ -32,6 +32,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
   public proseMirrorKeymap(): Record<string, Command> {
     // TODO: Add binding Mod-< to remove a blockquote?
     return {
+      // TODO: Doesn't work?
       "Mod->": setBlockType(
         this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
       ),
