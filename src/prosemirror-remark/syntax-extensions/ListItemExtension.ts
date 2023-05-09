@@ -35,11 +35,9 @@ export class ListItemExtension extends NodeExtension<ListItem> {
 
   public proseMirrorKeymap(): Record<string, Command> {
     const nodeType = this.proseMirrorSchema().nodes[this.proseMirrorNodeName()];
-    // TODO: Backspace to lift?
     return {
       Enter: splitListItem(nodeType),
       "Shift-Tab": liftListItem(nodeType),
-      // TODO: Sometimes works, sometimes doesn't?
       Tab: sinkListItem(nodeType),
     };
   }
