@@ -7,7 +7,7 @@ import type {
 import {
   liftListItem,
   sinkListItem,
-  splitListItem,
+  //splitListItem,
 } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
 
@@ -35,9 +35,12 @@ export class ListItemExtension extends NodeExtension<ListItem> {
 
   public proseMirrorKeymap(): Record<string, Command> {
     const nodeType = this.proseMirrorSchema().nodes[this.proseMirrorNodeName()];
+    // TODO: Backspace to lift?
     return {
-      Enter: splitListItem(nodeType),
+      // TODO: Breaks all enter keypresses
+      //Enter: splitListItem(nodeType),
       "Shift-Tab": liftListItem(nodeType),
+      // TODO: Sometimes works, sometimes doesn't?
       Tab: sinkListItem(nodeType),
     };
   }
