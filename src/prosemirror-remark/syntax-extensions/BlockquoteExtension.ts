@@ -1,5 +1,5 @@
 import type { BlockContent, Blockquote, DefinitionContent } from "mdast";
-import { setBlockType } from "prosemirror-commands";
+import { wrapIn } from "prosemirror-commands";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -32,8 +32,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
   public proseMirrorKeymap(): Record<string, Command> {
     // TODO: Add binding Mod-< to remove a blockquote?
     return {
-      // TODO: Doesn't work?
-      "Mod->": setBlockType(
+      "Mod->": wrapIn(
         this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
       ),
     };
