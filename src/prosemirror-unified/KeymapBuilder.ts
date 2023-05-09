@@ -9,10 +9,10 @@ export class KeymapBuilder {
 
   public constructor(extensionManager: ExtensionManager) {
     this.keymap = new Map();
-    this.addKeymap(baseKeymap);
     for (const extension of extensionManager.syntaxExtensions()) {
       this.addKeymap(extension.proseMirrorKeymap());
     }
+    this.addKeymap(baseKeymap);
   }
 
   public build(): Plugin {
