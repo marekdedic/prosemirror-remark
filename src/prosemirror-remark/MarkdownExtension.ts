@@ -27,6 +27,8 @@ import { UnorderedListExtension } from "./syntax-extensions/UnorderedListExtensi
 export class MarkdownExtension extends Extension {
   public dependencies(): Array<Extension> {
     return [
+      // ParagraphExtension needs to be first so that it is the default block.
+      new ParagraphExtension(),
       new BlockquoteExtension(),
       new BoldExtension(),
       new BreakExtension(),
@@ -42,7 +44,6 @@ export class MarkdownExtension extends Extension {
       new LinkReferenceExtension(),
       new ListItemExtension(),
       new OrderedListExtension(),
-      new ParagraphExtension(),
       new RootExtension(),
       new TextExtension(),
       new UnorderedListExtension(),
