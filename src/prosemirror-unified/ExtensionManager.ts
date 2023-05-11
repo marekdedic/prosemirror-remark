@@ -25,19 +25,20 @@ function isMarkExtension(
 }
 
 export class ExtensionManager {
-  private readonly markExtensionList: Record<string, MarkExtension<UnistNode>>;
-  private readonly nodeExtensionList: Record<string, NodeExtension<UnistNode>>;
-  private readonly otherSyntaxExtensionList: Record<
+  private readonly markExtensionList: Map<string, MarkExtension<UnistNode>>;
+  private readonly nodeExtensionList: Map<string, NodeExtension<UnistNode>>;
+  // TODO: This could probably be removed
+  private readonly otherSyntaxExtensionList: Map<
     string,
     SyntaxExtension<UnistNode>
   >;
-  private readonly otherExtensionList: Record<string, Extension>;
+  private readonly otherExtensionList: Map<string, Extension>;
 
   public constructor(extensions: Array<Extension>) {
-    this.markExtensionList = {};
-    this.nodeExtensionList = {};
-    this.otherSyntaxExtensionList = {};
-    this.otherExtensionList = {};
+    this.markExtensionList = new Map();
+    this.nodeExtensionList = new Map();
+    this.otherSyntaxExtensionList = new Map();
+    this.otherExtensionList = new Map();
 
     for (const extension of extensions) {
       this.add(extension);
@@ -51,23 +52,23 @@ export class ExtensionManager {
   }
 
   public extensions(): Array<Extension> {
-    return Object.values(this.otherExtensionList).concat(
-      this.syntaxExtensions()
+    return (this.syntaxExtensions() as Array<Extension>).concat(
+      Array.from(this.otherExtensionList.values())
     );
   }
 
   public markExtensions(): Array<MarkExtension<UnistNode>> {
-    return Object.values(this.markExtensionList);
+    return Array.from(this.markExtensionList.values());
   }
 
   public nodeExtensions(): Array<NodeExtension<UnistNode>> {
-    return Object.values(this.nodeExtensionList);
+    return Array.from(this.nodeExtensionList.values());
   }
 
   public syntaxExtensions(): Array<SyntaxExtension<UnistNode>> {
-    return Object.values(this.otherSyntaxExtensionList).concat(
+    return (this.nodeExtensions() as Array<SyntaxExtension<UnistNode>>).concat(
       this.markExtensions(),
-      this.nodeExtensions()
+      Array.from(this.otherSyntaxExtensionList.values())
     );
   }
 
@@ -77,17 +78,17 @@ export class ExtensionManager {
     }
 
     if (isMarkExtension(extension)) {
-      this.markExtensionList[extension.constructor.name] = extension;
+      this.markExtensionList.set(extension.constructor.name, extension);
       return;
     }
     if (isNodeExtension(extension)) {
-      this.nodeExtensionList[extension.constructor.name] = extension;
+      this.nodeExtensionList.set(extension.constructor.name, extension);
       return;
     }
     if (isSyntaxExtension(extension)) {
-      this.otherSyntaxExtensionList[extension.constructor.name] = extension;
+      this.otherSyntaxExtensionList.set(extension.constructor.name, extension);
       return;
     }
-    this.otherExtensionList[extension.constructor.name] = extension;
+    this.otherExtensionList.set(extension.constructor.name, extension);
   }
 }
