@@ -1,5 +1,6 @@
 import type { BlockContent, Blockquote, DefinitionContent } from "mdast";
 import { wrapIn } from "prosemirror-commands";
+import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -27,6 +28,15 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
         return ["blockquote", 0];
       },
     };
+  }
+
+  public proseMirrorInputRules(): Array<InputRule> {
+    return [
+      wrappingInputRule(
+        /^\s*>\s$/,
+        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+      ),
+    ];
   }
 
   public proseMirrorKeymap(): Record<string, Command> {
