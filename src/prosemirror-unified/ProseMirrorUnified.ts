@@ -6,6 +6,7 @@ import type { Node as UnistNode } from "unist";
 
 import type { Extension } from "./Extension";
 import { ExtensionManager } from "./ExtensionManager";
+import { InputRulesBuilder } from "./InputRulesBuilder";
 import { KeymapBuilder } from "./KeymapBuilder";
 import { ProseMirrorToUnistConverter } from "./ProseMirrorToUnistConverter";
 import { SchemaBuilder } from "./SchemaBuilder";
@@ -14,6 +15,7 @@ import { UnistToProseMirrorConverter } from "./UnistToProseMirrorConverter";
 
 export class ProseMirrorUnified {
   private readonly builtSchema: Schema<string, string>;
+  private readonly inputRulesBuilder: InputRulesBuilder;
   private readonly keymapBuilder: KeymapBuilder;
   private readonly unistToProseMirrorConverter: UnistToProseMirrorConverter;
   private readonly proseMirrorToUnistConverter: ProseMirrorToUnistConverter;
@@ -23,6 +25,7 @@ export class ProseMirrorUnified {
     const extensionManager = new ExtensionManager(extensions);
     this.builtSchema = new SchemaBuilder(extensionManager).build();
     extensionManager.setSchema(this.schema());
+    this.inputRulesBuilder = new InputRulesBuilder(extensionManager);
     this.keymapBuilder = new KeymapBuilder(extensionManager);
     this.unistToProseMirrorConverter = new UnistToProseMirrorConverter(
       extensionManager
@@ -49,7 +52,7 @@ export class ProseMirrorUnified {
   }
 
   public plugins(): Array<Plugin> {
-    return [this.keymapBuilder.build()];
+    return [this.inputRulesBuilder.build(), this.keymapBuilder.build()];
   }
 
   public serialize(doc: ProseMirrorNode): string {

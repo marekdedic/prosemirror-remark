@@ -1,3 +1,4 @@
+import type { InputRule } from "prosemirror-inputrules";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
 import type { Node as UnistNode } from "unist";
@@ -17,6 +18,10 @@ export abstract class SyntaxExtension<
 
   public unistToProseMirrorTest(node: UnistNode): boolean {
     return node.type === this.unistNodeName();
+  }
+
+  public proseMirrorInputRules(): Array<InputRule> {
+    return [];
   }
 
   public proseMirrorKeymap(): Record<string, Command> {
