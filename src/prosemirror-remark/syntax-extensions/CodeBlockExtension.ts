@@ -1,4 +1,5 @@
 import type { Code, Text } from "mdast";
+import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -33,6 +34,15 @@ export class CodeBlockExtension extends NodeExtension<Code> {
         return ["pre", ["code", 0]];
       },
     };
+  }
+
+  public proseMirrorInputRules(): Array<InputRule> {
+    return [
+      textblockTypeInputRule(
+        /^```$/,
+        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+      ),
+    ];
   }
 
   public unistNodeToProseMirrorNodes(node: Code): Array<ProseMirrorNode> {
