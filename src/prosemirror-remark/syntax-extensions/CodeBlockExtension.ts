@@ -44,6 +44,10 @@ export class CodeBlockExtension extends NodeExtension<Code> {
         /^```$/,
         this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
       ),
+      textblockTypeInputRule(
+        /^\s{4}$/,
+        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+      ),
     ];
   }
 
