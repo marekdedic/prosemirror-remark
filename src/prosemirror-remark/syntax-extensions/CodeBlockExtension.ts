@@ -1,10 +1,12 @@
 import type { Code, Text } from "mdast";
+import { setBlockType } from "prosemirror-commands";
 import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
 } from "prosemirror-model";
+import type { Command } from "prosemirror-state";
 
 import { type Extension, NodeExtension } from "../../prosemirror-unified";
 import { TextExtension } from "./TextExtension";
@@ -44,6 +46,14 @@ export class CodeBlockExtension extends NodeExtension<Code> {
         this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
       ),
     ];
+  }
+
+  public proseMirrorKeymap(): Record<string, Command> {
+    return {
+      "Shift-Mod-\\": setBlockType(
+        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+      ),
+    };
   }
 
   public unistNodeToProseMirrorNodes(node: Code): Array<ProseMirrorNode> {
