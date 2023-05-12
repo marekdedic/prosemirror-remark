@@ -27,6 +27,8 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     };
   }
 
+  // TODO: Add inpur rules
+
   public proseMirrorKeymap(): Record<string, Command> {
     return {
       "Mod-_": (state, dispatch): true => {

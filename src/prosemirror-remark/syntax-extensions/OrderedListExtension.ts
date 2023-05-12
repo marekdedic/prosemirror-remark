@@ -63,6 +63,7 @@ export class OrderedListExtension extends NodeExtension<List> {
   }
 
   public proseMirrorInputRules(): Array<InputRule> {
+    // TODO: Maybe this should work even when not on the beginning of a line?
     return [
       wrappingInputRule(
         /^(\d+)\.\s$/,
