@@ -30,7 +30,7 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
 
   public proseMirrorInputRules(): Array<InputRule> {
     return [
-      new InputRule(/^\s{0,3}[*-_]{3}$/, (state, _, start, end) => {
+      new InputRule(/^\s{0,3}\*\*\*|---|___$/, (state, _, start, end) => {
         return state.tr.replaceWith(
           start,
           end,
