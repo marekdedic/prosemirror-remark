@@ -1,4 +1,5 @@
 import type { List, ListContent } from "mdast";
+import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -59,6 +60,18 @@ export class OrderedListExtension extends NodeExtension<List> {
         ];
       },
     };
+  }
+
+  public proseMirrorInputRules(): Array<InputRule> {
+    return [
+      wrappingInputRule(
+        /^(\d+)\.\s$/,
+        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()],
+        (match) => ({ start: +match[1] }),
+        (match, node) =>
+          node.childCount + (node.attrs.start as number) == +match[1]
+      ),
+    ];
   }
 
   public proseMirrorKeymap(): Record<string, Command> {
