@@ -4,13 +4,7 @@ import type { Node as UnistNode } from "unist";
 import type { Extension } from "./Extension";
 import { MarkExtension } from "./MarkExtension";
 import { NodeExtension } from "./NodeExtension";
-import { SyntaxExtension } from "./SyntaxExtension";
-
-function isSyntaxExtension(
-  extension: Extension
-): extension is SyntaxExtension<UnistNode> {
-  return extension instanceof SyntaxExtension;
-}
+import type { SyntaxExtension } from "./SyntaxExtension";
 
 function isNodeExtension(
   extension: Extension
@@ -27,17 +21,11 @@ function isMarkExtension(
 export class ExtensionManager {
   private readonly markExtensionList: Map<string, MarkExtension<UnistNode>>;
   private readonly nodeExtensionList: Map<string, NodeExtension<UnistNode>>;
-  // TODO: This could probably be removed
-  private readonly otherSyntaxExtensionList: Map<
-    string,
-    SyntaxExtension<UnistNode>
-  >;
   private readonly otherExtensionList: Map<string, Extension>;
 
   public constructor(extensions: Array<Extension>) {
     this.markExtensionList = new Map();
     this.nodeExtensionList = new Map();
-    this.otherSyntaxExtensionList = new Map();
     this.otherExtensionList = new Map();
 
     for (const extension of extensions) {
@@ -67,8 +55,7 @@ export class ExtensionManager {
 
   public syntaxExtensions(): Array<SyntaxExtension<UnistNode>> {
     return (this.nodeExtensions() as Array<SyntaxExtension<UnistNode>>).concat(
-      this.markExtensions(),
-      Array.from(this.otherSyntaxExtensionList.values())
+      this.markExtensions()
     );
   }
 
@@ -83,10 +70,6 @@ export class ExtensionManager {
     }
     if (isNodeExtension(extension)) {
       this.nodeExtensionList.set(extension.constructor.name, extension);
-      return;
-    }
-    if (isSyntaxExtension(extension)) {
-      this.otherSyntaxExtensionList.set(extension.constructor.name, extension);
       return;
     }
     this.otherExtensionList.set(extension.constructor.name, extension);
