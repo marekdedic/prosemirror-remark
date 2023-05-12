@@ -39,7 +39,6 @@ export class CodeBlockExtension extends NodeExtension<Code> {
   }
 
   public proseMirrorInputRules(): Array<InputRule> {
-    // TODO: Maybe this should work even when not on the beginning of a line?
     return [
       textblockTypeInputRule(
         /^```$/,

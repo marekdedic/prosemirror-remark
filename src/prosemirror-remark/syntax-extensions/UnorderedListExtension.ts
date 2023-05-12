@@ -56,7 +56,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
   public proseMirrorInputRules(): Array<InputRule> {
     return [
       wrappingInputRule(
-        /^\s*([-+*])\s$/,
+        /^([-+*])\s$/,
         this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
       ),
     ];
