@@ -41,6 +41,8 @@ export class LinkExtension extends MarkExtension<Link> {
     };
   }
 
+  // TODO: Add a keymap
+
   public unistNodeToProseMirrorNodes(
     node: Link,
     convertedChildren: Array<ProseMirrorNode>
