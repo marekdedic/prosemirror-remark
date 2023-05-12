@@ -63,7 +63,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
   public proseMirrorInputRules(): Array<InputRule> {
     return [
       textblockTypeInputRule(
-        /^(#{1,6})\s$/,
+        /^\s{0,3}(#{1,6})\s$/,
         this.proseMirrorSchema().nodes[this.proseMirrorNodeName()],
         (match) => ({ level: match[1].length })
       ),
