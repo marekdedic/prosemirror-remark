@@ -1,5 +1,6 @@
 import type { Heading, PhrasingContent } from "mdast";
 import { setBlockType } from "prosemirror-commands";
+import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -57,6 +58,16 @@ export class HeadingExtension extends NodeExtension<Heading> {
         return ["h" + (node.attrs.level as number).toString(), 0];
       },
     };
+  }
+
+  public proseMirrorInputRules(): Array<InputRule> {
+    return [
+      textblockTypeInputRule(
+        new RegExp("^(#{1,6})\\s$"),
+        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()],
+        (match) => ({ level: match[1].length })
+      ),
+    ];
   }
 
   public proseMirrorKeymap(): Record<string, Command> {
