@@ -36,7 +36,10 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
   }
 
   public proseMirrorInputRules(): Array<InputRule> {
-    return [this.inputRuleHelper(/(?<!\*)\*(?:[^\s*](.*[^\s])?)\*([^*])$/)];
+    return [
+      this.inputRuleHelper(/(?<!\*)\*(?:[^\s*](.*[^\s])?)\*([^*])$/),
+      this.inputRuleHelper(/(?<!_)_(?:[^\s*](.*[^\s])?)_([^*])$/),
+    ];
   }
 
   public proseMirrorKeymap(): Record<string, Command> {

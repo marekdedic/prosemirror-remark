@@ -37,7 +37,10 @@ export class BoldExtension extends MarkExtension<Strong> {
   }
 
   public proseMirrorInputRules(): Array<InputRule> {
-    return [this.inputRuleHelper(/\*\*([^\s](?:.*[^\s])?)\*\*(.)$/)];
+    return [
+      this.inputRuleHelper(/\*\*([^\s](?:.*[^\s])?)\*\*(.)$/),
+      this.inputRuleHelper(/__([^\s](?:.*[^\s])?)__(.)$/),
+    ];
   }
 
   public proseMirrorKeymap(): Record<string, Command> {
