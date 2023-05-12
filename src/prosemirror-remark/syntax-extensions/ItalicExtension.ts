@@ -8,7 +8,7 @@ import type {
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
 
-import { MarkExtension } from "../../prosemirror-unified";
+import { MarkExtension, MarkInputRule } from "../../prosemirror-unified";
 
 export class ItalicExtension extends MarkExtension<Emphasis> {
   public unistNodeName(): "emphasis" {
@@ -37,8 +37,14 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
 
   public proseMirrorInputRules(): Array<InputRule> {
     return [
-      this.inputRuleHelper(/(?<!\*)\*(?:[^\s*](.*[^\s])?)\*([^*])$/),
-      this.inputRuleHelper(/(?<!_)_(?:[^\s*](.*[^\s])?)_([^*])$/),
+      new MarkInputRule(
+        /(?<!\*)\*(?:[^\s*](.*[^\s])?)\*([^*])$/,
+        this.proseMirrorSchema().marks[this.proseMirrorMarkName()]
+      ),
+      new MarkInputRule(
+        /(?<!_)_(?:[^\s*](.*[^\s])?)_([^*])$/,
+        this.proseMirrorSchema().marks[this.proseMirrorMarkName()]
+      ),
     ];
   }
 

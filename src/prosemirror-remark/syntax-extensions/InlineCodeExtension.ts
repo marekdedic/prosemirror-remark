@@ -8,7 +8,7 @@ import type {
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
 
-import { MarkExtension } from "../../prosemirror-unified";
+import { MarkExtension, MarkInputRule } from "../../prosemirror-unified";
 
 export class InlineCodeExtension extends MarkExtension<InlineCode> {
   public unistNodeName(): "inlineCode" {
@@ -30,7 +30,12 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
   }
 
   public proseMirrorInputRules(): Array<InputRule> {
-    return [this.inputRuleHelper(/`([^\s](?:.*[^\s])?)`(.)$/)];
+    return [
+      new MarkInputRule(
+        /`([^\s](?:.*[^\s])?)`(.)$/,
+        this.proseMirrorSchema().marks[this.proseMirrorMarkName()]
+      ),
+    ];
   }
 
   public proseMirrorKeymap(): Record<string, Command> {
