@@ -15,7 +15,6 @@ export class UnistToProseMirrorConverter {
     return "children" in node;
   }
 
-  // TODO: Better error handling?
   public convert(unist: UnistNode): ProseMirrorNode | null {
     const context: ConverterContext<unknown> = {};
     const rootNode = this.convertNode(unist, context);
@@ -23,6 +22,7 @@ export class UnistToProseMirrorConverter {
       extension.postUnistToProseMirrorHook(context);
     }
     if (rootNode.length !== 1) {
+      console.error("Couldn't find any way to convert the root unist node.");
       return null;
     }
     return rootNode[0];

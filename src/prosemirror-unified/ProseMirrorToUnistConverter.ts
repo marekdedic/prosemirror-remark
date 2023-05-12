@@ -10,10 +10,12 @@ export class ProseMirrorToUnistConverter {
     this.extensionManager = extensionManager;
   }
 
-  // TODO: Better error handling?
   public convert(node: ProseMirrorNode): UnistNode | null {
     const rootNode = this.convertNode(node);
     if (rootNode.length !== 1) {
+      console.error(
+        "Couldn't find any way to convert the root ProseMirror node."
+      );
       return null;
     }
     return rootNode[0];
