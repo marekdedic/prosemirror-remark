@@ -1,5 +1,6 @@
 import type { Emphasis, Text } from "mdast";
 import { toggleMark } from "prosemirror-commands";
+import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   MarkSpec,
@@ -32,6 +33,10 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
         return ["em"];
       },
     };
+  }
+
+  public proseMirrorInputRules(): Array<InputRule> {
+    return [this.inputRuleHelper(/(?<!\*)\*(?:[^\s*](.*[^\s])?)\*([^*])$/)];
   }
 
   public proseMirrorKeymap(): Record<string, Command> {
