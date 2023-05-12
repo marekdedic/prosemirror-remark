@@ -41,7 +41,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
   public proseMirrorInputRules(): Array<InputRule> {
     return [
       textblockTypeInputRule(
-        /^```$/,
+        /^\s{0,3}```$/,
         this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
       ),
       textblockTypeInputRule(
