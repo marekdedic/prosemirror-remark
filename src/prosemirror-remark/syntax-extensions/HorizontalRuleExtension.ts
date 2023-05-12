@@ -1,4 +1,5 @@
 import type { ThematicBreak } from "mdast";
+import { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -27,7 +28,17 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     };
   }
 
-  // TODO: Add inpur rules
+  public proseMirrorInputRules(): Array<InputRule> {
+    return [
+      new InputRule(/^[*-_]{3}$/, (state, _, start, end) => {
+        return state.tr.replaceWith(
+          start,
+          end,
+          this.createProseMirrorNodeHelper([])
+        );
+      }),
+    ];
+  }
 
   public proseMirrorKeymap(): Record<string, Command> {
     return {
