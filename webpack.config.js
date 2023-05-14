@@ -2,7 +2,7 @@
 
 module.exports = () => {
   return {
-    mode: "development",
+    mode: "production",
     devtool: "source-map",
     module: {
       rules: [
@@ -20,15 +20,17 @@ module.exports = () => {
     resolve: {
       extensions: [".ts", ".js"],
     },
-    entry: "./src/index.ts",
+    entry: {
+      "prosemirror-remark": "./src/index.ts",
+    },
     output: {
       filename: "[name].js",
     },
     optimization: {
       minimize: false,
-      splitChunks: {
-        chunks: "all",
-      },
+    },
+    experiments: {
+      outputModule: true,
     },
   };
 };
