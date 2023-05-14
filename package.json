@@ -19,7 +19,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "lint": "eslint --color 'src/**/*.ts' 'example/**/*.ts' 'webpack.config.js'"
+    "lint": "eslint --color 'src/**/*.ts' 'webpack.config.js'"
   },
   "peerDependencies": {
     "prosemirror-model": "^1.19.0",
