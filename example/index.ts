@@ -13,7 +13,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
-import { MarkdownExtension } from "../src/prosemirror-remark";
+import { MarkdownExtension } from "../src";
 import { defaultContent } from "./defaultContent";
 
 const editor = document.querySelector("#editor")!;
