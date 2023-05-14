@@ -7,9 +7,9 @@ import type {
 } from "prosemirror-model";
 import { wrapInList } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
+import { type Extension, NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
-import { type Extension, NodeExtension } from "../../prosemirror-unified";
 import { ListItemExtension } from "./ListItemExtension";
 
 export class OrderedListExtension extends NodeExtension<List> {

@@ -7,8 +7,7 @@ import type {
   NodeSpec,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
-
-import { NodeExtension } from "../../prosemirror-unified";
+import { NodeExtension } from "prosemirror-unified";
 
 export class BlockquoteExtension extends NodeExtension<Blockquote> {
   public unistNodeName(): "blockquote" {

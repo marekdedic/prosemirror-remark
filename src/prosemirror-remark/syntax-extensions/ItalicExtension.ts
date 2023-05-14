@@ -7,8 +7,7 @@ import type {
   Node as ProseMirrorNode,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
-
-import { MarkExtension, MarkInputRule } from "../../prosemirror-unified";
+import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
 export class ItalicExtension extends MarkExtension<Emphasis> {
   public unistNodeName(): "emphasis" {

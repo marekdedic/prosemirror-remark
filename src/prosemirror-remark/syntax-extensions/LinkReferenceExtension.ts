@@ -1,11 +1,11 @@
 import type { LinkReference } from "mdast";
 import type { Mark, Node as ProseMirrorNode } from "prosemirror-model";
-
 import {
   type ConverterContext,
   type Extension,
   MarkExtension,
-} from "../../prosemirror-unified";
+} from "prosemirror-unified";
+
 import {
   DefinitionExtension,
   type DefinitionExtensionContext,

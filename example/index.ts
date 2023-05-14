@@ -4,6 +4,7 @@ import "prosemirror-menu/style/menu.css";
 
 import { exampleSetup } from "prosemirror-example-setup";
 import { EditorState } from "prosemirror-state";
+import { ProseMirrorUnified } from "prosemirror-unified";
 import { EditorView } from "prosemirror-view";
 import rehypeSanitize from "rehype-sanitize";
 import rehypeStringify from "rehype-stringify";
@@ -13,7 +14,6 @@ import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
 import { MarkdownExtension } from "../src/prosemirror-remark";
-import { ProseMirrorUnified } from "../src/prosemirror-unified";
 import { defaultContent } from "./defaultContent";
 
 const editor = document.querySelector("#editor")!;

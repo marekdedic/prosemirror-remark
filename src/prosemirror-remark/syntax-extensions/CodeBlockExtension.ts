@@ -7,8 +7,8 @@ import type {
   NodeSpec,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
+import { type Extension, NodeExtension } from "prosemirror-unified";
 
-import { type Extension, NodeExtension } from "../../prosemirror-unified";
 import { TextExtension } from "./TextExtension";
 
 export class CodeBlockExtension extends NodeExtension<Code> {

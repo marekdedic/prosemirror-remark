@@ -1,9 +1,9 @@
+import { Extension } from "prosemirror-unified";
 import remarkParse from "remark-parse";
 import remarkStringify from "remark-stringify";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
-import { Extension } from "../prosemirror-unified";
 import { BlockquoteExtension } from "./syntax-extensions/BlockquoteExtension";
 import { BoldExtension } from "./syntax-extensions/BoldExtension";
 import { BreakExtension } from "./syntax-extensions/BreakExtension";

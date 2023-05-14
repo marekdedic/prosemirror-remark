@@ -6,8 +6,7 @@ import type {
   NodeSpec,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
-
-import { NodeExtension } from "../../prosemirror-unified";
+import { NodeExtension } from "prosemirror-unified";
 
 export class BreakExtension extends NodeExtension<Break> {
   public unistNodeName(): "break" {

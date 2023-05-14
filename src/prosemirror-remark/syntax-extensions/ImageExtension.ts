@@ -4,11 +4,11 @@ import type {
   Node as ProseMirrorNode,
   NodeSpec,
 } from "prosemirror-model";
+import { type Extension, NodeExtension } from "prosemirror-unified";
 import remarkUnwrapImages from "remark-unwrap-images";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
-import { type Extension, NodeExtension } from "../../prosemirror-unified";
 import { ParagraphExtension } from "./ParagraphExtension";
 
 export class ImageExtension extends NodeExtension<Image | Paragraph> {

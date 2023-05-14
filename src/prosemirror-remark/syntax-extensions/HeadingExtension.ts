@@ -7,9 +7,9 @@ import type {
   NodeSpec,
 } from "prosemirror-model";
 import type { Command, EditorState } from "prosemirror-state";
+import { type Extension, NodeExtension } from "prosemirror-unified";
 import type { EditorView } from "prosemirror-view";
 
-import { type Extension, NodeExtension } from "../../prosemirror-unified";
 import { ParagraphExtension } from "./ParagraphExtension";
 import { TextExtension } from "./TextExtension";
 

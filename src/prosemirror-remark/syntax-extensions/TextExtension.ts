@@ -1,7 +1,6 @@
 import type { Text } from "mdast";
 import type { Node as ProseMirrorNode, NodeSpec } from "prosemirror-model";
-
-import { NodeExtension } from "../../prosemirror-unified";
+import { NodeExtension } from "prosemirror-unified";
 
 export class TextExtension extends NodeExtension<Text> {
   public unistNodeName(): "text" {
