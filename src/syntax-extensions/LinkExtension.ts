@@ -7,6 +7,9 @@ import type {
 } from "prosemirror-model";
 import { MarkExtension } from "prosemirror-unified";
 
+/**
+ * @public
+ */
 export class LinkExtension extends MarkExtension<Link> {
   public unistNodeName(): "link" {
     return "link";

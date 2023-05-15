@@ -16,6 +16,9 @@ export interface LinkReferenceExtensionContext {
   marks: Record<string, Mark>;
 }
 
+/**
+ * @public
+ */
 export class LinkReferenceExtension extends MarkExtension<LinkReference> {
   public dependencies(): Array<Extension> {
     return [new DefinitionExtension(), new LinkExtension()];

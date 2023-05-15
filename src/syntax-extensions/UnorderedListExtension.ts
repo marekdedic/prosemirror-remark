@@ -12,6 +12,9 @@ import type { Node as UnistNode } from "unist";
 
 import { ListItemExtension } from "./ListItemExtension";
 
+/**
+ * @public
+ */
 export class UnorderedListExtension extends NodeExtension<List> {
   public dependencies(): Array<Extension> {
     return [new ListItemExtension()];

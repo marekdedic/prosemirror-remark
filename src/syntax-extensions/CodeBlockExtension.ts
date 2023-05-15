@@ -11,6 +11,9 @@ import { type Extension, NodeExtension } from "prosemirror-unified";
 
 import { TextExtension } from "./TextExtension";
 
+/**
+ * @public
+ */
 export class CodeBlockExtension extends NodeExtension<Code> {
   public dependencies(): Array<Extension> {
     return [new TextExtension()];

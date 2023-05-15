@@ -9,6 +9,9 @@ import type {
 import type { Command } from "prosemirror-state";
 import { NodeExtension } from "prosemirror-unified";
 
+/**
+ * @public
+ */
 export class BlockquoteExtension extends NodeExtension<Blockquote> {
   public unistNodeName(): "blockquote" {
     return "blockquote";

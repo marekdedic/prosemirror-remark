@@ -19,6 +19,9 @@ export interface ImageReferenceExtensionContext {
   proseMirrorNodes: Record<string, ProseMirrorNode>;
 }
 
+/**
+ * @public
+ */
 export class ImageReferenceExtension extends NodeExtension<ImageReference> {
   public dependencies(): Array<Extension> {
     return [new DefinitionExtension(), new ImageExtension()];

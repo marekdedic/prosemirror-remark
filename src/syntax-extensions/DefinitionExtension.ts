@@ -9,6 +9,9 @@ export interface DefinitionExtensionContext {
   >;
 }
 
+/**
+ * @public
+ */
 export class DefinitionExtension extends NodeExtension<Definition> {
   public unistNodeName(): "definition" {
     return "definition";

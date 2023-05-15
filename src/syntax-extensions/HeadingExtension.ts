@@ -13,6 +13,9 @@ import type { EditorView } from "prosemirror-view";
 import { ParagraphExtension } from "./ParagraphExtension";
 import { TextExtension } from "./TextExtension";
 
+/**
+ * @public
+ */
 export class HeadingExtension extends NodeExtension<Heading> {
   private static isAtStart(
     state: EditorState,
