@@ -2,6 +2,9 @@ import type { Definition } from "mdast";
 import type { Node as ProseMirrorNode } from "prosemirror-model";
 import { type ConverterContext, NodeExtension } from "prosemirror-unified";
 
+/**
+ * @public
+ */
 export interface DefinitionExtensionContext {
   definitions: Record<
     string,

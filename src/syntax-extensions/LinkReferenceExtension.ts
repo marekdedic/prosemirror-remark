@@ -12,6 +12,9 @@ import {
 } from "./DefinitionExtension";
 import { LinkExtension } from "./LinkExtension";
 
+/**
+ * @public
+ */
 export interface LinkReferenceExtensionContext {
   marks: Record<string, Mark>;
 }

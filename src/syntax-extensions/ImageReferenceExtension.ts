@@ -15,6 +15,9 @@ import {
 } from "./DefinitionExtension";
 import { ImageExtension } from "./ImageExtension";
 
+/**
+ * @public
+ */
 export interface ImageReferenceExtensionContext {
   proseMirrorNodes: Record<string, ProseMirrorNode>;
 }
