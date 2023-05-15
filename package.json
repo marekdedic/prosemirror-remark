@@ -18,7 +18,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
+    "build:webpack": "webpack",
+    "build": "npm run build:webpack",
     "lint": "eslint --color 'src/**/*.ts' 'webpack.config.js'"
   },
   "dependencies": {
