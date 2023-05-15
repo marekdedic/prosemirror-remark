@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-module.exports = () => {
+function createConfig(libraryType, extension) {
   return {
     mode: "production",
     devtool: "source-map",
@@ -24,7 +24,10 @@ module.exports = () => {
       "prosemirror-remark": "./src/index.ts",
     },
     output: {
-      filename: "[name].js",
+      filename: "[name]." + extension,
+      library: {
+        type: libraryType,
+      },
     },
     optimization: {
       minimize: false,
@@ -33,4 +36,9 @@ module.exports = () => {
       outputModule: true,
     },
   };
-};
+}
+
+module.exports = [
+  createConfig("module", "js"),
+  createConfig("commonjs2", "cjs"),
+];
