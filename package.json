@@ -20,6 +20,11 @@
   "main": "dist/prosemirror-remark.cjs",
   "module": "dist/prosemirror-remark.js",
   "types": "dist/prosemirror-remark.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "build:webpack": "webpack",
     "build:api-extractor": "api-extractor run",
