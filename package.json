@@ -4,7 +4,8 @@
   "description": "ProseMirror Remark integration",
   "keywords": [
     "prosemirror",
-    "remark"
+    "remark",
+    "mdast"
   ],
   "homepage": "https://github.com/marekdedic/prosemirror-remark#readme",
   "bugs": {
@@ -16,7 +17,9 @@
     "type": "git",
     "url": "git+https://github.com/marekdedic/prosemirror-remark.git"
   },
-  "main": "index.js",
+  "main": "dist/prosemirror-remark.cjs",
+  "module": "dist/prosemirror-remark.js",
+  "types": "dist/prosemirror-remark.d.ts",
   "scripts": {
     "build:webpack": "webpack",
     "build:api-extractor": "api-extractor run",
