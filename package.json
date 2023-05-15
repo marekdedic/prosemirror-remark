@@ -27,8 +27,6 @@
     "lint": "eslint --color 'src/**/*.ts' 'webpack.config.js'"
   },
   "dependencies": {
-    "@types/mdast": "^3.0.11",
-    "@types/unist": "^2.0.6",
     "prosemirror-commands": "^1.5.1",
     "prosemirror-inputrules": "^1.2.0",
     "prosemirror-model": "^1.19.0",
@@ -43,27 +41,18 @@
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.34.9",
+    "@types/mdast": "^3.0.11",
+    "@types/unist": "^2.0.6",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
-    "css-loader": "^6.7.3",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-deprecation": "^1.4.1",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-simple-import-sort": "^10.0.0",
-    "html-webpack-plugin": "^5.5.1",
-    "mini-css-extract-plugin": "^2.7.5",
     "prettier": "^2.8.7",
-    "prosemirror-example-setup": "^1.2.1",
-    "prosemirror-markdown": "^1.10.1",
-    "prosemirror-schema-basic": "^1.2.1",
-    "rehype-sanitize": "^5.0.1",
-    "rehype-stringify": "^9.0.3",
-    "remark-gfm": "^3.0.1",
-    "remark-rehype": "^10.1.0",
     "ts-loader": "^9.4.2",
     "webpack": "^5.80.0",
-    "webpack-cli": "^5.0.1",
-    "webpack-subresource-integrity": "^5.2.0-rc.1"
+    "webpack-cli": "^5.0.1"
   }
 }
