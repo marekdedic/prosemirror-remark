@@ -24,8 +24,12 @@ import { RootExtension } from "./syntax-extensions/RootExtension";
 import { TextExtension } from "./syntax-extensions/TextExtension";
 import { UnorderedListExtension } from "./syntax-extensions/UnorderedListExtension";
 
-// TODO: Allow HTML input
-// TODO: Add support for autolinks, including e-mail addresses (CommonMark spec: https://spec.commonmark.org/0.30/#autolink)
+/**
+ * @public
+ *
+ * TODO: Allow HTML input
+ * TODO: Add support for autolinks, including e-mail addresses (CommonMark spec: https://spec.commonmark.org/0.30/#autolink)
+ */
 export class MarkdownExtension extends Extension {
   public dependencies(): Array<Extension> {
     return [

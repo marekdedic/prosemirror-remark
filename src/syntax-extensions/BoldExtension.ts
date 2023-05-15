@@ -9,6 +9,9 @@ import type {
 import type { Command } from "prosemirror-state";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
+/**
+ * @public
+ */
 export class BoldExtension extends MarkExtension<Strong> {
   public unistNodeName(): "strong" {
     return "strong";

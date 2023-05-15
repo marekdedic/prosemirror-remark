@@ -8,6 +8,9 @@ import type {
 import type { Command } from "prosemirror-state";
 import { NodeExtension } from "prosemirror-unified";
 
+/**
+ * @public
+ */
 export class BreakExtension extends NodeExtension<Break> {
   public unistNodeName(): "break" {
     return "break";

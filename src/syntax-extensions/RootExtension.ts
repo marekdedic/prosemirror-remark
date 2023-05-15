@@ -2,6 +2,9 @@ import type { Content, Root } from "mdast";
 import type { Node as ProseMirrorNode, NodeSpec } from "prosemirror-model";
 import { NodeExtension } from "prosemirror-unified";
 
+/**
+ * @public
+ */
 export class RootExtension extends NodeExtension<Root> {
   public unistNodeName(): "root" {
     return "root";

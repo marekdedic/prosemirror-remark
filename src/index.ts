@@ -3,15 +3,24 @@ export { BlockquoteExtension } from "./syntax-extensions/BlockquoteExtension";
 export { BoldExtension } from "./syntax-extensions/BoldExtension";
 export { BreakExtension } from "./syntax-extensions/BreakExtension";
 export { CodeBlockExtension } from "./syntax-extensions/CodeBlockExtension";
-export { DefinitionExtension } from "./syntax-extensions/DefinitionExtension";
+export {
+  DefinitionExtension,
+  DefinitionExtensionContext,
+} from "./syntax-extensions/DefinitionExtension";
 export { HeadingExtension } from "./syntax-extensions/HeadingExtension";
 export { HorizontalRuleExtension } from "./syntax-extensions/HorizontalRuleExtension";
 export { ImageExtension } from "./syntax-extensions/ImageExtension";
-export { ImageReferenceExtension } from "./syntax-extensions/ImageReferenceExtension";
+export {
+  ImageReferenceExtension,
+  ImageReferenceExtensionContext,
+} from "./syntax-extensions/ImageReferenceExtension";
 export { InlineCodeExtension } from "./syntax-extensions/InlineCodeExtension";
 export { ItalicExtension } from "./syntax-extensions/ItalicExtension";
 export { LinkExtension } from "./syntax-extensions/LinkExtension";
-export { LinkReferenceExtension } from "./syntax-extensions/LinkReferenceExtension";
+export {
+  LinkReferenceExtension,
+  LinkReferenceExtensionContext,
+} from "./syntax-extensions/LinkReferenceExtension";
 export { ListItemExtension } from "./syntax-extensions/ListItemExtension";
 export { OrderedListExtension } from "./syntax-extensions/OrderedListExtension";
 export { ParagraphExtension } from "./syntax-extensions/ParagraphExtension";

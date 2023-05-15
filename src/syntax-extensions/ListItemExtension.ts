@@ -12,6 +12,9 @@ import {
 import type { Command } from "prosemirror-state";
 import { NodeExtension } from "prosemirror-unified";
 
+/**
+ * @public
+ */
 export class ListItemExtension extends NodeExtension<ListItem> {
   public unistNodeName(): "listItem" {
     return "listItem";

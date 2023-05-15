@@ -11,6 +11,9 @@ import type { Node as UnistNode } from "unist";
 
 import { ParagraphExtension } from "./ParagraphExtension";
 
+/**
+ * @public
+ */
 export class ImageExtension extends NodeExtension<Image | Paragraph> {
   public dependencies(): Array<Extension> {
     return [new ParagraphExtension()];

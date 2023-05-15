@@ -6,6 +6,9 @@ import type {
 } from "prosemirror-model";
 import { NodeExtension } from "prosemirror-unified";
 
+/**
+ * @public
+ */
 export class ParagraphExtension extends NodeExtension<Paragraph> {
   public unistNodeName(): "paragraph" {
     return "paragraph";

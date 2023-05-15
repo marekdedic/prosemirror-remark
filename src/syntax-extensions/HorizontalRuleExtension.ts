@@ -8,6 +8,9 @@ import type {
 import type { Command } from "prosemirror-state";
 import { NodeExtension } from "prosemirror-unified";
 
+/**
+ * @public
+ */
 export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
   public unistNodeName(): "thematicBreak" {
     return "thematicBreak";
