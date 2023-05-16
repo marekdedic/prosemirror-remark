@@ -41,7 +41,6 @@
     "prosemirror-view": "^1.30.2",
     "remark-parse": "^10.0.1",
     "remark-stringify": "^10.0.2",
-    "remark-unwrap-images": "^3.0.1",
     "unified": "^10.1.2"
   },
   "devDependencies": {

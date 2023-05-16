@@ -39,7 +39,6 @@ function createConfig(libraryType, extension) {
       "prosemirror-view": "module prosemirror-view",
       "remark-parse": "module remark-parse",
       "remark-stringify": "module remark-stringify",
-      "remark-unwrap-images": "module remark-unwrap-images",
       unified: "module unified",
     },
     optimization: {
