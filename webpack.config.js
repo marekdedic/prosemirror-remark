@@ -36,7 +36,6 @@ function createConfig(libraryType, extension) {
       "prosemirror-schema-list": "module prosemirror-schema-list",
       "prosemirror-state": "module prosemirror-state",
       "prosemirror-unified": "module prosemirror-unified",
-      "prosemirror-view": "module prosemirror-view",
       "remark-parse": "module remark-parse",
       "remark-stringify": "module remark-stringify",
       unified: "module unified",
