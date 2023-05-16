@@ -1,10 +1,6 @@
 import type { LinkReference } from "mdast";
 import type { Mark, Node as ProseMirrorNode } from "prosemirror-model";
-import {
-  type ConverterContext,
-  type Extension,
-  MarkExtension,
-} from "prosemirror-unified";
+import { type Extension, MarkExtension } from "prosemirror-unified";
 
 import {
   DefinitionExtension,
@@ -42,7 +38,7 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
   public unistNodeToProseMirrorNodes(
     node: LinkReference,
     convertedChildren: Array<ProseMirrorNode>,
-    context: ConverterContext<{
+    context: Partial<{
       LinkReferenceExtension: LinkReferenceExtensionContext;
     }>
   ): Array<ProseMirrorNode> {
@@ -70,7 +66,7 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
   }
 
   public postUnistToProseMirrorHook(
-    context: ConverterContext<{
+    context: Partial<{
       DefinitionExtension: DefinitionExtensionContext;
       LinkReferenceExtension: LinkReferenceExtensionContext;
     }>
