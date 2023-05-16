@@ -1,28 +1,19 @@
-import type { Image, Paragraph } from "mdast";
+import type { Image } from "mdast";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
 } from "prosemirror-model";
 import { type Extension, NodeExtension } from "prosemirror-unified";
-import remarkUnwrapImages from "remark-unwrap-images";
-import type { Processor } from "unified";
-import type { Node as UnistNode } from "unist";
 
 import { ParagraphExtension } from "./ParagraphExtension";
 
 /**
  * @public
  */
-export class ImageExtension extends NodeExtension<Image | Paragraph> {
+export class ImageExtension extends NodeExtension<Image> {
   public dependencies(): Array<Extension> {
     return [new ParagraphExtension()];
-  }
-
-  public unifiedInitializationHook(
-    processor: Processor<UnistNode, UnistNode, UnistNode, string>
-  ): Processor<UnistNode, UnistNode, UnistNode, string> {
-    return processor.use(remarkUnwrapImages);
   }
 
   public unistNodeName(): "image" {
@@ -35,13 +26,13 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
 
   public proseMirrorNodeSpec(): NodeSpec {
     return {
-      inline: false,
+      inline: true,
       attrs: {
         src: {},
         alt: { default: null },
         title: { default: null },
       },
-      group: "block",
+      group: "inline",
       draggable: true,
       parseDOM: [
         {
@@ -76,19 +67,13 @@ export class ImageExtension extends NodeExtension<Image | Paragraph> {
     });
   }
 
-  public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<Paragraph> {
+  public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<Image> {
     return [
-      // The paragraph is needed to counter-balance remark-unwrap-images, otherwise stringification breaks
       {
-        type: "paragraph",
-        children: [
-          {
-            type: this.unistNodeName(),
-            url: node.attrs.src as string,
-            title: node.attrs.title as string | null,
-            alt: node.attrs.alt as string | null,
-          },
-        ],
+        type: this.unistNodeName(),
+        url: node.attrs.src as string,
+        title: node.attrs.title as string | null,
+        alt: node.attrs.alt as string | null,
       },
     ];
   }

@@ -1,9 +1,6 @@
 import type { ImageReference } from "mdast";
 import type { Node as ProseMirrorNode } from "prosemirror-model";
 import { type Extension, NodeExtension } from "prosemirror-unified";
-import remarkUnwrapImages from "remark-unwrap-images";
-import type { Processor } from "unified";
-import type { Node as UnistNode } from "unist";
 
 import {
   DefinitionExtension,
@@ -24,12 +21,6 @@ export interface ImageReferenceExtensionContext {
 export class ImageReferenceExtension extends NodeExtension<ImageReference> {
   public dependencies(): Array<Extension> {
     return [new DefinitionExtension(), new ImageExtension()];
-  }
-
-  public unifiedInitializationHook(
-    processor: Processor<UnistNode, UnistNode, UnistNode, string>
-  ): Processor<UnistNode, UnistNode, UnistNode, string> {
-    return processor.use(remarkUnwrapImages);
   }
 
   public unistNodeName(): "imageReference" {
