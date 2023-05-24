@@ -32,6 +32,8 @@
     "lint": "eslint --color 'src/**/*.ts' 'webpack.config.js'"
   },
   "dependencies": {
+    "@types/mdast": "^3.0.11",
+    "@types/unist": "^2.0.6",
     "prosemirror-commands": "^1.5.1",
     "prosemirror-inputrules": "^1.2.0",
     "prosemirror-model": "^1.19.0",
@@ -44,8 +46,6 @@
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.34.9",
-    "@types/mdast": "^3.0.11",
-    "@types/unist": "^2.0.6",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "eslint": "^8.38.0",
