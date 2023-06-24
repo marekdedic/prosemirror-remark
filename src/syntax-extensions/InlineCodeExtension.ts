@@ -5,6 +5,7 @@ import type {
   DOMOutputSpec,
   MarkSpec,
   Node as ProseMirrorNode,
+  Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
@@ -31,29 +32,34 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
     };
   }
 
-  public proseMirrorInputRules(): Array<InputRule> {
+  public proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>
+  ): Array<InputRule> {
     return [
       new MarkInputRule(
         /`([^\s](?:.*[^\s])?)`(.)$/,
-        this.proseMirrorSchema().marks[this.proseMirrorMarkName()]
+        proseMirrorSchema.marks[this.proseMirrorMarkName()]
       ),
     ];
   }
 
-  public proseMirrorKeymap(): Record<string, Command> {
-    const markType = this.proseMirrorSchema().marks[this.proseMirrorMarkName()];
+  public proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>
+  ): Record<string, Command> {
+    const markType = proseMirrorSchema.marks[this.proseMirrorMarkName()];
     return {
       "Ctrl-`": toggleMark(markType),
     };
   }
 
-  public unistNodeToProseMirrorNodes(node: InlineCode): Array<ProseMirrorNode> {
+  public unistNodeToProseMirrorNodes(
+    node: InlineCode,
+    proseMirrorSchema: Schema<string, string>
+  ): Array<ProseMirrorNode> {
     return [
-      this.proseMirrorSchema()
+      proseMirrorSchema
         .text(node.value)
-        .mark([
-          this.proseMirrorSchema().marks[this.proseMirrorMarkName()].create(),
-        ]),
+        .mark([proseMirrorSchema.marks[this.proseMirrorMarkName()].create()]),
     ];
   }
 

@@ -4,6 +4,7 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
+  Schema,
 } from "prosemirror-model";
 import { wrapInList } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
@@ -60,30 +61,35 @@ export class UnorderedListExtension extends NodeExtension<List> {
     };
   }
 
-  public proseMirrorInputRules(): Array<InputRule> {
+  public proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>
+  ): Array<InputRule> {
     return [
       wrappingInputRule(
         /^\s{0,3}([-+*])\s$/,
-        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
       ),
     ];
   }
 
-  public proseMirrorKeymap(): Record<string, Command> {
+  public proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>
+  ): Record<string, Command> {
     return {
       "Shift-Mod-8": wrapInList(
-        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
       ),
     };
   }
 
   public unistNodeToProseMirrorNodes(
     node: List,
+    proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
-      this.proseMirrorSchema(),
+      proseMirrorSchema,
       convertedChildren,
       {
         spread: node.spread,

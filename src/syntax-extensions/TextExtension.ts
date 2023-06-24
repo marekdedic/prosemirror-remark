@@ -1,5 +1,9 @@
 import type { Text } from "mdast";
-import type { Node as ProseMirrorNode, NodeSpec } from "prosemirror-model";
+import type {
+  Node as ProseMirrorNode,
+  NodeSpec,
+  Schema,
+} from "prosemirror-model";
 import { NodeExtension } from "prosemirror-unified";
 
 /**
@@ -20,8 +24,11 @@ export class TextExtension extends NodeExtension<Text> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(node: Text): Array<ProseMirrorNode> {
-    return [this.proseMirrorSchema().text(node.value)];
+  public unistNodeToProseMirrorNodes(
+    node: Text,
+    proseMirrorSchema: Schema<string, string>
+  ): Array<ProseMirrorNode> {
+    return [proseMirrorSchema.text(node.value)];
   }
 
   public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<Text> {

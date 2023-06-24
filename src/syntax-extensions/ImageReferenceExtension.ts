@@ -1,5 +1,5 @@
 import type { ImageReference } from "mdast";
-import type { Node as ProseMirrorNode } from "prosemirror-model";
+import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import { type Extension, NodeExtension } from "prosemirror-unified";
 
 import {
@@ -37,14 +37,13 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
 
   public unistNodeToProseMirrorNodes(
     node: ImageReference,
+    proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
     context: Partial<{
       ImageReferenceExtension: ImageReferenceExtensionContext;
     }>
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = this.proseMirrorSchema().nodes[
-      "image"
-    ].createAndFill(
+    const proseMirrorNode = proseMirrorSchema.nodes["image"].createAndFill(
       { src: "", alt: node.alt, title: node.label },
       convertedChildren
     );

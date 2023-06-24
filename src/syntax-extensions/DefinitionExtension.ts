@@ -1,5 +1,5 @@
 import type { Definition } from "mdast";
-import type { Node as ProseMirrorNode } from "prosemirror-model";
+import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import { NodeExtension } from "prosemirror-unified";
 
 /**
@@ -30,6 +30,7 @@ export class DefinitionExtension extends NodeExtension<Definition> {
 
   public unistNodeToProseMirrorNodes(
     node: Definition,
+    _proseMirrorSchema: Schema<string, string>,
     _convertedChildren: Array<ProseMirrorNode>,
     context: Partial<{
       DefinitionExtension: DefinitionExtensionContext;
