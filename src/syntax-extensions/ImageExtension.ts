@@ -3,6 +3,7 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
+  Schema,
 } from "prosemirror-model";
 import {
   createProseMirrorNode,
@@ -62,11 +63,12 @@ export class ImageExtension extends NodeExtension<Image> {
 
   public unistNodeToProseMirrorNodes(
     node: Image,
+    proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
-      this.proseMirrorSchema(),
+      proseMirrorSchema,
       convertedChildren,
       {
         src: node.url,

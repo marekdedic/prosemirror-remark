@@ -3,6 +3,7 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
+  Schema,
 } from "prosemirror-model";
 import {
   liftListItem,
@@ -35,8 +36,10 @@ export class ListItemExtension extends NodeExtension<ListItem> {
     };
   }
 
-  public proseMirrorKeymap(): Record<string, Command> {
-    const nodeType = this.proseMirrorSchema().nodes[this.proseMirrorNodeName()];
+  public proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>
+  ): Record<string, Command> {
+    const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
     return {
       Enter: splitListItem(nodeType),
       "Shift-Tab": liftListItem(nodeType),
@@ -46,11 +49,12 @@ export class ListItemExtension extends NodeExtension<ListItem> {
 
   public unistNodeToProseMirrorNodes(
     _node: ListItem,
+    proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
-      this.proseMirrorSchema(),
+      proseMirrorSchema,
       convertedChildren
     );
   }
