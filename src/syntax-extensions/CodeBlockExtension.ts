@@ -5,9 +5,14 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
+  Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
-import { type Extension, NodeExtension } from "prosemirror-unified";
+import {
+  createProseMirrorNode,
+  type Extension,
+  NodeExtension,
+} from "prosemirror-unified";
 
 import { TextExtension } from "./TextExtension";
 
@@ -41,31 +46,40 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     };
   }
 
-  public proseMirrorInputRules(): Array<InputRule> {
+  public proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>
+  ): Array<InputRule> {
     return [
       textblockTypeInputRule(
         /^\s{0,3}```$/,
-        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
       ),
       textblockTypeInputRule(
         /^\s{4}$/,
-        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
       ),
     ];
   }
 
-  public proseMirrorKeymap(): Record<string, Command> {
+  public proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>
+  ): Record<string, Command> {
     return {
       "Shift-Mod-\\": setBlockType(
-        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
       ),
     };
   }
 
-  public unistNodeToProseMirrorNodes(node: Code): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper([
-      this.proseMirrorSchema().text(node.value),
-    ]);
+  public unistNodeToProseMirrorNodes(
+    node: Code,
+    proseMirrorSchema: Schema<string, string>
+  ): Array<ProseMirrorNode> {
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      proseMirrorSchema,
+      [proseMirrorSchema.text(node.value)]
+    );
   }
 
   public proseMirrorNodeToUnistNodes(

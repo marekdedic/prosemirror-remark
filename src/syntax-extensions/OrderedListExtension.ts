@@ -4,10 +4,15 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
+  Schema,
 } from "prosemirror-model";
 import { wrapInList } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
-import { type Extension, NodeExtension } from "prosemirror-unified";
+import {
+  createProseMirrorNode,
+  type Extension,
+  NodeExtension,
+} from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import { ListItemExtension } from "./ListItemExtension";
@@ -65,11 +70,13 @@ export class OrderedListExtension extends NodeExtension<List> {
     };
   }
 
-  public proseMirrorInputRules(): Array<InputRule> {
+  public proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>
+  ): Array<InputRule> {
     return [
       wrappingInputRule(
         /^\s{0,3}(\d+)\.\s$/,
-        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()],
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
         (match) => ({ start: +match[1] }),
         (match, node) =>
           node.childCount + (node.attrs.start as number) == +match[1]
@@ -77,22 +84,30 @@ export class OrderedListExtension extends NodeExtension<List> {
     ];
   }
 
-  public proseMirrorKeymap(): Record<string, Command> {
+  public proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>
+  ): Record<string, Command> {
     return {
       "Shift-Mod-9": wrapInList(
-        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
       ),
     };
   }
 
   public unistNodeToProseMirrorNodes(
     node: List,
+    proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(convertedChildren, {
-      spread: node.spread,
-      start: node.start ?? 1,
-    });
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      proseMirrorSchema,
+      convertedChildren,
+      {
+        spread: node.spread,
+        start: node.start ?? 1,
+      }
+    );
   }
 
   public proseMirrorNodeToUnistNodes(

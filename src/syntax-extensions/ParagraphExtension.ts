@@ -3,8 +3,9 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
+  Schema,
 } from "prosemirror-model";
-import { NodeExtension } from "prosemirror-unified";
+import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 /**
  * @public
@@ -31,9 +32,14 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
 
   public unistNodeToProseMirrorNodes(
     _node: Paragraph,
+    proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(convertedChildren);
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      proseMirrorSchema,
+      convertedChildren
+    );
   }
 
   public proseMirrorNodeToUnistNodes(

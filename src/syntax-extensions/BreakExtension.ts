@@ -4,9 +4,10 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
+  Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
-import { NodeExtension } from "prosemirror-unified";
+import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 /**
  * @public
@@ -32,15 +33,15 @@ export class BreakExtension extends NodeExtension<Break> {
     };
   }
 
-  public proseMirrorKeymap(): Record<string, Command> {
+  public proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>
+  ): Record<string, Command> {
     const command = chainCommands(exitCode, (state, dispatch) => {
       if (dispatch) {
         dispatch(
           state.tr
             .replaceSelectionWith(
-              this.proseMirrorSchema().nodes[
-                this.proseMirrorNodeName()
-              ].create()
+              proseMirrorSchema.nodes[this.proseMirrorNodeName()].create()
             )
             .scrollIntoView()
         );
@@ -62,9 +63,14 @@ export class BreakExtension extends NodeExtension<Break> {
 
   public unistNodeToProseMirrorNodes(
     _node: Break,
+    proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(convertedChildren);
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      proseMirrorSchema,
+      convertedChildren
+    );
   }
 
   public proseMirrorNodeToUnistNodes(): Array<Break> {

@@ -5,9 +5,10 @@ import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
+  Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
-import { NodeExtension } from "prosemirror-unified";
+import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 /**
  * @public
@@ -32,28 +33,35 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     };
   }
 
-  public proseMirrorInputRules(): Array<InputRule> {
+  public proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>
+  ): Array<InputRule> {
     return [
       wrappingInputRule(
         /^\s{0,3}>\s$/,
-        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
       ),
     ];
   }
 
-  public proseMirrorKeymap(): Record<string, Command> {
+  public proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>
+  ): Record<string, Command> {
     return {
-      "Mod->": wrapIn(
-        this.proseMirrorSchema().nodes[this.proseMirrorNodeName()]
-      ),
+      "Mod->": wrapIn(proseMirrorSchema.nodes[this.proseMirrorNodeName()]),
     };
   }
 
   public unistNodeToProseMirrorNodes(
     _node: Blockquote,
+    proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(convertedChildren);
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      proseMirrorSchema,
+      convertedChildren
+    );
   }
 
   public proseMirrorNodeToUnistNodes(
