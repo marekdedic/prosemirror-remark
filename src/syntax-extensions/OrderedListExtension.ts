@@ -7,7 +7,11 @@ import type {
 } from "prosemirror-model";
 import { wrapInList } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
-import { type Extension, NodeExtension } from "prosemirror-unified";
+import {
+  createProseMirrorNode,
+  type Extension,
+  NodeExtension,
+} from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import { ListItemExtension } from "./ListItemExtension";
@@ -89,10 +93,15 @@ export class OrderedListExtension extends NodeExtension<List> {
     node: List,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(convertedChildren, {
-      spread: node.spread,
-      start: node.start ?? 1,
-    });
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      this.proseMirrorSchema(),
+      convertedChildren,
+      {
+        spread: node.spread,
+        start: node.start ?? 1,
+      }
+    );
   }
 
   public proseMirrorNodeToUnistNodes(

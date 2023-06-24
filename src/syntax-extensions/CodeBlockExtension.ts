@@ -7,7 +7,11 @@ import type {
   NodeSpec,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
-import { type Extension, NodeExtension } from "prosemirror-unified";
+import {
+  createProseMirrorNode,
+  type Extension,
+  NodeExtension,
+} from "prosemirror-unified";
 
 import { TextExtension } from "./TextExtension";
 
@@ -63,9 +67,11 @@ export class CodeBlockExtension extends NodeExtension<Code> {
   }
 
   public unistNodeToProseMirrorNodes(node: Code): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper([
-      this.proseMirrorSchema().text(node.value),
-    ]);
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      this.proseMirrorSchema(),
+      [this.proseMirrorSchema().text(node.value)]
+    );
   }
 
   public proseMirrorNodeToUnistNodes(

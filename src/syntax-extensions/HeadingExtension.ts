@@ -7,7 +7,11 @@ import type {
   NodeSpec,
 } from "prosemirror-model";
 import type { Command, EditorState } from "prosemirror-state";
-import { type Extension, NodeExtension } from "prosemirror-unified";
+import {
+  createProseMirrorNode,
+  type Extension,
+  NodeExtension,
+} from "prosemirror-unified";
 import type { EditorView } from "prosemirror-view";
 
 import { ParagraphExtension } from "./ParagraphExtension";
@@ -95,9 +99,14 @@ export class HeadingExtension extends NodeExtension<Heading> {
     node: Heading,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(convertedChildren, {
-      level: node.depth,
-    });
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      this.proseMirrorSchema(),
+      convertedChildren,
+      {
+        level: node.depth,
+      }
+    );
   }
 
   public proseMirrorNodeToUnistNodes(
