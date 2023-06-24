@@ -4,7 +4,11 @@ import type {
   Node as ProseMirrorNode,
   NodeSpec,
 } from "prosemirror-model";
-import { type Extension, NodeExtension } from "prosemirror-unified";
+import {
+  createProseMirrorNode,
+  type Extension,
+  NodeExtension,
+} from "prosemirror-unified";
 
 import { ParagraphExtension } from "./ParagraphExtension";
 
@@ -60,11 +64,16 @@ export class ImageExtension extends NodeExtension<Image> {
     node: Image,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(convertedChildren, {
-      src: node.url,
-      alt: node.alt,
-      title: node.title,
-    });
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      this.proseMirrorSchema(),
+      convertedChildren,
+      {
+        src: node.url,
+        alt: node.alt,
+        title: node.title,
+      }
+    );
   }
 
   public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<Image> {

@@ -1,6 +1,6 @@
 import type { Content, Root } from "mdast";
 import type { Node as ProseMirrorNode, NodeSpec } from "prosemirror-model";
-import { NodeExtension } from "prosemirror-unified";
+import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 /**
  * @public
@@ -22,7 +22,11 @@ export class RootExtension extends NodeExtension<Root> {
     _node: Root,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(convertedChildren);
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      this.proseMirrorSchema(),
+      convertedChildren
+    );
   }
 
   public proseMirrorNodeToUnistNodes(

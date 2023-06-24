@@ -6,7 +6,7 @@ import type {
   NodeSpec,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
-import { NodeExtension } from "prosemirror-unified";
+import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 /**
  * @public
@@ -37,7 +37,11 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
         return state.tr.replaceWith(
           start,
           end,
-          this.createProseMirrorNodeHelper([])
+          createProseMirrorNode(
+            this.proseMirrorNodeName(),
+            this.proseMirrorSchema(),
+            []
+          )
         );
       }),
     ];
@@ -66,7 +70,11 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     _node: ThematicBreak,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
-    return this.createProseMirrorNodeHelper(convertedChildren);
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      this.proseMirrorSchema(),
+      convertedChildren
+    );
   }
 
   public proseMirrorNodeToUnistNodes(): Array<ThematicBreak> {
