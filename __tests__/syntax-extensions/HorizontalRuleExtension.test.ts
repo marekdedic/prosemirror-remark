@@ -1,6 +1,6 @@
 import { HorizontalRuleExtension } from "../../src/syntax-extensions/HorizontalRuleExtension";
+import { nodeExtensionTester } from "../nodeExtensionTester";
 
-test("HorizontalRuleExtension handles the correct unist node", () => {
-  const extension = new HorizontalRuleExtension();
-  expect(extension.unistNodeName()).toBe("thematicBreak");
+nodeExtensionTester(new HorizontalRuleExtension(), {
+  unistNodeName: "thematicBreak",
 });
