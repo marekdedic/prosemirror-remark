@@ -56,3 +56,31 @@ jobs:
       - name: "Lint"
         run: |
           npm run lint
+
+  test:
+    name: "Test"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3.5.3
+
+      - name: "Cache NPM dependencies"
+        uses: actions/cache@v3.3.1
+        with:
+          path: "~/.npm"
+          key: npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-${{ hashFiles('package.json') }}
+          restore-keys: |
+            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-${{ hashFiles('package.json') }}
+            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-
+            npm-dependencies-${{ runner.os }}-
+
+      - name: "Install NPM dependencies"
+        run: |
+          npm ci
+
+      - name: "Run tests"
+        run: |
+          npm run test
+
+      - name: "Upload coverage results"
+        uses: codecov/codecov-action@v3.1.4
