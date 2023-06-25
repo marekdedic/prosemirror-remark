@@ -1,0 +1,25 @@
+{
+  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "src/**/*",
+    "!src/index.ts"
+  ],
+  "coverageDirectory": "coverage",
+  "coverageProvider": "babel",
+  "testMatch": ["<rootDir>/__tests__/**/*.test.ts"],
+  "transform": {
+    "^.+\\.(j|t)s$": [
+      "ts-jest",
+      {
+        "tsconfig": "test.tsconfig.json"
+      }
+    ]
+  },
+  "transformIgnorePatterns": [
+    "node_modules/(?!prosemirror-unified)/"
+  ],
+  "moduleNameMapper": {
+    "prosemirror-unified": "<rootDir>/node_modules/prosemirror-unified/dist/prosemirror-unified.js"
+  },
+  "resetMocks": true
+}
