@@ -6,7 +6,7 @@
     "browser": true,
     "node": false
   },
-  "plugins": ["deprecation", "simple-import-sort", "@typescript-eslint"],
+  "plugins": ["deprecation", "jest", "simple-import-sort", "@typescript-eslint"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -105,6 +105,35 @@
         "@typescript-eslint/strict-boolean-expressions": "off",
         "@typescript-eslint/switch-exhaustiveness-check": "off",
         "@typescript-eslint/unbound-method": "off"
+      }
+    },
+    {
+      "files": [
+        "__tests__/**/*.ts",
+      ],
+      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
+      "rules": {
+        "@typescript-eslint/unbound-method": "off",
+        "jest/consistent-test-it": ["error", { "withinDescribe": "test" }],
+        "jest/no-duplicate-hooks": "error",
+        "jest/no-if": "error",
+        "jest/no-test-return-statement": "error",
+        "jest/prefer-called-with": "error",
+        "jest/prefer-expect-assertions": [
+          "error",
+          {
+            "onlyFunctionsWithAsyncKeyword": true,
+            "onlyFunctionsWithExpectInLoop": true,
+            "onlyFunctionsWithExpectInCallback": true
+          }
+        ],
+        "jest/prefer-expect-resolves": "error",
+        "jest/prefer-hooks-on-top": "error",
+        "jest/prefer-spy-on": "error",
+        "jest/prefer-strict-equal": "error",
+        "jest/require-hook": "error",
+        "jest/require-to-throw-message": "error",
+        "jest/unbound-method": "error"
       }
     }
   ]
