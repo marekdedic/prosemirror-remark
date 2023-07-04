@@ -57,14 +57,19 @@ export class SyntaxExtensionTester<
       expect(this.extension.unistNodeName()).toBe(this.unistNodeName);
     });
 
-    if (this.unistNodeMatches.length > 0) {
-      test("Matches correct unist nodes", () => {
-        // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-        expect.assertions(this.unistNodeMatches.length);
-        for (const { node, shouldMatch } of this.unistNodeMatches) {
-          expect(this.extension.unistToProseMirrorTest(node)).toBe(shouldMatch);
-        }
-      });
+    this.enqueueUnistNodeMatchTests();
+  }
+
+  private enqueueUnistNodeMatchTests(): void {
+    if (this.unistNodeMatches.length === 0) {
+      return;
     }
+    test("Matches correct unist nodes", () => {
+      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
+      expect.assertions(this.unistNodeMatches.length);
+      for (const { node, shouldMatch } of this.unistNodeMatches) {
+        expect(this.extension.unistToProseMirrorTest(node)).toBe(shouldMatch);
+      }
+    });
   }
 }
