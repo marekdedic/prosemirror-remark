@@ -1,16 +1,13 @@
 import { createEditor } from "jest-prosemirror";
 import {
-  Extension,
   type NodeExtension,
   ProseMirrorUnified,
   type SyntaxExtension,
 } from "prosemirror-unified";
-import remarkParse from "remark-parse";
-import remarkStringify from "remark-stringify";
-import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
 import { ConfigurableRootExtension } from "./ConfigurableRootExtension";
+import { ParserProviderExtension } from "./ParserProviderExtension";
 import { TextExtension } from "./TextExtension";
 
 // TODO: Re-evaluate
@@ -141,15 +138,5 @@ export class SyntaxExtensionTester<
           });
       }
     });
-  }
-}
-
-class ParserProviderExtension extends Extension {
-  public unifiedInitializationHook(
-    processor: Processor<UnistNode, UnistNode, UnistNode, string>
-  ): Processor<UnistNode, UnistNode, UnistNode, string> {
-    return processor
-      .use(remarkParse)
-      .use(remarkStringify, { fences: true, resourceLink: true, rule: "-" });
   }
 }
