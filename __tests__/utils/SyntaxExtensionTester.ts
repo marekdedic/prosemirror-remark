@@ -1,13 +1,7 @@
 import { createEditor } from "jest-prosemirror";
-import type {
-  Node as ProseMirrorNode,
-  NodeSpec,
-  Schema,
-} from "prosemirror-model";
 import {
-  createProseMirrorNode,
   Extension,
-  NodeExtension,
+  type NodeExtension,
   ProseMirrorUnified,
   type SyntaxExtension,
 } from "prosemirror-unified";
@@ -16,6 +10,7 @@ import remarkStringify from "remark-stringify";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
+import { ConfigurableRootExtension } from "./ConfigurableRootExtension";
 import { TextExtension } from "./TextExtension";
 
 // TODO: Re-evaluate
@@ -156,60 +151,5 @@ class ParserProviderExtension extends Extension {
     return processor
       .use(remarkParse)
       .use(remarkStringify, { fences: true, resourceLink: true, rule: "-" });
-  }
-}
-
-interface ConfigurableUnistRoot<ChildNode extends UnistNode> extends UnistNode {
-  type: "root";
-  children: Array<ChildNode>;
-}
-
-class ConfigurableRootExtension<
-  ChildNode extends UnistNode
-> extends NodeExtension<ConfigurableUnistRoot<ChildNode>> {
-  private readonly nodeExtension: NodeExtension<UnistNode>;
-
-  public constructor(nodeExtension: NodeExtension<UnistNode>) {
-    super();
-
-    this.nodeExtension = nodeExtension;
-  }
-
-  public unistNodeName(): "root" {
-    return "root";
-  }
-
-  public proseMirrorNodeName(): string {
-    return "doc";
-  }
-
-  public proseMirrorNodeSpec(): NodeSpec {
-    return {
-      content: this.nodeExtension.proseMirrorNodeName() ?? "text" + "+",
-    };
-  }
-
-  public unistNodeToProseMirrorNodes(
-    _: ConfigurableUnistRoot<ChildNode>,
-    proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
-  ): Array<ProseMirrorNode> {
-    return createProseMirrorNode(
-      this.proseMirrorNodeName(),
-      proseMirrorSchema,
-      convertedChildren
-    );
-  }
-
-  public proseMirrorNodeToUnistNodes(
-    _: ProseMirrorNode,
-    convertedChildren: Array<UnistNode>
-  ): Array<ConfigurableUnistRoot<ChildNode>> {
-    return [
-      {
-        type: "root",
-        children: convertedChildren as Array<ChildNode>,
-      },
-    ];
   }
 }
