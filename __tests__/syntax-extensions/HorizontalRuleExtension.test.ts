@@ -1,5 +1,5 @@
 import { HorizontalRuleExtension } from "../../src/syntax-extensions/HorizontalRuleExtension";
-import { NodeExtensionTester } from "../NodeExtensionTester";
+import { NodeExtensionTester } from "../utils/NodeExtensionTester";
 
 new NodeExtensionTester(new HorizontalRuleExtension(), {
   unistNodeName: "thematicBreak",
