@@ -6,7 +6,7 @@ import type {
 import { NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
-interface UnistText extends UnistNode {
+export interface UnistText extends UnistNode {
   type: "text";
   value: string;
 }

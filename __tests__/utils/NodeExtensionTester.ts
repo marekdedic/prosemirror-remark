@@ -2,8 +2,9 @@ import { createEditor } from "jest-prosemirror";
 import { type NodeExtension, ProseMirrorUnified } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
-import { ConfigurableRootExtension } from "./ConfigurableRootExtension";
+import { ParagraphExtension } from "./ParagraphExtension";
 import { ParserProviderExtension } from "./ParserProviderExtension";
+import { RootExtension } from "./RootExtension";
 import {
   SyntaxExtensionTester,
   type SyntaxExtensionTesterConfig,
@@ -86,13 +87,13 @@ export class NodeExtensionTester<
     }
     test("Matches input rules correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(4 * this.inputRuleMatches.length);
+      expect.assertions(3 * this.inputRuleMatches.length);
       for (const { editorInput, markdownOutput, shouldMatch } of this
         .inputRuleMatches) {
-        expect(shouldMatch).toBe(true); // TODO
         const pmu = new ProseMirrorUnified([
           new ParserProviderExtension(),
-          new ConfigurableRootExtension(this.extension),
+          new RootExtension(),
+          new ParagraphExtension(),
           new TextExtension(),
           this.extension,
         ]);
@@ -104,8 +105,23 @@ export class NodeExtensionTester<
           .nodes["doc"].createAndFill({}, [
             pmu
               .schema()
-              .nodes[this.extension.proseMirrorNodeName()!].createAndFill()!,
+              .nodes["test_paragraph"].createAndFill(
+                {},
+                shouldMatch ? [] : [pmu.schema().text(editorInput)]
+              )!,
+            ...(shouldMatch
+              ? [
+                  pmu
+                    .schema()
+                    .nodes[
+                      this.extension.proseMirrorNodeName()!
+                    ].createAndFill()!,
+                ]
+              : []),
           ])!;
+        const paddedMarkdownOutput = shouldMatch
+          ? "\n\n" + markdownOutput
+          : markdownOutput + "\n";
 
         jest.spyOn(console, "warn").mockImplementation();
         createEditor(proseMirrorRoot, {
@@ -115,7 +131,7 @@ export class NodeExtensionTester<
           .insertText(editorInput)
           .callback((content) => {
             expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
-            expect(pmu.serialize(content.doc)).toBe(markdownOutput);
+            expect(pmu.serialize(content.doc)).toBe(paddedMarkdownOutput);
           });
         expect(console.warn).not.toHaveBeenCalled();
       }

@@ -6,29 +6,16 @@ import type {
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
-interface ConfigurableUnistRoot<ChildUnistNode extends UnistNode>
-  extends UnistNode {
+import type { UnistParagraph } from "./ParagraphExtension";
+
+interface UnistRoot<ChildUnistNode extends UnistNode> extends UnistNode {
   type: "root";
-  children: Array<ChildUnistNode>;
+  children: Array<ChildUnistNode | UnistParagraph>;
 }
 
-export class ConfigurableRootExtension<
-  ChildUnistNode extends UnistNode,
-  UnistToProseMirrorContext extends Record<string, unknown>
-> extends NodeExtension<ConfigurableUnistRoot<ChildUnistNode>> {
-  private readonly nodeExtension: NodeExtension<
-    ChildUnistNode,
-    UnistToProseMirrorContext
-  >;
-
-  public constructor(
-    nodeExtension: NodeExtension<ChildUnistNode, UnistToProseMirrorContext>
-  ) {
-    super();
-
-    this.nodeExtension = nodeExtension;
-  }
-
+export class RootExtension<
+  ChildUnistNode extends UnistNode
+> extends NodeExtension<UnistRoot<ChildUnistNode>> {
   public unistNodeName(): "root" {
     return "root";
   }
@@ -39,12 +26,12 @@ export class ConfigurableRootExtension<
 
   public proseMirrorNodeSpec(): NodeSpec {
     return {
-      content: this.nodeExtension.proseMirrorNodeName() ?? "text" + "+",
+      content: "block+",
     };
   }
 
   public unistNodeToProseMirrorNodes(
-    _: ConfigurableUnistRoot<ChildUnistNode>,
+    _: UnistRoot<ChildUnistNode>,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>
   ): Array<ProseMirrorNode> {
@@ -58,7 +45,7 @@ export class ConfigurableRootExtension<
   public proseMirrorNodeToUnistNodes(
     _: ProseMirrorNode,
     convertedChildren: Array<UnistNode>
-  ): Array<ConfigurableUnistRoot<ChildUnistNode>> {
+  ): Array<UnistRoot<ChildUnistNode>> {
     return [
       {
         type: "root",

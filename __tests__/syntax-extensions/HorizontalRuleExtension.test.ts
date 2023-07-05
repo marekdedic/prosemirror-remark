@@ -8,4 +8,12 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   .shouldNotMatchUnistNode({ type: "horizontal_rule" })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldMatchInputRule("***", "---\n")
+  .shouldMatchInputRule("---", "---\n")
+  .shouldMatchInputRule("___", "---\n")
+  .shouldMatchInputRule(" ***", "---\n")
+  .shouldMatchInputRule("  ***", "---\n")
+  .shouldMatchInputRule("   ***", "---\n")
+  .shouldNotMatchInputRule("* **", "\\* \\*\\*")
+  .shouldNotMatchInputRule("** *", "\\*\\* \\*")
+  .shouldNotMatchInputRule("a***", "a\\*\\*\\*")
   .test();
