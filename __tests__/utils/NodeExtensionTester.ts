@@ -21,11 +21,14 @@ export class NodeExtensionTester<
     never
   >
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
+  protected readonly extension: NodeExtension<UNode, UnistToProseMirrorContext>;
+
   public constructor(
     extension: NodeExtension<UNode, UnistToProseMirrorContext>,
     config: NodeExtensionTesterConfig
   ) {
     super(extension, config);
+    this.extension = extension;
   }
 
   public test(): void {
