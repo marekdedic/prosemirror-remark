@@ -16,4 +16,7 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   .shouldNotMatchInputRule("* **", "\\* \\*\\*")
   .shouldNotMatchInputRule("** *", "\\*\\* \\*")
   .shouldNotMatchInputRule("a***", "a\\*\\*\\*")
+  .shouldConvertUnistNode({ type: "thematicBreak" }, (schema) => [
+    schema.nodes["horizontal_rule"].createAndFill()!,
+  ])
   .test();
