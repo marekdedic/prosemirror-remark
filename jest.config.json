@@ -6,6 +6,7 @@
   ],
   "coverageDirectory": "coverage",
   "coverageProvider": "babel",
+  "testEnvironment": "jsdom",
   "testMatch": ["<rootDir>/__tests__/**/*.test.ts"],
   "transform": {
     "^.+\\.(j|t)s$": [
