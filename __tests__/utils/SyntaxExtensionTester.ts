@@ -16,6 +16,8 @@ import remarkStringify from "remark-stringify";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
+import { TextExtension } from "./TextExtension";
+
 // TODO: Re-evaluate
 // eslint-disable-next-line jest/no-export
 export interface SyntaxExtensionTesterConfig {
@@ -209,37 +211,5 @@ class ConfigurableRootExtension<
         children: convertedChildren as Array<ChildNode>,
       },
     ];
-  }
-}
-
-interface UnistText extends UnistNode {
-  type: "text";
-  value: string;
-}
-
-class TextExtension extends NodeExtension<UnistText> {
-  public unistNodeName(): "text" {
-    return "text";
-  }
-
-  public proseMirrorNodeName(): string {
-    return "text";
-  }
-
-  public proseMirrorNodeSpec(): NodeSpec {
-    return {
-      group: "inline",
-    };
-  }
-
-  public unistNodeToProseMirrorNodes(
-    node: UnistText,
-    proseMirrorSchema: Schema<string, string>
-  ): Array<ProseMirrorNode> {
-    return [proseMirrorSchema.text(node.value)];
-  }
-
-  public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<UnistText> {
-    return [{ type: "text", value: node.text ?? "" }];
   }
 }
