@@ -7,4 +7,5 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   .shouldMatchUnistNode({ type: "thematicBreak" })
   .shouldNotMatchUnistNode({ type: "horizontal_rule" })
   .shouldNotMatchUnistNode({ type: "other" })
+  .shouldMatchInputRule("***", false)
   .test();
