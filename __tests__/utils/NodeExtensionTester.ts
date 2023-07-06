@@ -30,11 +30,6 @@ export class NodeExtensionTester<
     shouldMatch: boolean;
   }>;
 
-  private readonly proseMirrorNodeConversions: Array<{
-    source: ProseMirrorNode;
-    target: Array<UNode>;
-  }>;
-
   private readonly inputRuleMatches: Array<{
     editorInput: string;
     markdownOutput: string;
@@ -50,7 +45,6 @@ export class NodeExtensionTester<
 
     this.proseMirrorNodeName = config.proseMirrorNodeName;
     this.proseMirrorNodeMatches = [];
-    this.proseMirrorNodeConversions = [];
     this.inputRuleMatches = [];
   }
 
@@ -70,17 +64,6 @@ export class NodeExtensionTester<
     this.proseMirrorNodeMatches.push({
       node: node(this.pmu.schema()),
       shouldMatch: false,
-    });
-    return this;
-  }
-
-  public shouldConvertProseMirrorNode(
-    source: (schema: Schema<string, string>) => ProseMirrorNode,
-    target: Array<UNode>
-  ): this {
-    this.proseMirrorNodeConversions.push({
-      source: source(this.pmu.schema()),
-      target,
     });
     return this;
   }
@@ -125,7 +108,6 @@ export class NodeExtensionTester<
     });
 
     this.enqueueProseMirrorNodeMatchTests();
-    this.enqueueProseMirrorNodeConversionTests();
     this.enqueueInputRuleTests();
   }
 
@@ -138,27 +120,6 @@ export class NodeExtensionTester<
       expect.assertions(this.proseMirrorNodeMatches.length);
       for (const { node, shouldMatch } of this.proseMirrorNodeMatches) {
         expect(this.extension.proseMirrorToUnistTest(node)).toBe(shouldMatch);
-      }
-    });
-  }
-
-  private enqueueProseMirrorNodeConversionTests(): void {
-    if (this.proseMirrorNodeConversions.length === 0) {
-      return;
-    }
-    test("Converts ProseMirror -> unist correctly", () => {
-      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(this.proseMirrorNodeConversions.length);
-      for (const { source, target } of this.proseMirrorNodeConversions) {
-        expect(
-          (
-            this.pmu as unknown as {
-              proseMirrorToUnistConverter: {
-                convertNode(node: ProseMirrorNode): Array<UnistNode>;
-              };
-            }
-          ).proseMirrorToUnistConverter.convertNode(source)
-        ).toStrictEqual(target);
       }
     });
   }

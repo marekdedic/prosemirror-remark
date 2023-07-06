@@ -41,6 +41,11 @@ export class SyntaxExtensionTester<
     contextChecker(context: UnistToProseMirrorContext): void;
   }>;
 
+  private readonly proseMirrorNodeConversions: Array<{
+    source: ProseMirrorNode;
+    target: Array<UNode>;
+  }>;
+
   public constructor(
     extension: SyntaxExtension<UNode, UnistToProseMirrorContext>,
     config: SyntaxExtensionTesterConfig
@@ -50,6 +55,7 @@ export class SyntaxExtensionTester<
 
     this.unistNodeMatches = [];
     this.unistNodeConversions = [];
+    this.proseMirrorNodeConversions = [];
 
     this.pmu = new ProseMirrorUnified([
       new ParserProviderExtension(),
@@ -86,6 +92,17 @@ export class SyntaxExtensionTester<
     return this;
   }
 
+  public shouldConvertProseMirrorNode(
+    source: (schema: Schema<string, string>) => ProseMirrorNode,
+    target: Array<UNode>
+  ): this {
+    this.proseMirrorNodeConversions.push({
+      source: source(this.pmu.schema()),
+      target,
+    });
+    return this;
+  }
+
   protected enqueueTests(): void {
     test("Handles the correct unist node", () => {
       expect(this.extension.unistNodeName()).toBe(this.unistNodeName);
@@ -93,6 +110,7 @@ export class SyntaxExtensionTester<
 
     this.enqueueUnistNodeMatchTests();
     this.enqueueUnistNodeConversionTests();
+    this.enqueueProseMirrorNodeConversionTests();
   }
 
   private enqueueUnistNodeMatchTests(): void {
@@ -131,6 +149,27 @@ export class SyntaxExtensionTester<
           ).unistToProseMirrorConverter.convertNode(source, context)
         ).toStrictEqual(target);
         contextChecker(context);
+      }
+    });
+  }
+
+  private enqueueProseMirrorNodeConversionTests(): void {
+    if (this.proseMirrorNodeConversions.length === 0) {
+      return;
+    }
+    test("Converts ProseMirror -> unist correctly", () => {
+      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
+      expect.assertions(this.proseMirrorNodeConversions.length);
+      for (const { source, target } of this.proseMirrorNodeConversions) {
+        expect(
+          (
+            this.pmu as unknown as {
+              proseMirrorToUnistConverter: {
+                convertNode(node: ProseMirrorNode): Array<UnistNode>;
+              };
+            }
+          ).proseMirrorToUnistConverter.convertNode(source)
+        ).toStrictEqual(target);
       }
     });
   }

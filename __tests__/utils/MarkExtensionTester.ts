@@ -12,7 +12,6 @@ interface MarkExtensionTesterConfig extends SyntaxExtensionTesterConfig {
 }
 
 // TODO: Test proseMirrorMarkSpec
-// TODO: Test processConvertedUnistNode
 // TODO: Test input rules
 
 export class MarkExtensionTester<
