@@ -18,8 +18,6 @@ interface NodeExtensionTesterConfig extends SyntaxExtensionTesterConfig {
 
 // TODO: Test proseMirrorNodeSpec
 
-// TODO: Re-evaluate
-// eslint-disable-next-line jest/no-export
 export class NodeExtensionTester<
   UNode extends UnistNode,
   UnistToProseMirrorContext extends Record<string, unknown> = Record<
@@ -119,7 +117,6 @@ export class NodeExtensionTester<
   }
 
   public test(): void {
-    // eslint-disable-next-line jest/valid-title -- The rule requires a string literal
     describe(this.extension.constructor.name, () => {
       this.enqueueTests();
     });

@@ -135,6 +135,15 @@
         "jest/require-to-throw-message": "error",
         "jest/unbound-method": "error"
       }
+    },
+    {
+      "files": [
+        "__tests__/utils/**/*.ts",
+      ],
+      "rules": {
+        "jest/no-export": "off",
+        "jest/valid-title": "off"
+      }
     }
   ]
 }

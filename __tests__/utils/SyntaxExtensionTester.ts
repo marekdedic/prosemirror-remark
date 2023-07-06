@@ -6,8 +6,6 @@ import { ParagraphExtension } from "./ParagraphExtension";
 import { RootExtension } from "./RootExtension";
 import { TextExtension } from "./TextExtension";
 
-// TODO: Re-evaluate
-// eslint-disable-next-line jest/no-export
 export interface SyntaxExtensionTesterConfig {
   unistNodeName: string;
 }
@@ -15,8 +13,6 @@ export interface SyntaxExtensionTesterConfig {
 // TODO: Test keymap
 // TODO: Test post-hook
 
-// TODO: Re-evaluate
-// eslint-disable-next-line jest/no-export
 export class SyntaxExtensionTester<
   UNode extends UnistNode,
   UnistToProseMirrorContext extends Record<string, unknown> = Record<
