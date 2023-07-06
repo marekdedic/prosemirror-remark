@@ -1,0 +1,18 @@
+import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
+import { MarkExtensionTester } from "../utils/MarkExtensionTester";
+
+new MarkExtensionTester(new BoldExtension(), {
+  unistNodeName: "strong",
+})
+  .shouldMatchUnistNode({ type: "strong", children: [] })
+  .shouldNotMatchUnistNode({ type: "other" })
+  .shouldConvertUnistNode(
+    {
+      type: "strong",
+      children: [{ type: "text", value: "Hello World!" }],
+    },
+    (schema) => [
+      schema.text("Hello World!").mark([schema.marks["strong"].create()]),
+    ]
+  )
+  .test();
