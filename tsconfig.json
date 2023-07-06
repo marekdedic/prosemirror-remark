@@ -12,6 +12,7 @@
     "sourceMap": true,
     "declaration": true,
     "declarationDir": "types",
-    "strict": true
+    "strict": true,
+    "types": []
   }
 }
