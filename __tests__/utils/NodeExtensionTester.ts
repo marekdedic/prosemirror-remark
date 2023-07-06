@@ -154,9 +154,8 @@ export class NodeExtensionTester<
                 ]
               : []),
           ])!;
-        const paddedMarkdownOutput = shouldMatch
-          ? "\n\n" + markdownOutput
-          : markdownOutput + "\n";
+        const paddedMarkdownOutput =
+          (shouldMatch ? "\n\n" : "") + markdownOutput + "\n";
 
         jest.spyOn(console, "warn").mockImplementation();
         createEditor(proseMirrorRoot, {
