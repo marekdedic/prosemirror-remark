@@ -1,4 +1,5 @@
-import { type MarkExtension } from "prosemirror-unified";
+import type { Mark, Schema } from "prosemirror-model";
+import type { MarkExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import {
@@ -8,7 +9,9 @@ import {
 
 type MarkExtensionTesterConfig = SyntaxExtensionTesterConfig;
 
-// TODO: Test MarkExtension
+// TODO: Test proseMirrorMarkName
+// TODO: Test proseMirrorMarkSpec
+// TODO: Test processConvertedUnistNode
 // TODO: Test input rules
 
 export class MarkExtensionTester<
@@ -18,11 +21,46 @@ export class MarkExtensionTester<
     never
   >
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
+  protected readonly extension: MarkExtension<UNode, UnistToProseMirrorContext>;
+
+  private readonly proseMirrorNodeMatches: Array<{
+    node: UnistNode;
+    mark: Mark;
+    shouldMatch: boolean;
+  }>;
+
   public constructor(
     extension: MarkExtension<UNode, UnistToProseMirrorContext>,
     config: MarkExtensionTesterConfig
   ) {
     super(extension, config);
+    this.extension = extension;
+
+    this.proseMirrorNodeMatches = [];
+  }
+
+  public shouldMatchProseMirrorNode(
+    node: UnistNode,
+    mark: (schema: Schema<string, string>) => Mark
+  ): this {
+    this.proseMirrorNodeMatches.push({
+      node,
+      mark: mark(this.pmu.schema()),
+      shouldMatch: true,
+    });
+    return this;
+  }
+
+  public shouldNotMatchProseMirrorNode(
+    node: UnistNode,
+    mark: (schema: Schema<string, string>) => Mark
+  ): this {
+    this.proseMirrorNodeMatches.push({
+      node,
+      mark: mark(this.pmu.schema()),
+      shouldMatch: false,
+    });
+    return this;
   }
 
   public test(): void {
@@ -33,5 +71,22 @@ export class MarkExtensionTester<
 
   protected enqueueTests(): void {
     super.enqueueTests();
+
+    this.enqueueProseMirrorNodeMatchTests();
+  }
+
+  private enqueueProseMirrorNodeMatchTests(): void {
+    if (this.proseMirrorNodeMatches.length === 0) {
+      return;
+    }
+    test("Matches correct ProseMirror nodes", () => {
+      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
+      expect.assertions(this.proseMirrorNodeMatches.length);
+      for (const { node, mark, shouldMatch } of this.proseMirrorNodeMatches) {
+        expect(this.extension.proseMirrorToUnistTest(node, mark)).toBe(
+          shouldMatch
+        );
+      }
+    });
   }
 }
