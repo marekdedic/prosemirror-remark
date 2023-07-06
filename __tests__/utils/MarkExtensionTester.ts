@@ -1,3 +1,4 @@
+import { createEditor } from "jest-prosemirror";
 import type { Mark, Schema } from "prosemirror-model";
 import type { MarkExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
@@ -12,7 +13,6 @@ interface MarkExtensionTesterConfig extends SyntaxExtensionTesterConfig {
 }
 
 // TODO: Test proseMirrorMarkSpec
-// TODO: Test input rules
 
 export class MarkExtensionTester<
   UNode extends UnistNode,
@@ -31,6 +31,13 @@ export class MarkExtensionTester<
     shouldMatch: boolean;
   }>;
 
+  private readonly inputRuleMatches: Array<{
+    rawText: string;
+    editorInput: string;
+    markdownOutput: string;
+    shouldMatch: boolean;
+  }>;
+
   public constructor(
     extension: MarkExtension<UNode, UnistToProseMirrorContext>,
     config: MarkExtensionTesterConfig
@@ -40,6 +47,7 @@ export class MarkExtensionTester<
 
     this.proseMirrorMarkName = config.proseMirrorMarkName;
     this.proseMirrorNodeMatches = [];
+    this.inputRuleMatches = [];
   }
 
   public shouldMatchProseMirrorNode(
@@ -66,6 +74,34 @@ export class MarkExtensionTester<
     return this;
   }
 
+  public shouldMatchInputRule(
+    rawText: string,
+    editorInput: string,
+    markdownOutput: string
+  ): this {
+    this.inputRuleMatches.push({
+      rawText,
+      editorInput,
+      markdownOutput,
+      shouldMatch: true,
+    });
+    return this;
+  }
+
+  public shouldNotMatchInputRule(
+    rawText: string,
+    editorInput: string,
+    markdownOutput: string
+  ): this {
+    this.inputRuleMatches.push({
+      rawText,
+      editorInput,
+      markdownOutput,
+      shouldMatch: false,
+    });
+    return this;
+  }
+
   public test(): void {
     describe(this.extension.constructor.name, () => {
       this.enqueueTests();
@@ -82,6 +118,7 @@ export class MarkExtensionTester<
     });
 
     this.enqueueProseMirrorNodeMatchTests();
+    this.enqueueInputRuleTests();
   }
 
   private enqueueProseMirrorNodeMatchTests(): void {
@@ -95,6 +132,57 @@ export class MarkExtensionTester<
         expect(this.extension.proseMirrorToUnistTest(node, mark)).toBe(
           shouldMatch
         );
+      }
+    });
+  }
+
+  private enqueueInputRuleTests(): void {
+    if (this.inputRuleMatches.length === 0) {
+      return;
+    }
+    test("Matches input rules correctly", () => {
+      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
+      expect.assertions(3 * this.inputRuleMatches.length);
+      for (const { rawText, editorInput, markdownOutput, shouldMatch } of this
+        .inputRuleMatches) {
+        const source = "BEGIN";
+        const proseMirrorRoot = this.pmu.parse(source);
+        const proseMirrorTree = this.pmu
+          .schema()
+          .nodes["doc"].createAndFill({}, [
+            this.pmu.schema().nodes["test_paragraph"].createAndFill(
+              {},
+              shouldMatch
+                ? [
+                    this.pmu.schema().text("BEGIN"),
+                    this.pmu
+                      .schema()
+                      .text(rawText)
+                      .mark([
+                        this.pmu
+                          .schema()
+                          .mark(this.extension.proseMirrorMarkName()!),
+                      ]),
+                    this.pmu.schema().text("END"),
+                  ]
+                : [this.pmu.schema().text("BEGIN" + editorInput + "END")]
+            )!,
+          ])!;
+
+        jest.spyOn(console, "warn").mockImplementation();
+        createEditor(proseMirrorRoot, {
+          plugins: [this.pmu.inputRulesPlugin()],
+        })
+          .selectText("end")
+          .insertText(editorInput)
+          .insertText("END")
+          .callback((content) => {
+            expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
+            expect(this.pmu.serialize(content.doc)).toBe(
+              "BEGIN" + markdownOutput + "END\n"
+            );
+          });
+        expect(console.warn).not.toHaveBeenCalled();
       }
     });
   }
