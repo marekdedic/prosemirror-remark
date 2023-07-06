@@ -14,6 +14,10 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   .shouldMatchProseMirrorNode(
     (schema) => schema.nodes["horizontal_rule"].createAndFill()!
   )
+  .shouldConvertProseMirrorNode(
+    (schema) => schema.nodes["horizontal_rule"].createAndFill()!,
+    [{ type: "thematicBreak" }]
+  )
   .shouldMatchInputRule("***", "---\n")
   .shouldMatchInputRule("---", "---\n")
   .shouldMatchInputRule("___", "---\n")

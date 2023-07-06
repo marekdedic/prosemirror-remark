@@ -17,7 +17,6 @@ interface NodeExtensionTesterConfig extends SyntaxExtensionTesterConfig {
 }
 
 // TODO: Test proseMirrorNodeSpec
-// TODO: Test proseMirrorNodeToUnsitNodes
 
 // TODO: Re-evaluate
 // eslint-disable-next-line jest/no-export
@@ -37,6 +36,12 @@ export class NodeExtensionTester<
     shouldMatch: boolean;
   }>;
 
+  private readonly proseMirrorNodeConversions: Array<{
+    source: ProseMirrorNode;
+    target: Array<UNode>;
+    convertedChildren: Array<UnistNode>;
+  }>;
+
   private readonly inputRuleMatches: Array<{
     editorInput: string;
     markdownOutput: string;
@@ -52,6 +57,7 @@ export class NodeExtensionTester<
 
     this.proseMirrorNodeName = config.proseMirrorNodeName;
     this.proseMirrorNodeMatches = [];
+    this.proseMirrorNodeConversions = [];
     this.inputRuleMatches = [];
   }
 
@@ -71,6 +77,19 @@ export class NodeExtensionTester<
     this.proseMirrorNodeMatches.push({
       node: node(this.schema),
       shouldMatch: false,
+    });
+    return this;
+  }
+
+  public shouldConvertProseMirrorNode(
+    source: (schema: Schema<string, string>) => ProseMirrorNode,
+    target: Array<UNode>,
+    convertedChildren: Array<UnistNode> = []
+  ): this {
+    this.proseMirrorNodeConversions.push({
+      source: source(this.schema),
+      target,
+      convertedChildren,
     });
     return this;
   }
@@ -116,6 +135,7 @@ export class NodeExtensionTester<
     });
 
     this.enqueueProseMirrorNodeMatchTests();
+    this.enqueueProseMirrorNodeConversionTests();
     this.enqueueInputRuleTests();
   }
 
@@ -128,6 +148,22 @@ export class NodeExtensionTester<
       expect.assertions(this.proseMirrorNodeMatches.length);
       for (const { node, shouldMatch } of this.proseMirrorNodeMatches) {
         expect(this.extension.proseMirrorToUnistTest(node)).toBe(shouldMatch);
+      }
+    });
+  }
+
+  private enqueueProseMirrorNodeConversionTests(): void {
+    if (this.proseMirrorNodeConversions.length === 0) {
+      return;
+    }
+    test("Converts ProseMirror -> unist correctly", () => {
+      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
+      expect.assertions(this.proseMirrorNodeConversions.length);
+      for (const { source, target, convertedChildren } of this
+        .proseMirrorNodeConversions) {
+        expect(
+          this.extension.proseMirrorNodeToUnistNodes(source, convertedChildren)
+        ).toStrictEqual(target);
       }
     });
   }
