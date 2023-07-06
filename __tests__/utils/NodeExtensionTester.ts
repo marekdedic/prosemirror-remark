@@ -1,16 +1,12 @@
 import { createEditor } from "jest-prosemirror";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
-import { type NodeExtension, ProseMirrorUnified } from "prosemirror-unified";
+import { type NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
-import { ParagraphExtension } from "./ParagraphExtension";
-import { ParserProviderExtension } from "./ParserProviderExtension";
-import { RootExtension } from "./RootExtension";
 import {
   SyntaxExtensionTester,
   type SyntaxExtensionTesterConfig,
 } from "./SyntaxExtensionTester";
-import { TextExtension } from "./TextExtension";
 
 interface NodeExtensionTesterConfig extends SyntaxExtensionTesterConfig {
   proseMirrorNodeName: string;
@@ -37,7 +33,6 @@ export class NodeExtensionTester<
   private readonly proseMirrorNodeConversions: Array<{
     source: ProseMirrorNode;
     target: Array<UNode>;
-    convertedChildren: Array<UnistNode>;
   }>;
 
   private readonly inputRuleMatches: Array<{
@@ -63,7 +58,7 @@ export class NodeExtensionTester<
     node: (schema: Schema<string, string>) => ProseMirrorNode
   ): this {
     this.proseMirrorNodeMatches.push({
-      node: node(this.schema),
+      node: node(this.pmu.schema()),
       shouldMatch: true,
     });
     return this;
@@ -73,7 +68,7 @@ export class NodeExtensionTester<
     node: (schema: Schema<string, string>) => ProseMirrorNode
   ): this {
     this.proseMirrorNodeMatches.push({
-      node: node(this.schema),
+      node: node(this.pmu.schema()),
       shouldMatch: false,
     });
     return this;
@@ -81,13 +76,11 @@ export class NodeExtensionTester<
 
   public shouldConvertProseMirrorNode(
     source: (schema: Schema<string, string>) => ProseMirrorNode,
-    target: Array<UNode>,
-    convertedChildren: Array<UnistNode> = []
+    target: Array<UNode>
   ): this {
     this.proseMirrorNodeConversions.push({
-      source: source(this.schema),
+      source: source(this.pmu.schema()),
       target,
-      convertedChildren,
     });
     return this;
   }
@@ -156,10 +149,15 @@ export class NodeExtensionTester<
     test("Converts ProseMirror -> unist correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(this.proseMirrorNodeConversions.length);
-      for (const { source, target, convertedChildren } of this
-        .proseMirrorNodeConversions) {
+      for (const { source, target } of this.proseMirrorNodeConversions) {
         expect(
-          this.extension.proseMirrorNodeToUnistNodes(source, convertedChildren)
+          (
+            this.pmu as unknown as {
+              proseMirrorToUnistConverter: {
+                convertNode(node: ProseMirrorNode): Array<UnistNode>;
+              };
+            }
+          ).proseMirrorToUnistConverter.convertNode(source)
         ).toStrictEqual(target);
       }
     });
@@ -174,28 +172,20 @@ export class NodeExtensionTester<
       expect.assertions(3 * this.inputRuleMatches.length);
       for (const { editorInput, markdownOutput, shouldMatch } of this
         .inputRuleMatches) {
-        const pmu = new ProseMirrorUnified([
-          new ParserProviderExtension(),
-          new RootExtension(),
-          new ParagraphExtension(),
-          new TextExtension(),
-          this.extension,
-        ]);
-
         const source = "";
-        const proseMirrorRoot = pmu.parse(source);
-        const proseMirrorTree = pmu
+        const proseMirrorRoot = this.pmu.parse(source);
+        const proseMirrorTree = this.pmu
           .schema()
           .nodes["doc"].createAndFill({}, [
-            pmu
+            this.pmu
               .schema()
               .nodes["test_paragraph"].createAndFill(
                 {},
-                shouldMatch ? [] : [pmu.schema().text(editorInput)]
+                shouldMatch ? [] : [this.pmu.schema().text(editorInput)]
               )!,
             ...(shouldMatch
               ? [
-                  pmu
+                  this.pmu
                     .schema()
                     .nodes[
                       this.extension.proseMirrorNodeName()!
@@ -209,13 +199,13 @@ export class NodeExtensionTester<
 
         jest.spyOn(console, "warn").mockImplementation();
         createEditor(proseMirrorRoot, {
-          plugins: [pmu.inputRulesPlugin()],
+          plugins: [this.pmu.inputRulesPlugin()],
         })
           .selectText("end")
           .insertText(editorInput)
           .callback((content) => {
             expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
-            expect(pmu.serialize(content.doc)).toBe(paddedMarkdownOutput);
+            expect(this.pmu.serialize(content.doc)).toBe(paddedMarkdownOutput);
           });
         expect(console.warn).not.toHaveBeenCalled();
       }

@@ -3,6 +3,7 @@ import { ProseMirrorUnified, type SyntaxExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import { ParagraphExtension } from "./ParagraphExtension";
+import { ParserProviderExtension } from "./ParserProviderExtension";
 import { RootExtension } from "./RootExtension";
 import { TextExtension } from "./TextExtension";
 
@@ -25,7 +26,7 @@ export class SyntaxExtensionTester<
     UnistToProseMirrorContext
   >;
 
-  protected readonly schema: Schema<string, string>;
+  protected readonly pmu: ProseMirrorUnified;
 
   private readonly unistNodeName: string;
 
@@ -37,7 +38,6 @@ export class SyntaxExtensionTester<
   private readonly unistNodeConversions: Array<{
     source: UNode;
     target: Array<ProseMirrorNode>;
-    convertedChildren: Array<ProseMirrorNode>;
     contextChecker(context: UnistToProseMirrorContext): void;
   }>;
 
@@ -51,12 +51,13 @@ export class SyntaxExtensionTester<
     this.unistNodeMatches = [];
     this.unistNodeConversions = [];
 
-    this.schema = new ProseMirrorUnified([
+    this.pmu = new ProseMirrorUnified([
+      new ParserProviderExtension(),
       new RootExtension(),
       new ParagraphExtension(),
       new TextExtension(),
       this.extension,
-    ]).schema();
+    ]);
   }
 
   public shouldMatchUnistNode(node: UNode): this {
@@ -72,7 +73,6 @@ export class SyntaxExtensionTester<
   public shouldConvertUnistNode(
     source: UNode,
     target: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
-    convertedChildren: Array<ProseMirrorNode> = [],
     contextChecker: (
       context: UnistToProseMirrorContext
       // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -80,8 +80,7 @@ export class SyntaxExtensionTester<
   ): this {
     this.unistNodeConversions.push({
       source,
-      target: target(this.schema),
-      convertedChildren,
+      target: target(this.pmu.schema()),
       contextChecker,
     });
     return this;
@@ -116,16 +115,20 @@ export class SyntaxExtensionTester<
     test("Converts unist -> ProseMirror correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(this.unistNodeConversions.length);
-      for (const { source, target, convertedChildren, contextChecker } of this
+      for (const { source, target, contextChecker } of this
         .unistNodeConversions) {
         const context = {} as UnistToProseMirrorContext;
         expect(
-          this.extension.unistNodeToProseMirrorNodes(
-            source,
-            this.schema,
-            convertedChildren,
-            context
-          )
+          (
+            this.pmu as unknown as {
+              unistToProseMirrorConverter: {
+                convertNode(
+                  node: UnistNode,
+                  context: Record<string, unknown>
+                ): Array<ProseMirrorNode>;
+              };
+            }
+          ).unistToProseMirrorConverter.convertNode(source, context)
         ).toStrictEqual(target);
         contextChecker(context);
       }
