@@ -2,6 +2,7 @@ import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
 import { MarkExtensionTester } from "../utils/MarkExtensionTester";
 
 new MarkExtensionTester(new BoldExtension(), {
+  proseMirrorMarkName: "strong",
   unistNodeName: "strong",
 })
   .shouldMatchUnistNode({ type: "strong", children: [] })

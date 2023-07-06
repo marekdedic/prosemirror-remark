@@ -7,9 +7,10 @@ import {
   type SyntaxExtensionTesterConfig,
 } from "./SyntaxExtensionTester";
 
-type MarkExtensionTesterConfig = SyntaxExtensionTesterConfig;
+interface MarkExtensionTesterConfig extends SyntaxExtensionTesterConfig {
+  proseMirrorMarkName: string;
+}
 
-// TODO: Test proseMirrorMarkName
 // TODO: Test proseMirrorMarkSpec
 // TODO: Test processConvertedUnistNode
 // TODO: Test input rules
@@ -22,6 +23,8 @@ export class MarkExtensionTester<
   >
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
   protected readonly extension: MarkExtension<UNode, UnistToProseMirrorContext>;
+
+  private readonly proseMirrorMarkName: string;
 
   private readonly proseMirrorNodeMatches: Array<{
     node: UnistNode;
@@ -36,6 +39,7 @@ export class MarkExtensionTester<
     super(extension, config);
     this.extension = extension;
 
+    this.proseMirrorMarkName = config.proseMirrorMarkName;
     this.proseMirrorNodeMatches = [];
   }
 
@@ -71,6 +75,12 @@ export class MarkExtensionTester<
 
   protected enqueueTests(): void {
     super.enqueueTests();
+
+    test("Provides the correct ProseMirror mark", () => {
+      expect(this.extension.proseMirrorMarkName()).toBe(
+        this.proseMirrorMarkName
+      );
+    });
 
     this.enqueueProseMirrorNodeMatchTests();
   }
