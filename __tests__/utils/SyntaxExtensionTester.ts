@@ -59,7 +59,7 @@ export class SyntaxExtensionTester<
     ]).schema();
   }
 
-  public shouldMatchUnistNode(node: UnistNode): this {
+  public shouldMatchUnistNode(node: UNode): this {
     this.unistNodeMatches.push({ node, shouldMatch: true });
     return this;
   }
