@@ -1,4 +1,5 @@
 import { createEditor } from "jest-prosemirror";
+import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import { type NodeExtension, ProseMirrorUnified } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
@@ -15,7 +16,6 @@ interface NodeExtensionTesterConfig extends SyntaxExtensionTesterConfig {
   proseMirrorNodeName: string;
 }
 
-// TODO: Test proseMirrorToUnsitTest
 // TODO: Test proseMirrorNodeSpec
 // TODO: Test proseMirrorNodeToUnsitNodes
 
@@ -32,6 +32,11 @@ export class NodeExtensionTester<
 
   private readonly proseMirrorNodeName: string;
 
+  private readonly proseMirrorNodeMatches: Array<{
+    node: ProseMirrorNode;
+    shouldMatch: boolean;
+  }>;
+
   private readonly inputRuleMatches: Array<{
     editorInput: string;
     markdownOutput: string;
@@ -46,7 +51,28 @@ export class NodeExtensionTester<
     this.extension = extension;
 
     this.proseMirrorNodeName = config.proseMirrorNodeName;
+    this.proseMirrorNodeMatches = [];
     this.inputRuleMatches = [];
+  }
+
+  public shouldMatchProseMirrorNode(
+    node: (schema: Schema<string, string>) => ProseMirrorNode
+  ): this {
+    this.proseMirrorNodeMatches.push({
+      node: node(this.schema),
+      shouldMatch: true,
+    });
+    return this;
+  }
+
+  public shouldNotMatchProseMirrorNode(
+    node: (schema: Schema<string, string>) => ProseMirrorNode
+  ): this {
+    this.proseMirrorNodeMatches.push({
+      node: node(this.schema),
+      shouldMatch: false,
+    });
+    return this;
   }
 
   public shouldMatchInputRule(
@@ -89,7 +115,21 @@ export class NodeExtensionTester<
       );
     });
 
+    this.enqueueProseMirrorNodeMatchTests();
     this.enqueueInputRuleTests();
+  }
+
+  private enqueueProseMirrorNodeMatchTests(): void {
+    if (this.proseMirrorNodeMatches.length === 0) {
+      return;
+    }
+    test("Matches correct ProseMirror nodes", () => {
+      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
+      expect.assertions(this.proseMirrorNodeMatches.length);
+      for (const { node, shouldMatch } of this.proseMirrorNodeMatches) {
+        expect(this.extension.proseMirrorToUnistTest(node)).toBe(shouldMatch);
+      }
+    });
   }
 
   private enqueueInputRuleTests(): void {

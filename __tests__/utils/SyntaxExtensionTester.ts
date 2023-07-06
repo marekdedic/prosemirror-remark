@@ -28,20 +28,22 @@ export class SyntaxExtensionTester<
     UNode,
     UnistToProseMirrorContext
   >;
+
+  protected readonly schema: Schema<string, string>;
+
   private readonly unistNodeName: string;
 
   private readonly unistNodeMatches: Array<{
     node: UnistNode;
     shouldMatch: boolean;
   }>;
+
   private readonly unistNodeConversions: Array<{
     source: UNode;
     target: Array<ProseMirrorNode>;
     convertedChildren: Array<ProseMirrorNode>;
     contextChecker(context: UnistToProseMirrorContext): void;
   }>;
-
-  private readonly schema: Schema<string, string>;
 
   public constructor(
     extension: SyntaxExtension<UNode, UnistToProseMirrorContext>,

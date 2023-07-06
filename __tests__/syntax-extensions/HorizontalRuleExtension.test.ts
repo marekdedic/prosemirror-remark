@@ -8,6 +8,12 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   .shouldMatchUnistNode({ type: "thematicBreak" })
   .shouldNotMatchUnistNode({ type: "horizontal_rule" })
   .shouldNotMatchUnistNode({ type: "other" })
+  .shouldConvertUnistNode({ type: "thematicBreak" }, (schema) => [
+    schema.nodes["horizontal_rule"].createAndFill()!,
+  ])
+  .shouldMatchProseMirrorNode(
+    (schema) => schema.nodes["horizontal_rule"].createAndFill()!
+  )
   .shouldMatchInputRule("***", "---\n")
   .shouldMatchInputRule("---", "---\n")
   .shouldMatchInputRule("___", "---\n")
@@ -17,7 +23,4 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   .shouldNotMatchInputRule("* **", "\\* \\*\\*")
   .shouldNotMatchInputRule("** *", "\\*\\* \\*")
   .shouldNotMatchInputRule("a***", "a\\*\\*\\*")
-  .shouldConvertUnistNode({ type: "thematicBreak" }, (schema) => [
-    schema.nodes["horizontal_rule"].createAndFill()!,
-  ])
   .test();
