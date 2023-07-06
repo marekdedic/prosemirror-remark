@@ -12,10 +12,12 @@ import {
 import { TextExtension } from "./TextExtension";
 
 interface NodeExtensionTesterConfig extends SyntaxExtensionTesterConfig {
-  unistNodeName: string;
+  proseMirrorNodeName: string;
 }
 
-// TODO: Add things from NodeExtension
+// TODO: Test proseMirrorToUnsitTest
+// TODO: Test proseMirrorNodeSpec
+// TODO: Test proseMirrorNodeToUnsitNodes
 
 // TODO: Re-evaluate
 // eslint-disable-next-line jest/no-export
@@ -27,6 +29,8 @@ export class NodeExtensionTester<
   >
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
   protected readonly extension: NodeExtension<UNode, UnistToProseMirrorContext>;
+
+  private readonly proseMirrorNodeName: string;
 
   private readonly inputRuleMatches: Array<{
     editorInput: string;
@@ -41,6 +45,7 @@ export class NodeExtensionTester<
     super(extension, config);
     this.extension = extension;
 
+    this.proseMirrorNodeName = config.proseMirrorNodeName;
     this.inputRuleMatches = [];
   }
 
@@ -77,6 +82,12 @@ export class NodeExtensionTester<
 
   protected enqueueTests(): void {
     super.enqueueTests();
+
+    test("Provides the correct ProseMirror node", () => {
+      expect(this.extension.proseMirrorNodeName()).toBe(
+        this.proseMirrorNodeName
+      );
+    });
 
     this.enqueueInputRuleTests();
   }

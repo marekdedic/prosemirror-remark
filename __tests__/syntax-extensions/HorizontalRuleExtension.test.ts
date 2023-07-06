@@ -2,6 +2,7 @@ import { HorizontalRuleExtension } from "../../src/syntax-extensions/HorizontalR
 import { NodeExtensionTester } from "../utils/NodeExtensionTester";
 
 new NodeExtensionTester(new HorizontalRuleExtension(), {
+  proseMirrorNodeName: "horizontal_rule",
   unistNodeName: "thematicBreak",
 })
   .shouldMatchUnistNode({ type: "thematicBreak" })
