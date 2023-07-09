@@ -18,12 +18,54 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
     (schema) => schema.nodes["horizontal_rule"].createAndFill()!,
     [{ type: "thematicBreak" }]
   )
-  .shouldMatchInputRule("***", "---")
-  .shouldMatchInputRule("---", "---")
-  .shouldMatchInputRule("___", "---")
-  .shouldMatchInputRule(" ***", "---")
-  .shouldMatchInputRule("  ***", "---")
-  .shouldMatchInputRule("   ***", "---")
+  .shouldMatchInputRule(
+    "***",
+    (schema) => [
+      schema.nodes["paragraph"].createAndFill()!,
+      schema.nodes["horizontal_rule"].createAndFill()!,
+    ],
+    "---"
+  )
+  .shouldMatchInputRule(
+    "---",
+    (schema) => [
+      schema.nodes["paragraph"].createAndFill()!,
+      schema.nodes["horizontal_rule"].createAndFill()!,
+    ],
+    "---"
+  )
+  .shouldMatchInputRule(
+    "___",
+    (schema) => [
+      schema.nodes["paragraph"].createAndFill()!,
+      schema.nodes["horizontal_rule"].createAndFill()!,
+    ],
+    "---"
+  )
+  .shouldMatchInputRule(
+    " ***",
+    (schema) => [
+      schema.nodes["paragraph"].createAndFill()!,
+      schema.nodes["horizontal_rule"].createAndFill()!,
+    ],
+    "---"
+  )
+  .shouldMatchInputRule(
+    "  ***",
+    (schema) => [
+      schema.nodes["paragraph"].createAndFill()!,
+      schema.nodes["horizontal_rule"].createAndFill()!,
+    ],
+    "---"
+  )
+  .shouldMatchInputRule(
+    "   ***",
+    (schema) => [
+      schema.nodes["paragraph"].createAndFill()!,
+      schema.nodes["horizontal_rule"].createAndFill()!,
+    ],
+    "---"
+  )
   .shouldNotMatchInputRule("*-*", "\\*-\\*")
   .shouldNotMatchInputRule("*_*", "\\*\\_\\*")
   .shouldNotMatchInputRule("* **", "\\* \\*\\*")
