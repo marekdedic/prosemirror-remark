@@ -150,7 +150,7 @@ export class MarkExtensionTester<
         const proseMirrorTree = this.pmu
           .schema()
           .nodes["doc"].createAndFill({}, [
-            this.pmu.schema().nodes["test_paragraph"].createAndFill(
+            this.pmu.schema().nodes["paragraph"].createAndFill(
               {},
               shouldMatch
                 ? [

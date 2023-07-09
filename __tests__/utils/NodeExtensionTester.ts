@@ -162,7 +162,7 @@ export class NodeExtensionTester<
               : [
                   this.pmu
                     .schema()
-                    .nodes["test_paragraph"].createAndFill({}, [
+                    .nodes["paragraph"].createAndFill({}, [
                       this.pmu.schema().text(editorInput),
                     ])!,
                 ]

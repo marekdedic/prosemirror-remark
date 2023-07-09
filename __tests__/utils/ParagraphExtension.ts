@@ -20,7 +20,7 @@ export class ParagraphExtension extends NodeExtension<UnistParagraph> {
   }
 
   public proseMirrorNodeName(): string {
-    return "test_paragraph";
+    return "paragraph";
   }
 
   public proseMirrorNodeSpec(): NodeSpec {
