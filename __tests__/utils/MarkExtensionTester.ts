@@ -9,7 +9,7 @@ import {
 } from "./SyntaxExtensionTester";
 
 interface MarkExtensionTesterConfig extends SyntaxExtensionTesterConfig {
-  proseMirrorMarkName: string;
+  proseMirrorMarkName: string | null;
 }
 
 // TODO: Test proseMirrorMarkSpec
@@ -23,7 +23,7 @@ export class MarkExtensionTester<
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
   protected readonly extension: MarkExtension<UNode, UnistToProseMirrorContext>;
 
-  private readonly proseMirrorMarkName: string;
+  private readonly proseMirrorMarkName: string | null;
 
   private readonly proseMirrorNodeMatches: Array<{
     node: UnistNode;
