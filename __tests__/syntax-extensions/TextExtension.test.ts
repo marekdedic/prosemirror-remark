@@ -13,6 +13,6 @@ new NodeExtensionTester(new TextExtension(), {
   .shouldMatchProseMirrorNode((schema) => schema.text("Hello World"))
   .shouldConvertProseMirrorNode(
     (schema) => schema.text("Hello World!"),
-    [{ type: "text", value: "Hello World" }]
+    [{ type: "text", value: "Hello World!" }]
   )
   .test();
