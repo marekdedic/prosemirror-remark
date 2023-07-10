@@ -13,6 +13,7 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class BreakExtension extends NodeExtension<Break> {
+  // TODO: Hard breaks seem to be broken
   public unistNodeName(): "break" {
     return "break";
   }
