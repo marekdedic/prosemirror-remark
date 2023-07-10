@@ -97,4 +97,12 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       } as UnistNode,
     ]
   )
+  .shouldConvertUnistNode(
+    {
+      type: "imageReference",
+      referenceType: "full",
+      identifier: "imageId",
+    },
+    (schema) => [schema.nodes["image"].createAndFill({ src: "" })!]
+  )
   .test();
