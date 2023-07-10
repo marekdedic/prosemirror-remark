@@ -9,7 +9,7 @@ import {
 } from "./SyntaxExtensionTester";
 
 interface NodeExtensionTesterConfig extends SyntaxExtensionTesterConfig {
-  proseMirrorNodeName: string;
+  proseMirrorNodeName: string | null;
 }
 
 // TODO: Test proseMirrorNodeSpec
@@ -23,7 +23,7 @@ export class NodeExtensionTester<
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
   protected readonly extension: NodeExtension<UNode, UnistToProseMirrorContext>;
 
-  private readonly proseMirrorNodeName: string;
+  private readonly proseMirrorNodeName: string | null;
 
   private readonly proseMirrorNodeMatches: Array<{
     node: ProseMirrorNode;
