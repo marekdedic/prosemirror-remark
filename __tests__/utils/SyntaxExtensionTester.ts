@@ -12,7 +12,6 @@ export interface SyntaxExtensionTesterConfig {
 }
 
 // TODO: Test keymap
-// TODO: Test post-hook
 
 export class SyntaxExtensionTester<
   UNode extends UnistNode,
