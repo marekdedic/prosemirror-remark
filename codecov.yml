@@ -1,5 +1,5 @@
 coverage:
-  range: "0...100"
+  range: "85...100"
 
   status:
     project:

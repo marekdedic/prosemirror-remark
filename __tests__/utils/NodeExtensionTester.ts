@@ -9,7 +9,7 @@ import {
 } from "./SyntaxExtensionTester";
 
 interface NodeExtensionTesterConfig extends SyntaxExtensionTesterConfig {
-  proseMirrorNodeName: string;
+  proseMirrorNodeName: string | null;
 }
 
 // TODO: Test proseMirrorNodeSpec
@@ -23,18 +23,27 @@ export class NodeExtensionTester<
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
   protected readonly extension: NodeExtension<UNode, UnistToProseMirrorContext>;
 
-  private readonly proseMirrorNodeName: string;
+  private readonly proseMirrorNodeName: string | null;
 
   private readonly proseMirrorNodeMatches: Array<{
     node: ProseMirrorNode;
     shouldMatch: boolean;
   }>;
 
-  private readonly inputRuleMatches: Array<{
-    editorInput: string;
-    markdownOutput: string;
-    shouldMatch: boolean;
-  }>;
+  private readonly inputRuleMatches: Array<
+    | {
+        editorInput: string;
+        proseMirrorNodes: Array<ProseMirrorNode>;
+        markdownOutput: string;
+        shouldMatch: true;
+      }
+    | {
+        editorInput: string;
+        proseMirrorNodes: null;
+        markdownOutput: string;
+        shouldMatch: false;
+      }
+  >;
 
   public constructor(
     extension: NodeExtension<UNode, UnistToProseMirrorContext>,
@@ -70,10 +79,14 @@ export class NodeExtensionTester<
 
   public shouldMatchInputRule(
     editorInput: string,
+    proseMirrorNodes: (
+      schema: Schema<string, string>
+    ) => Array<ProseMirrorNode>,
     markdownOutput: string
   ): this {
     this.inputRuleMatches.push({
       editorInput,
+      proseMirrorNodes: proseMirrorNodes(this.pmu.schema()),
       markdownOutput,
       shouldMatch: true,
     });
@@ -86,6 +99,7 @@ export class NodeExtensionTester<
   ): this {
     this.inputRuleMatches.push({
       editorInput,
+      proseMirrorNodes: null,
       markdownOutput,
       shouldMatch: false,
     });
@@ -131,31 +145,28 @@ export class NodeExtensionTester<
     test("Matches input rules correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(3 * this.inputRuleMatches.length);
-      for (const { editorInput, markdownOutput, shouldMatch } of this
-        .inputRuleMatches) {
+      for (const {
+        editorInput,
+        proseMirrorNodes,
+        markdownOutput,
+        shouldMatch,
+      } of this.inputRuleMatches) {
         const source = "";
         const proseMirrorRoot = this.pmu.parse(source);
         const proseMirrorTree = this.pmu
           .schema()
-          .nodes["doc"].createAndFill({}, [
-            this.pmu
-              .schema()
-              .nodes["test_paragraph"].createAndFill(
-                {},
-                shouldMatch ? [] : [this.pmu.schema().text(editorInput)]
-              )!,
-            ...(shouldMatch
-              ? [
+          .nodes["doc"].createAndFill(
+            {},
+            shouldMatch
+              ? proseMirrorNodes
+              : [
                   this.pmu
                     .schema()
-                    .nodes[
-                      this.extension.proseMirrorNodeName()!
-                    ].createAndFill()!,
+                    .nodes["paragraph"].createAndFill({}, [
+                      this.pmu.schema().text(editorInput),
+                    ])!,
                 ]
-              : []),
-          ])!;
-        const paddedMarkdownOutput =
-          (shouldMatch ? "\n\n" : "") + markdownOutput + "\n";
+          )!;
 
         jest.spyOn(console, "warn").mockImplementation();
         createEditor(proseMirrorRoot, {
@@ -165,7 +176,9 @@ export class NodeExtensionTester<
           .insertText(editorInput)
           .callback((content) => {
             expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
-            expect(this.pmu.serialize(content.doc)).toBe(paddedMarkdownOutput);
+            expect(
+              this.pmu.serialize(content.doc).replace(/^\s+|\s+$/g, "")
+            ).toBe(markdownOutput);
           });
         expect(console.warn).not.toHaveBeenCalled();
       }

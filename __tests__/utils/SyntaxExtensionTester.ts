@@ -12,7 +12,6 @@ export interface SyntaxExtensionTesterConfig {
 }
 
 // TODO: Test keymap
-// TODO: Test post-hook
 
 export class SyntaxExtensionTester<
   UNode extends UnistNode,
@@ -38,7 +37,7 @@ export class SyntaxExtensionTester<
   private readonly unistNodeConversions: Array<{
     source: UNode;
     target: Array<ProseMirrorNode>;
-    contextChecker(context: UnistToProseMirrorContext): void;
+    injectNodes: Array<UnistNode>;
   }>;
 
   private readonly proseMirrorNodeConversions: Array<{
@@ -79,15 +78,12 @@ export class SyntaxExtensionTester<
   public shouldConvertUnistNode(
     source: UNode,
     target: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
-    contextChecker: (
-      context: UnistToProseMirrorContext
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-    ) => void = (): void => {}
+    injectNodes: Array<UnistNode> = []
   ): this {
     this.unistNodeConversions.push({
       source,
       target: target(this.pmu.schema()),
-      contextChecker,
+      injectNodes,
     });
     return this;
   }
@@ -133,22 +129,25 @@ export class SyntaxExtensionTester<
     test("Converts unist -> ProseMirror correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(this.unistNodeConversions.length);
-      for (const { source, target, contextChecker } of this
-        .unistNodeConversions) {
+      for (const { source, target, injectNodes } of this.unistNodeConversions) {
+        const annotatedPmu = this.pmu as unknown as {
+          unistToProseMirrorConverter: {
+            convertNode(
+              node: UnistNode,
+              context: Record<string, unknown>
+            ): Array<ProseMirrorNode>;
+          };
+        };
         const context = {} as UnistToProseMirrorContext;
-        expect(
-          (
-            this.pmu as unknown as {
-              unistToProseMirrorConverter: {
-                convertNode(
-                  node: UnistNode,
-                  context: Record<string, unknown>
-                ): Array<ProseMirrorNode>;
-              };
-            }
-          ).unistToProseMirrorConverter.convertNode(source, context)
-        ).toStrictEqual(target);
-        contextChecker(context);
+        for (const node of injectNodes) {
+          annotatedPmu.unistToProseMirrorConverter.convertNode(node, context);
+        }
+        const result = annotatedPmu.unistToProseMirrorConverter.convertNode(
+          source,
+          context
+        );
+        this.extension.postUnistToProseMirrorHook(context);
+        expect(result).toStrictEqual(target);
       }
     });
   }
