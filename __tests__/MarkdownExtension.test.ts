@@ -153,9 +153,9 @@ test("ProseMirror -> unist conversion", () => {
       "\n" +
       "![Awesome image](https://example.test)\n" +
       "\n" +
-      "1.  Ordered list\n" +
+      "1. Ordered list\n" +
       "\n" +
-      "*   Unordered list\n\n" +
+      "* Unordered list\n\n" +
       "A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test).\n"
   );
 });

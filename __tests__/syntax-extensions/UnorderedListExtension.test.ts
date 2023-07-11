@@ -240,7 +240,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "*   Hello World!"
+    "* Hello World!"
   )
   .shouldMatchInputRule(
     "- Hello World!",
@@ -253,7 +253,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "*   Hello World!"
+    "* Hello World!"
   )
   .shouldMatchInputRule(
     "+ Hello World!",
@@ -266,7 +266,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "*   Hello World!"
+    "* Hello World!"
   )
   .shouldMatchInputRule(
     " * Hello World!",
@@ -279,7 +279,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "*   Hello World!"
+    "* Hello World!"
   )
   .shouldMatchInputRule(
     "  * Hello World!",
@@ -292,10 +292,10 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "*   Hello World!"
+    "* Hello World!"
   )
   .shouldMatchInputRule(
-    "   * Hello World!",
+    " * Hello World!",
     (schema) => [
       schema.nodes["bullet_list"].createAndFill({}, [
         schema.nodes["list_item"].createAndFill({}, [
@@ -305,7 +305,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "*   Hello World!"
+    "* Hello World!"
   )
   /*
   TODO: Fix this test of joining lists - probably \n != Enter key
