@@ -7,7 +7,9 @@ test("unist -> ProseMirror conversion", () => {
   const schema = pmu.schema();
   // TODO: Link and image references don't work
   const result = pmu.parse(
-    "> Inside a blockquote\n" +
+    "> Inside a blockquote\n\n" +
+      "Paragraph with a  \n" +
+      "hard break\n" +
       "```\nCode\n```\n" +
       "# Hello\n" +
       "***\n" +
@@ -26,6 +28,11 @@ test("unist -> ProseMirror conversion", () => {
         schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Inside a blockquote"),
         ])!,
+      ])!,
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.text("Paragraph with a"),
+        schema.nodes["hard_break"].createAndFill()!,
+        schema.text("hard break"),
       ])!,
       schema.nodes["code_block"].createAndFill({}, [schema.text("Code")])!,
       schema.nodes["heading"].createAndFill({}, [schema.text("Hello")])!,
@@ -87,6 +94,11 @@ test("ProseMirror -> unist conversion", () => {
           schema.text("Inside a blockquote"),
         ])!,
       ])!,
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.text("Paragraph with a"),
+        schema.nodes["hard_break"].createAndFill()!,
+        schema.text("hard break"),
+      ])!,
       schema.nodes["code_block"].createAndFill({}, [schema.text("Code")])!,
       schema.nodes["heading"].createAndFill({}, [schema.text("Hello")])!,
       schema.nodes["horizontal_rule"].createAndFill()!,
@@ -129,6 +141,9 @@ test("ProseMirror -> unist conversion", () => {
   );
   expect(result).toBe(
     "> Inside a blockquote\n" +
+      "\n" +
+      "Paragraph with a\\\n" +
+      "hard break\n" +
       "\n" +
       "```\nCode\n```\n" +
       "\n" +
