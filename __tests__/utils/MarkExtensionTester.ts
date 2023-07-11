@@ -12,8 +12,6 @@ interface MarkExtensionTesterConfig extends SyntaxExtensionTesterConfig {
   proseMirrorMarkName: string | null;
 }
 
-// TODO: Test proseMirrorMarkSpec
-
 export class MarkExtensionTester<
   UNode extends UnistNode,
   UnistToProseMirrorContext extends Record<string, unknown> = Record<

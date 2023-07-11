@@ -12,8 +12,6 @@ interface NodeExtensionTesterConfig extends SyntaxExtensionTesterConfig {
   proseMirrorNodeName: string | null;
 }
 
-// TODO: Test proseMirrorNodeSpec
-
 export class NodeExtensionTester<
   UNode extends UnistNode,
   UnistToProseMirrorContext extends Record<string, unknown> = Record<
