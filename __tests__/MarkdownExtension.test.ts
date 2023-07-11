@@ -14,8 +14,10 @@ test("unist -> ProseMirror conversion", () => {
       "# Hello\n" +
       "***\n" +
       "![Awesome image](https://example.test)\n" +
-      //"![Image 2][img2]\n" +
-      //"[img2]: https://img.test\n" +
+      "\n" +
+      "![Image 2][img2]\n" +
+      "\n" +
+      "[img2]: https://img2.test\n" +
       "1. Ordered list\n" +
       "- Unordered list\n\n" +
       "A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test).\n"
@@ -43,14 +45,12 @@ test("unist -> ProseMirror conversion", () => {
           alt: "Awesome image",
         })!,
       ])!,
-      /*
       schema.nodes["paragraph"].createAndFill({}, [
         schema.nodes["image"].createAndFill({
           src: "https://img2.test",
           alt: "Image 2",
         })!,
       ])!,
-      */
       schema.nodes["ordered_list"].createAndFill({}, [
         schema.nodes["list_item"].createAndFill({}, [
           schema.nodes["paragraph"].createAndFill({}, [
