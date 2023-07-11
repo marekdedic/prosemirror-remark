@@ -26,9 +26,6 @@ import { UnorderedListExtension } from "./syntax-extensions/UnorderedListExtensi
 
 /**
  * @public
- *
- * TODO: Allow HTML input
- * TODO: Add support for autolinks, including e-mail addresses (CommonMark spec: https://spec.commonmark.org/0.30/#autolink)
  */
 export class MarkdownExtension extends Extension {
   public dependencies(): Array<Extension> {
