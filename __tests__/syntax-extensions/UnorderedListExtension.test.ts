@@ -240,7 +240,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    // TODO: Investigate the triple space - it doesn't occur with 42
     "*   Hello World!"
   )
   .shouldMatchInputRule(

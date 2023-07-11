@@ -288,7 +288,6 @@ new NodeExtensionTester(new OrderedListExtension(), {
         ])!,
       ])!,
     ],
-    // TODO: Investigate the double space - it doesn't occur with 42
     "1.  Hello World!"
   )
   .shouldMatchInputRule(
