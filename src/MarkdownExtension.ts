@@ -59,8 +59,11 @@ export class MarkdownExtension extends Extension {
   public unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, string>
   ): Processor<UnistNode, UnistNode, UnistNode, string> {
-    return processor
-      .use(remarkParse)
-      .use(remarkStringify, { fences: true, resourceLink: true, rule: "-" });
+    return processor.use(remarkParse).use(remarkStringify, {
+      fences: true,
+      listItemIndent: "one",
+      resourceLink: true,
+      rule: "-",
+    });
   }
 }

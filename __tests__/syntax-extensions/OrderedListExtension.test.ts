@@ -288,8 +288,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
         ])!,
       ])!,
     ],
-    // TODO: Investigate the double space - it doesn't occur with 42
-    "1.  Hello World!"
+    "1. Hello World!"
   )
   .shouldMatchInputRule(
     " 1. Hello World!",
@@ -302,7 +301,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
         ])!,
       ])!,
     ],
-    "1.  Hello World!"
+    "1. Hello World!"
   )
   .shouldMatchInputRule(
     "  1. Hello World!",
@@ -315,7 +314,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
         ])!,
       ])!,
     ],
-    "1.  Hello World!"
+    "1. Hello World!"
   )
   .shouldMatchInputRule(
     "   1. Hello World!",
@@ -328,7 +327,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
         ])!,
       ])!,
     ],
-    "1.  Hello World!"
+    "1. Hello World!"
   )
   .shouldMatchInputRule(
     "42. Hello World!",
