@@ -308,7 +308,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "* Hello World!"
   )
   /*
-  TODO: Fix this test of joining lists - probably \n != Enter key
   .shouldMatchInputRule(
     "* Hello World!\n\n\n* Second item",
     (schema) => [
