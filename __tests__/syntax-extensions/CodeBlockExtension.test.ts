@@ -124,28 +124,4 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     ],
     "```\nHello World!\n```"
   )
-  /*
-  TODO: These are incorrect - the editor is not plain markdown
-  .shouldMatchInputRule(
-    "    Hello World!\n\n    Another line",
-    (schema) => [
-      schema.nodes["code_block"].createAndFill({}, [
-        schema.text("Hello World!\n\nAnother line"),
-      ])!,
-    ],
-    "```\nHello World!\n\nAnother line\n```"
-  )
-  .shouldMatchInputRule(
-    "    Hello World!\nAnother line",
-    (schema) => [
-      schema.nodes["code_block"].createAndFill({}, [
-        schema.text("Hello World!"),
-      ])!,
-      schema.nodes["paragraph"].createAndFill({}, [
-        schema.text("Another line"),
-      ])!,
-    ],
-    "```\nHello World!\n```\nAnother line"
-  )
-  */
   .test();

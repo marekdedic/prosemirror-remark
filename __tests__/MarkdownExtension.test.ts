@@ -5,20 +5,23 @@ import { MarkdownExtension } from "../src/MarkdownExtension";
 test("unist -> ProseMirror conversion", () => {
   const pmu = new ProseMirrorUnified([new MarkdownExtension()]);
   const schema = pmu.schema();
-  // TODO: Link and image references don't work
   const result = pmu.parse(
-    "> Inside a blockquote\n" +
+    "> Inside a blockquote\n\n" +
+      "Paragraph with a  \n" +
+      "hard break\n" +
       "```\nCode\n```\n" +
       "# Hello\n" +
       "***\n" +
       "![Awesome image](https://example.test)\n" +
-      //"![Image 2][img2]\n" +
-      //"[img2]: https://img.test\n" +
+      "\n" +
+      "![Image 2][img2]\n" +
+      "\n" +
+      "[img2]: https://img2.test\n" +
       "1. Ordered list\n" +
       "- Unordered list\n\n" +
-      "A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test).\n"
-    //"A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test) and another [type of link][link2].\n" +
-    //"[link2]: https://link2.test"
+      "A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test) and another [type of link][link2].\n" +
+      "\n" +
+      "[link2]: https://link2.test"
   );
   expect(result).toEqualProsemirrorNode(
     schema.nodes["doc"].createAndFill({}, [
@@ -26,6 +29,11 @@ test("unist -> ProseMirror conversion", () => {
         schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Inside a blockquote"),
         ])!,
+      ])!,
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.text("Paragraph with a"),
+        schema.nodes["hard_break"].createAndFill()!,
+        schema.text("hard break"),
       ])!,
       schema.nodes["code_block"].createAndFill({}, [schema.text("Code")])!,
       schema.nodes["heading"].createAndFill({}, [schema.text("Hello")])!,
@@ -36,14 +44,12 @@ test("unist -> ProseMirror conversion", () => {
           alt: "Awesome image",
         })!,
       ])!,
-      /*
       schema.nodes["paragraph"].createAndFill({}, [
         schema.nodes["image"].createAndFill({
           src: "https://img2.test",
           alt: "Image 2",
         })!,
       ])!,
-      */
       schema.nodes["ordered_list"].createAndFill({}, [
         schema.nodes["list_item"].createAndFill({}, [
           schema.nodes["paragraph"].createAndFill({}, [
@@ -71,6 +77,10 @@ test("unist -> ProseMirror conversion", () => {
           .mark([
             schema.marks["link"].create({ href: "https://example.test" }),
           ]),
+        schema.text(" and another "),
+        schema
+          .text("type of link")
+          .mark([schema.marks["link"].create({ href: "https://link2.test" })]),
         schema.text("."),
       ])!,
     ])!
@@ -86,6 +96,11 @@ test("ProseMirror -> unist conversion", () => {
         schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Inside a blockquote"),
         ])!,
+      ])!,
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.text("Paragraph with a"),
+        schema.nodes["hard_break"].createAndFill()!,
+        schema.text("hard break"),
       ])!,
       schema.nodes["code_block"].createAndFill({}, [schema.text("Code")])!,
       schema.nodes["heading"].createAndFill({}, [schema.text("Hello")])!,
@@ -129,6 +144,9 @@ test("ProseMirror -> unist conversion", () => {
   );
   expect(result).toBe(
     "> Inside a blockquote\n" +
+      "\n" +
+      "Paragraph with a\\\n" +
+      "hard break\n" +
       "\n" +
       "```\nCode\n```\n" +
       "\n" +

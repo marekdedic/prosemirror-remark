@@ -34,7 +34,6 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
   public proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>
   ): Array<InputRule> {
-    // TODO: Require newline after - to not trigger on ***bold italic*** text
     return [
       new InputRule(/^\s{0,3}(?:\*\*\*|---|___)$/, (state, _, start, end) => {
         return state.tr.replaceWith(

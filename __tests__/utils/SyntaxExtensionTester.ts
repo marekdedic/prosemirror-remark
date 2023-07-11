@@ -11,8 +11,6 @@ export interface SyntaxExtensionTesterConfig {
   unistNodeName: string;
 }
 
-// TODO: Test keymap
-
 export class SyntaxExtensionTester<
   UNode extends UnistNode,
   UnistToProseMirrorContext extends Record<string, unknown> = Record<

@@ -308,9 +308,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "* Hello World!"
   )
   /*
-  TODO: Fix this test of joining lists - probably \n != Enter key
   .shouldMatchInputRule(
-    "* Hello World!\n\n\n2. Second item",
+    "* Hello World!\n\n\n* Second item",
     (schema) => [
       schema.nodes["bullet_list"].createAndFill({}, [
         schema.nodes["list_item"].createAndFill({}, [
