@@ -5,7 +5,6 @@ import { MarkdownExtension } from "../src/MarkdownExtension";
 test("unist -> ProseMirror conversion", () => {
   const pmu = new ProseMirrorUnified([new MarkdownExtension()]);
   const schema = pmu.schema();
-  // TODO: Link and image references don't work
   const result = pmu.parse(
     "> Inside a blockquote\n\n" +
       "Paragraph with a  \n" +
@@ -20,9 +19,9 @@ test("unist -> ProseMirror conversion", () => {
       "[img2]: https://img2.test\n" +
       "1. Ordered list\n" +
       "- Unordered list\n\n" +
-      "A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test).\n"
-    //"A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test) and another [type of link][link2].\n" +
-    //"[link2]: https://link2.test"
+      "A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test) and another [type of link][link2].\n" +
+      "\n" +
+      "[link2]: https://link2.test"
   );
   expect(result).toEqualProsemirrorNode(
     schema.nodes["doc"].createAndFill({}, [
@@ -78,6 +77,10 @@ test("unist -> ProseMirror conversion", () => {
           .mark([
             schema.marks["link"].create({ href: "https://example.test" }),
           ]),
+        schema.text(" and another "),
+        schema
+          .text("type of link")
+          .mark([schema.marks["link"].create({ href: "https://link2.test" })]),
         schema.text("."),
       ])!,
     ])!
