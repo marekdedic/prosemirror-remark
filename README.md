@@ -47,17 +47,17 @@ If you want finer-grained control over how Markdown is processed and viewed, ins
 - `BoldExtension` provides support for `**bold text**`
 - `BreakExtension` provides support for `hard breaks at the end of a line\`
 - `CodeBlockExtension` provides support for code blocks like
+  ````
   ```
-  \`\`\`
   this
-  \`\`\`
   ```
+  ````
 - `DefinitionExtension` provides support for definitions for reference-style images and links. It is auto-included with `ImageReferenceExtension` and `LinkReferenceExtension`.
 - `HeadingExtension` provides support for `## Headings`
 - `HorizontalRuleExtension` provides support for horizontal dividers like this: `---`
 - `ImageExtension` provides support for images `![Awesome image](https://example.test)`
 - `ImageReferenceExtension` provides support for reference style images with the address later in the document like `![Awesome image][imageId]`
-- `InlineCodeExtension` provides support for `\`inline code snippets\``
+- `InlineCodeExtension` provides support for `` `inline code snippets` ``
 - `ItalicExtension` provides support for `*italic text*`
 - `LinkExtension` provides support for `[links](https://example.test)`
 - `LinkReferenceExtension` provides support for reference style links with the address later in the document like `[Click me!](linkId)`
