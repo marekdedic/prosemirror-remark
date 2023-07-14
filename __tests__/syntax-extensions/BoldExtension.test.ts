@@ -29,6 +29,14 @@ new MarkExtensionTester(new BoldExtension(), {
   .shouldMatchInputRule("**Test**", "**Test**", "Test")
   .shouldMatchInputRule("__Test__", "**Test**", "Test")
   .shouldMatchInputRule("**Hello World**", "**Hello World**", "Hello World")
+  .shouldMatchInputRule("**Test**\n", "**Test**\n", (schema) => [
+    schema.text("Test").mark([schema.mark("strong")]),
+    schema.text("\n"),
+  ])
+  .shouldMatchInputRule("__Test__\n", "**Test**\n", (schema) => [
+    schema.text("Test").mark([schema.mark("strong")]),
+    schema.text("\n"),
+  ])
   .shouldNotMatchInputRule("*_Test**", "\\*\\_Test\\*\\*")
   .shouldNotMatchInputRule("_*Test**", "\\_\\*Test\\*\\*")
   .shouldNotMatchInputRule("**Test__", "\\*\\*Test\\_\\_")

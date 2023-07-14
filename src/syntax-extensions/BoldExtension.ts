@@ -44,11 +44,11 @@ export class BoldExtension extends MarkExtension<Strong> {
   ): Array<InputRule> {
     return [
       new MarkInputRule(
-        /\*\*([^\s](?:.*[^\s])?)\*\*(.)$/,
+        /\*\*([^\s](?:.*[^\s])?)\*\*(.|\n)$/,
         proseMirrorSchema.marks[this.proseMirrorMarkName()]
       ),
       new MarkInputRule(
-        /__([^\s](?:.*[^\s])?)__(.)$/,
+        /__([^\s](?:.*[^\s])?)__(.|\n)$/,
         proseMirrorSchema.marks[this.proseMirrorMarkName()]
       ),
     ];
