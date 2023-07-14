@@ -47,7 +47,7 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
         proseMirrorSchema.marks[this.proseMirrorMarkName()]
       ),
       new MarkInputRule(
-        /(?<!_)_([^\s*](?:.*[^\s])?)_([^*])$/,
+        /(?<!_)_([^\s_](?:.*[^\s])?)_([^_])$/,
         proseMirrorSchema.marks[this.proseMirrorMarkName()]
       ),
     ];
