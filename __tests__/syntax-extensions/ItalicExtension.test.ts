@@ -24,8 +24,8 @@ new MarkExtensionTester(new ItalicExtension(), {
     (schema) => schema.text("Hello World!").mark([schema.mark("em")]),
     [{ type: "emphasis", children: [{ type: "text", value: "Hello World!" }] }]
   )
-  .shouldMatchInputRule("Test", "*Test*", "*Test*")
-  .shouldMatchInputRule("Test", "_Test_", "*Test*")
-  .shouldMatchInputRule("Hello World", "*Hello World*", "*Hello World*")
-  .shouldNotMatchInputRule("Test", "*Test_", "\\*Test\\_")
+  .shouldMatchInputRule("*Test*", "*Test*", "Test")
+  .shouldMatchInputRule("_Test_", "*Test*", "Test")
+  .shouldMatchInputRule("*Hello World*", "*Hello World*", "Hello World")
+  .shouldNotMatchInputRule("*Test_", "\\*Test\\_", "Test")
   .test();

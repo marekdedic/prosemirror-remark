@@ -73,9 +73,9 @@ export class MarkExtensionTester<
   }
 
   public shouldMatchInputRule(
-    rawText: string,
     editorInput: string,
-    markdownOutput: string
+    markdownOutput: string,
+    rawText: string
   ): this {
     this.inputRuleMatches.push({
       rawText,
@@ -87,9 +87,9 @@ export class MarkExtensionTester<
   }
 
   public shouldNotMatchInputRule(
-    rawText: string,
     editorInput: string,
-    markdownOutput: string
+    markdownOutput: string,
+    rawText: string
   ): this {
     this.inputRuleMatches.push({
       rawText,
