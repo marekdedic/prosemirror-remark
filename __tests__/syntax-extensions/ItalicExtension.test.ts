@@ -29,7 +29,7 @@ new MarkExtensionTester(new ItalicExtension(), {
   .shouldMatchInputRule("*Hello World*", "*Hello World*", "Hello World")
   .shouldMatchInputRule("*Test*\n", "*Test*\n", (schema) => [
     schema.text("Test").mark([schema.mark("em")]),
-    //schema.text("\n"),
+    schema.text("\n"),
   ])
   .shouldMatchInputRule("_Test_\n", "*Test*\n", (schema) => [
     schema.text("Test").mark([schema.mark("em")]),
