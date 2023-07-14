@@ -29,20 +29,11 @@ export class MarkExtensionTester<
     shouldMatch: boolean;
   }>;
 
-  private readonly inputRuleMatches: Array<
-    | {
-        editorInput: string;
-        proseMirrorNodes: Array<ProseMirrorNode>;
-        markdownOutput: string;
-        shouldMatch: true;
-      }
-    | {
-        editorInput: string;
-        proseMirrorNodes: null;
-        markdownOutput: string;
-        shouldMatch: false;
-      }
-  >;
+  private readonly inputRuleMatches: Array<{
+    editorInput: string;
+    proseMirrorNodes: Array<ProseMirrorNode>;
+    markdownOutput: string;
+  }>;
 
   public constructor(
     extension: MarkExtension<UNode, UnistToProseMirrorContext>,
@@ -101,20 +92,23 @@ export class MarkExtensionTester<
             ]
           : proseMirrorContents(this.pmu.schema()),
       markdownOutput,
-      shouldMatch: true,
     });
     return this;
   }
 
   public shouldNotMatchInputRule(
     editorInput: string,
-    markdownOutput: string
+    markdownOutput: string,
+    proseMirrorContents?: (
+      schema: Schema<string, string>
+    ) => Array<ProseMirrorNode>
   ): this {
     this.inputRuleMatches.push({
       editorInput,
-      proseMirrorNodes: null,
+      proseMirrorNodes: proseMirrorContents?.(this.pmu.schema()) ?? [
+        this.pmu.schema().text(editorInput),
+      ],
       markdownOutput,
-      shouldMatch: false,
     });
     return this;
   }
@@ -160,12 +154,8 @@ export class MarkExtensionTester<
     test("Matches input rules correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(3 * this.inputRuleMatches.length);
-      for (const {
-        editorInput,
-        proseMirrorNodes,
-        markdownOutput,
-        shouldMatch,
-      } of this.inputRuleMatches) {
+      for (const { editorInput, proseMirrorNodes, markdownOutput } of this
+        .inputRuleMatches) {
         const source = "BEGIN";
         const proseMirrorRoot = this.pmu.parse(source);
         const proseMirrorTree = this.pmu
@@ -173,16 +163,11 @@ export class MarkExtensionTester<
           .nodes["doc"].createAndFill({}, [
             this.pmu
               .schema()
-              .nodes["paragraph"].createAndFill(
-                {},
-                shouldMatch
-                  ? [
-                      this.pmu.schema().text("BEGIN"),
-                      ...proseMirrorNodes,
-                      this.pmu.schema().text("END"),
-                    ]
-                  : [this.pmu.schema().text("BEGIN" + editorInput + "END")]
-              )!,
+              .nodes["paragraph"].createAndFill({}, [
+                this.pmu.schema().text("BEGIN"),
+                ...proseMirrorNodes,
+                this.pmu.schema().text("END"),
+              ])!,
           ])!;
 
         jest.spyOn(console, "warn").mockImplementation();
