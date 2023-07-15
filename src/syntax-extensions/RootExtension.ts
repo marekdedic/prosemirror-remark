@@ -1,4 +1,4 @@
-import type { Content, Root } from "mdast";
+import type { Root, RootContent } from "mdast";
 import type {
   Node as ProseMirrorNode,
   NodeSpec,
@@ -36,7 +36,7 @@ export class RootExtension extends NodeExtension<Root> {
 
   public proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
-    convertedChildren: Array<Content>
+    convertedChildren: Array<RootContent>
   ): Array<Root> {
     return [{ type: this.unistNodeName(), children: convertedChildren }];
   }
