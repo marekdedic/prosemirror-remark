@@ -28,20 +28,11 @@ export class NodeExtensionTester<
     shouldMatch: boolean;
   }>;
 
-  private readonly inputRuleMatches: Array<
-    | {
-        editorInput: string;
-        proseMirrorNodes: Array<ProseMirrorNode>;
-        markdownOutput: string;
-        shouldMatch: true;
-      }
-    | {
-        editorInput: string;
-        proseMirrorNodes: null;
-        markdownOutput: string;
-        shouldMatch: false;
-      }
-  >;
+  private readonly inputRuleMatches: Array<{
+    editorInput: string;
+    proseMirrorNodes: Array<ProseMirrorNode>;
+    markdownOutput: string;
+  }>;
 
   public constructor(
     extension: NodeExtension<UNode, UnistToProseMirrorContext>,
@@ -86,20 +77,27 @@ export class NodeExtensionTester<
       editorInput,
       proseMirrorNodes: proseMirrorNodes(this.pmu.schema()),
       markdownOutput,
-      shouldMatch: true,
     });
     return this;
   }
 
   public shouldNotMatchInputRule(
     editorInput: string,
-    markdownOutput: string
+    markdownOutput: string,
+    proseMirrorNodes?: (
+      schema: Schema<string, string>
+    ) => Array<ProseMirrorNode>
   ): this {
     this.inputRuleMatches.push({
       editorInput,
-      proseMirrorNodes: null,
+      proseMirrorNodes: proseMirrorNodes?.(this.pmu.schema()) ?? [
+        this.pmu
+          .schema()
+          .nodes["paragraph"].createAndFill({}, [
+            this.pmu.schema().text(editorInput),
+          ])!,
+      ],
       markdownOutput,
-      shouldMatch: false,
     });
     return this;
   }
@@ -143,28 +141,13 @@ export class NodeExtensionTester<
     test("Matches input rules correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(3 * this.inputRuleMatches.length);
-      for (const {
-        editorInput,
-        proseMirrorNodes,
-        markdownOutput,
-        shouldMatch,
-      } of this.inputRuleMatches) {
+      for (const { editorInput, proseMirrorNodes, markdownOutput } of this
+        .inputRuleMatches) {
         const source = "";
         const proseMirrorRoot = this.pmu.parse(source);
         const proseMirrorTree = this.pmu
           .schema()
-          .nodes["doc"].createAndFill(
-            {},
-            shouldMatch
-              ? proseMirrorNodes
-              : [
-                  this.pmu
-                    .schema()
-                    .nodes["paragraph"].createAndFill({}, [
-                      this.pmu.schema().text(editorInput),
-                    ])!,
-                ]
-          )!;
+          .nodes["doc"].createAndFill({}, proseMirrorNodes)!;
 
         jest.spyOn(console, "warn").mockImplementation();
         createEditor(proseMirrorRoot, {

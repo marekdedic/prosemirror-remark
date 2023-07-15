@@ -35,7 +35,7 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     proseMirrorSchema: Schema<string, string>
   ): Array<InputRule> {
     return [
-      new InputRule(/^\s{0,3}(?:\*\*\*|---|___)$/, (state, _, start, end) => {
+      new InputRule(/^\s{0,3}(?:\*\*\*|---|___)\n$/, (state, _, start, end) => {
         return state.tr.replaceWith(
           start,
           end,
