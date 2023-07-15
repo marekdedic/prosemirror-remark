@@ -1,5 +1,9 @@
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
-import { ProseMirrorUnified, type SyntaxExtension } from "prosemirror-unified";
+import {
+  type Extension,
+  ProseMirrorUnified,
+  type SyntaxExtension,
+} from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import { ParagraphExtension } from "./ParagraphExtension";
@@ -9,6 +13,7 @@ import { TextExtension } from "./TextExtension";
 
 export interface SyntaxExtensionTesterConfig {
   unistNodeName: string;
+  otherExtensionsInTest?: Array<Extension>;
 }
 
 export class SyntaxExtensionTester<
@@ -59,6 +64,7 @@ export class SyntaxExtensionTester<
       new RootExtension(),
       new ParagraphExtension(),
       new TextExtension(),
+      ...(config.otherExtensionsInTest ?? []),
       this.extension,
     ]);
   }
