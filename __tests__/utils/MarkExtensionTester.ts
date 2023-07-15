@@ -32,15 +32,15 @@ export class MarkExtensionTester<
   private readonly inputRuleMatches: Array<
     | {
         editorInput: string;
-        proseMirrorNodes: null;
-        markdownOutput: string;
-        shouldMatch: false;
-      }
-    | {
-        editorInput: string;
         proseMirrorNodes: Array<ProseMirrorNode>;
         markdownOutput: string;
         shouldMatch: true;
+      }
+    | {
+        editorInput: string;
+        proseMirrorNodes: null;
+        markdownOutput: string;
+        shouldMatch: false;
       }
   >;
 
