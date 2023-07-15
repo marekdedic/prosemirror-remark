@@ -26,14 +26,22 @@ new MarkExtensionTester(new BoldExtension(), {
     (schema) => schema.text("Hello World!").mark([schema.mark("strong")]),
     [{ type: "strong", children: [{ type: "text", value: "Hello World!" }] }]
   )
-  .shouldMatchInputRule("Test", "**Test**", "**Test**")
-  .shouldMatchInputRule("Test", "__Test__", "**Test**")
-  .shouldMatchInputRule("Hello World", "**Hello World**", "**Hello World**")
-  .shouldNotMatchInputRule("Test", "*_Test**", "\\*\\_Test\\*\\*")
-  .shouldNotMatchInputRule("Test", "_*Test**", "\\_\\*Test\\*\\*")
-  .shouldNotMatchInputRule("Test", "**Test__", "\\*\\*Test\\_\\_")
-  .shouldNotMatchInputRule("Test", "**Test_*", "\\*\\*Test\\_\\*")
-  .shouldNotMatchInputRule("Test", "**Test*_", "\\*\\*Test\\*\\_")
-  .shouldNotMatchInputRule("Test", "* *Test**", "\\* \\*Test\\*\\*")
-  .shouldNotMatchInputRule("Test", "**Test* *", "\\*\\*Test\\* \\*")
+  .shouldMatchInputRule("**Test**", "**Test**", "Test")
+  .shouldMatchInputRule("__Test__", "**Test**", "Test")
+  .shouldMatchInputRule("**Hello World**", "**Hello World**", "Hello World")
+  .shouldMatchInputRule("**Test**\n", "**Test**\n", (schema) => [
+    schema.text("Test").mark([schema.mark("strong")]),
+    schema.text("\n"),
+  ])
+  .shouldMatchInputRule("__Test__\n", "**Test**\n", (schema) => [
+    schema.text("Test").mark([schema.mark("strong")]),
+    schema.text("\n"),
+  ])
+  .shouldNotMatchInputRule("*_Test**", "\\*\\_Test\\*\\*")
+  .shouldNotMatchInputRule("_*Test**", "\\_\\*Test\\*\\*")
+  .shouldNotMatchInputRule("**Test__", "\\*\\*Test\\_\\_")
+  .shouldNotMatchInputRule("**Test_*", "\\*\\*Test\\_\\*")
+  .shouldNotMatchInputRule("**Test*_", "\\*\\*Test\\*\\_")
+  .shouldNotMatchInputRule("* *Test**", "\\* \\*Test\\*\\*")
+  .shouldNotMatchInputRule("**Test* *", "\\*\\*Test\\* \\*")
   .test();

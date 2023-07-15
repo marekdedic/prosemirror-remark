@@ -25,6 +25,10 @@ new MarkExtensionTester(new InlineCodeExtension(), {
     (schema) => schema.text("Hello World!").mark([schema.mark("code")]),
     [{ type: "inlineCode", value: "Hello World!" }]
   )
-  .shouldMatchInputRule("Test", "`Test`", "`Test`")
-  .shouldMatchInputRule("Hello World", "`Hello World`", "`Hello World`")
+  .shouldMatchInputRule("`Test`", "`Test`", "Test")
+  .shouldMatchInputRule("`Hello World`", "`Hello World`", "Hello World")
+  .shouldMatchInputRule("`Test`\n", "`Test`\n", (schema) => [
+    schema.text("Test").mark([schema.mark("code")]),
+    schema.text("\n"),
+  ])
   .test();

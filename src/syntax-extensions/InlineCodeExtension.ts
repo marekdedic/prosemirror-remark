@@ -37,7 +37,7 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
   ): Array<InputRule> {
     return [
       new MarkInputRule(
-        /`([^\s](?:.*[^\s])?)`(.)$/,
+        /`([^\s](?:.*[^\s])?)`([\s\S])$/,
         proseMirrorSchema.marks[this.proseMirrorMarkName()]
       ),
     ];
