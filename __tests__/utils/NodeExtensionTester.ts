@@ -93,7 +93,7 @@ export class NodeExtensionTester<
       proseMirrorNodes: proseMirrorNodes?.(this.pmu.schema()) ?? [
         this.pmu
           .schema()
-          .nodes["paragraph"].createAndFill({}, [
+          .nodes.paragraph.createAndFill({}, [
             this.pmu.schema().text(editorInput),
           ])!,
       ],
@@ -147,7 +147,7 @@ export class NodeExtensionTester<
         const proseMirrorRoot = this.pmu.parse(source);
         const proseMirrorTree = this.pmu
           .schema()
-          .nodes["doc"].createAndFill({}, proseMirrorNodes)!;
+          .nodes.doc.createAndFill({}, proseMirrorNodes)!;
 
         jest.spyOn(console, "warn").mockImplementation();
         createEditor(proseMirrorRoot, {

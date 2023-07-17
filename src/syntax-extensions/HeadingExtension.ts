@@ -168,7 +168,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
         dispatch(
           state.tr.setNodeMarkup(
             headingPosition,
-            proseMirrorSchema.nodes["paragraph"],
+            proseMirrorSchema.nodes.paragraph,
           ),
         );
       }

@@ -12,9 +12,7 @@ new MarkExtensionTester(new ItalicExtension(), {
       type: "emphasis",
       children: [{ type: "text", value: "Hello World!" }],
     },
-    (schema) => [
-      schema.text("Hello World!").mark([schema.marks["em"].create()]),
-    ],
+    (schema) => [schema.text("Hello World!").mark([schema.marks.em.create()])],
   )
   .shouldMatchProseMirrorNode({ type: "text" }, (schema) => schema.mark("em"))
   .shouldNotMatchProseMirrorNode({ type: "other" }, (schema) =>

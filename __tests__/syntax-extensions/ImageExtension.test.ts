@@ -21,7 +21,7 @@ new NodeExtensionTester(new ImageExtension(), {
   .shouldConvertUnistNode(
     { type: "image", url: "https://example.test" },
     (schema) => [
-      schema.nodes["image"].createAndFill({ src: "https://example.test" })!,
+      schema.nodes.image.createAndFill({ src: "https://example.test" })!,
     ],
   )
   .shouldConvertUnistNode(
@@ -31,7 +31,7 @@ new NodeExtensionTester(new ImageExtension(), {
       alt: "Awesome image",
     },
     (schema) => [
-      schema.nodes["image"].createAndFill({
+      schema.nodes.image.createAndFill({
         src: "https://example.test",
         alt: "Awesome image",
       })!,
@@ -45,7 +45,7 @@ new NodeExtensionTester(new ImageExtension(), {
       title: "Image title",
     },
     (schema) => [
-      schema.nodes["image"].createAndFill({
+      schema.nodes.image.createAndFill({
         src: "https://example.test",
         alt: "Awesome image",
         title: "Image title",
@@ -54,18 +54,18 @@ new NodeExtensionTester(new ImageExtension(), {
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes["image"].createAndFill({ src: "https://example.test" })!,
+      schema.nodes.image.createAndFill({ src: "https://example.test" })!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes["image"].createAndFill({
+      schema.nodes.image.createAndFill({
         src: "https://example.test",
         alt: "Awesome image",
       })!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes["image"].createAndFill({
+      schema.nodes.image.createAndFill({
         src: "https://example.test",
         alt: "Awesome image",
         title: "Image title",
@@ -73,12 +73,12 @@ new NodeExtensionTester(new ImageExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes["image"].createAndFill({ src: "https://example.test" })!,
+      schema.nodes.image.createAndFill({ src: "https://example.test" })!,
     [{ type: "image", url: "https://example.test" }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes["image"].createAndFill({
+      schema.nodes.image.createAndFill({
         src: "https://example.test",
         alt: "Awesome image",
       })!,
@@ -92,7 +92,7 @@ new NodeExtensionTester(new ImageExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes["image"].createAndFill({
+      schema.nodes.image.createAndFill({
         src: "https://example.test",
         alt: "Awesome image",
         title: "Image title",

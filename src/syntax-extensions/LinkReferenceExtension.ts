@@ -43,7 +43,7 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
       LinkReferenceExtension: LinkReferenceExtensionContext;
     }>,
   ): Array<ProseMirrorNode> {
-    const mark = proseMirrorSchema.marks["link"].create({
+    const mark = proseMirrorSchema.marks.link.create({
       href: null,
       title: null,
     });

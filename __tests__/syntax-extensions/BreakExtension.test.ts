@@ -9,13 +9,13 @@ new NodeExtensionTester(new BreakExtension(), {
   .shouldNotMatchUnistNode({ type: "hard_break" })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode({ type: "break" }, (schema) => [
-    schema.nodes["hard_break"].createAndFill()!,
+    schema.nodes.hard_break.createAndFill()!,
   ])
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["hard_break"].createAndFill()!,
+    (schema) => schema.nodes.hard_break.createAndFill()!,
   )
   .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes["hard_break"].createAndFill()!,
+    (schema) => schema.nodes.hard_break.createAndFill()!,
     [{ type: "break" }],
   )
   .test();
