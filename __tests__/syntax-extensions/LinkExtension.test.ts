@@ -32,7 +32,7 @@ new MarkExtensionTester(new LinkExtension(), {
       schema
         .text("Click me!")
         .mark([schema.marks["link"].create({ href: "https://example.test" })]),
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -48,13 +48,13 @@ new MarkExtensionTester(new LinkExtension(), {
           title: "This link has a title",
         }),
       ]),
-    ]
+    ],
   )
   .shouldMatchProseMirrorNode({ type: "text" }, (schema) =>
-    schema.mark("link", { href: "https://example.test" })
+    schema.mark("link", { href: "https://example.test" }),
   )
   .shouldNotMatchProseMirrorNode({ type: "other" }, (schema) =>
-    schema.mark("link", { href: "https://example.test" })
+    schema.mark("link", { href: "https://example.test" }),
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -67,7 +67,7 @@ new MarkExtensionTester(new LinkExtension(), {
         url: "https://example.test",
         children: [{ type: "text", value: "Click me!" }],
       },
-    ]
+    ],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -84,6 +84,6 @@ new MarkExtensionTester(new LinkExtension(), {
         title: "This link has a title",
         children: [{ type: "text", value: "Click me!" }],
       },
-    ]
+    ],
   )
   .test();

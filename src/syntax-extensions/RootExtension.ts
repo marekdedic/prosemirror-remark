@@ -25,18 +25,18 @@ export class RootExtension extends NodeExtension<Root> {
   public unistNodeToProseMirrorNodes(
     _node: Root,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
       proseMirrorSchema,
-      convertedChildren
+      convertedChildren,
     );
   }
 
   public proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
-    convertedChildren: Array<RootContent>
+    convertedChildren: Array<RootContent>,
   ): Array<Root> {
     return [{ type: this.unistNodeName(), children: convertedChildren }];
   }

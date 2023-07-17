@@ -12,10 +12,10 @@ new NodeExtensionTester(new BreakExtension(), {
     schema.nodes["hard_break"].createAndFill()!,
   ])
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["hard_break"].createAndFill()!
+    (schema) => schema.nodes["hard_break"].createAndFill()!,
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.nodes["hard_break"].createAndFill()!,
-    [{ type: "break" }]
+    [{ type: "break" }],
   )
   .test();

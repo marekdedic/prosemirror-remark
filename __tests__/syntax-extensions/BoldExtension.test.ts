@@ -16,17 +16,17 @@ new MarkExtensionTester(new BoldExtension(), {
     },
     (schema) => [
       schema.text("Hello World!").mark([schema.marks["strong"].create()]),
-    ]
+    ],
   )
   .shouldMatchProseMirrorNode({ type: "text" }, (schema) =>
-    schema.mark("strong")
+    schema.mark("strong"),
   )
   .shouldNotMatchProseMirrorNode({ type: "other" }, (schema) =>
-    schema.mark("strong")
+    schema.mark("strong"),
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.text("Hello World!").mark([schema.mark("strong")]),
-    [{ type: "strong", children: [{ type: "text", value: "Hello World!" }] }]
+    [{ type: "strong", children: [{ type: "text", value: "Hello World!" }] }],
   )
   .shouldMatchInputRule("**Test**", "**Test**", "Test")
   .shouldMatchInputRule("__Test__", "**Test**", "Test")

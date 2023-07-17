@@ -47,44 +47,44 @@ export class CodeBlockExtension extends NodeExtension<Code> {
   }
 
   public proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
       textblockTypeInputRule(
         /^\s{0,3}```$/,
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
       textblockTypeInputRule(
         /^\s{4}$/,
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
     ];
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     return {
       "Shift-Mod-\\": setBlockType(
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
     };
   }
 
   public unistNodeToProseMirrorNodes(
     node: Code,
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
       proseMirrorSchema,
-      [proseMirrorSchema.text(node.value)]
+      [proseMirrorSchema.text(node.value)],
     );
   }
 
   public proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
-    convertedChildren: Array<Text>
+    convertedChildren: Array<Text>,
   ): Array<Code> {
     return [
       {

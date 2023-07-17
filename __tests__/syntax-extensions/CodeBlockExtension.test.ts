@@ -26,49 +26,49 @@ new NodeExtensionTester(new CodeBlockExtension(), {
       schema.nodes["code_block"].createAndFill({ lang: "ts" }, [
         schema.text("Hello World!"),
       ])!,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     { type: "code", value: "Hello World!", lang: "ts", meta: "startline=2" },
     (schema) => [
       schema.nodes["code_block"].createAndFill(
         { lang: "ts", meta: "startline=2" },
-        [schema.text("Hello World!")]
+        [schema.text("Hello World!")],
       )!,
-    ]
+    ],
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["code_block"].createAndFill()!
+    (schema) => schema.nodes["code_block"].createAndFill()!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes["code_block"].createAndFill({}, [
         schema.text("Hello World!"),
-      ])!
+      ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes["code_block"].createAndFill({ lang: "ts" }, [
         schema.text("Hello World!"),
-      ])!
+      ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes["code_block"].createAndFill(
         { lang: "ts", meta: "startline=2" },
-        [schema.text("Hello World!")]
-      )!
+        [schema.text("Hello World!")],
+      )!,
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.nodes["code_block"].createAndFill()!,
-    [{ type: "code", value: "" }]
+    [{ type: "code", value: "" }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.nodes["code_block"].createAndFill({}, [
         schema.text("Hello World!"),
       ])!,
-    [{ type: "code", value: "Hello World!" }]
+    [{ type: "code", value: "Hello World!" }],
   )
   /*
   .shouldConvertProseMirrorNode(
@@ -122,6 +122,6 @@ new NodeExtensionTester(new CodeBlockExtension(), {
         schema.text("Hello World!"),
       ])!,
     ],
-    "```\nHello World!\n```"
+    "```\nHello World!\n```",
   )
   .test();

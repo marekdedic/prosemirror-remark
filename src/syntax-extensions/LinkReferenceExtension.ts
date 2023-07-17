@@ -41,7 +41,7 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
     convertedChildren: Array<ProseMirrorNode>,
     context: Partial<{
       LinkReferenceExtension: LinkReferenceExtensionContext;
-    }>
+    }>,
   ): Array<ProseMirrorNode> {
     const mark = proseMirrorSchema.marks["link"].create({
       href: null,
@@ -52,7 +52,7 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
     }
     context.LinkReferenceExtension.marks[node.identifier] = mark;
     return convertedChildren.map((child) =>
-      child.mark(child.marks.concat([mark]))
+      child.mark(child.marks.concat([mark])),
     );
   }
 
@@ -61,7 +61,7 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
   }
 
   public processConvertedUnistNode(
-    convertedNode: LinkReference
+    convertedNode: LinkReference,
   ): LinkReference {
     return convertedNode;
   }
@@ -70,7 +70,7 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
     context: Partial<{
       DefinitionExtension: DefinitionExtensionContext;
       LinkReferenceExtension: LinkReferenceExtensionContext;
-    }>
+    }>,
   ): void {
     if (
       context.LinkReferenceExtension === undefined ||

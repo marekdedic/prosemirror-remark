@@ -47,7 +47,7 @@ export class LinkExtension extends MarkExtension<Link> {
   public unistNodeToProseMirrorNodes(
     node: Link,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(
@@ -56,14 +56,14 @@ export class LinkExtension extends MarkExtension<Link> {
             href: node.url,
             title: node.title,
           }),
-        ])
-      )
+        ]),
+      ),
     );
   }
 
   public processConvertedUnistNode(
     convertedNode: Text,
-    originalMark: Mark
+    originalMark: Mark,
   ): Link {
     return {
       type: this.unistNodeName(),

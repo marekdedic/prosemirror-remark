@@ -34,7 +34,7 @@ export class DefinitionExtension extends NodeExtension<Definition> {
     _convertedChildren: Array<ProseMirrorNode>,
     context: Partial<{
       DefinitionExtension: DefinitionExtensionContext;
-    }>
+    }>,
   ): Array<ProseMirrorNode> {
     if (context.DefinitionExtension === undefined) {
       context.DefinitionExtension = { definitions: {} };

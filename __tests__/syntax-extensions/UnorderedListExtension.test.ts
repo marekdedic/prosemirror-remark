@@ -32,7 +32,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       children: [],
     },
-    (schema) => [schema.nodes["bullet_list"].createAndFill()!]
+    (schema) => [schema.nodes["bullet_list"].createAndFill()!],
   )
   .shouldConvertUnistNode(
     {
@@ -41,7 +41,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       spread: true,
       children: [],
     },
-    (schema) => [schema.nodes["bullet_list"].createAndFill({ spread: true })!]
+    (schema) => [schema.nodes["bullet_list"].createAndFill({ spread: true })!],
   )
   .shouldConvertUnistNode(
     {
@@ -53,7 +53,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       schema.nodes["bullet_list"].createAndFill({}, [
         schema.nodes["list_item"].createAndFill()!,
       ])!,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -65,7 +65,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       schema.nodes["bullet_list"].createAndFill({}, [
         schema.nodes["list_item"].createAndFill({ spread: true })!,
       ])!,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -91,25 +91,25 @@ new NodeExtensionTester(new UnorderedListExtension(), {
           ])!,
         ])!,
       ])!,
-    ]
+    ],
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["bullet_list"].createAndFill()!
+    (schema) => schema.nodes["bullet_list"].createAndFill()!,
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["bullet_list"].createAndFill({ spread: true })!
+    (schema) => schema.nodes["bullet_list"].createAndFill({ spread: true })!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes["bullet_list"].createAndFill({}, [
         schema.nodes["list_item"].createAndFill()!,
-      ])!
+      ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes["bullet_list"].createAndFill({}, [
         schema.nodes["list_item"].createAndFill({ spread: true })!,
-      ])!
+      ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
@@ -119,7 +119,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
             schema.text("Hello World!"),
           ])!,
         ])!,
-      ])!
+      ])!,
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.nodes["bullet_list"].createAndFill()!,
@@ -136,7 +136,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
           },
         ],
       },
-    ]
+    ],
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.nodes["bullet_list"].createAndFill({ spread: true })!,
@@ -153,7 +153,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
           },
         ],
       },
-    ]
+    ],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -173,7 +173,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
           },
         ],
       },
-    ]
+    ],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -193,7 +193,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
           },
         ],
       },
-    ]
+    ],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -222,12 +222,12 @@ new NodeExtensionTester(new UnorderedListExtension(), {
           },
         ],
       },
-    ]
+    ],
   )
   .shouldMatchInputRule(
     "* ",
     (schema) => [schema.nodes["bullet_list"].createAndFill()!],
-    "*"
+    "*",
   )
   .shouldMatchInputRule(
     "* Hello World!",
@@ -240,7 +240,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "* Hello World!"
+    "* Hello World!",
   )
   .shouldMatchInputRule(
     "- Hello World!",
@@ -253,7 +253,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "* Hello World!"
+    "* Hello World!",
   )
   .shouldMatchInputRule(
     "+ Hello World!",
@@ -266,7 +266,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "* Hello World!"
+    "* Hello World!",
   )
   .shouldMatchInputRule(
     " * Hello World!",
@@ -279,7 +279,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "* Hello World!"
+    "* Hello World!",
   )
   .shouldMatchInputRule(
     "  * Hello World!",
@@ -292,7 +292,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "* Hello World!"
+    "* Hello World!",
   )
   .shouldMatchInputRule(
     " * Hello World!",
@@ -305,7 +305,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ])!,
       ])!,
     ],
-    "* Hello World!"
+    "* Hello World!",
   )
   /*
   .shouldMatchInputRule(

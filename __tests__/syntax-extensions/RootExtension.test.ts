@@ -35,7 +35,7 @@ new NodeExtensionTester(new RootExtension(), {
           schema.text("Hello World!"),
         ])!,
       ])!,
-    ]
+    ],
   )
   .shouldMatchProseMirrorNode((schema) => schema.nodes["doc"].createAndFill()!)
   .shouldMatchProseMirrorNode(
@@ -44,11 +44,11 @@ new NodeExtensionTester(new RootExtension(), {
         schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Hello World!"),
         ])!,
-      ])!
+      ])!,
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.nodes["doc"].createAndFill()!,
-    [{ type: "root", children: [{ type: "paragraph", children: [] }] }]
+    [{ type: "root", children: [{ type: "paragraph", children: [] }] }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -67,6 +67,6 @@ new NodeExtensionTester(new RootExtension(), {
           },
         ],
       },
-    ]
+    ],
   )
   .test();

@@ -14,15 +14,15 @@ new MarkExtensionTester(new ItalicExtension(), {
     },
     (schema) => [
       schema.text("Hello World!").mark([schema.marks["em"].create()]),
-    ]
+    ],
   )
   .shouldMatchProseMirrorNode({ type: "text" }, (schema) => schema.mark("em"))
   .shouldNotMatchProseMirrorNode({ type: "other" }, (schema) =>
-    schema.mark("em")
+    schema.mark("em"),
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.text("Hello World!").mark([schema.mark("em")]),
-    [{ type: "emphasis", children: [{ type: "text", value: "Hello World!" }] }]
+    [{ type: "emphasis", children: [{ type: "text", value: "Hello World!" }] }],
   )
   .shouldMatchInputRule("*Test*", "*Test*", "Test")
   .shouldMatchInputRule("_Test_", "*Test*", "Test")

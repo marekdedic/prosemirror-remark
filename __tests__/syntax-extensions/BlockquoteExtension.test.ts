@@ -32,7 +32,7 @@ new NodeExtensionTester(new BlockquoteExtension(), {
           schema.text("Hello World!"),
         ])!,
       ])!,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -57,10 +57,10 @@ new NodeExtensionTester(new BlockquoteExtension(), {
           schema.text("Second paragraph"),
         ])!,
       ])!,
-    ]
+    ],
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["blockquote"].createAndFill()!
+    (schema) => schema.nodes["blockquote"].createAndFill()!,
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -79,7 +79,7 @@ new NodeExtensionTester(new BlockquoteExtension(), {
           },
         ],
       },
-    ]
+    ],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -105,7 +105,7 @@ new NodeExtensionTester(new BlockquoteExtension(), {
           },
         ],
       },
-    ]
+    ],
   )
   .shouldMatchInputRule(
     "> Hello World!",
@@ -116,7 +116,7 @@ new NodeExtensionTester(new BlockquoteExtension(), {
         ])!,
       ])!,
     ],
-    "> Hello World!"
+    "> Hello World!",
   )
   .shouldMatchInputRule(
     " > Hello World!",
@@ -127,7 +127,7 @@ new NodeExtensionTester(new BlockquoteExtension(), {
         ])!,
       ])!,
     ],
-    "> Hello World!"
+    "> Hello World!",
   )
   .shouldMatchInputRule(
     "  > Hello World!",
@@ -138,7 +138,7 @@ new NodeExtensionTester(new BlockquoteExtension(), {
         ])!,
       ])!,
     ],
-    "> Hello World!"
+    "> Hello World!",
   )
   .shouldMatchInputRule(
     "   > Hello World!",
@@ -149,6 +149,6 @@ new NodeExtensionTester(new BlockquoteExtension(), {
         ])!,
       ])!,
     ],
-    "> Hello World!"
+    "> Hello World!",
   )
   .test();

@@ -21,7 +21,7 @@ export class SyntaxExtensionTester<
   UnistToProseMirrorContext extends Record<string, unknown> = Record<
     string,
     never
-  >
+  >,
 > {
   protected readonly extension: SyntaxExtension<
     UNode,
@@ -50,7 +50,7 @@ export class SyntaxExtensionTester<
 
   public constructor(
     extension: SyntaxExtension<UNode, UnistToProseMirrorContext>,
-    config: SyntaxExtensionTesterConfig
+    config: SyntaxExtensionTesterConfig,
   ) {
     this.extension = extension;
     this.unistNodeName = config.unistNodeName;
@@ -82,7 +82,7 @@ export class SyntaxExtensionTester<
   public shouldConvertUnistNode(
     source: UNode,
     target: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
-    injectNodes: Array<UnistNode> = []
+    injectNodes: Array<UnistNode> = [],
   ): this {
     this.unistNodeConversions.push({
       source,
@@ -94,7 +94,7 @@ export class SyntaxExtensionTester<
 
   public shouldConvertProseMirrorNode(
     source: (schema: Schema<string, string>) => ProseMirrorNode,
-    target: Array<UNode>
+    target: Array<UNode>,
   ): this {
     this.proseMirrorNodeConversions.push({
       source: source(this.pmu.schema()),
@@ -138,7 +138,7 @@ export class SyntaxExtensionTester<
           unistToProseMirrorConverter: {
             convertNode(
               node: UnistNode,
-              context: Record<string, unknown>
+              context: Record<string, unknown>,
             ): Array<ProseMirrorNode>;
           };
         };
@@ -148,7 +148,7 @@ export class SyntaxExtensionTester<
         }
         const result = annotatedPmu.unistToProseMirrorConverter.convertNode(
           source,
-          context
+          context,
         );
         this.extension.postUnistToProseMirrorHook(context);
         expect(result).toStrictEqual(target);
@@ -171,7 +171,7 @@ export class SyntaxExtensionTester<
                 convertNode(node: ProseMirrorNode): Array<UnistNode>;
               };
             }
-          ).proseMirrorToUnistConverter.convertNode(source)
+          ).proseMirrorToUnistConverter.convertNode(source),
         ).toStrictEqual(target);
       }
     });

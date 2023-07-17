@@ -17,7 +17,7 @@ export class MarkExtensionTester<
   UnistToProseMirrorContext extends Record<string, unknown> = Record<
     string,
     never
-  >
+  >,
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
   protected readonly extension: MarkExtension<UNode, UnistToProseMirrorContext>;
 
@@ -37,7 +37,7 @@ export class MarkExtensionTester<
 
   public constructor(
     extension: MarkExtension<UNode, UnistToProseMirrorContext>,
-    config: MarkExtensionTesterConfig
+    config: MarkExtensionTesterConfig,
   ) {
     super(extension, config);
     this.extension = extension;
@@ -49,7 +49,7 @@ export class MarkExtensionTester<
 
   public shouldMatchProseMirrorNode(
     node: UnistNode,
-    mark: (schema: Schema<string, string>) => Mark
+    mark: (schema: Schema<string, string>) => Mark,
   ): this {
     this.proseMirrorNodeMatches.push({
       node,
@@ -61,7 +61,7 @@ export class MarkExtensionTester<
 
   public shouldNotMatchProseMirrorNode(
     node: UnistNode,
-    mark: (schema: Schema<string, string>) => Mark
+    mark: (schema: Schema<string, string>) => Mark,
   ): this {
     this.proseMirrorNodeMatches.push({
       node,
@@ -76,7 +76,7 @@ export class MarkExtensionTester<
     markdownOutput: string,
     proseMirrorContents:
       | string
-      | ((schema: Schema<string, string>) => Array<ProseMirrorNode>)
+      | ((schema: Schema<string, string>) => Array<ProseMirrorNode>),
   ): this {
     this.inputRuleMatches.push({
       editorInput,
@@ -100,8 +100,8 @@ export class MarkExtensionTester<
     editorInput: string,
     markdownOutput: string,
     proseMirrorContents?: (
-      schema: Schema<string, string>
-    ) => Array<ProseMirrorNode>
+      schema: Schema<string, string>,
+    ) => Array<ProseMirrorNode>,
   ): this {
     this.inputRuleMatches.push({
       editorInput,
@@ -124,7 +124,7 @@ export class MarkExtensionTester<
 
     test("Provides the correct ProseMirror mark", () => {
       expect(this.extension.proseMirrorMarkName()).toBe(
-        this.proseMirrorMarkName
+        this.proseMirrorMarkName,
       );
     });
 
@@ -141,7 +141,7 @@ export class MarkExtensionTester<
       expect.assertions(this.proseMirrorNodeMatches.length);
       for (const { node, mark, shouldMatch } of this.proseMirrorNodeMatches) {
         expect(this.extension.proseMirrorToUnistTest(node, mark)).toBe(
-          shouldMatch
+          shouldMatch,
         );
       }
     });
@@ -180,7 +180,7 @@ export class MarkExtensionTester<
           .callback((content) => {
             expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
             expect(this.pmu.serialize(content.doc)).toBe(
-              "BEGIN" + markdownOutput + "END\n"
+              "BEGIN" + markdownOutput + "END\n",
             );
           });
         expect(console.warn).not.toHaveBeenCalled();

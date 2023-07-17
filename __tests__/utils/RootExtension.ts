@@ -14,7 +14,7 @@ interface UnistRoot<ChildUnistNode extends UnistNode> extends UnistNode {
 }
 
 export class RootExtension<
-  ChildUnistNode extends UnistNode
+  ChildUnistNode extends UnistNode,
 > extends NodeExtension<UnistRoot<ChildUnistNode>> {
   public unistNodeName(): "root" {
     return "root";
@@ -33,18 +33,18 @@ export class RootExtension<
   public unistNodeToProseMirrorNodes(
     _: UnistRoot<ChildUnistNode>,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
       proseMirrorSchema,
-      convertedChildren
+      convertedChildren,
     );
   }
 
   public proseMirrorNodeToUnistNodes(
     _: ProseMirrorNode,
-    convertedChildren: Array<UnistNode>
+    convertedChildren: Array<UnistNode>,
   ): Array<UnistRoot<ChildUnistNode>> {
     return [
       {

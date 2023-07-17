@@ -26,7 +26,7 @@ export class TextExtension extends NodeExtension<Text> {
 
   public unistNodeToProseMirrorNodes(
     node: Text,
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<ProseMirrorNode> {
     return [proseMirrorSchema.text(node.value)];
   }

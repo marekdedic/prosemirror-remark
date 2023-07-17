@@ -64,7 +64,7 @@ export class ImageExtension extends NodeExtension<Image> {
   public unistNodeToProseMirrorNodes(
     node: Image,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
@@ -74,7 +74,7 @@ export class ImageExtension extends NodeExtension<Image> {
         src: node.url,
         alt: node.alt,
         title: node.title,
-      }
+      },
     );
   }
 

@@ -34,18 +34,18 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
   }
 
   public proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
       wrappingInputRule(
         /^\s{0,3}>\s$/,
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
     ];
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     return {
       "Mod->": wrapIn(proseMirrorSchema.nodes[this.proseMirrorNodeName()]),
@@ -55,18 +55,18 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
   public unistNodeToProseMirrorNodes(
     _node: Blockquote,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
       proseMirrorSchema,
-      convertedChildren
+      convertedChildren,
     );
   }
 
   public proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
-    convertedChildren: Array<BlockContent | DefinitionContent>
+    convertedChildren: Array<BlockContent | DefinitionContent>,
   ): Array<Blockquote> {
     return [
       {

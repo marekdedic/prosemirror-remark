@@ -24,7 +24,7 @@ import { TextExtension } from "./TextExtension";
 export class HeadingExtension extends NodeExtension<Heading> {
   private static isAtStart(
     state: EditorState,
-    view: EditorView | undefined
+    view: EditorView | undefined,
   ): boolean {
     if (!state.selection.empty) {
       return false;
@@ -69,19 +69,19 @@ export class HeadingExtension extends NodeExtension<Heading> {
   }
 
   public proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
       textblockTypeInputRule(
         /^\s{0,3}(#{1,6})\s$/,
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-        (match) => ({ level: match[1].length })
+        (match) => ({ level: match[1].length }),
       ),
     ];
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const keymap: Record<string, Command> = {
       Tab: this.headingLevelCommandBuilder(proseMirrorSchema, +1, false),
@@ -89,7 +89,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
       "Shift-Tab": this.headingLevelCommandBuilder(
         proseMirrorSchema,
         -1,
-        false
+        false,
       ),
       Backspace: this.headingLevelCommandBuilder(proseMirrorSchema, -1, true),
     };
@@ -97,7 +97,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
     for (let i = 1; i <= 6; i++) {
       keymap[`Shift-Mod-${i}`] = setBlockType(
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-        { level: i }
+        { level: i },
       );
     }
 
@@ -107,7 +107,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
   public unistNodeToProseMirrorNodes(
     node: Heading,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
@@ -115,13 +115,13 @@ export class HeadingExtension extends NodeExtension<Heading> {
       convertedChildren,
       {
         level: node.depth,
-      }
+      },
     );
   }
 
   public proseMirrorNodeToUnistNodes(
     node: ProseMirrorNode,
-    convertedChildren: Array<PhrasingContent>
+    convertedChildren: Array<PhrasingContent>,
   ): Array<Heading> {
     return [
       {
@@ -135,7 +135,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
   private headingLevelCommandBuilder(
     proseMirrorSchema: Schema<string, string>,
     levelUpdate: -1 | 1,
-    onlyAtStart: boolean
+    onlyAtStart: boolean,
   ): Command {
     return (state, dispatch, view) => {
       if (onlyAtStart && !HeadingExtension.isAtStart(state, view)) {
@@ -155,21 +155,21 @@ export class HeadingExtension extends NodeExtension<Heading> {
       const headingPosition = $anchor.before($anchor.depth);
       const newHeadingLevel = Math.min(
         6,
-        Math.max(0, (headingNode.attrs.level as number) + levelUpdate)
+        Math.max(0, (headingNode.attrs.level as number) + levelUpdate),
       );
 
       if (newHeadingLevel > 0) {
         dispatch(
           state.tr.setNodeMarkup(headingPosition, undefined, {
             level: newHeadingLevel,
-          })
+          }),
         );
       } else {
         dispatch(
           state.tr.setNodeMarkup(
             headingPosition,
-            proseMirrorSchema.nodes["paragraph"]
-          )
+            proseMirrorSchema.nodes["paragraph"],
+          ),
         );
       }
       return true;
