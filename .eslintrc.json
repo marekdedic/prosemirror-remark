@@ -33,7 +33,6 @@
     "@typescript-eslint/no-import-type-side-effects": "off", // TODO
     "@typescript-eslint/no-require-imports": "error",
     "@typescript-eslint/no-unnecessary-qualifier": "error",
-    //"@typescript-eslint/no-unused-vars": ["error", {"argsIgnorePattern": "_.*"}], // TODO
     "@typescript-eslint/no-useless-empty-export": "error",
     "@typescript-eslint/parameter-properties": "error",
     "@typescript-eslint/prefer-enum-initializers": "error",
