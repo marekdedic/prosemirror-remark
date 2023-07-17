@@ -5,21 +5,21 @@ export { BreakExtension } from "./syntax-extensions/BreakExtension";
 export { CodeBlockExtension } from "./syntax-extensions/CodeBlockExtension";
 export {
   DefinitionExtension,
-  DefinitionExtensionContext,
+  type DefinitionExtensionContext,
 } from "./syntax-extensions/DefinitionExtension";
 export { HeadingExtension } from "./syntax-extensions/HeadingExtension";
 export { HorizontalRuleExtension } from "./syntax-extensions/HorizontalRuleExtension";
 export { ImageExtension } from "./syntax-extensions/ImageExtension";
 export {
   ImageReferenceExtension,
-  ImageReferenceExtensionContext,
+  type ImageReferenceExtensionContext,
 } from "./syntax-extensions/ImageReferenceExtension";
 export { InlineCodeExtension } from "./syntax-extensions/InlineCodeExtension";
 export { ItalicExtension } from "./syntax-extensions/ItalicExtension";
 export { LinkExtension } from "./syntax-extensions/LinkExtension";
 export {
   LinkReferenceExtension,
-  LinkReferenceExtensionContext,
+  type LinkReferenceExtensionContext,
 } from "./syntax-extensions/LinkReferenceExtension";
 export { ListItemExtension } from "./syntax-extensions/ListItemExtension";
 export { OrderedListExtension } from "./syntax-extensions/OrderedListExtension";
