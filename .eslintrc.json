@@ -1,6 +1,6 @@
 {
   "parserOptions": {
-    "project": "./tsconfig.json",
+    "project": "./tsconfig.json"
   },
   "env": {
     "browser": true,
@@ -109,7 +109,7 @@
     },
     {
       "files": [
-        "__tests__/**/*.ts",
+        "__tests__/**/*.ts"
       ],
       "extends": ["plugin:jest/recommended", "plugin:jest/style"],
       "rules": {
@@ -138,7 +138,7 @@
     },
     {
       "files": [
-        "__tests__/utils/**/*.ts",
+        "__tests__/utils/**/*.ts"
       ],
       "rules": {
         "jest/no-export": "off",
