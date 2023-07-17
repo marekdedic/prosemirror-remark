@@ -34,16 +34,16 @@ export class BreakExtension extends NodeExtension<Break> {
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const command = chainCommands(exitCode, (state, dispatch) => {
       if (dispatch) {
         dispatch(
           state.tr
             .replaceSelectionWith(
-              proseMirrorSchema.nodes[this.proseMirrorNodeName()].create()
+              proseMirrorSchema.nodes[this.proseMirrorNodeName()].create(),
             )
-            .scrollIntoView()
+            .scrollIntoView(),
         );
       }
       return true;
@@ -64,12 +64,12 @@ export class BreakExtension extends NodeExtension<Break> {
   public unistNodeToProseMirrorNodes(
     _node: Break,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
       proseMirrorSchema,
-      convertedChildren
+      convertedChildren,
     );
   }
 

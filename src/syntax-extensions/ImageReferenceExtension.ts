@@ -41,11 +41,11 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
     convertedChildren: Array<ProseMirrorNode>,
     context: Partial<{
       ImageReferenceExtension: ImageReferenceExtensionContext;
-    }>
+    }>,
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = proseMirrorSchema.nodes["image"].createAndFill(
       { src: "", alt: node.alt, title: node.label },
-      convertedChildren
+      convertedChildren,
     );
     if (proseMirrorNode === null) {
       return [];
@@ -70,7 +70,7 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
     context: Partial<{
       DefinitionExtension: DefinitionExtensionContext;
       ImageReferenceExtension: ImageReferenceExtensionContext;
-    }>
+    }>,
   ): void {
     if (
       context.ImageReferenceExtension === undefined ||

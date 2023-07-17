@@ -20,26 +20,31 @@ new NodeExtensionTester(new ParagraphExtension(), {
       schema.nodes["paragraph"].createAndFill({}, [
         schema.text("Hello World!"),
       ])!,
-    ]
+    ],
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["paragraph"].createAndFill()!
+    (schema) => schema.nodes["paragraph"].createAndFill()!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes["paragraph"].createAndFill({}, [
         schema.text("Hello World!"),
-      ])!
+      ])!,
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.nodes["paragraph"].createAndFill()!,
-    [{ type: "paragraph", children: [] }]
+    [{ type: "paragraph", children: [] }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.nodes["paragraph"].createAndFill({}, [
         schema.text("Hello World!"),
       ])!,
-    [{ type: "paragraph", children: [{ type: "text", value: "Hello World!" }] }]
+    [
+      {
+        type: "paragraph",
+        children: [{ type: "text", value: "Hello World!" }],
+      },
+    ],
   )
   .test();

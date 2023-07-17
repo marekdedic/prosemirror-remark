@@ -33,18 +33,18 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
   public unistNodeToProseMirrorNodes(
     _node: Paragraph,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
       proseMirrorSchema,
-      convertedChildren
+      convertedChildren,
     );
   }
 
   public proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
-    convertedChildren: Array<PhrasingContent>
+    convertedChildren: Array<PhrasingContent>,
   ): Array<Paragraph> {
     return [{ type: this.unistNodeName(), children: convertedChildren }];
   }

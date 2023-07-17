@@ -33,18 +33,18 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
   }
 
   public proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
       new MarkInputRule(
         /`([^\s](?:.*[^\s])?)`([\s\S])$/,
-        proseMirrorSchema.marks[this.proseMirrorMarkName()]
+        proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
     ];
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const markType = proseMirrorSchema.marks[this.proseMirrorMarkName()];
     return {
@@ -54,7 +54,7 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
 
   public unistNodeToProseMirrorNodes(
     node: InlineCode,
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<ProseMirrorNode> {
     return [
       proseMirrorSchema

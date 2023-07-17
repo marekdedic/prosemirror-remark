@@ -21,7 +21,7 @@ test("unist -> ProseMirror conversion", () => {
       "- Unordered list\n\n" +
       "A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test) and another [type of link][link2].\n" +
       "\n" +
-      "[link2]: https://link2.test"
+      "[link2]: https://link2.test",
   );
   expect(result).toEqualProsemirrorNode(
     schema.nodes["doc"].createAndFill({}, [
@@ -83,7 +83,7 @@ test("unist -> ProseMirror conversion", () => {
           .mark([schema.marks["link"].create({ href: "https://link2.test" })]),
         schema.text("."),
       ])!,
-    ])!
+    ])!,
   );
 });
 
@@ -140,7 +140,7 @@ test("ProseMirror -> unist conversion", () => {
           ]),
         schema.text("."),
       ])!,
-    ])!
+    ])!,
   );
   expect(result).toBe(
     "> Inside a blockquote\n" +
@@ -159,6 +159,6 @@ test("ProseMirror -> unist conversion", () => {
       "1. Ordered list\n" +
       "\n" +
       "* Unordered list\n\n" +
-      "A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test).\n"
+      "A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test).\n",
   );
 });

@@ -38,7 +38,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
         identifier: "imageId",
         url: "https://example.test",
       } as UnistNode,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -55,7 +55,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
         identifier: "imageId",
         url: "https://example.test",
       } as UnistNode,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -72,7 +72,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
         identifier: "imageId",
         url: "https://example.test",
       } as UnistNode,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -95,7 +95,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
         url: "https://example.test",
         title: "Image title",
       } as UnistNode,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -103,6 +103,6 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "full",
       identifier: "imageId",
     },
-    (schema) => [schema.nodes["image"].createAndFill({ src: "" })!]
+    (schema) => [schema.nodes["image"].createAndFill({ src: "" })!],
   )
   .test();

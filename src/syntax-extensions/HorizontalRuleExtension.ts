@@ -32,7 +32,7 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
   }
 
   public proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
       new InputRule(/^\s{0,3}(?:\*\*\*|---|___)\n$/, (state, _, start, end) => {
@@ -42,15 +42,15 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
           createProseMirrorNode(
             this.proseMirrorNodeName(),
             proseMirrorSchema,
-            []
-          )
+            [],
+          ),
         );
       }),
     ];
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     return {
       "Mod-_": (state, dispatch): true => {
@@ -58,9 +58,9 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
           dispatch(
             state.tr
               .replaceSelectionWith(
-                proseMirrorSchema.nodes[this.proseMirrorNodeName()].create()
+                proseMirrorSchema.nodes[this.proseMirrorNodeName()].create(),
               )
-              .scrollIntoView()
+              .scrollIntoView(),
           );
         }
         return true;
@@ -71,12 +71,12 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
   public unistNodeToProseMirrorNodes(
     _node: ThematicBreak,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
       proseMirrorSchema,
-      convertedChildren
+      convertedChildren,
     );
   }
 

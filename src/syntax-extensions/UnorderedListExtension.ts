@@ -62,22 +62,22 @@ export class UnorderedListExtension extends NodeExtension<List> {
   }
 
   public proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
       wrappingInputRule(
         /^\s{0,3}([-+*])\s$/,
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
     ];
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     return {
       "Shift-Mod-8": wrapInList(
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
     };
   }
@@ -85,7 +85,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
   public unistNodeToProseMirrorNodes(
     node: List,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
@@ -93,13 +93,13 @@ export class UnorderedListExtension extends NodeExtension<List> {
       convertedChildren,
       {
         spread: node.spread,
-      }
+      },
     );
   }
 
   public proseMirrorNodeToUnistNodes(
     node: ProseMirrorNode,
-    convertedChildren: Array<ListContent>
+    convertedChildren: Array<ListContent>,
   ): Array<List> {
     const spread = node.attrs.spread as boolean;
     return [

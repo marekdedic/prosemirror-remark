@@ -37,7 +37,7 @@ export class ListItemExtension extends NodeExtension<ListItem> {
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
     return {
@@ -50,18 +50,18 @@ export class ListItemExtension extends NodeExtension<ListItem> {
   public unistNodeToProseMirrorNodes(
     _node: ListItem,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
       proseMirrorSchema,
-      convertedChildren
+      convertedChildren,
     );
   }
 
   public proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
-    convertedChildren: Array<BlockContent | DefinitionContent>
+    convertedChildren: Array<BlockContent | DefinitionContent>,
   ): Array<ListItem> {
     return [
       {

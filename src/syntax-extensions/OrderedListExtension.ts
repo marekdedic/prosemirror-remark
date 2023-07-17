@@ -71,7 +71,7 @@ export class OrderedListExtension extends NodeExtension<List> {
   }
 
   public proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
       wrappingInputRule(
@@ -79,17 +79,17 @@ export class OrderedListExtension extends NodeExtension<List> {
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
         (match) => ({ start: +match[1] }),
         (match, node) =>
-          node.childCount + (node.attrs.start as number) == +match[1]
+          node.childCount + (node.attrs.start as number) == +match[1],
       ),
     ];
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     return {
       "Shift-Mod-9": wrapInList(
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()]
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
     };
   }
@@ -97,7 +97,7 @@ export class OrderedListExtension extends NodeExtension<List> {
   public unistNodeToProseMirrorNodes(
     node: List,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
@@ -106,13 +106,13 @@ export class OrderedListExtension extends NodeExtension<List> {
       {
         spread: node.spread,
         start: node.start ?? 1,
-      }
+      },
     );
   }
 
   public proseMirrorNodeToUnistNodes(
     node: ProseMirrorNode,
-    convertedChildren: Array<ListContent>
+    convertedChildren: Array<ListContent>,
   ): Array<List> {
     const spread = node.attrs.spread as boolean;
     return [

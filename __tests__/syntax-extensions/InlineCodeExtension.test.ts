@@ -15,15 +15,15 @@ new MarkExtensionTester(new InlineCodeExtension(), {
     },
     (schema) => [
       schema.text("Hello World!").mark([schema.marks["code"].create()]),
-    ]
+    ],
   )
   .shouldMatchProseMirrorNode({ type: "text" }, (schema) => schema.mark("code"))
   .shouldNotMatchProseMirrorNode({ type: "other" }, (schema) =>
-    schema.mark("code")
+    schema.mark("code"),
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.text("Hello World!").mark([schema.mark("code")]),
-    [{ type: "inlineCode", value: "Hello World!" }]
+    [{ type: "inlineCode", value: "Hello World!" }],
   )
   .shouldMatchInputRule("`Test`", "`Test`", "Test")
   .shouldMatchInputRule("`Hello World`", "`Hello World`", "Hello World")

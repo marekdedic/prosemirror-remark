@@ -15,11 +15,11 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
     schema.nodes["horizontal_rule"].createAndFill()!,
   ])
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["horizontal_rule"].createAndFill()!
+    (schema) => schema.nodes["horizontal_rule"].createAndFill()!,
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.nodes["horizontal_rule"].createAndFill()!,
-    [{ type: "thematicBreak" }]
+    [{ type: "thematicBreak" }],
   )
   .shouldMatchInputRule(
     "***\n",
@@ -27,7 +27,7 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
       schema.nodes["paragraph"].createAndFill()!,
       schema.nodes["horizontal_rule"].createAndFill()!,
     ],
-    "---"
+    "---",
   )
   .shouldMatchInputRule(
     "---\n",
@@ -35,7 +35,7 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
       schema.nodes["paragraph"].createAndFill()!,
       schema.nodes["horizontal_rule"].createAndFill()!,
     ],
-    "---"
+    "---",
   )
   .shouldMatchInputRule(
     "___\n",
@@ -43,7 +43,7 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
       schema.nodes["paragraph"].createAndFill()!,
       schema.nodes["horizontal_rule"].createAndFill()!,
     ],
-    "---"
+    "---",
   )
   .shouldMatchInputRule(
     " ***\n",
@@ -51,7 +51,7 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
       schema.nodes["paragraph"].createAndFill()!,
       schema.nodes["horizontal_rule"].createAndFill()!,
     ],
-    "---"
+    "---",
   )
   .shouldMatchInputRule(
     "  ***\n",
@@ -59,7 +59,7 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
       schema.nodes["paragraph"].createAndFill()!,
       schema.nodes["horizontal_rule"].createAndFill()!,
     ],
-    "---"
+    "---",
   )
   .shouldMatchInputRule(
     "   ***\n",
@@ -67,7 +67,7 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
       schema.nodes["paragraph"].createAndFill()!,
       schema.nodes["horizontal_rule"].createAndFill()!,
     ],
-    "---"
+    "---",
   )
   .shouldNotMatchInputRule("*-*\n", "*-*", (schema) => [
     schema.nodes["paragraph"].createAndFill({}, [
@@ -92,6 +92,6 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
         schema.text("*bold italic").mark([schema.marks["strong"].create()]),
         schema.text("*"),
       ])!,
-    ]
+    ],
   )
   .test();

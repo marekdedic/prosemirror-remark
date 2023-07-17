@@ -40,22 +40,22 @@ export class BoldExtension extends MarkExtension<Strong> {
   }
 
   public proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
       new MarkInputRule(
         /\*\*([^\s](?:.*[^\s])?)\*\*([\s\S])$/,
-        proseMirrorSchema.marks[this.proseMirrorMarkName()]
+        proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
       new MarkInputRule(
         /__([^\s](?:.*[^\s])?)__([\s\S])$/,
-        proseMirrorSchema.marks[this.proseMirrorMarkName()]
+        proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
     ];
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const markType = proseMirrorSchema.marks[this.proseMirrorMarkName()];
     return {
@@ -67,14 +67,14 @@ export class BoldExtension extends MarkExtension<Strong> {
   public unistNodeToProseMirrorNodes(
     _node: Strong,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(
         child.marks.concat([
           proseMirrorSchema.marks[this.proseMirrorMarkName()].create(),
-        ])
-      )
+        ]),
+      ),
     );
   }
 

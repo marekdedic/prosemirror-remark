@@ -39,22 +39,22 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
   }
 
   public proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
       new MarkInputRule(
         /(?<!\*)\*([^\s*](?:.*[^\s])?)\*([^*])$/,
-        proseMirrorSchema.marks[this.proseMirrorMarkName()]
+        proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
       new MarkInputRule(
         /(?<!_)_([^\s_](?:.*[^\s])?)_([^_])$/,
-        proseMirrorSchema.marks[this.proseMirrorMarkName()]
+        proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
     ];
   }
 
   public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>
+    proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const markType = proseMirrorSchema.marks[this.proseMirrorMarkName()];
     return {
@@ -66,14 +66,14 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
   public unistNodeToProseMirrorNodes(
     _node: Emphasis,
     proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>
+    convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
     return convertedChildren.map((child) =>
       child.mark(
         child.marks.concat([
           proseMirrorSchema.marks[this.proseMirrorMarkName()].create(),
-        ])
-      )
+        ]),
+      ),
     );
   }
 

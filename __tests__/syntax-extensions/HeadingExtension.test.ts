@@ -25,9 +25,9 @@ new NodeExtensionTester(new HeadingExtension(), {
         {
           level: 1,
         },
-        [schema.text("Hello World!")]
+        [schema.text("Hello World!")],
       )!,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -40,9 +40,9 @@ new NodeExtensionTester(new HeadingExtension(), {
         {
           level: 3,
         },
-        [schema.text("Hello World!")]
+        [schema.text("Hello World!")],
       )!,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -55,28 +55,28 @@ new NodeExtensionTester(new HeadingExtension(), {
         {
           level: 6,
         },
-        [schema.text("Hello World!")]
+        [schema.text("Hello World!")],
       )!,
-    ]
+    ],
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["heading"].createAndFill({ level: 1 })!
+    (schema) => schema.nodes["heading"].createAndFill({ level: 1 })!,
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["heading"].createAndFill({ level: 3 })!
+    (schema) => schema.nodes["heading"].createAndFill({ level: 3 })!,
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["heading"].createAndFill({ level: 6 })!
+    (schema) => schema.nodes["heading"].createAndFill({ level: 6 })!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes["heading"].createAndFill({ level: 3 }, [
         schema.text("Hello World!"),
-      ])!
+      ])!,
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.nodes["heading"].createAndFill({ level: 4 })!,
-    [{ type: "heading", depth: 4, children: [] }]
+    [{ type: "heading", depth: 4, children: [] }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -89,7 +89,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         depth: 1,
         children: [{ type: "text", value: "Hello World!" }],
       },
-    ]
+    ],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -102,7 +102,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         depth: 3,
         children: [{ type: "text", value: "Hello World!" }],
       },
-    ]
+    ],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -115,7 +115,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         depth: 6,
         children: [{ type: "text", value: "Hello World!" }],
       },
-    ]
+    ],
   )
   .shouldMatchInputRule(
     "# Hello World!",
@@ -124,7 +124,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         schema.text("Hello World!"),
       ])!,
     ],
-    "# Hello World!"
+    "# Hello World!",
   )
   .shouldMatchInputRule(
     "## Hello World!",
@@ -133,7 +133,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         schema.text("Hello World!"),
       ])!,
     ],
-    "## Hello World!"
+    "## Hello World!",
   )
   .shouldMatchInputRule(
     "### Hello World!",
@@ -142,7 +142,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         schema.text("Hello World!"),
       ])!,
     ],
-    "### Hello World!"
+    "### Hello World!",
   )
   .shouldMatchInputRule(
     "#### Hello World!",
@@ -151,7 +151,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         schema.text("Hello World!"),
       ])!,
     ],
-    "#### Hello World!"
+    "#### Hello World!",
   )
   .shouldMatchInputRule(
     "##### Hello World!",
@@ -160,7 +160,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         schema.text("Hello World!"),
       ])!,
     ],
-    "##### Hello World!"
+    "##### Hello World!",
   )
   .shouldMatchInputRule(
     "###### Hello World!",
@@ -169,7 +169,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         schema.text("Hello World!"),
       ])!,
     ],
-    "###### Hello World!"
+    "###### Hello World!",
   )
   .shouldMatchInputRule(
     " # Hello World!",
@@ -178,7 +178,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         schema.text("Hello World!"),
       ])!,
     ],
-    "# Hello World!"
+    "# Hello World!",
   )
   .shouldMatchInputRule(
     "  # Hello World!",
@@ -187,7 +187,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         schema.text("Hello World!"),
       ])!,
     ],
-    "# Hello World!"
+    "# Hello World!",
   )
   .shouldMatchInputRule(
     "   # Hello World!",
@@ -196,7 +196,7 @@ new NodeExtensionTester(new HeadingExtension(), {
         schema.text("Hello World!"),
       ])!,
     ],
-    "# Hello World!"
+    "# Hello World!",
   )
   .shouldNotMatchInputRule("####### Hello World!", "\\####### Hello World!")
   .test();

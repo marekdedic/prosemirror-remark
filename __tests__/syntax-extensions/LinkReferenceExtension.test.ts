@@ -44,7 +44,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
         identifier: "linkId",
         url: "https://example.test",
       } as UnistNode,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -64,7 +64,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
         identifier: "linkId",
         url: "https://example.test",
       } as UnistNode,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -84,7 +84,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
         identifier: "linkId",
         url: "https://example.test",
       } as UnistNode,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -108,7 +108,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
         url: "https://example.test",
         title: "This link has a title",
       } as UnistNode,
-    ]
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -123,6 +123,6 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
           href: null,
         }),
       ]),
-    ]
+    ],
   )
   .test();
