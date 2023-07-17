@@ -160,10 +160,10 @@ export class MarkExtensionTester<
         const proseMirrorRoot = this.pmu.parse(source);
         const proseMirrorTree = this.pmu
           .schema()
-          .nodes["doc"].createAndFill({}, [
+          .nodes.doc.createAndFill({}, [
             this.pmu
               .schema()
-              .nodes["paragraph"].createAndFill({}, [
+              .nodes.paragraph.createAndFill({}, [
                 this.pmu.schema().text("BEGIN"),
                 ...proseMirrorNodes,
                 this.pmu.schema().text("END"),

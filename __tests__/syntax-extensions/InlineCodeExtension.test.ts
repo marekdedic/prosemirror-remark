@@ -14,7 +14,7 @@ new MarkExtensionTester(new InlineCodeExtension(), {
       value: "Hello World!",
     },
     (schema) => [
-      schema.text("Hello World!").mark([schema.marks["code"].create()]),
+      schema.text("Hello World!").mark([schema.marks.code.create()]),
     ],
   )
   .shouldMatchProseMirrorNode({ type: "text" }, (schema) => schema.mark("code"))

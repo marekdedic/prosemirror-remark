@@ -43,7 +43,7 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
       ImageReferenceExtension: ImageReferenceExtensionContext;
     }>,
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = proseMirrorSchema.nodes["image"].createAndFill(
+    const proseMirrorNode = proseMirrorSchema.nodes.image.createAndFill(
       { src: "", alt: node.alt, title: node.label },
       convertedChildren,
     );

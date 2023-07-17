@@ -1,6 +1,6 @@
 import { createEditor } from "jest-prosemirror";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
-import { type NodeExtension } from "prosemirror-unified";
+import type { NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import {
@@ -93,7 +93,7 @@ export class NodeExtensionTester<
       proseMirrorNodes: proseMirrorNodes?.(this.pmu.schema()) ?? [
         this.pmu
           .schema()
-          .nodes["paragraph"].createAndFill({}, [
+          .nodes.paragraph.createAndFill({}, [
             this.pmu.schema().text(editorInput),
           ])!,
       ],
@@ -147,7 +147,7 @@ export class NodeExtensionTester<
         const proseMirrorRoot = this.pmu.parse(source);
         const proseMirrorTree = this.pmu
           .schema()
-          .nodes["doc"].createAndFill({}, proseMirrorNodes)!;
+          .nodes.doc.createAndFill({}, proseMirrorNodes)!;
 
         jest.spyOn(console, "warn").mockImplementation();
         createEditor(proseMirrorRoot, {
