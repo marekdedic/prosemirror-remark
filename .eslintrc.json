@@ -29,7 +29,7 @@
     "@typescript-eslint/member-ordering": "error",
     "@typescript-eslint/method-signature-style": ["error", "method"],
     "@typescript-eslint/no-base-to-string": "error",
-    "@typescript-eslint/no-import-type-side-effects": "off", // TODO
+    "@typescript-eslint/no-import-type-side-effects": "error",
     "@typescript-eslint/no-require-imports": "error",
     "@typescript-eslint/no-unnecessary-qualifier": "error",
     "@typescript-eslint/no-useless-empty-export": "error",
