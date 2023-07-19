@@ -7,7 +7,12 @@ import type {
   NodeSpec,
   Schema,
 } from "prosemirror-model";
-import type { Command } from "prosemirror-state";
+import {
+  type Command,
+  type EditorState,
+  Selection,
+  type Transaction,
+} from "prosemirror-state";
 import {
   createProseMirrorNode,
   type Extension,
@@ -20,6 +25,44 @@ import { TextExtension } from "./TextExtension";
  * @public
  */
 export class CodeBlockExtension extends NodeExtension<Code> {
+  private static liftOutOfCodeBlock() {
+    return function (
+      state: EditorState,
+      dispatch?: (tr: Transaction) => void,
+    ): boolean {
+      const { $from, $to } = state.selection;
+      if (
+        // Mustn't be a complex selection
+        !$from.sameParent($to) ||
+        // Must be in a code block
+        $from.parent.type.name !== "code_block" ||
+        // Must be at the end of the code block
+        $from.parentOffset !== $from.parent.content.size ||
+        // There must already be a preceding empty line
+        !$from.parent.textBetween(0, $from.parentOffset).endsWith("\n\n")
+      ) {
+        return false;
+      }
+      if (dispatch) {
+        const tr = state.tr;
+        dispatch(
+          tr
+            // Delete the preceding empty line
+            .deleteRange($from.pos - 2, $from.pos)
+            // Insert empty paragraph
+            .insert(
+              $from.pos - 1,
+              tr.doc.type.schema.nodes.paragraph.createAndFill()!,
+            )
+            // Put the cursor into the empty paragraph
+            .setSelection(Selection.near(tr.doc.resolve($from.pos), 1)!)
+            .scrollIntoView(),
+        );
+      }
+      return true;
+    };
+  }
+
   public dependencies(): Array<Extension> {
     return [new TextExtension()];
   }
@@ -68,6 +111,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
       "Shift-Mod-\\": setBlockType(
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
+      Enter: CodeBlockExtension.liftOutOfCodeBlock(),
     };
   }
 
