@@ -23,7 +23,7 @@ export class MarkExtensionTester<
 
   private readonly proseMirrorMarkName: string | null;
 
-  private readonly proseMirrorNodeMatches: Array<{
+  private readonly proseMirrorMarkMatches: Array<{
     node: UnistNode;
     mark: Mark;
     shouldMatch: boolean;
@@ -43,15 +43,15 @@ export class MarkExtensionTester<
     this.extension = extension;
 
     this.proseMirrorMarkName = config.proseMirrorMarkName;
-    this.proseMirrorNodeMatches = [];
+    this.proseMirrorMarkMatches = [];
     this.inputRuleMatches = [];
   }
 
-  public shouldMatchProseMirrorNode(
+  public shouldMatchProseMirrorMark(
     node: UnistNode,
     mark: (schema: Schema<string, string>) => Mark,
   ): this {
-    this.proseMirrorNodeMatches.push({
+    this.proseMirrorMarkMatches.push({
       node,
       mark: mark(this.pmu.schema()),
       shouldMatch: true,
@@ -59,11 +59,11 @@ export class MarkExtensionTester<
     return this;
   }
 
-  public shouldNotMatchProseMirrorNode(
+  public shouldNotMatchProseMirrorMark(
     node: UnistNode,
     mark: (schema: Schema<string, string>) => Mark,
   ): this {
-    this.proseMirrorNodeMatches.push({
+    this.proseMirrorMarkMatches.push({
       node,
       mark: mark(this.pmu.schema()),
       shouldMatch: false,
@@ -133,13 +133,13 @@ export class MarkExtensionTester<
   }
 
   private enqueueProseMirrorNodeMatchTests(): void {
-    if (this.proseMirrorNodeMatches.length === 0) {
+    if (this.proseMirrorMarkMatches.length === 0) {
       return;
     }
     test("Matches correct ProseMirror nodes", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(this.proseMirrorNodeMatches.length);
-      for (const { node, mark, shouldMatch } of this.proseMirrorNodeMatches) {
+      expect.assertions(this.proseMirrorMarkMatches.length);
+      for (const { node, mark, shouldMatch } of this.proseMirrorMarkMatches) {
         expect(this.extension.proseMirrorToUnistTest(node, mark)).toBe(
           shouldMatch,
         );
