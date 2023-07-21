@@ -45,7 +45,7 @@ export class SyntaxExtensionTester<
 
   private readonly proseMirrorNodeConversions: Array<{
     source: ProseMirrorNode;
-    target: Array<UNode>;
+    target: Array<UnistNode>;
   }>;
 
   public constructor(
@@ -94,7 +94,7 @@ export class SyntaxExtensionTester<
 
   public shouldConvertProseMirrorNode(
     source: (schema: Schema<string, string>) => ProseMirrorNode,
-    target: Array<UNode>,
+    target: Array<UnistNode | UNode>,
   ): this {
     this.proseMirrorNodeConversions.push({
       source: source(this.pmu.schema()),

@@ -21,12 +21,32 @@ new MarkExtensionTester(new BoldExtension(), {
   .shouldMatchProseMirrorMark({ type: "text" }, (schema) =>
     schema.mark("strong"),
   )
+  .shouldMatchProseMirrorMark({ type: "emphasis" }, (schema) =>
+    schema.mark("strong"),
+  )
   .shouldNotMatchProseMirrorMark({ type: "other" }, (schema) =>
     schema.mark("strong"),
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.text("Hello World!").mark([schema.mark("strong")]),
     [{ type: "strong", children: [{ type: "text", value: "Hello World!" }] }],
+  )
+  .shouldConvertProseMirrorNode(
+    (schema) =>
+      schema
+        .text("Hello World!")
+        .mark([schema.mark("em"), schema.mark("strong")]),
+    [
+      {
+        type: "strong",
+        children: [
+          {
+            type: "emphasis",
+            children: [{ type: "text", value: "Hello World!" }],
+          },
+        ],
+      },
+    ],
   )
   .shouldMatchInputRule("**Test**", "**Test**", "Test")
   .shouldMatchInputRule("__Test__", "**Test**", "Test")

@@ -1,9 +1,13 @@
+import { Node as UnistNode } from "unist";
+
+import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
 import { ItalicExtension } from "../../src/syntax-extensions/ItalicExtension";
 import { MarkExtensionTester } from "../utils/MarkExtensionTester";
 
 new MarkExtensionTester(new ItalicExtension(), {
   proseMirrorMarkName: "em",
   unistNodeName: "emphasis",
+  otherExtensionsInTest: [new BoldExtension()],
 })
   .shouldMatchUnistNode({ type: "emphasis", children: [] })
   .shouldNotMatchUnistNode({ type: "other" })
@@ -15,8 +19,26 @@ new MarkExtensionTester(new ItalicExtension(), {
     (schema) => [schema.text("Hello World!").mark([schema.marks.em.create()])],
   )
   .shouldMatchProseMirrorMark({ type: "text" }, (schema) => schema.mark("em"))
+  .shouldMatchProseMirrorMark({ type: "strong" }, (schema) => schema.mark("em"))
   .shouldNotMatchProseMirrorMark({ type: "other" }, (schema) =>
     schema.mark("em"),
+  )
+  .shouldConvertProseMirrorNode(
+    (schema) =>
+      schema
+        .text("Hello World!")
+        .mark([schema.mark("em"), schema.mark("strong")]),
+    [
+      {
+        type: "strong",
+        children: [
+          {
+            type: "emphasis",
+            children: [{ type: "text", value: "Hello World!" }],
+          },
+        ],
+      } as UnistNode,
+    ],
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.text("Hello World!").mark([schema.mark("em")]),
