@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@types/mdast": "^4.0.0",
-    "@types/unist": "^2.0.6",
+    "@types/unist": "^3.0.0",
     "prosemirror-commands": "^1.5.1",
     "prosemirror-inputrules": "^1.2.0",
     "prosemirror-schema-list": "^1.2.2",
