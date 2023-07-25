@@ -1,4 +1,4 @@
-import { Node as UnistNode } from "unist";
+import type { Node as UnistNode } from "unist";
 
 import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
 import { ItalicExtension } from "../../src/syntax-extensions/ItalicExtension";
