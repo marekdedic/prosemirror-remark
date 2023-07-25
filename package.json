@@ -1,6 +1,6 @@
 {
   "name": "prosemirror-remark",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "ProseMirror Remark integration",
   "keywords": [
     "prosemirror",
@@ -40,7 +40,7 @@
     "prosemirror-commands": "^1.5.1",
     "prosemirror-inputrules": "^1.2.0",
     "prosemirror-schema-list": "^1.2.2",
-    "prosemirror-unified": "^0.4.0",
+    "prosemirror-unified": "^0.5.0",
     "remark-parse": "^10.0.1",
     "remark-stringify": "^10.0.2",
     "unified": "^10.1.2"
