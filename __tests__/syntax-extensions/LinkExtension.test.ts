@@ -50,10 +50,10 @@ new MarkExtensionTester(new LinkExtension(), {
       ]),
     ],
   )
-  .shouldMatchProseMirrorNode({ type: "text" }, (schema) =>
+  .shouldMatchProseMirrorMark({ type: "text" }, (schema) =>
     schema.mark("link", { href: "https://example.test" }),
   )
-  .shouldNotMatchProseMirrorNode({ type: "other" }, (schema) =>
+  .shouldNotMatchProseMirrorMark({ type: "other" }, (schema) =>
     schema.mark("link", { href: "https://example.test" }),
   )
   .shouldConvertProseMirrorNode(
