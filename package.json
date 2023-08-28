@@ -43,7 +43,7 @@
     "prosemirror-unified": "^0.5.0",
     "remark-parse": "^10.0.1",
     "remark-stringify": "^10.0.2",
-    "unified": "^10.1.2"
+    "unified": "^11.0.2"
   },
   "peerDependencies": {
     "prosemirror-model": "^1.19.3",
