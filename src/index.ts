@@ -26,5 +26,6 @@ export { ListItemExtension } from "./syntax-extensions/ListItemExtension";
 export { OrderedListExtension } from "./syntax-extensions/OrderedListExtension";
 export { ParagraphExtension } from "./syntax-extensions/ParagraphExtension";
 export { RootExtension } from "./syntax-extensions/RootExtension";
+export { StrikethroughExtension } from "./syntax-extensions/StrikethroughExtension";
 export { TextExtension } from "./syntax-extensions/TextExtension";
 export { UnorderedListExtension } from "./syntax-extensions/UnorderedListExtension";

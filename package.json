@@ -39,6 +39,8 @@
   "dependencies": {
     "@types/mdast": "^4.0.1",
     "@types/unist": "^3.0.0",
+    "mdast-util-gfm-strikethrough": "^2.0.0",
+    "micromark-extension-gfm-strikethrough": "^2.0.0",
     "prosemirror-commands": "^1.5.1",
     "prosemirror-inputrules": "^1.2.0",
     "prosemirror-schema-list": "^1.2.2",
