@@ -2,7 +2,6 @@ import type { Delete, Emphasis, Text } from "mdast";
 import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
-  Mark,
   MarkSpec,
   Node as ProseMirrorNode,
   Schema,
@@ -20,13 +19,6 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
     processor: Processor<UnistNode, UnistNode, UnistNode, string>,
   ): Processor<UnistNode, UnistNode, UnistNode, string> {
     return processor.use(remarkGfm); // TODO: Too general
-  }
-
-  public proseMirrorToUnistTest(node: UnistNode, mark: Mark): boolean {
-    return (
-      ["text", "emphasis", "strong"].indexOf(node.type) > -1 &&
-      mark.type.name === this.proseMirrorMarkName()
-    );
   }
 
   public unistNodeName(): "delete" {

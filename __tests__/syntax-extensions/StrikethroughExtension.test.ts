@@ -91,15 +91,7 @@ new MarkExtensionTester(new StrikethroughExtension(), {
         ]),
     ],
   )
-  .shouldMatchProseMirrorMark({ type: "text" }, (schema) =>
-    schema.mark("strikethrough"),
-  )
-  .shouldMatchProseMirrorMark({ type: "emphasis" }, (schema) =>
-    schema.mark("strikethrough"),
-  )
-  .shouldNotMatchProseMirrorMark({ type: "other" }, (schema) =>
-    schema.mark("strikethrough"),
-  )
+  .shouldMatchProseMirrorMark((schema) => schema.mark("strikethrough"))
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.text("Hello World!").mark([schema.mark("strikethrough")]),
