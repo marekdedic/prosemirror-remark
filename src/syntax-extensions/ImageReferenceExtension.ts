@@ -58,10 +58,6 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
     return [proseMirrorNode];
   }
 
-  public proseMirrorToUnistTest(): boolean {
-    return false;
-  }
-
   public proseMirrorNodeToUnistNodes(): Array<ImageReference> {
     return [];
   }

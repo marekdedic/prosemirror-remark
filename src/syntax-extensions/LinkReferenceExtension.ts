@@ -56,10 +56,6 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
     );
   }
 
-  public proseMirrorToUnistTest(): boolean {
-    return false;
-  }
-
   public processConvertedUnistNode(
     convertedNode: LinkReference,
   ): LinkReference {

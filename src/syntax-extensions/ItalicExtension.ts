@@ -3,26 +3,17 @@ import { toggleMark } from "prosemirror-commands";
 import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
-  Mark,
   MarkSpec,
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
-import type { Node as UnistNode } from "unist";
 
 /**
  * @public
  */
 export class ItalicExtension extends MarkExtension<Emphasis> {
-  public proseMirrorToUnistTest(node: UnistNode, mark: Mark): boolean {
-    return (
-      ["text", "strong"].indexOf(node.type) > -1 &&
-      mark.type.name === this.proseMirrorMarkName()
-    );
-  }
-
   public unistNodeName(): "emphasis" {
     return "emphasis";
   }
