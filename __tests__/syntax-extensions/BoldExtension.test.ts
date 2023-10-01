@@ -18,15 +18,7 @@ new MarkExtensionTester(new BoldExtension(), {
       schema.text("Hello World!").mark([schema.marks.strong.create()]),
     ],
   )
-  .shouldMatchProseMirrorMark({ type: "text" }, (schema) =>
-    schema.mark("strong"),
-  )
-  .shouldMatchProseMirrorMark({ type: "emphasis" }, (schema) =>
-    schema.mark("strong"),
-  )
-  .shouldNotMatchProseMirrorMark({ type: "other" }, (schema) =>
-    schema.mark("strong"),
-  )
+  .shouldMatchProseMirrorMark((schema) => schema.mark("strong"))
   .shouldConvertProseMirrorNode(
     (schema) => schema.text("Hello World!").mark([schema.mark("strong")]),
     [{ type: "strong", children: [{ type: "text", value: "Hello World!" }] }],

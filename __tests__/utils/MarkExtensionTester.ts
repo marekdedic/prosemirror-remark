@@ -24,7 +24,6 @@ export class MarkExtensionTester<
   private readonly proseMirrorMarkName: string | null;
 
   private readonly proseMirrorMarkMatches: Array<{
-    node: UnistNode;
     mark: Mark;
     shouldMatch: boolean;
   }>;
@@ -48,11 +47,9 @@ export class MarkExtensionTester<
   }
 
   public shouldMatchProseMirrorMark(
-    node: UnistNode,
     mark: (schema: Schema<string, string>) => Mark,
   ): this {
     this.proseMirrorMarkMatches.push({
-      node,
       mark: mark(this.pmu.schema()),
       shouldMatch: true,
     });
@@ -60,11 +57,9 @@ export class MarkExtensionTester<
   }
 
   public shouldNotMatchProseMirrorMark(
-    node: UnistNode,
     mark: (schema: Schema<string, string>) => Mark,
   ): this {
     this.proseMirrorMarkMatches.push({
-      node,
       mark: mark(this.pmu.schema()),
       shouldMatch: false,
     });
@@ -139,8 +134,8 @@ export class MarkExtensionTester<
     test("Matches correct ProseMirror nodes", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(this.proseMirrorMarkMatches.length);
-      for (const { node, mark, shouldMatch } of this.proseMirrorMarkMatches) {
-        expect(this.extension.proseMirrorToUnistTest(node, mark)).toBe(
+      for (const { mark, shouldMatch } of this.proseMirrorMarkMatches) {
+        expect(mark.type.name === this.extension.proseMirrorMarkName()).toBe(
           shouldMatch,
         );
       }
