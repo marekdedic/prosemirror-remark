@@ -26,10 +26,10 @@ import { TextExtension } from "./TextExtension";
  */
 export class CodeBlockExtension extends NodeExtension<Code> {
   private static liftOutOfCodeBlock() {
-    return function (
+    return (
       state: EditorState,
       dispatch?: (tr: Transaction) => void,
-    ): boolean {
+    ): boolean => {
       const { $from, $to } = state.selection;
       if (
         // Mustn't be a complex selection
