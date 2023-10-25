@@ -35,8 +35,8 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
-      new InputRule(/^\s{0,3}(?:\*\*\*|---|___)\n$/, (state, _, start, end) => {
-        return state.tr.replaceWith(
+      new InputRule(/^\s{0,3}(?:\*\*\*|---|___)\n$/, (state, _, start, end) =>
+        state.tr.replaceWith(
           start,
           end,
           createProseMirrorNode(
@@ -44,8 +44,8 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
             proseMirrorSchema,
             [],
           ),
-        );
-      }),
+        ),
+      ),
     ];
   }
 

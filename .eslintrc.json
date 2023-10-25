@@ -6,7 +6,13 @@
     "browser": true,
     "node": false
   },
-  "plugins": ["deprecation", "jest", "simple-import-sort", "@typescript-eslint"],
+  "plugins": [
+    "deprecation",
+    "jest",
+    "prefer-arrow-functions",
+    "simple-import-sort",
+    "@typescript-eslint"
+  ],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/strict-type-checked",
@@ -14,11 +20,19 @@
     "plugin:prettier/recommended"
   ],
   "rules": {
-    "deprecation/deprecation": "warn",
+    "arrow-body-style": ["error", "as-needed"],
+    "camelcase": "error",
     "no-warning-comments": "warn",
+    "strict": ["error", "never"],
+    "deprecation/deprecation": "warn",
+    "prefer-arrow-functions/prefer-arrow-functions": [
+      "error",
+      {
+        "allowNamedFunctions": true
+      }
+    ],
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
-    "strict": ["error", "never"],
     "@typescript-eslint/array-type": ["error", { "default": "generic" }],
     "@typescript-eslint/consistent-type-exports": "error",
     "@typescript-eslint/consistent-type-imports": "error",
