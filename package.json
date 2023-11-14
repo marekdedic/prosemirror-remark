@@ -41,7 +41,7 @@
     "prosemirror-commands": "^1.5.1",
     "prosemirror-inputrules": "^1.2.0",
     "prosemirror-schema-list": "^1.2.2",
-    "prosemirror-unified": "^0.6.0",
+    "prosemirror-unified": "=0.6.0",
     "remark-parse": "^10.0.1",
     "remark-stringify": "^10.0.2",
     "unified": "^10.1.2"
