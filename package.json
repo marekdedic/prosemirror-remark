@@ -36,15 +36,15 @@
     "test": "jest"
   },
   "dependencies": {
-    "@types/mdast": "^4.0.0",
-    "@types/unist": "^2.0.6",
+    "@types/mdast": "^4.0.1",
+    "@types/unist": "^3.0.0",
     "prosemirror-commands": "^1.5.1",
     "prosemirror-inputrules": "^1.2.0",
     "prosemirror-schema-list": "^1.2.2",
-    "prosemirror-unified": "=0.6.0",
-    "remark-parse": "^10.0.1",
-    "remark-stringify": "^10.0.2",
-    "unified": "^10.1.2"
+    "prosemirror-unified": "=0.7.0",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.4"
   },
   "peerDependencies": {
     "prosemirror-model": "^1.19.3",
