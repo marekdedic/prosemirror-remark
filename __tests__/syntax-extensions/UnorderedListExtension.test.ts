@@ -51,7 +51,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     },
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill()!,
+        schema.nodes.regular_list_item.createAndFill()!,
       ])!,
     ],
   )
@@ -63,7 +63,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     },
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({ spread: true })!,
+        schema.nodes.regular_list_item.createAndFill({ spread: true })!,
       ])!,
     ],
   )
@@ -85,7 +85,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     },
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
@@ -102,19 +102,19 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill()!,
+        schema.nodes.regular_list_item.createAndFill()!,
       ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({ spread: true })!,
+        schema.nodes.regular_list_item.createAndFill({ spread: true })!,
       ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
@@ -158,7 +158,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill()!,
+        schema.nodes.regular_list_item.createAndFill()!,
       ])!,
     [
       {
@@ -178,7 +178,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.nodes.bullet_list.createAndFill({ spread: true }, [
-        schema.nodes.list_item.createAndFill({ spread: true })!,
+        schema.nodes.regular_list_item.createAndFill({ spread: true })!,
       ])!,
     [
       {
@@ -198,7 +198,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
@@ -233,7 +233,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "* Hello World!",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
@@ -246,7 +246,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "- Hello World!",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
@@ -259,7 +259,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "+ Hello World!",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
@@ -272,7 +272,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     " * Hello World!",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
@@ -285,7 +285,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "  * Hello World!",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
@@ -298,7 +298,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     " * Hello World!",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
@@ -312,12 +312,12 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "* Hello World!\n\n\n* Second item",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Second line"),
           ])!,
@@ -335,7 +335,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "Shift-Mod-8",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
         ])!,
       ])!,
@@ -346,7 +346,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
         ])!,
       ])!,
@@ -355,10 +355,10 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "Enter",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("Hel")])!,
         ])!,
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("lo")])!,
         ])!,
       ])!,
@@ -369,10 +369,10 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
@@ -381,10 +381,10 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "Tab",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
@@ -395,10 +395,10 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
@@ -407,10 +407,10 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "Tab",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
           schema.nodes.bullet_list.createAndFill({}, [
-            schema.nodes.list_item.createAndFill({}, [
+            schema.nodes.regular_list_item.createAndFill({}, [
               schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
             ])!,
           ])!,
@@ -422,10 +422,10 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
           schema.nodes.bullet_list.createAndFill({}, [
-            schema.nodes.list_item.createAndFill({}, [
+            schema.nodes.regular_list_item.createAndFill({}, [
               schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
             ])!,
           ])!,
@@ -436,10 +436,10 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "Shift-Tab",
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,

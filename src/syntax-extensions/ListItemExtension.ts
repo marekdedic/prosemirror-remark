@@ -22,13 +22,14 @@ export class ListItemExtension extends NodeExtension<ListItem> {
   }
 
   public override proseMirrorNodeName(): string {
-    return "list_item";
+    return "regular_list_item";
   }
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
       content: "paragraph block*",
       defining: true,
+      group: "list_item",
       parseDOM: [{ tag: "li" }],
       toDOM(): DOMOutputSpec {
         return ["li", 0];
