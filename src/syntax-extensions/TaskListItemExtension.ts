@@ -44,17 +44,13 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
         return [
           "li",
           [
-            [
-              "input",
-              {
-                type: "checkbox",
-                checked: (node.attrs.checked as boolean)
-                  ? "checked"
-                  : undefined,
-              },
-            ],
-            0,
+            "input",
+            {
+              type: "checkbox",
+              checked: (node.attrs.checked as boolean) ? "checked" : undefined,
+            },
           ],
+          ["span", 0],
         ];
       },
     };
