@@ -57,7 +57,11 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   }
 
   public unistToProseMirrorTest(node: UnistNode): boolean {
-    return node.type === this.unistNodeName() && "checked" in node;
+    return (
+      node.type === this.unistNodeName() &&
+      "checked" in node &&
+      typeof node.checked === "boolean"
+    );
   }
 
   public unistNodeToProseMirrorNodes(
