@@ -20,8 +20,8 @@ export class GFMExtension extends Extension {
   }
 
   public unifiedInitializationHook(
-    processor: Processor<UnistNode, UnistNode, UnistNode, string>,
-  ): Processor<UnistNode, UnistNode, UnistNode, string> {
+    processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
+  ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
     return processor.use(remarkGfm);
   }
 }

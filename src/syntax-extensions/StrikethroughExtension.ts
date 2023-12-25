@@ -16,8 +16,8 @@ import type { Node as UnistNode } from "unist";
  */
 export class StrikethroughExtension extends MarkExtension<Delete> {
   public unifiedInitializationHook(
-    processor: Processor<UnistNode, UnistNode, UnistNode, string>,
-  ): Processor<UnistNode, UnistNode, UnistNode, string> {
+    processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
+  ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
     return processor.use(remarkGfm); // TODO: Too general
   }
 
