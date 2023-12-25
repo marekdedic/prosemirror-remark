@@ -5,25 +5,21 @@ import type {
   NodeSpec,
   Schema,
 } from "prosemirror-model";
-import {
-  liftListItem,
-  sinkListItem,
-  splitListItem,
-} from "prosemirror-schema-list";
-import type { Command } from "prosemirror-state";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 /**
  * @public
+ *
+ * TODO: Add a keymap
  */
-export class ListItemExtension extends NodeExtension<ListItem> {
+export class TaskListItemExtension extends NodeExtension<ListItem> {
   public unistNodeName(): "listItem" {
     return "listItem";
   }
 
   public proseMirrorNodeName(): string {
-    return "regular_list_item";
+    return "task_list_item";
   }
 
   public proseMirrorNodeSpec(): NodeSpec {
@@ -31,30 +27,45 @@ export class ListItemExtension extends NodeExtension<ListItem> {
       content: "paragraph block*",
       defining: true,
       group: "list_item",
-      parseDOM: [{ tag: "li" }],
-      toDOM(): DOMOutputSpec {
-        return ["li", 0];
+      attrs: { checked: { default: false } },
+      parseDOM: [
+        {
+          tag: "li",
+          getAttrs(dom: Node | string): false | { checked: boolean } {
+            const checkbox = (dom as HTMLElement).firstChild;
+            if (!(checkbox instanceof HTMLInputElement)) {
+              return false;
+            }
+            return { checked: checkbox.checked };
+          },
+        },
+      ],
+      toDOM(node: ProseMirrorNode): DOMOutputSpec {
+        return [
+          "li",
+          [
+            [
+              "input",
+              {
+                type: "checkbox",
+                checked: (node.attrs.checked as boolean)
+                  ? "checked"
+                  : undefined,
+              },
+            ],
+            0,
+          ],
+        ];
       },
     };
   }
 
   public unistToProseMirrorTest(node: UnistNode): boolean {
-    return node.type === this.unistNodeName() && !("checked" in node);
-  }
-
-  public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>,
-  ): Record<string, Command> {
-    const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
-    return {
-      Enter: splitListItem(nodeType),
-      "Shift-Tab": liftListItem(nodeType),
-      Tab: sinkListItem(nodeType),
-    };
+    return node.type === this.unistNodeName() && "checked" in node;
   }
 
   public unistNodeToProseMirrorNodes(
-    _node: ListItem,
+    node: ListItem,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
@@ -62,16 +73,18 @@ export class ListItemExtension extends NodeExtension<ListItem> {
       this.proseMirrorNodeName(),
       proseMirrorSchema,
       convertedChildren,
+      { checked: node.checked },
     );
   }
 
   public proseMirrorNodeToUnistNodes(
-    _node: ProseMirrorNode,
+    node: ProseMirrorNode,
     convertedChildren: Array<BlockContent | DefinitionContent>,
   ): Array<ListItem> {
     return [
       {
         type: this.unistNodeName(),
+        checked: node.attrs.checked as boolean,
         children: convertedChildren,
       },
     ];

@@ -5,6 +5,7 @@ import type { Node as UnistNode } from "unist";
 
 import { MarkdownExtension } from "./MarkdownExtension";
 import { StrikethroughExtension } from "./syntax-extensions/StrikethroughExtension";
+import { TaskListItemExtension } from "./syntax-extensions/TaskListItemExtension";
 
 /**
  * @public
@@ -12,8 +13,9 @@ import { StrikethroughExtension } from "./syntax-extensions/StrikethroughExtensi
 export class GFMExtension extends Extension {
   public dependencies(): Array<Extension> {
     return [
-      new StrikethroughExtension(),
       new MarkdownExtension(),
+      new StrikethroughExtension(),
+      new TaskListItemExtension(),
     ];
   }
 
