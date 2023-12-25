@@ -12,6 +12,7 @@ import {
 } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
+import type { Node as UnistNode } from "unist";
 
 /**
  * @public
@@ -35,6 +36,13 @@ export class ListItemExtension extends NodeExtension<ListItem> {
         return ["li", 0];
       },
     };
+  }
+
+  public unistToProseMirrorTest(node: UnistNode): boolean {
+    return (
+      node.type === this.unistNodeName() &&
+      (!("checked" in node) || typeof node.checked !== "boolean")
+    );
   }
 
   public override proseMirrorKeymap(
