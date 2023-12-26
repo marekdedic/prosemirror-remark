@@ -50,7 +50,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
               checked: (node.attrs.checked as boolean) ? "checked" : undefined,
             },
           ],
-          ["span", 0],
+          ["span", { style: "display: inline-block;" }, 0],
         ];
       },
     };
