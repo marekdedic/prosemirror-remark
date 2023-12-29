@@ -43,12 +43,20 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       toDOM(node: ProseMirrorNode): DOMOutputSpec {
         return [
           "li",
+          { style: "list-style-type: none;" },
           [
-            "input",
-            {
-              type: "checkbox",
-              checked: (node.attrs.checked as boolean) ? "checked" : undefined,
-            },
+            "span",
+            { contenteditable: "false" },
+            [
+              "input",
+              {
+                type: "checkbox",
+                checked: (node.attrs.checked as boolean)
+                  ? "checked"
+                  : undefined,
+                disabled: "disabled",
+              },
+            ],
           ],
           ["span", { style: "display: inline-block;" }, 0],
         ];
