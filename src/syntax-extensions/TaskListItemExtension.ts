@@ -11,10 +11,64 @@ import type {
   Schema,
 } from "prosemirror-model";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
+import type {
+  EditorView,
+  NodeView,
+  NodeViewConstructor,
+} from "prosemirror-view";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
+
+class TaskListItemView implements NodeView {
+  public readonly dom: HTMLElement;
+  public readonly contentDOM: HTMLElement;
+
+  public constructor(
+    node: ProseMirrorNode,
+    view: EditorView,
+    getPos: () => number | undefined,
+  ) {
+    const checkbox = document.createElement("input");
+    checkbox.setAttribute("type", "checkbox");
+    checkbox.setAttribute("style", "cursor: pointer;");
+    if (node.attrs.checked === true) {
+      checkbox.setAttribute("checked", "checked");
+    }
+    checkbox.addEventListener("click", (e) => {
+      e.preventDefault();
+      view.dispatch(
+        view.state.tr.setNodeAttribute(
+          getPos()!,
+          "checked",
+          !(node.attrs.checked as boolean),
+        ),
+      );
+    });
+
+    const checkboxContainer = document.createElement("span");
+    checkboxContainer.setAttribute("contenteditable", "false");
+    checkboxContainer.setAttribute("style", "position: absolute; left: 5px;");
+    checkboxContainer.appendChild(checkbox);
+
+    this.contentDOM = document.createElement("span");
+    this.contentDOM.setAttribute("style", "position: relative; left: 30px;");
+
+    this.dom = document.createElement("li");
+    this.dom.setAttribute(
+      "style",
+      "list-style-type: none; margin-left: -30px;",
+    );
+    this.dom.appendChild(checkboxContainer);
+    this.dom.appendChild(this.contentDOM);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this -- Inherited from the NodeView interface
+  public stopEvent(): boolean {
+    return true;
+  }
+}
 
 /**
  * @public
@@ -63,17 +117,32 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       toDOM(node: ProseMirrorNode): DOMOutputSpec {
         return [
           "li",
+          { style: "list-style-type: none;, margin-left: -30px;" },
           [
-            "input",
+            "span",
             {
-              type: "checkbox",
-              checked: (node.attrs.checked as boolean) ? "checked" : undefined,
+              contenteditable: "false",
+              style: "position: absolute; left: 5px;",
             },
+            [
+              "input",
+              {
+                type: "checkbox",
+                checked: (node.attrs.checked as boolean)
+                  ? "checked"
+                  : undefined,
+                disabled: "disabled",
+              },
+            ],
           ],
-          ["span", { style: "display: inline-block;" }, 0],
+          ["span", { style: "position: relative; left: 30px" }, 0],
         ];
       },
     };
+  }
+
+  public override proseMirrorNodeView(): NodeViewConstructor | null {
+    return (node, view, getPos) => new TaskListItemView(node, view, getPos);
   }
 
   public override unistToProseMirrorTest(node: UnistNode): boolean {
