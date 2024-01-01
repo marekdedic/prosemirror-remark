@@ -6,7 +6,56 @@ import type {
   Schema,
 } from "prosemirror-model";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
+import type {
+  EditorView,
+  NodeView,
+  NodeViewConstructor,
+} from "prosemirror-view";
 import type { Node as UnistNode } from "unist";
+
+class TaskListItemView implements NodeView {
+  public readonly dom: HTMLElement;
+  public readonly contentDOM: HTMLElement;
+
+  public constructor(
+    node: ProseMirrorNode,
+    view: EditorView,
+    getPos: () => number | undefined,
+  ) {
+    const checkbox = document.createElement("input");
+    checkbox.setAttribute("type", "checkbox");
+    checkbox.setAttribute("style", "cursor: pointer;");
+    if (node.attrs.checked === true) {
+      checkbox.setAttribute("checked", "checked");
+    }
+    checkbox.addEventListener("click", (e) => {
+      e.preventDefault();
+      view.dispatch(
+        view.state.tr.setNodeAttribute(
+          getPos()!,
+          "checked",
+          !(node.attrs.checked as boolean),
+        ),
+      );
+    });
+
+    const checkboxContainer = document.createElement("span");
+    checkboxContainer.setAttribute("contenteditable", "false");
+    checkboxContainer.appendChild(checkbox);
+
+    this.contentDOM = document.createElement("span");
+    this.contentDOM.setAttribute("style", "display: inline-block;");
+
+    this.dom = document.createElement("li");
+    this.dom.setAttribute("style", "list-style-type: none;");
+    this.dom.appendChild(checkboxContainer);
+    this.dom.appendChild(this.contentDOM);
+  }
+
+  public stopEvent(): boolean {
+    return true;
+  }
+}
 
 /**
  * @public
@@ -62,6 +111,10 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
         ];
       },
     };
+  }
+
+  public proseMirrorNodeView(): NodeViewConstructor | null {
+    return (node, view, getPos) => new TaskListItemView(node, view, getPos);
   }
 
   public unistToProseMirrorTest(node: UnistNode): boolean {
