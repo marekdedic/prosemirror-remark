@@ -6,6 +6,7 @@ import type {
   NodeSpec,
   Schema,
 } from "prosemirror-model";
+import type { Command, EditorState } from "prosemirror-state";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 import type {
   EditorView,
@@ -66,9 +67,22 @@ class TaskListItemView implements NodeView {
  * @public
  *
  * TODO: Add GFM to remark
- * TODO: Add a keymap
  */
 export class TaskListItemExtension extends NodeExtension<ListItem> {
+  private static isAtStart(
+    state: EditorState,
+    view: EditorView | undefined,
+  ): boolean {
+    if (!state.selection.empty) {
+      return false;
+    }
+    if (view !== undefined) {
+      return view.endOfTextblock("backward", state);
+    } else {
+      return state.selection.$anchor.parentOffset > 0;
+    }
+  }
+
   public unistNodeName(): "listItem" {
     return "listItem";
   }
@@ -145,6 +159,36 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
         );
       }),
     ];
+  }
+
+  public proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>,
+  ): Record<string, Command> {
+    return {
+      Backspace: (state, dispatch, view): boolean => {
+        if (!TaskListItemExtension.isAtStart(state, view)) {
+          return false;
+        }
+        const taskListItemNode = state.selection.$anchor.node(-1);
+        if (taskListItemNode.type.name !== "task_list_item") {
+          return false;
+        }
+        if (dispatch === undefined) {
+          return true;
+        }
+        dispatch(
+          state.tr.replaceRangeWith(
+            state.selection.$from.before() - 2,
+            state.selection.$from.before() + taskListItemNode.nodeSize,
+            proseMirrorSchema.nodes.regular_list_item.createAndFill(
+              {},
+              taskListItemNode.content,
+            )!,
+          ),
+        );
+        return true;
+      },
+    };
   }
 
   public unistToProseMirrorTest(node: UnistNode): boolean {
