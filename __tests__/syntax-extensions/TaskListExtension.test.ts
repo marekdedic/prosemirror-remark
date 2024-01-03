@@ -8,7 +8,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   proseMirrorNodeName: "bullet_list",
   unistNodeName: "list",
   otherExtensionsInTest: [
-    new UnorderedListExtension(),
     new TaskListItemExtension(),
   ],
 })
