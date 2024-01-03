@@ -1,15 +1,15 @@
 import type { Node as UnistNode } from "unist";
 
+import { ListItemExtension } from "../../src/syntax-extensions/ListItemExtension";
 import { TaskListItemExtension } from "../../src/syntax-extensions/TaskListItemExtension";
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { NodeExtensionTester } from "../utils/NodeExtensionTester";
 
+// TODO: Add input rule tests
 new NodeExtensionTester(new UnorderedListExtension(), {
   proseMirrorNodeName: "bullet_list",
   unistNodeName: "list",
-  otherExtensionsInTest: [
-    new TaskListItemExtension(),
-  ],
+  otherExtensionsInTest: [new ListItemExtension(), new TaskListItemExtension()],
 })
   .shouldMatchUnistNode({ type: "list", ordered: false, children: [] })
   .shouldMatchUnistNode({
