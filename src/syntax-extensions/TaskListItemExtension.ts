@@ -1,4 +1,5 @@
 import type { BlockContent, DefinitionContent, ListItem } from "mdast";
+import { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -60,6 +61,7 @@ class TaskListItemView implements NodeView {
 /**
  * @public
  *
+ * TODO: Add GFM to remark
  * TODO: Add a keymap
  */
 export class TaskListItemExtension extends NodeExtension<ListItem> {
@@ -115,6 +117,27 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
 
   public proseMirrorNodeView(): NodeViewConstructor | null {
     return (node, view, getPos) => new TaskListItemView(node, view, getPos);
+  }
+
+  public proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>,
+  ): Array<InputRule> {
+    return [
+      new InputRule(/^\[([x\s]?)\][\s\S]$/, (state, match, start) => {
+        const wrappingNode = state.doc.resolve(start).node(-1);
+        if (wrappingNode.type.name !== "regular_list_item") {
+          return null;
+        }
+        return state.tr.replaceRangeWith(
+          start - 2,
+          start + wrappingNode.nodeSize,
+          proseMirrorSchema.nodes[this.proseMirrorNodeName()].createAndFill(
+            { checked: match[1] === "x" },
+            wrappingNode.content.cut(3 + match[1].length),
+          )!,
+        );
+      }),
+    ];
   }
 
   public unistToProseMirrorTest(node: UnistNode): boolean {
