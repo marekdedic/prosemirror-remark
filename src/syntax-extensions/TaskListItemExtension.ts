@@ -13,6 +13,8 @@ import type {
   NodeView,
   NodeViewConstructor,
 } from "prosemirror-view";
+import remarkGfm from "remark-gfm";
+import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
 class TaskListItemView implements NodeView {
@@ -65,8 +67,6 @@ class TaskListItemView implements NodeView {
 
 /**
  * @public
- *
- * TODO: Add GFM to remark
  */
 export class TaskListItemExtension extends NodeExtension<ListItem> {
   private static isAtStart(
@@ -81,6 +81,12 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     } else {
       return state.selection.$anchor.parentOffset > 0;
     }
+  }
+
+  public unifiedInitializationHook(
+    processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
+  ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
+    return processor.use(remarkGfm); // TODO: Too general
   }
 
   public unistNodeName(): "listItem" {
