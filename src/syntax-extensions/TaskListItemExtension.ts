@@ -42,13 +42,17 @@ class TaskListItemView implements NodeView {
 
     const checkboxContainer = document.createElement("span");
     checkboxContainer.setAttribute("contenteditable", "false");
+    checkboxContainer.setAttribute("style", "position: absolute; left: 5px;");
     checkboxContainer.appendChild(checkbox);
 
     this.contentDOM = document.createElement("span");
-    this.contentDOM.setAttribute("style", "display: inline-block;");
+    this.contentDOM.setAttribute("style", "position: relative; left: 30px;");
 
     this.dom = document.createElement("li");
-    this.dom.setAttribute("style", "list-style-type: none;");
+    this.dom.setAttribute(
+      "style",
+      "list-style-type: none; margin-left: -30px;",
+    );
     this.dom.appendChild(checkboxContainer);
     this.dom.appendChild(this.contentDOM);
   }
@@ -94,10 +98,13 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       toDOM(node: ProseMirrorNode): DOMOutputSpec {
         return [
           "li",
-          { style: "list-style-type: none;" },
+          { style: "list-style-type: none;, margin-left: -30px;" },
           [
             "span",
-            { contenteditable: "false" },
+            {
+              contenteditable: "false",
+              style: "position: absolute; left: 5px;",
+            },
             [
               "input",
               {
@@ -109,7 +116,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
               },
             ],
           ],
-          ["span", { style: "display: inline-block;" }, 0],
+          ["span", { style: "position: relative; left: 30px" }, 0],
         ];
       },
     };
