@@ -389,4 +389,136 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       },
     ],
   )
+  /* TODO: Re-enable when jest-prosemirror can handle keymaps with Enter
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+      ])!,
+    ],
+    3,
+    "Enter",
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hel")])!,
+        ])!,
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("lo")])!,
+        ])!,
+      ])!,
+    ],
+    "* [ ] Hel\n* [ ] lo",
+  )
+  */
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        ])!,
+      ])!,
+    ],
+    3,
+    "Tab",
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        ])!,
+      ])!,
+    ],
+    "* [ ] Hello\n* [ ] World",
+  )
+  /* TODO: Re-enable once jest-prosemirror can handle keymaps with Tab
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        ])!,
+      ])!,
+    ],
+    10,
+    "Tab",
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+          schema.nodes.bullet_list.createAndFill({}, [
+            schema.nodes.task_list_item.createAndFill({}, [
+              schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+            ])!,
+          ])!,
+        ])!,
+      ])!,
+    ],
+    "* [ ] Hello\n    * [ ] World",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+          schema.nodes.bullet_list.createAndFill({}, [
+            schema.nodes.task_list_item.createAndFill({}, [
+              schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+            ])!,
+          ])!,
+        ])!,
+      ])!,
+    ],
+    10,
+    "Shift-Tab",
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        ])!,
+      ])!,
+    ],
+    "* [ ] Hello\n* [ ] World",
+  )
+  */
+  /* TODO: Re-enable when jest-prosemirrr supports keymaps with backspace
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        ])!,
+      ])!,
+    ],
+    0,
+    "Backspace",
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+        schema.nodes.task_list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        ])!,
+      ])!,
+    ],
+    "* Hello\n* [ ] World",
+  )
+  */
   .test();
