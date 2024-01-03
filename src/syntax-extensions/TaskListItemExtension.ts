@@ -4,6 +4,7 @@ import {
   gfmTaskListItemToMarkdown,
 } from "mdast-util-gfm-task-list-item";
 import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
+import { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -143,6 +144,27 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
 
   public override proseMirrorNodeView(): NodeViewConstructor | null {
     return (node, view, getPos) => new TaskListItemView(node, view, getPos);
+  }
+
+  public proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>,
+  ): Array<InputRule> {
+    return [
+      new InputRule(/^\[([x\s]?)\][\s\S]$/, (state, match, start) => {
+        const wrappingNode = state.doc.resolve(start).node(-1);
+        if (wrappingNode.type.name !== "regular_list_item") {
+          return null;
+        }
+        return state.tr.replaceRangeWith(
+          start - 2,
+          start + wrappingNode.nodeSize,
+          proseMirrorSchema.nodes[this.proseMirrorNodeName()].createAndFill(
+            { checked: match[1] === "x" },
+            wrappingNode.content.cut(3 + match[1].length),
+          )!,
+        );
+      }),
+    ];
   }
 
   public override unistToProseMirrorTest(node: UnistNode): boolean {
