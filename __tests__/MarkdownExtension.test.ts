@@ -51,14 +51,14 @@ test("unist -> ProseMirror conversion", () => {
         })!,
       ])!,
       schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Ordered list"),
           ])!,
         ])!,
       ])!,
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Unordered list"),
           ])!,
@@ -110,14 +110,14 @@ test("ProseMirror -> unist conversion", () => {
         })!,
       ])!,
       schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Ordered list"),
           ])!,
         ])!,
       ])!,
       schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.list_item.createAndFill({}, [
+        schema.nodes.regular_list_item.createAndFill({}, [
           schema.nodes.paragraph.createAndFill({}, [
             schema.text("Unordered list"),
           ])!,
