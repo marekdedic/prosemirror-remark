@@ -55,7 +55,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
               tr.doc.type.schema.nodes.paragraph.createAndFill()!,
             )
             // Put the cursor into the empty paragraph
-            .setSelection(Selection.near(tr.doc.resolve($from.pos), 1)!)
+            .setSelection(Selection.near(tr.doc.resolve($from.pos), 1))
             .scrollIntoView(),
         );
       }
