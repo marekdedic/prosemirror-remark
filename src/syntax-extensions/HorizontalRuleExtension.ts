@@ -49,6 +49,7 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     ];
   }
 
+  // TODO: Test
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
