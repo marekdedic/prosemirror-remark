@@ -1,3 +1,4 @@
+import type { PrimitiveSelection } from "@remirror/core-types";
 import { createEditor } from "jest-prosemirror";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { NodeExtension } from "prosemirror-unified";
@@ -28,6 +29,14 @@ export class NodeExtensionTester<
     shouldMatch: boolean;
   }>;
 
+  private readonly keymapMatches: Array<{
+    proseMirrorBefore: Array<ProseMirrorNode>;
+    selection: PrimitiveSelection;
+    key: string;
+    proseMirrorAfter: Array<ProseMirrorNode>;
+    markdownOutput: string;
+  }>;
+
   private readonly inputRuleMatches: Array<{
     editorInput: string;
     proseMirrorNodes: Array<ProseMirrorNode>;
@@ -43,6 +52,7 @@ export class NodeExtensionTester<
 
     this.proseMirrorNodeName = config.proseMirrorNodeName;
     this.proseMirrorNodeMatches = [];
+    this.keymapMatches = [];
     this.inputRuleMatches = [];
   }
 
@@ -62,6 +72,27 @@ export class NodeExtensionTester<
     this.proseMirrorNodeMatches.push({
       node: node(this.pmu.schema()),
       shouldMatch: false,
+    });
+    return this;
+  }
+
+  public shouldSupportKeymap(
+    proseMirrorBefore: (
+      schema: Schema<string, string>,
+    ) => Array<ProseMirrorNode>,
+    selection: PrimitiveSelection,
+    key: string,
+    proseMirrorAfter: (
+      schema: Schema<string, string>,
+    ) => Array<ProseMirrorNode>,
+    markdownOutput: string,
+  ): this {
+    this.keymapMatches.push({
+      proseMirrorBefore: proseMirrorBefore(this.pmu.schema()),
+      selection,
+      key,
+      proseMirrorAfter: proseMirrorAfter(this.pmu.schema()),
+      markdownOutput,
     });
     return this;
   }
@@ -118,6 +149,7 @@ export class NodeExtensionTester<
     });
 
     this.enqueueProseMirrorNodeMatchTests();
+    this.enqueueKeymapTests();
     this.enqueueInputRuleTests();
   }
 
@@ -130,6 +162,44 @@ export class NodeExtensionTester<
       expect.assertions(this.proseMirrorNodeMatches.length);
       for (const { node, shouldMatch } of this.proseMirrorNodeMatches) {
         expect(this.extension.proseMirrorToUnistTest(node)).toBe(shouldMatch);
+      }
+    });
+  }
+
+  private enqueueKeymapTests(): void {
+    if (this.keymapMatches.length === 0) {
+      return;
+    }
+    test("Supports keymap correctly", () => {
+      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
+      expect.assertions(3 * this.keymapMatches.length);
+      for (const {
+        proseMirrorBefore,
+        selection,
+        key,
+        proseMirrorAfter,
+        markdownOutput,
+      } of this.keymapMatches) {
+        const proseMirrorTreeBefore = this.pmu
+          .schema()
+          .nodes.doc.createAndFill({}, proseMirrorBefore)!;
+        const proseMirrorTreeAfter = this.pmu
+          .schema()
+          .nodes.doc.createAndFill({}, proseMirrorAfter)!;
+
+        jest.spyOn(console, "warn").mockImplementation();
+        createEditor(proseMirrorTreeBefore, {
+          plugins: [this.pmu.keymapPlugin()],
+        })
+          .selectText(selection)
+          .shortcut(key)
+          .callback((content) => {
+            expect(content.doc).toEqualProsemirrorNode(proseMirrorTreeAfter);
+            expect(
+              this.pmu.serialize(content.doc).replace(/^\s+|\s+$/g, ""),
+            ).toBe(markdownOutput);
+          });
+        expect(console.warn).not.toHaveBeenCalled();
       }
     });
   }
