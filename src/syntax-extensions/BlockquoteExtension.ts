@@ -44,7 +44,6 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     ];
   }
 
-  // TODO: Test
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
