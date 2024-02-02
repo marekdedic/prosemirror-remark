@@ -107,6 +107,39 @@ new NodeExtensionTester(new BlockquoteExtension(), {
       },
     ],
   )
+  .shouldSupportKeymap(
+    () => [],
+    "start",
+    "Mod->",
+    (schema) => [schema.nodes.blockquote.createAndFill()!],
+    ">",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("abcd")])!,
+    ],
+    3,
+    "Mod->",
+    (schema) => [
+      schema.nodes.blockquote.createAndFill({}, [
+        schema.nodes.paragraph.createAndFill({}, [schema.text("abcd")])!,
+      ])!,
+    ],
+    "> abcd",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("abcd")])!,
+    ],
+    { from: 1, to: 3 },
+    "Mod->",
+    (schema) => [
+      schema.nodes.blockquote.createAndFill({}, [
+        schema.nodes.paragraph.createAndFill({}, [schema.text("abcd")])!,
+      ])!,
+    ],
+    "> abcd",
+  )
   .shouldMatchInputRule(
     "> Hello World!",
     (schema) => [
