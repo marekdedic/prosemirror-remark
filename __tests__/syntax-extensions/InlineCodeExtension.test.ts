@@ -22,6 +22,28 @@ new MarkExtensionTester(new InlineCodeExtension(), {
     (schema) => schema.text("Hello World!").mark([schema.mark("code")]),
     [{ type: "inlineCode", value: "Hello World!" }],
   )
+  .shouldSupportKeymap(
+    () => [],
+    "start",
+    "Ctrl-`",
+    () => [],
+    "",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("abcdef")])!,
+    ],
+    { from: 3, to: 5 },
+    "Ctrl-`",
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [
+        schema.text("ab"),
+        schema.text("cd").mark([schema.mark("code")]),
+        schema.text("ef"),
+      ])!,
+    ],
+    "ab`cd`ef",
+  )
   .shouldMatchInputRule("`Test`", "`Test`", "Test")
   .shouldMatchInputRule("`Hello World`", "`Hello World`", "Hello World")
   .shouldMatchInputRule("`Test`\n", "`Test`\n", (schema) => [
