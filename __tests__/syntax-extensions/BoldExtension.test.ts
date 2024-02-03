@@ -40,6 +40,50 @@ new MarkExtensionTester(new BoldExtension(), {
       },
     ],
   )
+  .shouldSupportKeymap(
+    () => [],
+    "start",
+    "Mod-b",
+    () => [],
+    "",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("abcdef")])!,
+    ],
+    { from: 3, to: 5 },
+    "Mod-b",
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [
+        schema.text("ab"),
+        schema.text("cd").mark([schema.mark("strong")]),
+        schema.text("ef"),
+      ])!,
+    ],
+    "ab**cd**ef",
+  )
+  .shouldSupportKeymap(
+    () => [],
+    "start",
+    "Mod-B",
+    () => [],
+    "",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("abcdef")])!,
+    ],
+    { from: 3, to: 5 },
+    "Mod-B",
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [
+        schema.text("ab"),
+        schema.text("cd").mark([schema.mark("strong")]),
+        schema.text("ef"),
+      ])!,
+    ],
+    "ab**cd**ef",
+  )
   .shouldMatchInputRule("**Test**", "**Test**", "Test")
   .shouldMatchInputRule("__Test__", "**Test**", "Test")
   .shouldMatchInputRule("**Hello World**", "**Hello World**", "Hello World")
