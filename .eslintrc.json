@@ -15,6 +15,7 @@
   ],
   "extends": [
     "eslint:recommended",
+    "plugin:eslint-comments/recommended",
     "plugin:@typescript-eslint/strict-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
     "plugin:prettier/recommended"
@@ -25,6 +26,13 @@
     "no-warning-comments": "warn",
     "strict": ["error", "never"],
     "deprecation/deprecation": "warn",
+    "eslint-comments/no-unused-disable": "error",
+    "eslint-comments/require-description": [
+      "error",
+      {
+        "ignore": ["eslint-env"]
+      }
+    ],
     "prefer-arrow-functions/prefer-arrow-functions": [
       "error",
       {
