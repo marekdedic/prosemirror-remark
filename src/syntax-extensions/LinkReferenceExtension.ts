@@ -81,7 +81,7 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
       const definition = context.DefinitionExtension.definitions[id];
       const attrs = context.LinkReferenceExtension.marks[id].attrs as Record<
         string,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Attrs can be any
         any
       >;
       attrs.href = definition.url;
