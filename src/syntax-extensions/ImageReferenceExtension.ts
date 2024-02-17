@@ -82,7 +82,7 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
       const attrs = context.ImageReferenceExtension.proseMirrorNodes[id]
         .attrs as Record<
         string,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Attrs can be any
         any
       >;
       attrs.src = definition.url;
