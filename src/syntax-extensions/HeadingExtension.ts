@@ -133,6 +133,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
         +1,
         false,
       ),
+      // eslint-disable-next-line @typescript-eslint/naming-convention -- This is a key
       "#": HeadingExtension.headingLevelCommandBuilder(
         proseMirrorSchema,
         +1,
