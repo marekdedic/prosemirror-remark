@@ -14,15 +14,15 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class BlockquoteExtension extends NodeExtension<Blockquote> {
-  public unistNodeName(): "blockquote" {
+  public override unistNodeName(): "blockquote" {
     return "blockquote";
   }
 
-  public proseMirrorNodeName(): string {
+  public override proseMirrorNodeName(): string {
     return "blockquote";
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
+  public override proseMirrorNodeSpec(): NodeSpec {
     return {
       content: "block+",
       group: "block",
@@ -33,7 +33,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     };
   }
 
-  public proseMirrorInputRules(
+  public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
@@ -44,7 +44,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     ];
   }
 
-  public proseMirrorKeymap(
+  public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     return {
@@ -52,7 +52,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     _node: Blockquote,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
@@ -64,7 +64,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     );
   }
 
-  public proseMirrorNodeToUnistNodes(
+  public override proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
     convertedChildren: Array<BlockContent | DefinitionContent>,
   ): Array<Blockquote> {

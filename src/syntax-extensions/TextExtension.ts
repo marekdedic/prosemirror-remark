@@ -10,28 +10,30 @@ import { NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class TextExtension extends NodeExtension<Text> {
-  public unistNodeName(): "text" {
+  public override unistNodeName(): "text" {
     return "text";
   }
 
-  public proseMirrorNodeName(): string {
+  public override proseMirrorNodeName(): string {
     return "text";
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
+  public override proseMirrorNodeSpec(): NodeSpec {
     return {
       group: "inline",
     };
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     node: Text,
     proseMirrorSchema: Schema<string, string>,
   ): Array<ProseMirrorNode> {
     return [proseMirrorSchema.text(node.value)];
   }
 
-  public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<Text> {
+  public override proseMirrorNodeToUnistNodes(
+    node: ProseMirrorNode,
+  ): Array<Text> {
     return [{ type: this.unistNodeName(), value: node.text ?? "" }];
   }
 }

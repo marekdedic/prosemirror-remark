@@ -28,7 +28,7 @@ import { UnorderedListExtension } from "./syntax-extensions/UnorderedListExtensi
  * @public
  */
 export class MarkdownExtension extends Extension {
-  public dependencies(): Array<Extension> {
+  public override dependencies(): Array<Extension> {
     return [
       // ParagraphExtension needs to be first so that it is the default block.
       new ParagraphExtension(),
@@ -53,7 +53,7 @@ export class MarkdownExtension extends Extension {
     ];
   }
 
-  public unifiedInitializationHook(
+  public override unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
   ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
     return processor.use(remarkParse).use(remarkStringify, {

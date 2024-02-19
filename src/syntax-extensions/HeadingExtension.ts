@@ -36,103 +36,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
     }
   }
 
-  public dependencies(): Array<Extension> {
-    return [new ParagraphExtension(), new TextExtension()];
-  }
-
-  public unistNodeName(): "heading" {
-    return "heading";
-  }
-
-  public proseMirrorNodeName(): string {
-    return "heading";
-  }
-
-  public proseMirrorNodeSpec(): NodeSpec {
-    return {
-      attrs: { level: { default: 1 } },
-      content: "text*",
-      group: "block",
-      defining: true,
-      parseDOM: [
-        { tag: "h1", attrs: { level: 1 } },
-        { tag: "h2", attrs: { level: 2 } },
-        { tag: "h3", attrs: { level: 3 } },
-        { tag: "h4", attrs: { level: 4 } },
-        { tag: "h5", attrs: { level: 5 } },
-        { tag: "h6", attrs: { level: 6 } },
-      ],
-      toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return ["h" + (node.attrs.level as number).toString(), 0];
-      },
-    };
-  }
-
-  public proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>,
-  ): Array<InputRule> {
-    return [
-      textblockTypeInputRule(
-        /^\s{0,3}(#{1,6})\s$/,
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-        (match) => ({ level: match[1].length }),
-      ),
-    ];
-  }
-
-  public proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>,
-  ): Record<string, Command> {
-    const keymap: Record<string, Command> = {
-      Tab: this.headingLevelCommandBuilder(proseMirrorSchema, +1, false),
-      "#": this.headingLevelCommandBuilder(proseMirrorSchema, +1, true),
-      "Shift-Tab": this.headingLevelCommandBuilder(
-        proseMirrorSchema,
-        -1,
-        false,
-      ),
-      Backspace: this.headingLevelCommandBuilder(proseMirrorSchema, -1, true),
-    };
-
-    for (let i = 1; i <= 6; i++) {
-      keymap[`Shift-Mod-${i}`] = setBlockType(
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-        { level: i },
-      );
-    }
-
-    return keymap;
-  }
-
-  public unistNodeToProseMirrorNodes(
-    node: Heading,
-    proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>,
-  ): Array<ProseMirrorNode> {
-    return createProseMirrorNode(
-      this.proseMirrorNodeName(),
-      proseMirrorSchema,
-      convertedChildren,
-      {
-        level: node.depth,
-      },
-    );
-  }
-
-  public proseMirrorNodeToUnistNodes(
-    node: ProseMirrorNode,
-    convertedChildren: Array<PhrasingContent>,
-  ): Array<Heading> {
-    return [
-      {
-        type: this.unistNodeName(),
-        depth: node.attrs.level as 1 | 2 | 3 | 4 | 5 | 6,
-        children: convertedChildren,
-      },
-    ];
-  }
-
-  private headingLevelCommandBuilder(
+  private static headingLevelCommandBuilder(
     proseMirrorSchema: Schema<string, string>,
     levelUpdate: -1 | 1,
     onlyAtStart: boolean,
@@ -174,5 +78,113 @@ export class HeadingExtension extends NodeExtension<Heading> {
       }
       return true;
     };
+  }
+
+  public override dependencies(): Array<Extension> {
+    return [new ParagraphExtension(), new TextExtension()];
+  }
+
+  public override unistNodeName(): "heading" {
+    return "heading";
+  }
+
+  public override proseMirrorNodeName(): string {
+    return "heading";
+  }
+
+  public override proseMirrorNodeSpec(): NodeSpec {
+    return {
+      attrs: { level: { default: 1 } },
+      content: "text*",
+      group: "block",
+      defining: true,
+      parseDOM: [
+        { tag: "h1", attrs: { level: 1 } },
+        { tag: "h2", attrs: { level: 2 } },
+        { tag: "h3", attrs: { level: 3 } },
+        { tag: "h4", attrs: { level: 4 } },
+        { tag: "h5", attrs: { level: 5 } },
+        { tag: "h6", attrs: { level: 6 } },
+      ],
+      toDOM(node: ProseMirrorNode): DOMOutputSpec {
+        return ["h" + (node.attrs.level as number).toString(), 0];
+      },
+    };
+  }
+
+  public override proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>,
+  ): Array<InputRule> {
+    return [
+      textblockTypeInputRule(
+        /^\s{0,3}(#{1,6})\s$/,
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
+        (match) => ({ level: match[1].length }),
+      ),
+    ];
+  }
+
+  public override proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>,
+  ): Record<string, Command> {
+    const keymap: Record<string, Command> = {
+      Tab: HeadingExtension.headingLevelCommandBuilder(
+        proseMirrorSchema,
+        +1,
+        false,
+      ),
+      "#": HeadingExtension.headingLevelCommandBuilder(
+        proseMirrorSchema,
+        +1,
+        true,
+      ),
+      "Shift-Tab": HeadingExtension.headingLevelCommandBuilder(
+        proseMirrorSchema,
+        -1,
+        false,
+      ),
+      Backspace: HeadingExtension.headingLevelCommandBuilder(
+        proseMirrorSchema,
+        -1,
+        true,
+      ),
+    };
+
+    for (let i = 1; i <= 6; i++) {
+      keymap[`Shift-Mod-${i}`] = setBlockType(
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
+        { level: i },
+      );
+    }
+
+    return keymap;
+  }
+
+  public override unistNodeToProseMirrorNodes(
+    node: Heading,
+    proseMirrorSchema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>,
+  ): Array<ProseMirrorNode> {
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      proseMirrorSchema,
+      convertedChildren,
+      {
+        level: node.depth,
+      },
+    );
+  }
+
+  public override proseMirrorNodeToUnistNodes(
+    node: ProseMirrorNode,
+    convertedChildren: Array<PhrasingContent>,
+  ): Array<Heading> {
+    return [
+      {
+        type: this.unistNodeName(),
+        depth: node.attrs.level as 1 | 2 | 3 | 4 | 5 | 6,
+        children: convertedChildren,
+      },
+    ];
   }
 }

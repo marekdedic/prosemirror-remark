@@ -5,7 +5,7 @@ import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
 export class ParserProviderExtension extends Extension {
-  public unifiedInitializationHook(
+  public override unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
   ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
     return processor.use(remarkParse).use(remarkStringify, {

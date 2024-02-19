@@ -13,15 +13,15 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class BreakExtension extends NodeExtension<Break> {
-  public unistNodeName(): "break" {
+  public override unistNodeName(): "break" {
     return "break";
   }
 
-  public proseMirrorNodeName(): string {
+  public override proseMirrorNodeName(): string {
     return "hard_break";
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
+  public override proseMirrorNodeSpec(): NodeSpec {
     return {
       inline: true,
       group: "inline",
@@ -33,7 +33,7 @@ export class BreakExtension extends NodeExtension<Break> {
     };
   }
 
-  public proseMirrorKeymap(
+  public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const command = chainCommands(exitCode, (state, dispatch) => {
@@ -61,7 +61,7 @@ export class BreakExtension extends NodeExtension<Break> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     _node: Break,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
@@ -73,7 +73,7 @@ export class BreakExtension extends NodeExtension<Break> {
     );
   }
 
-  public proseMirrorNodeToUnistNodes(): Array<Break> {
+  public override proseMirrorNodeToUnistNodes(): Array<Break> {
     return [{ type: this.unistNodeName() }];
   }
 }

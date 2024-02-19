@@ -15,15 +15,15 @@ export interface UnistParagraph extends UnistNode {
 }
 
 export class ParagraphExtension extends NodeExtension<UnistParagraph> {
-  public unistNodeName(): "paragraph" {
+  public override unistNodeName(): "paragraph" {
     return "paragraph";
   }
 
-  public proseMirrorNodeName(): string {
+  public override proseMirrorNodeName(): string {
     return "paragraph";
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
+  public override proseMirrorNodeSpec(): NodeSpec {
     return {
       content: "inline*",
       group: "block",
@@ -33,7 +33,7 @@ export class ParagraphExtension extends NodeExtension<UnistParagraph> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     _: UnistParagraph,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
@@ -45,7 +45,7 @@ export class ParagraphExtension extends NodeExtension<UnistParagraph> {
     );
   }
 
-  public proseMirrorNodeToUnistNodes(
+  public override proseMirrorNodeToUnistNodes(
     _: ProseMirrorNode,
     convertedChildren: Array<UnistNode>,
   ): Array<UnistParagraph> {
