@@ -16,21 +16,21 @@ interface UnistRoot<ChildUnistNode extends UnistNode> extends UnistNode {
 export class RootExtension<
   ChildUnistNode extends UnistNode,
 > extends NodeExtension<UnistRoot<ChildUnistNode>> {
-  public unistNodeName(): "root" {
+  public override unistNodeName(): "root" {
     return "root";
   }
 
-  public proseMirrorNodeName(): string {
+  public override proseMirrorNodeName(): string {
     return "doc";
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
+  public override proseMirrorNodeSpec(): NodeSpec {
     return {
       content: "block+",
     };
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     _: UnistRoot<ChildUnistNode>,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
@@ -42,7 +42,7 @@ export class RootExtension<
     );
   }
 
-  public proseMirrorNodeToUnistNodes(
+  public override proseMirrorNodeToUnistNodes(
     _: ProseMirrorNode,
     convertedChildren: Array<UnistNode>,
   ): Array<UnistRoot<ChildUnistNode>> {

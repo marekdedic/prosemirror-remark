@@ -63,19 +63,19 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     };
   }
 
-  public dependencies(): Array<Extension> {
+  public override dependencies(): Array<Extension> {
     return [new TextExtension()];
   }
 
-  public unistNodeName(): "code" {
+  public override unistNodeName(): "code" {
     return "code";
   }
 
-  public proseMirrorNodeName(): string {
+  public override proseMirrorNodeName(): string {
     return "code_block";
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
+  public override proseMirrorNodeSpec(): NodeSpec {
     return {
       content: "text*",
       group: "block",
@@ -89,7 +89,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     };
   }
 
-  public proseMirrorInputRules(
+  public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
@@ -104,7 +104,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     ];
   }
 
-  public proseMirrorKeymap(
+  public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     return {
@@ -115,7 +115,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     node: Code,
     proseMirrorSchema: Schema<string, string>,
   ): Array<ProseMirrorNode> {
@@ -126,7 +126,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     );
   }
 
-  public proseMirrorNodeToUnistNodes(
+  public override proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
     convertedChildren: Array<Text>,
   ): Array<Code> {

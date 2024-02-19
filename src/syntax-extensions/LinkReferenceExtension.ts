@@ -19,23 +19,23 @@ export interface LinkReferenceExtensionContext {
  * @public
  */
 export class LinkReferenceExtension extends MarkExtension<LinkReference> {
-  public dependencies(): Array<Extension> {
+  public override dependencies(): Array<Extension> {
     return [new DefinitionExtension(), new LinkExtension()];
   }
 
-  public unistNodeName(): "linkReference" {
+  public override unistNodeName(): "linkReference" {
     return "linkReference";
   }
 
-  public proseMirrorMarkName(): null {
+  public override proseMirrorMarkName(): null {
     return null;
   }
 
-  public proseMirrorMarkSpec(): null {
+  public override proseMirrorMarkSpec(): null {
     return null;
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     node: LinkReference,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
@@ -56,13 +56,13 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
     );
   }
 
-  public processConvertedUnistNode(
+  public override processConvertedUnistNode(
     convertedNode: LinkReference,
   ): LinkReference {
     return convertedNode;
   }
 
-  public postUnistToProseMirrorHook(
+  public override postUnistToProseMirrorHook(
     context: Partial<{
       DefinitionExtension: DefinitionExtensionContext;
       LinkReferenceExtension: LinkReferenceExtensionContext;

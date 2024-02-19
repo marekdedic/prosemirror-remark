@@ -11,15 +11,15 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class ParagraphExtension extends NodeExtension<Paragraph> {
-  public unistNodeName(): "paragraph" {
+  public override unistNodeName(): "paragraph" {
     return "paragraph";
   }
 
-  public proseMirrorNodeName(): string {
+  public override proseMirrorNodeName(): string {
     return "paragraph";
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
+  public override proseMirrorNodeSpec(): NodeSpec {
     return {
       content: "inline*",
       group: "block",
@@ -30,7 +30,7 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     _node: Paragraph,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
@@ -42,7 +42,7 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
     );
   }
 
-  public proseMirrorNodeToUnistNodes(
+  public override proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
     convertedChildren: Array<PhrasingContent>,
   ): Array<Paragraph> {

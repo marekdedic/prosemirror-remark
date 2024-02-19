@@ -19,23 +19,23 @@ export interface ImageReferenceExtensionContext {
  * @public
  */
 export class ImageReferenceExtension extends NodeExtension<ImageReference> {
-  public dependencies(): Array<Extension> {
+  public override dependencies(): Array<Extension> {
     return [new DefinitionExtension(), new ImageExtension()];
   }
 
-  public unistNodeName(): "imageReference" {
+  public override unistNodeName(): "imageReference" {
     return "imageReference";
   }
 
-  public proseMirrorNodeName(): null {
+  public override proseMirrorNodeName(): null {
     return null;
   }
 
-  public proseMirrorNodeSpec(): null {
+  public override proseMirrorNodeSpec(): null {
     return null;
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     node: ImageReference,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
@@ -58,11 +58,11 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
     return [proseMirrorNode];
   }
 
-  public proseMirrorNodeToUnistNodes(): Array<ImageReference> {
+  public override proseMirrorNodeToUnistNodes(): Array<ImageReference> {
     return [];
   }
 
-  public postUnistToProseMirrorHook(
+  public override postUnistToProseMirrorHook(
     context: Partial<{
       DefinitionExtension: DefinitionExtensionContext;
       ImageReferenceExtension: ImageReferenceExtensionContext;

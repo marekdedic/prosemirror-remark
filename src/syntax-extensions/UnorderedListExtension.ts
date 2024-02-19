@@ -21,25 +21,25 @@ import { ListItemExtension } from "./ListItemExtension";
  * @public
  */
 export class UnorderedListExtension extends NodeExtension<List> {
-  public dependencies(): Array<Extension> {
+  public override dependencies(): Array<Extension> {
     return [new ListItemExtension()];
   }
 
-  public unistNodeName(): "list" {
+  public override unistNodeName(): "list" {
     return "list";
   }
 
-  public unistToProseMirrorTest(node: UnistNode): boolean {
+  public override unistToProseMirrorTest(node: UnistNode): boolean {
     return (
       node.type === this.unistNodeName() && (node as List).ordered !== true
     );
   }
 
-  public proseMirrorNodeName(): string {
+  public override proseMirrorNodeName(): string {
     return "bullet_list";
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
+  public override proseMirrorNodeSpec(): NodeSpec {
     return {
       content: "list_item+",
       group: "block",
@@ -61,7 +61,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
     };
   }
 
-  public proseMirrorInputRules(
+  public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
@@ -72,7 +72,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
     ];
   }
 
-  public proseMirrorKeymap(
+  public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     return {
@@ -82,7 +82,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     node: List,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
@@ -97,7 +97,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
     );
   }
 
-  public proseMirrorNodeToUnistNodes(
+  public override proseMirrorNodeToUnistNodes(
     node: ProseMirrorNode,
     convertedChildren: Array<ListContent>,
   ): Array<List> {

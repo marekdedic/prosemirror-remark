@@ -17,15 +17,15 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class ListItemExtension extends NodeExtension<ListItem> {
-  public unistNodeName(): "listItem" {
+  public override unistNodeName(): "listItem" {
     return "listItem";
   }
 
-  public proseMirrorNodeName(): string {
+  public override proseMirrorNodeName(): string {
     return "list_item";
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
+  public override proseMirrorNodeSpec(): NodeSpec {
     return {
       content: "paragraph block*",
       defining: true,
@@ -36,7 +36,7 @@ export class ListItemExtension extends NodeExtension<ListItem> {
     };
   }
 
-  public proseMirrorKeymap(
+  public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
@@ -47,7 +47,7 @@ export class ListItemExtension extends NodeExtension<ListItem> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     _node: ListItem,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
@@ -59,7 +59,7 @@ export class ListItemExtension extends NodeExtension<ListItem> {
     );
   }
 
-  public proseMirrorNodeToUnistNodes(
+  public override proseMirrorNodeToUnistNodes(
     _node: ProseMirrorNode,
     convertedChildren: Array<BlockContent | DefinitionContent>,
   ): Array<ListItem> {

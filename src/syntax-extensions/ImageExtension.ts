@@ -17,19 +17,19 @@ import { ParagraphExtension } from "./ParagraphExtension";
  * @public
  */
 export class ImageExtension extends NodeExtension<Image> {
-  public dependencies(): Array<Extension> {
+  public override dependencies(): Array<Extension> {
     return [new ParagraphExtension()];
   }
 
-  public unistNodeName(): "image" {
+  public override unistNodeName(): "image" {
     return "image";
   }
 
-  public proseMirrorNodeName(): string {
+  public override proseMirrorNodeName(): string {
     return "image";
   }
 
-  public proseMirrorNodeSpec(): NodeSpec {
+  public override proseMirrorNodeSpec(): NodeSpec {
     return {
       inline: true,
       attrs: {
@@ -61,7 +61,7 @@ export class ImageExtension extends NodeExtension<Image> {
     };
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     node: Image,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
@@ -78,7 +78,9 @@ export class ImageExtension extends NodeExtension<Image> {
     );
   }
 
-  public proseMirrorNodeToUnistNodes(node: ProseMirrorNode): Array<Image> {
+  public override proseMirrorNodeToUnistNodes(
+    node: ProseMirrorNode,
+  ): Array<Image> {
     return [
       {
         type: this.unistNodeName(),

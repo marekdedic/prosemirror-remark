@@ -16,19 +16,19 @@ export interface DefinitionExtensionContext {
  * @public
  */
 export class DefinitionExtension extends NodeExtension<Definition> {
-  public unistNodeName(): "definition" {
+  public override unistNodeName(): "definition" {
     return "definition";
   }
 
-  public proseMirrorNodeName(): null {
+  public override proseMirrorNodeName(): null {
     return null;
   }
 
-  public proseMirrorNodeSpec(): null {
+  public override proseMirrorNodeSpec(): null {
     return null;
   }
 
-  public unistNodeToProseMirrorNodes(
+  public override unistNodeToProseMirrorNodes(
     node: Definition,
     _proseMirrorSchema: Schema<string, string>,
     _convertedChildren: Array<ProseMirrorNode>,
@@ -46,7 +46,7 @@ export class DefinitionExtension extends NodeExtension<Definition> {
     return [];
   }
 
-  public proseMirrorNodeToUnistNodes(): Array<Definition> {
+  public override proseMirrorNodeToUnistNodes(): Array<Definition> {
     return [];
   }
 }
