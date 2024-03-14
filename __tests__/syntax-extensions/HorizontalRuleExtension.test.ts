@@ -21,6 +21,39 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
     (schema) => schema.nodes.horizontal_rule.createAndFill()!,
     [{ type: "thematicBreak" }],
   )
+  .shouldSupportKeymap(
+    () => [],
+    "start",
+    "Mod-_",
+    (schema) => [schema.nodes.horizontal_rule.createAndFill()!],
+    "---",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("abcdef")])!,
+    ],
+    4,
+    "Mod-_",
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("abc")])!,
+      schema.nodes.horizontal_rule.createAndFill()!,
+      schema.nodes.paragraph.createAndFill({}, [schema.text("def")])!,
+    ],
+    "abc\n\n---\n\ndef",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("abcdef")])!,
+    ],
+    { from: 3, to: 5 },
+    "Mod-_",
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("ab")])!,
+      schema.nodes.horizontal_rule.createAndFill()!,
+      schema.nodes.paragraph.createAndFill({}, [schema.text("ef")])!,
+    ],
+    "ab\n\n---\n\nef",
+  )
   .shouldMatchInputRule(
     "***\n",
     (schema) => [
