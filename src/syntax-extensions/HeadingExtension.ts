@@ -152,7 +152,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
     };
 
     for (let i = 1; i <= 6; i++) {
-      keymap[`Shift-Mod-${i}`] = setBlockType(
+      keymap[`Shift-Mod-${i.toString()}`] = setBlockType(
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
         { level: i },
       );
