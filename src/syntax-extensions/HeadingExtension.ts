@@ -52,15 +52,16 @@ export class HeadingExtension extends NodeExtension<Heading> {
         return false;
       }
 
+      const newHeadingLevel = (headingNode.attrs.level as number) + levelUpdate;
+
+      if (newHeadingLevel < 0 || newHeadingLevel > 6) {
+        return false;
+      }
       if (dispatch === undefined) {
         return true;
       }
 
       const headingPosition = $anchor.before($anchor.depth);
-      const newHeadingLevel = Math.min(
-        6,
-        Math.max(0, (headingNode.attrs.level as number) + levelUpdate),
-      );
 
       if (newHeadingLevel > 0) {
         dispatch(
