@@ -124,7 +124,6 @@ export class HeadingExtension extends NodeExtension<Heading> {
     ];
   }
 
-  // TODO: Test
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
