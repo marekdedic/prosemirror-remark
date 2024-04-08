@@ -179,8 +179,8 @@
       "rules": {
         "@typescript-eslint/unbound-method": "off",
         "jest/consistent-test-it": ["error", { "withinDescribe": "test" }],
+        "jest/no-conditional-in-test": "error",
         "jest/no-duplicate-hooks": "error",
-        "jest/no-if": "error",
         "jest/no-test-return-statement": "error",
         "jest/prefer-called-with": "error",
         "jest/prefer-expect-assertions": [
