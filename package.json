@@ -26,6 +26,7 @@
     "LICENSE",
     "README.md"
   ],
+  "type": "module",
   "scripts": {
     "clean": "rimraf dist/*",
     "prebuild": "npm run clean",
