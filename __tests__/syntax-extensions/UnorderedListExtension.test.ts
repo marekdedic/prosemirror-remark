@@ -307,24 +307,24 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* Hello World!",
   )
-  /* TODO
+  /* TODO: Enable when jest-prosemirror supports input rules with Enter
   .shouldMatchInputRule(
     "* Hello World!\n\n\n* Second item",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
-        schema.nodes["list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [
             schema.text("Second line"),
           ])!,
         ])!,
       ])!,
     ],
-    "* Hello World!\n2. Second item"
+    "* Hello World!\n2. Second item",
   )
   */
   .shouldSupportKeymap(
