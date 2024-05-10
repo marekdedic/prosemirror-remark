@@ -36,7 +36,6 @@ export class ListItemExtension extends NodeExtension<ListItem> {
     };
   }
 
-  // TODO: Test
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
