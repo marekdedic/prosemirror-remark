@@ -307,7 +307,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* Hello World!",
   )
-  /*
+  /* TODO
   .shouldMatchInputRule(
     "* Hello World!\n\n\n* Second item",
     (schema) => [

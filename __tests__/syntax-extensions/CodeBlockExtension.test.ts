@@ -64,7 +64,7 @@ new NodeExtensionTester(new CodeBlockExtension(), {
       schema.nodes.code_block.createAndFill({}, [schema.text("Hello World!")])!,
     [{ type: "code", value: "Hello World!" }],
   )
-  /*
+  /* TODO
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.nodes["code_block"].createAndFill({ lang: "ts" }, [
