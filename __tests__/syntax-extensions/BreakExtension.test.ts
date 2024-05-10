@@ -18,4 +18,21 @@ new NodeExtensionTester(new BreakExtension(), {
     (schema) => schema.nodes.hard_break.createAndFill()!,
     [{ type: "break" }],
   )
+  /* TODO: Re-enable once jest-prosemirror supports keymaps with Enter
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+    ],
+    3,
+    "Mod-Enter",
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [
+        schema.text("He"),
+        schema.nodes.hard_break.createAndFill()!,
+        schema.text("llo"),
+      ])!,
+    ],
+    "He\\\nllo",
+  )
+  */
   .test();

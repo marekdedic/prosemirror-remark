@@ -33,7 +33,6 @@ export class BreakExtension extends NodeExtension<Break> {
     };
   }
 
-  // TODO: Test
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
