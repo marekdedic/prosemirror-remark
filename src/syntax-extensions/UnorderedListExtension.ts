@@ -72,7 +72,6 @@ export class UnorderedListExtension extends NodeExtension<List> {
     ];
   }
 
-  // TODO: Test
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {

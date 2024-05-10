@@ -327,4 +327,19 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "* Hello World!\n2. Second item"
   )
   */
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+    ],
+    3,
+    "Shift-Mod-8",
+    (schema) => [
+      schema.nodes.bullet_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+      ])!,
+    ],
+    "* Hello",
+  )
   .test();
