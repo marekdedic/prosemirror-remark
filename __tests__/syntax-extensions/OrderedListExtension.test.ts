@@ -346,20 +346,20 @@ new NodeExtensionTester(new OrderedListExtension(), {
   .shouldMatchInputRule(
     "1. Hello World!\n\n\n2. Second item",
     (schema) => [
-      schema.nodes["ordered_list"].createAndFill({}, [
-        schema.nodes["list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
+      schema.nodes.ordered_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
-        schema.nodes["list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [
             schema.text("Second line"),
           ])!,
         ])!,
       ])!,
     ],
-    "1. Hello World!\n2. Second item"
+    "1. Hello World!\n2. Second item",
   )
   */
   .shouldSupportKeymap(
