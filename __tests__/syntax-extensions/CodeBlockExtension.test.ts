@@ -64,7 +64,7 @@ new NodeExtensionTester(new CodeBlockExtension(), {
       schema.nodes.code_block.createAndFill({}, [schema.text("Hello World!")])!,
     [{ type: "code", value: "Hello World!" }],
   )
-  /*
+  /* TODO
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.nodes["code_block"].createAndFill({ lang: "ts" }, [
@@ -116,4 +116,75 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     ],
     "```\nHello World!\n```",
   )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+    ],
+    3,
+    "Shift-Mod-\\",
+    (schema) => [
+      schema.nodes.code_block.createAndFill({}, [schema.text("Hello")])!,
+    ],
+    "```\nHello\n```",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+    ],
+    3,
+    "Shift-Mod-\\",
+    (schema) => [
+      schema.nodes.code_block.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+    ],
+    "```\nHello\n```\n\nWorld",
+  )
+  /* TODO: Enable once jest-prosemirror supports keymaps with Enter
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.code_block.createAndFill({}, [schema.text("Hello")])!,
+    ],
+    3,
+    "Enter",
+    (schema) => [
+      schema.nodes.code_block.createAndFill({}, [schema.text("Hel\nlo")])!,
+    ],
+    "```\nHel\nlo\n```",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.code_block.createAndFill({}, [schema.text("Hello")])!,
+    ],
+    5,
+    "Enter",
+    (schema) => [
+      schema.nodes.code_block.createAndFill({}, [schema.text("Hello\n")])!,
+    ],
+    "```\nHello\n\n```",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.code_block.createAndFill({}, [schema.text("Hello\n")])!,
+    ],
+    5,
+    "Enter",
+    (schema) => [
+      schema.nodes.code_block.createAndFill({}, [schema.text("Hello\n\n")])!,
+    ],
+    "```\nHello\n\n\n```",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.code_block.createAndFill({}, [schema.text("Hello\n\n")])!,
+    ],
+    5,
+    "Enter",
+    (schema) => [
+      schema.nodes.code_block.createAndFill({}, [schema.text("Hello\n\n")])!,
+      schema.nodes.paragraph.createAndFill({}, [])!,
+    ],
+    "```\nHello\n\n\n```\n",
+  )
+  */
   .test();

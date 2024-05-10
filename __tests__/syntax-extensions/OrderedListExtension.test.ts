@@ -342,7 +342,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
     "42. Hello World!",
   )
-  /*
+  /* TODO
   .shouldMatchInputRule(
     "1. Hello World!\n\n\n2. Second item",
     (schema) => [
@@ -360,6 +360,126 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ])!,
     ],
     "1. Hello World!\n2. Second item"
+  )
+  */
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+    ],
+    3,
+    "Shift-Mod-9",
+    (schema) => [
+      schema.nodes.ordered_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+      ])!,
+    ],
+    "1. Hello",
+  )
+  /* TODO: Re-enable when jest-prosemirror can handle keymaps with Enter
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.ordered_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+      ])!,
+    ],
+    3,
+    "Enter",
+    (schema) => [
+      schema.nodes.ordered_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hel")])!,
+        ])!,
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("lo")])!,
+        ])!,
+      ])!,
+    ],
+    "1. Hel\n2. lo",
+  )
+  */
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.ordered_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        ])!,
+      ])!,
+    ],
+    3,
+    "Tab",
+    (schema) => [
+      schema.nodes.ordered_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        ])!,
+      ])!,
+    ],
+    "1. Hello\n2. World",
+  )
+  /* TODO: Re-enable once jest-prosemirror can handle keymaps with Tab
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.ordered_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        ])!,
+      ])!,
+    ],
+    10,
+    "Tab",
+    (schema) => [
+      schema.nodes.ordered_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+          schema.nodes.ordered_list.createAndFill({}, [
+            schema.nodes.list_item.createAndFill({}, [
+              schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+            ])!,
+          ])!,
+        ])!,
+      ])!,
+    ],
+    "1. Hello\n    1. World",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes.ordered_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+          schema.nodes.ordered_list.createAndFill({}, [
+            schema.nodes.list_item.createAndFill({}, [
+              schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+            ])!,
+          ])!,
+        ])!,
+      ])!,
+    ],
+    10,
+    "Shift-Tab",
+    (schema) => [
+      schema.nodes.ordered_list.createAndFill({}, [
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+        ])!,
+        schema.nodes.list_item.createAndFill({}, [
+          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        ])!,
+      ])!,
+    ],
+    "1. Hello\n2. World",
   )
   */
   .test();

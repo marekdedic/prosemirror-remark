@@ -19,7 +19,7 @@
   "transformIgnorePatterns": [
     "node_modules/(?!prosemirror-unified)/"
   ],
-  "setupFilesAfterEnv": ["jest-prosemirror/environment"],
+  "setupFilesAfterEnv": ["jest-prosemirror/environment", "<rootDir>/__tests__/setupAfterEnv.ts"],
   "moduleNameMapper": {
     "prosemirror-unified": "<rootDir>/node_modules/prosemirror-unified/dist/prosemirror-unified.js"
   },
