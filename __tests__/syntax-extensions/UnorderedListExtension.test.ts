@@ -307,7 +307,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* Hello World!",
   )
-  /* TODO
+  /* TODO: Enable when jest-prosemirror supports input rules with Enter
   .shouldMatchInputRule(
     "* Hello World!\n\n\n* Second item",
     (schema) => [
