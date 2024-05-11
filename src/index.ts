@@ -8,6 +8,7 @@ export {
   DefinitionExtension,
   type DefinitionExtensionContext,
 } from "./syntax-extensions/DefinitionExtension";
+export { ExtendedAutolinkExtension } from "./syntax-extensions/ExtendedAutolinkExtension";
 export { HeadingExtension } from "./syntax-extensions/HeadingExtension";
 export { HorizontalRuleExtension } from "./syntax-extensions/HorizontalRuleExtension";
 export { ImageExtension } from "./syntax-extensions/ImageExtension";
