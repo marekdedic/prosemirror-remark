@@ -12,6 +12,7 @@ import {
 } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
+import type { Node as UnistNode } from "unist";
 
 /**
  * @public
@@ -22,18 +23,26 @@ export class ListItemExtension extends NodeExtension<ListItem> {
   }
 
   public override proseMirrorNodeName(): string {
-    return "list_item";
+    return "regular_list_item";
   }
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
       content: "paragraph block*",
       defining: true,
+      group: "list_item",
       parseDOM: [{ tag: "li" }],
       toDOM(): DOMOutputSpec {
         return ["li", 0];
       },
     };
+  }
+
+  public unistToProseMirrorTest(node: UnistNode): boolean {
+    return (
+      node.type === this.unistNodeName() &&
+      (!("checked" in node) || typeof node.checked !== "boolean")
+    );
   }
 
   public override proseMirrorKeymap(

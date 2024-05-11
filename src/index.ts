@@ -1,3 +1,4 @@
+export { GFMExtension } from "./GFMExtension";
 export { MarkdownExtension } from "./MarkdownExtension";
 export { BlockquoteExtension } from "./syntax-extensions/BlockquoteExtension";
 export { BoldExtension } from "./syntax-extensions/BoldExtension";
@@ -7,6 +8,7 @@ export {
   DefinitionExtension,
   type DefinitionExtensionContext,
 } from "./syntax-extensions/DefinitionExtension";
+export { ExtendedAutolinkExtension } from "./syntax-extensions/ExtendedAutolinkExtension";
 export { HeadingExtension } from "./syntax-extensions/HeadingExtension";
 export { HorizontalRuleExtension } from "./syntax-extensions/HorizontalRuleExtension";
 export { ImageExtension } from "./syntax-extensions/ImageExtension";
@@ -25,5 +27,7 @@ export { ListItemExtension } from "./syntax-extensions/ListItemExtension";
 export { OrderedListExtension } from "./syntax-extensions/OrderedListExtension";
 export { ParagraphExtension } from "./syntax-extensions/ParagraphExtension";
 export { RootExtension } from "./syntax-extensions/RootExtension";
+export { StrikethroughExtension } from "./syntax-extensions/StrikethroughExtension";
+export { TaskListItemExtension } from "./syntax-extensions/TaskListItemExtension";
 export { TextExtension } from "./syntax-extensions/TextExtension";
 export { UnorderedListExtension } from "./syntax-extensions/UnorderedListExtension";

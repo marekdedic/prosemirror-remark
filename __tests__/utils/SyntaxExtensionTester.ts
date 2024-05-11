@@ -40,7 +40,7 @@ export class SyntaxExtensionTester<
   }>;
 
   private readonly unistNodeConversions: Array<{
-    source: UNode;
+    source: UnistNode;
     target: Array<ProseMirrorNode>;
     injectNodes: Array<UnistNode>;
   }>;
@@ -91,7 +91,7 @@ export class SyntaxExtensionTester<
   }
 
   public shouldConvertUnistNode(
-    source: UNode,
+    source: UnistNode | UNode,
     target: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
     injectNodes: Array<UnistNode> = [],
   ): this {
