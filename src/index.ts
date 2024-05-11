@@ -1,3 +1,4 @@
+export { GFMExtension } from "./GFMExtension";
 export { MarkdownExtension } from "./MarkdownExtension";
 export { BlockquoteExtension } from "./syntax-extensions/BlockquoteExtension";
 export { BoldExtension } from "./syntax-extensions/BoldExtension";
