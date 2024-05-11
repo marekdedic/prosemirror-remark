@@ -69,3 +69,13 @@ If you want finer-grained control over how Markdown is processed and viewed, ins
 - `UnorderedListExtension` provides support for `- unordered lists`
 
 Additionaly, you can also augment prosemirror-remark by creating your own extensions - see the [prosemirror-unified documentation](https://github.com/marekdedic/prosemirror-unified/#creating-your-own-extensions) for more details
+
+## GitHub flavored markdown
+
+On top of the standard CommonMark version of markdown, prosemirror-remark can also be used to add support for GitHub flavored markdown (GFM). In order to do this, simply replace `MarkdownExtension` with `GFMExtension`. `GFMExtension` automatically includes standard markdown, as well as the following extensions (which can also be added manually one-by-one):
+
+- `ExtendedLinkExtension` provides support for automatic conversions of addresses starting with `www.` to links.
+- `StrikethroughExtension` provides support for `~~text with strikethrough~~`
+- `TaskListItemExtension` provides support for `- [ ] Task list items`
+
+Note that tables are currently not supported.
