@@ -14,14 +14,11 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v4.1.4
 
-      - name: "Cache NPM dependencies"
-        uses: actions/cache@v4.0.2
+      - name: "Set up Node.js"
+        uses: actions/setup-node@v4.0.2
         with:
-          path: "~/.npm"
-          key: npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-${{ hashFiles('package.json') }}
-          restore-keys: |
-            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-${{ hashFiles('package.json') }}
-            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-
+          node-version: latest
+          cache: npm
 
       - name: "Install NPM dependencies"
         run: |
@@ -38,14 +35,11 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v4.1.4
 
-      - name: "Cache NPM dependencies"
-        uses: actions/cache@v4.0.2
+      - name: "Set up Node.js"
+        uses: actions/setup-node@v4.0.2
         with:
-          path: "~/.npm"
-          key: npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-${{ hashFiles('package.json') }}
-          restore-keys: |
-            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-${{ hashFiles('package.json') }}
-            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-
+          node-version: latest
+          cache: npm
 
       - name: "Install NPM dependencies"
         run: |
@@ -62,14 +56,11 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v4.1.4
 
-      - name: "Cache NPM dependencies"
-        uses: actions/cache@v4.0.2
+      - name: "Set up Node.js"
+        uses: actions/setup-node@v4.0.2
         with:
-          path: "~/.npm"
-          key: npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-${{ hashFiles('package.json') }}
-          restore-keys: |
-            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-${{ hashFiles('package.json') }}
-            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-
+          node-version: latest
+          cache: npm
 
       - name: "Install NPM dependencies"
         run: |
