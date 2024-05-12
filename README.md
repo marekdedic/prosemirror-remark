@@ -68,7 +68,7 @@ If you want finer-grained control over how Markdown is processed and viewed, ins
 - `TextExtension` provides support for text. You **need** to include this.
 - `UnorderedListExtension` provides support for `- unordered lists`
 
-Additionaly, you can also augment prosemirror-remark by creating your own extensions - see the [prosemirror-unified documentation](https://github.com/marekdedic/prosemirror-unified/#creating-your-own-extensions) for more details
+Additionally, you can also augment prosemirror-remark by creating your own extensions - see the [prosemirror-unified documentation](https://github.com/marekdedic/prosemirror-unified/#creating-your-own-extensions) for more details
 
 ## GitHub flavored markdown
 
