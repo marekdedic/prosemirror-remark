@@ -33,7 +33,7 @@
     "build:webpack": "webpack",
     "build:api-extractor": "api-extractor run",
     "build": "npm run build:webpack && npm run build:api-extractor",
-    "lint": "eslint --color 'src/**/*.ts' '__tests__/**/*.ts' 'webpack.config.js'",
+    "lint": "eslint --color 'src/**/*.ts' '__tests__/**/*.ts' '*.config.{js,ts}'",
     "test": "jest"
   },
   "dependencies": {
