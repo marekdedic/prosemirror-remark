@@ -15,7 +15,7 @@
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:eslint-comments/recommended",
+    "plugin:@eslint-community/eslint-comments/recommended",
     "plugin:@typescript-eslint/strict-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
     "plugin:prettier/recommended"
@@ -26,13 +26,6 @@
     "no-warning-comments": "warn",
     "strict": ["error", "never"],
     "deprecation/deprecation": "warn",
-    "eslint-comments/no-unused-disable": "error",
-    "eslint-comments/require-description": [
-      "error",
-      {
-        "ignore": ["eslint-env"]
-      }
-    ],
     "prefer-arrow-functions/prefer-arrow-functions": [
       "error",
       {
@@ -41,6 +34,13 @@
     ],
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
+    "@eslint-community/eslint-comments/no-unused-disable": "error",
+    "@eslint-community/eslint-comments/require-description": [
+      "error",
+      {
+        "ignore": ["eslint-env"]
+      }
+    ],
     "@typescript-eslint/array-type": ["error", { "default": "generic" }],
     "@typescript-eslint/class-methods-use-this": [
       "error",
