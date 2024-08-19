@@ -28,7 +28,7 @@
   ],
   "type": "module",
   "scripts": {
-    "clean": "rimraf dist/*",
+    "clean": "rimraf dist/* types/*",
     "prebuild": "npm run clean",
     "build:webpack": "webpack",
     "build:api-extractor": "api-extractor run",
