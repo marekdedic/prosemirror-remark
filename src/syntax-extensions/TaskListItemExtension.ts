@@ -85,9 +85,8 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     }
     if (view !== undefined) {
       return view.endOfTextblock("backward", state);
-    } else {
-      return state.selection.$anchor.parentOffset > 0;
     }
+    return state.selection.$anchor.parentOffset > 0;
   }
 
   public override unifiedInitializationHook(
