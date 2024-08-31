@@ -4,6 +4,16 @@ export default {
   collectCoverageFrom: ["src/**/*", "!src/index.ts"],
   coverageDirectory: "coverage",
   coverageProvider: "babel",
+  moduleNameMapper: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention -- The key is a module name
+    "prosemirror-unified":
+      "<rootDir>/node_modules/prosemirror-unified/dist/prosemirror-unified.js",
+  },
+  resetMocks: true,
+  setupFilesAfterEnv: [
+    "jest-prosemirror/environment",
+    "<rootDir>/__tests__/setupAfterEnv.ts",
+  ],
   testEnvironment: "jsdom",
   testMatch: ["<rootDir>/__tests__/**/*.test.ts"],
   transform: {
@@ -16,14 +26,4 @@ export default {
     ],
   },
   transformIgnorePatterns: ["node_modules/(?!prosemirror-unified)/"],
-  setupFilesAfterEnv: [
-    "jest-prosemirror/environment",
-    "<rootDir>/__tests__/setupAfterEnv.ts",
-  ],
-  moduleNameMapper: {
-    // eslint-disable-next-line @typescript-eslint/naming-convention -- The key is a module name
-    "prosemirror-unified":
-      "<rootDir>/node_modules/prosemirror-unified/dist/prosemirror-unified.js",
-  },
-  resetMocks: true,
 };

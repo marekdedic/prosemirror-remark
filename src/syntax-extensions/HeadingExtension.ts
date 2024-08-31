@@ -101,15 +101,15 @@ export class HeadingExtension extends NodeExtension<Heading> {
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const keymap: Record<string, Command> = {
-      Tab: HeadingExtension.headingLevelCommandBuilder(
-        proseMirrorSchema,
-        +1,
-        false,
-      ),
       // eslint-disable-next-line @typescript-eslint/naming-convention -- This is a key
       "#": HeadingExtension.headingLevelCommandBuilder(
         proseMirrorSchema,
         +1,
+        true,
+      ),
+      Backspace: HeadingExtension.headingLevelCommandBuilder(
+        proseMirrorSchema,
+        -1,
         true,
       ),
       "Shift-Tab": HeadingExtension.headingLevelCommandBuilder(
@@ -117,10 +117,10 @@ export class HeadingExtension extends NodeExtension<Heading> {
         -1,
         false,
       ),
-      Backspace: HeadingExtension.headingLevelCommandBuilder(
+      Tab: HeadingExtension.headingLevelCommandBuilder(
         proseMirrorSchema,
-        -1,
-        true,
+        +1,
+        false,
       ),
     };
 
@@ -141,15 +141,15 @@ export class HeadingExtension extends NodeExtension<Heading> {
     return {
       attrs: { level: { default: 1 } },
       content: "text*",
-      group: "block",
       defining: true,
+      group: "block",
       parseDOM: [
-        { tag: "h1", attrs: { level: 1 } },
-        { tag: "h2", attrs: { level: 2 } },
-        { tag: "h3", attrs: { level: 3 } },
-        { tag: "h4", attrs: { level: 4 } },
-        { tag: "h5", attrs: { level: 5 } },
-        { tag: "h6", attrs: { level: 6 } },
+        { attrs: { level: 1 }, tag: "h1" },
+        { attrs: { level: 2 }, tag: "h2" },
+        { attrs: { level: 3 }, tag: "h3" },
+        { attrs: { level: 4 }, tag: "h4" },
+        { attrs: { level: 5 }, tag: "h5" },
+        { attrs: { level: 6 }, tag: "h6" },
       ],
       toDOM(node: ProseMirrorNode): DOMOutputSpec {
         return [`h${(node.attrs.level as number).toString()}`, 0];
@@ -163,9 +163,9 @@ export class HeadingExtension extends NodeExtension<Heading> {
   ): Array<Heading> {
     return [
       {
-        type: this.unistNodeName(),
-        depth: node.attrs.level as 1 | 2 | 3 | 4 | 5 | 6,
         children: convertedChildren,
+        depth: node.attrs.level as 1 | 2 | 3 | 4 | 5 | 6,
+        type: this.unistNodeName(),
       },
     ];
   }

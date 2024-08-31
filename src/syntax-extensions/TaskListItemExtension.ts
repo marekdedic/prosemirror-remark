@@ -147,13 +147,12 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
+      attrs: { checked: { default: false } },
       content: "paragraph block*",
       defining: true,
       group: "list_item",
-      attrs: { checked: { default: false } },
       parseDOM: [
         {
-          tag: "li",
           getAttrs(dom: Node | string): false | { checked: boolean } {
             const checkbox = (dom as HTMLElement).firstChild;
             if (!(checkbox instanceof HTMLInputElement)) {
@@ -161,6 +160,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
             }
             return { checked: checkbox.checked };
           },
+          tag: "li",
         },
       ],
       toDOM(node: ProseMirrorNode): DOMOutputSpec {
@@ -176,11 +176,11 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
             [
               "input",
               {
-                type: "checkbox",
                 checked: (node.attrs.checked as boolean)
                   ? "checked"
                   : undefined,
                 disabled: "disabled",
+                type: "checkbox",
               },
             ],
           ],
@@ -196,9 +196,9 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   ): Array<ListItem> {
     return [
       {
-        type: this.unistNodeName(),
         checked: node.attrs.checked as boolean,
         children: convertedChildren,
+        type: this.unistNodeName(),
       },
     ];
   }

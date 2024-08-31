@@ -23,7 +23,7 @@ export class RootExtension extends NodeExtension<Root> {
     _node: ProseMirrorNode,
     convertedChildren: Array<RootContent>,
   ): Array<Root> {
-    return [{ type: this.unistNodeName(), children: convertedChildren }];
+    return [{ children: convertedChildren, type: this.unistNodeName() }];
   }
 
   public override unistNodeName(): "root" {

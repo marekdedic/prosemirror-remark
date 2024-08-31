@@ -79,7 +79,7 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
     }>,
   ): Array<ProseMirrorNode> {
     const proseMirrorNode = proseMirrorSchema.nodes.image.createAndFill(
-      { src: "", alt: node.alt, title: node.label },
+      { alt: node.alt, src: "", title: node.label },
       convertedChildren,
     );
     if (proseMirrorNode === null) {

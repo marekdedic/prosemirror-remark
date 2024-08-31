@@ -56,9 +56,9 @@ export class OrderedListExtension extends NodeExtension<List> {
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
+      attrs: { spread: { default: false }, start: { default: 1 } },
       content: "list_item+",
       group: "block",
-      attrs: { spread: { default: false }, start: { default: 1 } },
       parseDOM: [
         {
           getAttrs(dom: Node | string): { spread: boolean; start: number } {
@@ -92,14 +92,14 @@ export class OrderedListExtension extends NodeExtension<List> {
     const spread = node.attrs.spread as boolean;
     return [
       {
-        type: this.unistNodeName(),
-        ordered: true,
-        spread,
-        start: node.attrs.start as number,
         children: convertedChildren.map((child) => {
           child.spread = spread;
           return child;
         }),
+        ordered: true,
+        spread,
+        start: node.attrs.start as number,
+        type: this.unistNodeName(),
       },
     ];
   }

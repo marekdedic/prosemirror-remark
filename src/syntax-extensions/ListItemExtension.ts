@@ -52,8 +52,8 @@ export class ListItemExtension extends NodeExtension<ListItem> {
   ): Array<ListItem> {
     return [
       {
-        type: this.unistNodeName(),
         children: convertedChildren,
+        type: this.unistNodeName(),
       },
     ];
   }

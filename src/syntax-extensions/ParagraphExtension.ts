@@ -31,7 +31,7 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
     _node: ProseMirrorNode,
     convertedChildren: Array<PhrasingContent>,
   ): Array<Paragraph> {
-    return [{ type: this.unistNodeName(), children: convertedChildren }];
+    return [{ children: convertedChildren, type: this.unistNodeName() }];
   }
 
   public override unistNodeName(): "paragraph" {

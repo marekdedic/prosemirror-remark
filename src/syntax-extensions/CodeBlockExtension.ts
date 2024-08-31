@@ -87,10 +87,10 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     return {
+      Enter: CodeBlockExtension.liftOutOfCodeBlock(),
       "Shift-Mod-\\": setBlockType(
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
-      Enter: CodeBlockExtension.liftOutOfCodeBlock(),
     };
   }
 
@@ -100,12 +100,12 @@ export class CodeBlockExtension extends NodeExtension<Code> {
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
-      content: "text*",
-      group: "block",
       code: true,
+      content: "text*",
       defining: true,
+      group: "block",
       marks: "",
-      parseDOM: [{ tag: "pre", preserveWhitespace: "full" }],
+      parseDOM: [{ preserveWhitespace: "full", tag: "pre" }],
       toDOM(): DOMOutputSpec {
         return ["pre", ["code", 0]];
       },

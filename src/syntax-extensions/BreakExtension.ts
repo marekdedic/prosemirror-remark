@@ -48,10 +48,10 @@ export class BreakExtension extends NodeExtension<Break> {
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
-      inline: true,
       group: "inline",
-      selectable: false,
+      inline: true,
       parseDOM: [{ tag: "br" }],
+      selectable: false,
       toDOM(): DOMOutputSpec {
         return ["br"];
       },

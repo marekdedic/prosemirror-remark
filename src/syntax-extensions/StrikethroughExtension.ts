@@ -25,7 +25,7 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
   public override processConvertedUnistNode(
     convertedNode: Emphasis | Text,
   ): Delete {
-    return { type: this.unistNodeName(), children: [convertedNode] };
+    return { children: [convertedNode], type: this.unistNodeName() };
   }
 
   public override proseMirrorInputRules(
@@ -53,9 +53,9 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
         { tag: "s" },
         { tag: "del" },
         {
-          style: "text-decoration",
           getAttrs: (value) =>
             /(^|[\s])line-through([\s]|$)/u.test(value) && null,
+          style: "text-decoration",
         },
       ],
       toDOM(): DOMOutputSpec {

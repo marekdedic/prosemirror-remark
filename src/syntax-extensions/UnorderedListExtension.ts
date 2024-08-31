@@ -53,9 +53,9 @@ export class UnorderedListExtension extends NodeExtension<List> {
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
+      attrs: { spread: { default: false } },
       content: "list_item+",
       group: "block",
-      attrs: { spread: { default: false } },
       parseDOM: [
         {
           getAttrs(dom: Node | string): { spread: boolean } {
@@ -80,13 +80,13 @@ export class UnorderedListExtension extends NodeExtension<List> {
     const spread = node.attrs.spread as boolean;
     return [
       {
-        type: this.unistNodeName(),
-        ordered: false,
-        spread,
         children: convertedChildren.map((child) => {
           child.spread = spread;
           return child;
         }),
+        ordered: false,
+        spread,
+        type: this.unistNodeName(),
       },
     ];
   }

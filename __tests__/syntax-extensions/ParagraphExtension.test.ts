@@ -5,17 +5,17 @@ new NodeExtensionTester(new ParagraphExtension(), {
   proseMirrorNodeName: "paragraph",
   unistNodeName: "paragraph",
 })
-  .shouldMatchUnistNode({ type: "paragraph", children: [] })
+  .shouldMatchUnistNode({ children: [], type: "paragraph" })
   .shouldMatchUnistNode({
-    type: "paragraph",
     children: [{ type: "text", value: "Hello World!" }],
+    type: "paragraph",
   })
   .shouldNotMatchUnistNode({ type: "other" })
-  .shouldConvertUnistNode({ type: "paragraph", children: [] }, (schema) => [
+  .shouldConvertUnistNode({ children: [], type: "paragraph" }, (schema) => [
     schema.nodes.paragraph.createAndFill()!,
   ])
   .shouldConvertUnistNode(
-    { type: "paragraph", children: [{ type: "text", value: "Hello World!" }] },
+    { children: [{ type: "text", value: "Hello World!" }], type: "paragraph" },
     (schema) => [
       schema.nodes.paragraph.createAndFill({}, [schema.text("Hello World!")])!,
     ],
@@ -29,15 +29,15 @@ new NodeExtensionTester(new ParagraphExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.nodes.paragraph.createAndFill()!,
-    [{ type: "paragraph", children: [] }],
+    [{ children: [], type: "paragraph" }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.nodes.paragraph.createAndFill({}, [schema.text("Hello World!")])!,
     [
       {
-        type: "paragraph",
         children: [{ type: "text", value: "Hello World!" }],
+        type: "paragraph",
       },
     ],
   )

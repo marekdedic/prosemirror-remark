@@ -18,7 +18,7 @@ export class BoldExtension extends MarkExtension<Strong> {
   public override processConvertedUnistNode(
     convertedNode: Emphasis | Text,
   ): Strong {
-    return { type: this.unistNodeName(), children: [convertedNode] };
+    return { children: [convertedNode], type: this.unistNodeName() };
   }
 
   public override proseMirrorInputRules(
@@ -56,8 +56,8 @@ export class BoldExtension extends MarkExtension<Strong> {
         { tag: "b" },
         { tag: "strong" },
         {
-          style: "font-weight",
           getAttrs: (value) => /^(bold(er)?|[5-9]\d{2,})$/u.test(value) && null,
+          style: "font-weight",
         },
       ],
       toDOM(): DOMOutputSpec {

@@ -5,20 +5,20 @@ new NodeExtensionTester(new HeadingExtension(), {
   proseMirrorNodeName: "heading",
   unistNodeName: "heading",
 })
-  .shouldMatchUnistNode({ type: "heading", depth: 1, children: [] })
-  .shouldMatchUnistNode({ type: "heading", depth: 3, children: [] })
-  .shouldMatchUnistNode({ type: "heading", depth: 6, children: [] })
+  .shouldMatchUnistNode({ children: [], depth: 1, type: "heading" })
+  .shouldMatchUnistNode({ children: [], depth: 3, type: "heading" })
+  .shouldMatchUnistNode({ children: [], depth: 6, type: "heading" })
   .shouldMatchUnistNode({
-    type: "heading",
-    depth: 3,
     children: [{ type: "text", value: "Hello World!" }],
+    depth: 3,
+    type: "heading",
   })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
     {
-      type: "heading",
-      depth: 1,
       children: [{ type: "text", value: "Hello World!" }],
+      depth: 1,
+      type: "heading",
     },
     (schema) => [
       schema.nodes.heading.createAndFill(
@@ -31,9 +31,9 @@ new NodeExtensionTester(new HeadingExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "heading",
-      depth: 3,
       children: [{ type: "text", value: "Hello World!" }],
+      depth: 3,
+      type: "heading",
     },
     (schema) => [
       schema.nodes.heading.createAndFill(
@@ -46,9 +46,9 @@ new NodeExtensionTester(new HeadingExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "heading",
-      depth: 6,
       children: [{ type: "text", value: "Hello World!" }],
+      depth: 6,
+      type: "heading",
     },
     (schema) => [
       schema.nodes.heading.createAndFill(
@@ -76,7 +76,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.nodes.heading.createAndFill({ level: 4 })!,
-    [{ type: "heading", depth: 4, children: [] }],
+    [{ children: [], depth: 4, type: "heading" }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -85,9 +85,9 @@ new NodeExtensionTester(new HeadingExtension(), {
       ])!,
     [
       {
-        type: "heading",
-        depth: 1,
         children: [{ type: "text", value: "Hello World!" }],
+        depth: 1,
+        type: "heading",
       },
     ],
   )
@@ -98,9 +98,9 @@ new NodeExtensionTester(new HeadingExtension(), {
       ])!,
     [
       {
-        type: "heading",
-        depth: 3,
         children: [{ type: "text", value: "Hello World!" }],
+        depth: 3,
+        type: "heading",
       },
     ],
   )
@@ -111,9 +111,9 @@ new NodeExtensionTester(new HeadingExtension(), {
       ])!,
     [
       {
-        type: "heading",
-        depth: 6,
         children: [{ type: "text", value: "Hello World!" }],
+        depth: 6,
+        type: "heading",
       },
     ],
   )

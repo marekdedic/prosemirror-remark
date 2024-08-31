@@ -7,47 +7,47 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   proseMirrorNodeName: "bullet_list",
   unistNodeName: "list",
 })
-  .shouldMatchUnistNode({ type: "list", ordered: false, children: [] })
+  .shouldMatchUnistNode({ children: [], ordered: false, type: "list" })
   .shouldMatchUnistNode({
-    type: "list",
+    children: [],
     ordered: false,
     spread: true,
-    children: [],
+    type: "list",
   })
   .shouldMatchUnistNode({
-    type: "list",
+    children: [],
     ordered: false,
     spread: true,
-    children: [],
+    type: "list",
   })
   .shouldNotMatchUnistNode({
-    type: "list",
-    ordered: true,
     children: [],
+    ordered: true,
+    type: "list",
   } as UnistNode)
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
     {
-      type: "list",
-      ordered: false,
       children: [],
+      ordered: false,
+      type: "list",
     },
     (schema) => [schema.nodes.bullet_list.createAndFill()!],
   )
   .shouldConvertUnistNode(
     {
-      type: "list",
+      children: [],
       ordered: false,
       spread: true,
-      children: [],
+      type: "list",
     },
     (schema) => [schema.nodes.bullet_list.createAndFill({ spread: true })!],
   )
   .shouldConvertUnistNode(
     {
-      type: "list",
+      children: [{ children: [], type: "listItem" }],
       ordered: false,
-      children: [{ type: "listItem", children: [] }],
+      type: "list",
     },
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
@@ -57,9 +57,9 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "list",
+      children: [{ children: [], spread: true, type: "listItem" }],
       ordered: false,
-      children: [{ type: "listItem", spread: true, children: [] }],
+      type: "list",
     },
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
@@ -69,19 +69,19 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "list",
-      ordered: false,
       children: [
         {
-          type: "listItem",
           children: [
             {
-              type: "paragraph",
               children: [{ type: "text", value: "Hello World!" }],
+              type: "paragraph",
             },
           ],
+          type: "listItem",
         },
       ],
+      ordered: false,
+      type: "list",
     },
     (schema) => [
       schema.nodes.bullet_list.createAndFill({}, [
@@ -125,16 +125,16 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     (schema) => schema.nodes.bullet_list.createAndFill()!,
     [
       {
-        type: "list",
-        ordered: false,
-        spread: false,
         children: [
           {
-            type: "listItem",
+            children: [{ children: [], type: "paragraph" }],
             spread: false,
-            children: [{ type: "paragraph", children: [] }],
+            type: "listItem",
           },
         ],
+        ordered: false,
+        spread: false,
+        type: "list",
       },
     ],
   )
@@ -142,16 +142,16 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     (schema) => schema.nodes.bullet_list.createAndFill({ spread: true })!,
     [
       {
-        type: "list",
-        ordered: false,
-        spread: true,
         children: [
           {
-            type: "listItem",
+            children: [{ children: [], type: "paragraph" }],
             spread: true,
-            children: [{ type: "paragraph", children: [] }],
+            type: "listItem",
           },
         ],
+        ordered: false,
+        spread: true,
+        type: "list",
       },
     ],
   )
@@ -162,16 +162,16 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ])!,
     [
       {
-        type: "list",
-        ordered: false,
-        spread: false,
         children: [
           {
-            type: "listItem",
+            children: [{ children: [], type: "paragraph" }],
             spread: false,
-            children: [{ type: "paragraph", children: [] }],
+            type: "listItem",
           },
         ],
+        ordered: false,
+        spread: false,
+        type: "list",
       },
     ],
   )
@@ -182,16 +182,16 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ])!,
     [
       {
-        type: "list",
-        ordered: false,
-        spread: true,
         children: [
           {
-            type: "listItem",
+            children: [{ children: [], type: "paragraph" }],
             spread: true,
-            children: [{ type: "paragraph", children: [] }],
+            type: "listItem",
           },
         ],
+        ordered: false,
+        spread: true,
+        type: "list",
       },
     ],
   )
@@ -206,21 +206,21 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ])!,
     [
       {
-        type: "list",
-        ordered: false,
-        spread: false,
         children: [
           {
-            type: "listItem",
-            spread: false,
             children: [
               {
-                type: "paragraph",
                 children: [{ type: "text", value: "Hello World!" }],
+                type: "paragraph",
               },
             ],
+            spread: false,
+            type: "listItem",
           },
         ],
+        ordered: false,
+        spread: false,
+        type: "list",
       },
     ],
   )

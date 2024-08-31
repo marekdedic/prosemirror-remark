@@ -37,7 +37,6 @@ export class LinkExtension extends MarkExtension<Link> {
       inclusive: false,
       parseDOM: [
         {
-          tag: "a[href]",
           getAttrs(dom: Node | string): {
             href: string | null;
             title: string | null;
@@ -47,6 +46,7 @@ export class LinkExtension extends MarkExtension<Link> {
               title: (dom as HTMLElement).getAttribute("title"),
             };
           },
+          tag: "a[href]",
         },
       ],
       toDOM(node: Mark): DOMOutputSpec {

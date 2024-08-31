@@ -55,8 +55,8 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
   ): Array<Blockquote> {
     return [
       {
-        type: this.unistNodeName(),
         children: convertedChildren,
+        type: this.unistNodeName(),
       },
     ];
   }

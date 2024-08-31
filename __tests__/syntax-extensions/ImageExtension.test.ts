@@ -7,15 +7,15 @@ new NodeExtensionTester(new ImageExtension(), {
 })
   .shouldMatchUnistNode({ type: "image", url: "https://example.test" })
   .shouldMatchUnistNode({
+    alt: "Awesome image",
     type: "image",
     url: "https://example.test",
-    alt: "Awesome image",
   })
   .shouldMatchUnistNode({
-    type: "image",
-    url: "https://example.test",
     alt: "Awesome image",
     title: "Image title",
+    type: "image",
+    url: "https://example.test",
   })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
@@ -26,28 +26,28 @@ new NodeExtensionTester(new ImageExtension(), {
   )
   .shouldConvertUnistNode(
     {
+      alt: "Awesome image",
       type: "image",
       url: "https://example.test",
-      alt: "Awesome image",
     },
     (schema) => [
       schema.nodes.image.createAndFill({
-        src: "https://example.test",
         alt: "Awesome image",
+        src: "https://example.test",
       })!,
     ],
   )
   .shouldConvertUnistNode(
     {
-      type: "image",
-      url: "https://example.test",
       alt: "Awesome image",
       title: "Image title",
+      type: "image",
+      url: "https://example.test",
     },
     (schema) => [
       schema.nodes.image.createAndFill({
-        src: "https://example.test",
         alt: "Awesome image",
+        src: "https://example.test",
         title: "Image title",
       })!,
     ],
@@ -59,15 +59,15 @@ new NodeExtensionTester(new ImageExtension(), {
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes.image.createAndFill({
-        src: "https://example.test",
         alt: "Awesome image",
+        src: "https://example.test",
       })!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
       schema.nodes.image.createAndFill({
-        src: "https://example.test",
         alt: "Awesome image",
+        src: "https://example.test",
         title: "Image title",
       })!,
   )
@@ -79,30 +79,30 @@ new NodeExtensionTester(new ImageExtension(), {
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.nodes.image.createAndFill({
-        src: "https://example.test",
         alt: "Awesome image",
+        src: "https://example.test",
       })!,
     [
       {
+        alt: "Awesome image",
         type: "image",
         url: "https://example.test",
-        alt: "Awesome image",
       },
     ],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.nodes.image.createAndFill({
-        src: "https://example.test",
         alt: "Awesome image",
+        src: "https://example.test",
         title: "Image title",
       })!,
     [
       {
-        type: "image",
-        url: "https://example.test",
         alt: "Awesome image",
         title: "Image title",
+        type: "image",
+        url: "https://example.test",
       },
     ],
   )

@@ -28,14 +28,14 @@ export class ImageExtension extends NodeExtension<Image> {
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
-      inline: true,
       attrs: {
-        src: {},
         alt: { default: null },
+        src: {},
         title: { default: null },
       },
-      group: "inline",
       draggable: true,
+      group: "inline",
+      inline: true,
       parseDOM: [
         {
           getAttrs(dom: Node | string): {
@@ -44,8 +44,8 @@ export class ImageExtension extends NodeExtension<Image> {
             title: string | null;
           } {
             return {
-              src: (dom as HTMLElement).getAttribute("src"),
               alt: (dom as HTMLElement).getAttribute("alt"),
+              src: (dom as HTMLElement).getAttribute("src"),
               title: (dom as HTMLElement).getAttribute("title"),
             };
           },
@@ -85,8 +85,8 @@ export class ImageExtension extends NodeExtension<Image> {
       proseMirrorSchema,
       convertedChildren,
       {
-        src: node.url,
         alt: node.alt,
+        src: node.url,
         title: node.title,
       },
     );

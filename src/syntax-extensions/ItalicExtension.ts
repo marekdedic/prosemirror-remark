@@ -18,7 +18,7 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
   public override processConvertedUnistNode(
     convertedNode: Strong | Text,
   ): Emphasis {
-    return { type: this.unistNodeName(), children: [convertedNode] };
+    return { children: [convertedNode], type: this.unistNodeName() };
   }
 
   public override proseMirrorInputRules(
@@ -56,8 +56,8 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
         { tag: "i" },
         { tag: "em" },
         {
-          style: "font-style",
           getAttrs: (value) => value === "italic" && null,
+          style: "font-style",
         },
       ],
       toDOM(): DOMOutputSpec {

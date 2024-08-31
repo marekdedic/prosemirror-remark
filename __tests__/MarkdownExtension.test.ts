@@ -45,14 +45,14 @@ test("unist -> ProseMirror conversion", () => {
       schema.nodes.horizontal_rule.createAndFill()!,
       schema.nodes.paragraph.createAndFill({}, [
         schema.nodes.image.createAndFill({
-          src: "https://example.test",
           alt: "Awesome image",
+          src: "https://example.test",
         })!,
       ])!,
       schema.nodes.paragraph.createAndFill({}, [
         schema.nodes.image.createAndFill({
-          src: "https://img2.test",
           alt: "Image 2",
+          src: "https://img2.test",
         })!,
       ])!,
       schema.nodes.ordered_list.createAndFill({}, [
@@ -110,8 +110,8 @@ test("ProseMirror -> unist conversion", () => {
       schema.nodes.horizontal_rule.createAndFill()!,
       schema.nodes.paragraph.createAndFill({}, [
         schema.nodes.image.createAndFill({
-          src: "https://example.test",
           alt: "Awesome image",
+          src: "https://example.test",
         })!,
       ])!,
       schema.nodes.ordered_list.createAndFill({}, [

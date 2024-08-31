@@ -69,7 +69,7 @@ export class NodeExtensionTester<
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(3 * this.inputRuleMatches.length);
 
-      for (const { editorInput, proseMirrorNodes, markdownOutput } of this
+      for (const { editorInput, markdownOutput, proseMirrorNodes } of this
         .inputRuleMatches) {
         const source = "";
         const proseMirrorRoot = this.pmu.parse(source);
@@ -120,8 +120,8 @@ export class NodeExtensionTester<
   ): this {
     this.inputRuleMatches.push({
       editorInput,
-      proseMirrorNodes: proseMirrorNodes(this.pmu.schema()),
       markdownOutput,
+      proseMirrorNodes: proseMirrorNodes(this.pmu.schema()),
     });
     return this;
   }
@@ -145,6 +145,7 @@ export class NodeExtensionTester<
   ): this {
     this.inputRuleMatches.push({
       editorInput,
+      markdownOutput,
       proseMirrorNodes: proseMirrorNodes?.(this.pmu.schema()) ?? [
         this.pmu
           .schema()
@@ -152,7 +153,6 @@ export class NodeExtensionTester<
             this.pmu.schema().text(editorInput),
           ])!,
       ],
-      markdownOutput,
     });
     return this;
   }

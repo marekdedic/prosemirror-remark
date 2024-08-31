@@ -33,8 +33,8 @@ export class RootExtension<
   ): Array<UnistRoot<ChildUnistNode>> {
     return [
       {
-        type: "root",
         children: convertedChildren as Array<ChildUnistNode>,
+        type: "root",
       },
     ];
   }

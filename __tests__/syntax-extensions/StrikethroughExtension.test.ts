@@ -6,16 +6,16 @@ import { StrikethroughExtension } from "../../src/syntax-extensions/Strikethroug
 import { MarkExtensionTester } from "../utils/MarkExtensionTester";
 
 new MarkExtensionTester(new StrikethroughExtension(), {
+  otherExtensionsInTest: [new BoldExtension(), new ItalicExtension()],
   proseMirrorMarkName: "strikethrough",
   unistNodeName: "delete",
-  otherExtensionsInTest: [new BoldExtension(), new ItalicExtension()],
 })
-  .shouldMatchUnistNode({ type: "delete", children: [] })
+  .shouldMatchUnistNode({ children: [], type: "delete" })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
     {
-      type: "delete",
       children: [{ type: "text", value: "Hello World!" }],
+      type: "delete",
     },
     (schema) => [
       schema.text("Hello World!").mark([schema.marks.strikethrough.create()]),
@@ -23,13 +23,13 @@ new MarkExtensionTester(new StrikethroughExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "delete",
       children: [
         {
-          type: "emphasis",
           children: [{ type: "text", value: "Hello World!" }],
+          type: "emphasis",
         },
       ],
+      type: "delete",
     },
     (schema) => [
       schema
@@ -39,13 +39,13 @@ new MarkExtensionTester(new StrikethroughExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "emphasis",
       children: [
         {
-          type: "delete",
           children: [{ type: "text", value: "Hello World!" }],
+          type: "delete",
         },
       ],
+      type: "emphasis",
     } as UnistNode,
     (schema) => [
       schema
@@ -55,13 +55,13 @@ new MarkExtensionTester(new StrikethroughExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "delete",
       children: [
         {
-          type: "strong",
           children: [{ type: "text", value: "Hello World!" }],
+          type: "strong",
         },
       ],
+      type: "delete",
     },
     (schema) => [
       schema
@@ -74,13 +74,13 @@ new MarkExtensionTester(new StrikethroughExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "strong",
       children: [
         {
-          type: "delete",
           children: [{ type: "text", value: "Hello World!" }],
+          type: "delete",
         },
       ],
+      type: "strong",
     } as UnistNode,
     (schema) => [
       schema
@@ -95,7 +95,7 @@ new MarkExtensionTester(new StrikethroughExtension(), {
   .shouldConvertProseMirrorNode(
     (schema) =>
       schema.text("Hello World!").mark([schema.mark("strikethrough")]),
-    [{ type: "delete", children: [{ type: "text", value: "Hello World!" }] }],
+    [{ children: [{ type: "text", value: "Hello World!" }], type: "delete" }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
@@ -104,13 +104,13 @@ new MarkExtensionTester(new StrikethroughExtension(), {
         .mark([schema.mark("em"), schema.mark("strikethrough")]),
     [
       {
-        type: "delete",
         children: [
           {
-            type: "emphasis",
             children: [{ type: "text", value: "Hello World!" }],
+            type: "emphasis",
           },
         ],
+        type: "delete",
       },
     ],
   )
@@ -121,13 +121,13 @@ new MarkExtensionTester(new StrikethroughExtension(), {
         .mark([schema.mark("strikethrough"), schema.mark("em")]),
     [
       {
-        type: "emphasis",
         children: [
           {
-            type: "delete",
             children: [{ type: "text", value: "Hello World!" }],
+            type: "delete",
           },
         ],
+        type: "emphasis",
       } as UnistNode,
     ],
   )
@@ -138,13 +138,13 @@ new MarkExtensionTester(new StrikethroughExtension(), {
         .mark([schema.mark("strong"), schema.mark("strikethrough")]),
     [
       {
-        type: "delete",
         children: [
           {
-            type: "strong",
             children: [{ type: "text", value: "Hello World!" }],
+            type: "strong",
           },
         ],
+        type: "delete",
       },
     ],
   )
@@ -155,13 +155,13 @@ new MarkExtensionTester(new StrikethroughExtension(), {
         .mark([schema.mark("strikethrough"), schema.mark("strong")]),
     [
       {
-        type: "strong",
         children: [
           {
-            type: "delete",
             children: [{ type: "text", value: "Hello World!" }],
+            type: "delete",
           },
         ],
+        type: "strong",
       } as UnistNode,
     ],
   )

@@ -102,11 +102,11 @@ export class SyntaxExtensionTester<
       expect.assertions(3 * this.keymapMatches.length);
 
       for (const {
+        key,
+        markdownOutput,
+        proseMirrorAfter,
         proseMirrorBefore,
         selection,
-        key,
-        proseMirrorAfter,
-        markdownOutput,
       } of this.keymapMatches) {
         const proseMirrorTreeBefore = this.pmu
           .schema()
@@ -166,7 +166,7 @@ export class SyntaxExtensionTester<
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(this.unistNodeConversions.length);
 
-      for (const { source, target, injectNodes } of this.unistNodeConversions) {
+      for (const { injectNodes, source, target } of this.unistNodeConversions) {
         const annotatedPmu = this.pmu as unknown as {
           unistToProseMirrorConverter: {
             convertNode(
@@ -222,9 +222,9 @@ export class SyntaxExtensionTester<
     injectNodes: Array<UnistNode> = [],
   ): this {
     this.unistNodeConversions.push({
+      injectNodes,
       source,
       target: target(this.pmu.schema()),
-      injectNodes,
     });
     return this;
   }
@@ -251,11 +251,11 @@ export class SyntaxExtensionTester<
     markdownOutput: string,
   ): this {
     this.keymapMatches.push({
+      key,
+      markdownOutput,
+      proseMirrorAfter: proseMirrorAfter(this.pmu.schema()),
       proseMirrorBefore: proseMirrorBefore(this.pmu.schema()),
       selection,
-      key,
-      proseMirrorAfter: proseMirrorAfter(this.pmu.schema()),
-      markdownOutput,
     });
     return this;
   }
