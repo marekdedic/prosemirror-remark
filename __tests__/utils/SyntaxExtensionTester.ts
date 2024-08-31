@@ -253,6 +253,7 @@ export class SyntaxExtensionTester<
             ).toBe(markdownOutput);
           });
 
+        // eslint-disable-next-line no-console -- Testing for console
         expect(console.warn).not.toHaveBeenCalled();
       }
     });
