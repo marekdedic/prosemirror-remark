@@ -39,8 +39,8 @@ export class ImageExtension extends NodeExtension<Image> {
       parseDOM: [
         {
           getAttrs(dom: Node | string): {
-            src: string | null;
             alt: string | null;
+            src: string | null;
             title: string | null;
           } {
             return {

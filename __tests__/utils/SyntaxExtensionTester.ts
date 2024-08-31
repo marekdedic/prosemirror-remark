@@ -34,11 +34,11 @@ export class SyntaxExtensionTester<
   protected readonly pmu: ProseMirrorUnified;
 
   private readonly keymapMatches: Array<{
+    key: string;
+    markdownOutput: string;
+    proseMirrorAfter: Array<ProseMirrorNode>;
     proseMirrorBefore: Array<ProseMirrorNode>;
     selection: PrimitiveSelection;
-    key: string;
-    proseMirrorAfter: Array<ProseMirrorNode>;
-    markdownOutput: string;
   }>;
 
   private readonly proseMirrorNodeConversions: Array<{
@@ -47,9 +47,9 @@ export class SyntaxExtensionTester<
   }>;
 
   private readonly unistNodeConversions: Array<{
+    injectNodes: Array<UnistNode>;
     source: UnistNode;
     target: Array<ProseMirrorNode>;
-    injectNodes: Array<UnistNode>;
   }>;
 
   private readonly unistNodeMatches: Array<{

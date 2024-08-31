@@ -9,7 +9,7 @@ import { NodeExtension } from "prosemirror-unified";
 export interface DefinitionExtensionContext {
   definitions: Record<
     string,
-    { url: string; title: string | null | undefined }
+    { title: string | null | undefined; url: string }
   >;
 }
 

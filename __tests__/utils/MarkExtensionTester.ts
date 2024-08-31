@@ -24,8 +24,8 @@ export class MarkExtensionTester<
 
   private readonly inputRuleMatches: Array<{
     editorInput: string;
-    proseMirrorNodes: Array<ProseMirrorNode>;
     markdownOutput: string;
+    proseMirrorNodes: Array<ProseMirrorNode>;
   }>;
 
   private readonly proseMirrorMarkMatches: Array<{
