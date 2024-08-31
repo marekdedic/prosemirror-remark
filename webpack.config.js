@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 function createConfig(libraryType, extension) {
   return {
     mode: "production",
