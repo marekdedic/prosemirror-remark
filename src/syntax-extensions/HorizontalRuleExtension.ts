@@ -1,5 +1,4 @@
 import type { ThematicBreak } from "mdast";
-import { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -7,6 +6,8 @@ import type {
   Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
+
+import { InputRule } from "prosemirror-inputrules";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 /**

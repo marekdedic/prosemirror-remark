@@ -1,5 +1,6 @@
 import type { Definition } from "mdast";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
+
 import { NodeExtension } from "prosemirror-unified";
 
 /**

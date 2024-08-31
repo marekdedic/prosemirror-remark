@@ -1,6 +1,4 @@
 import type { BlockContent, Blockquote, DefinitionContent } from "mdast";
-import { wrapIn } from "prosemirror-commands";
-import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -8,6 +6,9 @@ import type {
   Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
+
+import { wrapIn } from "prosemirror-commands";
+import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 /**

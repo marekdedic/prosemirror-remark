@@ -1,12 +1,13 @@
 import type { PrimitiveSelection } from "@remirror/core-types";
-import { createEditor } from "jest-prosemirror";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type { Node as UnistNode } from "unist";
+
+import { createEditor } from "jest-prosemirror";
 import {
   type Extension,
   ProseMirrorUnified,
   type SyntaxExtension,
 } from "prosemirror-unified";
-import type { Node as UnistNode } from "unist";
 
 import { ParagraphExtension } from "./ParagraphExtension";
 import { ParserProviderExtension } from "./ParserProviderExtension";

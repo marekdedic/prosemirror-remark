@@ -1,12 +1,13 @@
 import type { Code, Text } from "mdast";
-import { setBlockType } from "prosemirror-commands";
-import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
   Schema,
 } from "prosemirror-model";
+
+import { setBlockType } from "prosemirror-commands";
+import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
 import {
   type Command,
   type EditorState,

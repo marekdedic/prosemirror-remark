@@ -4,8 +4,9 @@ import type {
   NodeSpec,
   Schema,
 } from "prosemirror-model";
-import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
+
+import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import type { UnistText } from "./TextExtension";
 

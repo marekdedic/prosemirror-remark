@@ -6,6 +6,7 @@ import type {
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
+
 import { MarkExtension } from "prosemirror-unified";
 
 /**

@@ -4,6 +4,7 @@ import type {
   NodeSpec,
   Schema,
 } from "prosemirror-model";
+
 import { NodeExtension } from "prosemirror-unified";
 
 /**

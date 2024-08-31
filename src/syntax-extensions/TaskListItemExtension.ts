@@ -1,10 +1,4 @@
 import type { BlockContent, DefinitionContent, ListItem } from "mdast";
-import {
-  gfmTaskListItemFromMarkdown,
-  gfmTaskListItemToMarkdown,
-} from "mdast-util-gfm-task-list-item";
-import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
-import { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -12,7 +6,6 @@ import type {
   Schema,
 } from "prosemirror-model";
 import type { Command, EditorState } from "prosemirror-state";
-import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 import type {
   EditorView,
   NodeView,
@@ -20,6 +13,14 @@ import type {
 } from "prosemirror-view";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
+
+import {
+  gfmTaskListItemFromMarkdown,
+  gfmTaskListItemToMarkdown,
+} from "mdast-util-gfm-task-list-item";
+import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
+import { InputRule } from "prosemirror-inputrules";
+import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 

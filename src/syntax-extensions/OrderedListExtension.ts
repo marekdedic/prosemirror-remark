@@ -1,19 +1,20 @@
 import type { List, ListContent } from "mdast";
-import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
   NodeSpec,
   Schema,
 } from "prosemirror-model";
-import { wrapInList } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
+import type { Node as UnistNode } from "unist";
+
+import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
+import { wrapInList } from "prosemirror-schema-list";
 import {
   createProseMirrorNode,
   type Extension,
   NodeExtension,
 } from "prosemirror-unified";
-import type { Node as UnistNode } from "unist";
 
 import { ListItemExtension } from "./ListItemExtension";
 

@@ -5,14 +5,15 @@ import type {
   NodeSpec,
   Schema,
 } from "prosemirror-model";
+import type { Command } from "prosemirror-state";
+import type { Node as UnistNode } from "unist";
+
 import {
   liftListItem,
   sinkListItem,
   splitListItem,
 } from "prosemirror-schema-list";
-import type { Command } from "prosemirror-state";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
-import type { Node as UnistNode } from "unist";
 
 /**
  * @public

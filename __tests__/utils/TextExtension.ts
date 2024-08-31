@@ -3,8 +3,9 @@ import type {
   NodeSpec,
   Schema,
 } from "prosemirror-model";
-import { NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
+
+import { NodeExtension } from "prosemirror-unified";
 
 export interface UnistText extends UnistNode {
   type: "text";

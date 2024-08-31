@@ -1,5 +1,4 @@
 import type { Break } from "mdast";
-import { chainCommands, exitCode } from "prosemirror-commands";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -7,6 +6,8 @@ import type {
   Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
+
+import { chainCommands, exitCode } from "prosemirror-commands";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 /**

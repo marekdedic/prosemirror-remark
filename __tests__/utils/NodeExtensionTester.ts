@@ -1,7 +1,8 @@
-import { createEditor } from "jest-prosemirror";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
+
+import { createEditor } from "jest-prosemirror";
 
 import {
   SyntaxExtensionTester,

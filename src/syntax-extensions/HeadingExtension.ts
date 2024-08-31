@@ -1,6 +1,4 @@
 import type { Heading, PhrasingContent } from "mdast";
-import { setBlockType } from "prosemirror-commands";
-import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Node as ProseMirrorNode,
@@ -8,12 +6,15 @@ import type {
   Schema,
 } from "prosemirror-model";
 import type { Command, EditorState } from "prosemirror-state";
+import type { EditorView } from "prosemirror-view";
+
+import { setBlockType } from "prosemirror-commands";
+import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
 import {
   createProseMirrorNode,
   type Extension,
   NodeExtension,
 } from "prosemirror-unified";
-import type { EditorView } from "prosemirror-view";
 
 import { ParagraphExtension } from "./ParagraphExtension";
 import { TextExtension } from "./TextExtension";

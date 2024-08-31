@@ -1,5 +1,4 @@
 import type { InlineCode, Text } from "mdast";
-import { toggleMark } from "prosemirror-commands";
 import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
@@ -8,6 +7,8 @@ import type {
   Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
+
+import { toggleMark } from "prosemirror-commands";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
 /**

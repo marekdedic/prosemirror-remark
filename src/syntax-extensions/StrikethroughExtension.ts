@@ -1,9 +1,4 @@
 import type { Delete, Emphasis, Text } from "mdast";
-import {
-  gfmStrikethroughFromMarkdown,
-  gfmStrikethroughToMarkdown,
-} from "mdast-util-gfm-strikethrough";
-import { gfmStrikethrough } from "micromark-extension-gfm-strikethrough";
 import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
@@ -11,9 +6,15 @@ import type {
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
-import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
+
+import {
+  gfmStrikethroughFromMarkdown,
+  gfmStrikethroughToMarkdown,
+} from "mdast-util-gfm-strikethrough";
+import { gfmStrikethrough } from "micromark-extension-gfm-strikethrough";
+import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 

@@ -1,5 +1,6 @@
 import type { ImageReference } from "mdast";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
+
 import { type Extension, NodeExtension } from "prosemirror-unified";
 
 import {
