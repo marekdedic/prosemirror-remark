@@ -11,9 +11,9 @@ export function buildUnifiedExtension(
   return function (this: Processor) {
     const data = this.data();
 
-    data.micromarkExtensions = data.micromarkExtensions ?? [];
-    data.fromMarkdownExtensions = data.fromMarkdownExtensions ?? [];
-    data.toMarkdownExtensions = data.toMarkdownExtensions ?? [];
+    data.micromarkExtensions ??= [];
+    data.fromMarkdownExtensions ??= [];
+    data.toMarkdownExtensions ??= [];
 
     data.micromarkExtensions.push(...micromarkExtensions);
     data.fromMarkdownExtensions.push(...fromMarkdownExtensions);
