@@ -79,7 +79,7 @@ export class OrderedListExtension extends NodeExtension<List> {
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
         (match) => ({ start: +match[1] }),
         (match, node) =>
-          node.childCount + (node.attrs.start as number) == +match[1],
+          node.childCount + (node.attrs.start as number) === +match[1],
       ),
     ];
   }

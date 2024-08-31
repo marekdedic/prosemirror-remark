@@ -50,7 +50,7 @@ export class BreakExtension extends NodeExtension<Break> {
     });
 
     const isMac =
-      typeof navigator != "undefined"
+      typeof navigator !== "undefined"
         ? /Mac|iP(hone|[oa]d)/.test(navigator.platform) // eslint-disable-line @typescript-eslint/no-deprecated -- In the tested systems, it will be defined
         : false;
 
