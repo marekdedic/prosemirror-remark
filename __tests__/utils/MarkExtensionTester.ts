@@ -70,8 +70,8 @@ export class MarkExtensionTester<
     editorInput: string,
     markdownOutput: string,
     proseMirrorContents:
-      | string
-      | ((schema: Schema<string, string>) => Array<ProseMirrorNode>),
+      | ((schema: Schema<string, string>) => Array<ProseMirrorNode>)
+      | string,
   ): this {
     this.inputRuleMatches.push({
       editorInput,
