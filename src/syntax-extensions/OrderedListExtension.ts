@@ -51,7 +51,7 @@ export class OrderedListExtension extends NodeExtension<List> {
             return {
               spread:
                 (dom as HTMLElement).getAttribute("data-spread") === "true",
-              start: start !== null ? parseInt(start) : 1,
+              start: start !== null ? parseInt(start, 10) : 1,
             };
           },
           tag: "ol",
