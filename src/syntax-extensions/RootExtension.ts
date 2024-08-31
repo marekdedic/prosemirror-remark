@@ -1,7 +1,7 @@
 import type { Root, RootContent } from "mdast";
 import type {
-  Node as ProseMirrorNode,
   NodeSpec,
+  Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
 

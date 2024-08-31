@@ -1,8 +1,8 @@
 import type { BlockContent, DefinitionContent, ListItem } from "mdast";
 import type {
   DOMOutputSpec,
-  Node as ProseMirrorNode,
   NodeSpec,
+  Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
