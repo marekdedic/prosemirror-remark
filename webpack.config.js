@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention -- Not applicable to this config file */
+
 function createConfig(libraryType, extension) {
   return {
     mode: "production",
@@ -48,3 +50,5 @@ function createConfig(libraryType, extension) {
 }
 
 export default [createConfig("module", "js"), createConfig("commonjs2", "cjs")];
+
+/* eslint-enable */
