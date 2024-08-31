@@ -11,8 +11,8 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 import type { UnistText } from "./TextExtension";
 
 export interface UnistParagraph extends UnistNode {
-  type: "paragraph";
   children: Array<UnistText>;
+  type: "paragraph";
 }
 
 export class ParagraphExtension extends NodeExtension<UnistParagraph> {

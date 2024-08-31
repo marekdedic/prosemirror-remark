@@ -10,8 +10,8 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 import type { UnistParagraph } from "./ParagraphExtension";
 
 interface UnistRoot<ChildUnistNode extends UnistNode> extends UnistNode {
-  type: "root";
   children: Array<ChildUnistNode | UnistParagraph>;
+  type: "root";
 }
 
 export class RootExtension<

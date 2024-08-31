@@ -15,8 +15,8 @@ import { RootExtension } from "./RootExtension";
 import { TextExtension } from "./TextExtension";
 
 export interface SyntaxExtensionTesterConfig {
-  unistNodeName: string;
   otherExtensionsInTest?: Array<Extension>;
+  unistNodeName: string;
 }
 
 export class SyntaxExtensionTester<
