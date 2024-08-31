@@ -131,9 +131,11 @@ export class MarkExtensionTester<
     if (this.proseMirrorMarkMatches.length === 0) {
       return;
     }
+
     test("Matches correct ProseMirror nodes", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(this.proseMirrorMarkMatches.length);
+
       for (const { mark, shouldMatch } of this.proseMirrorMarkMatches) {
         expect(mark.type.name === this.extension.proseMirrorMarkName()).toBe(
           shouldMatch,
@@ -146,9 +148,11 @@ export class MarkExtensionTester<
     if (this.inputRuleMatches.length === 0) {
       return;
     }
+
     test("Matches input rules correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(3 * this.inputRuleMatches.length);
+
       for (const { editorInput, proseMirrorNodes, markdownOutput } of this
         .inputRuleMatches) {
         const source = "BEGIN";
@@ -178,6 +182,7 @@ export class MarkExtensionTester<
               "BEGIN" + markdownOutput + "END\n",
             );
           });
+
         expect(console.warn).not.toHaveBeenCalled();
       }
     });

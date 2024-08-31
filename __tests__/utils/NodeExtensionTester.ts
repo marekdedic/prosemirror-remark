@@ -125,9 +125,11 @@ export class NodeExtensionTester<
     if (this.proseMirrorNodeMatches.length === 0) {
       return;
     }
+
     test("Matches correct ProseMirror nodes", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(this.proseMirrorNodeMatches.length);
+
       for (const { node, shouldMatch } of this.proseMirrorNodeMatches) {
         expect(this.extension.proseMirrorToUnistTest(node)).toBe(shouldMatch);
       }
@@ -138,9 +140,11 @@ export class NodeExtensionTester<
     if (this.inputRuleMatches.length === 0) {
       return;
     }
+
     test("Matches input rules correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(3 * this.inputRuleMatches.length);
+
       for (const { editorInput, proseMirrorNodes, markdownOutput } of this
         .inputRuleMatches) {
         const source = "";
@@ -161,6 +165,7 @@ export class NodeExtensionTester<
               this.pmu.serialize(content.doc).replace(/^\s+|\s+$/g, ""),
             ).toBe(markdownOutput);
           });
+
         expect(console.warn).not.toHaveBeenCalled();
       }
     });

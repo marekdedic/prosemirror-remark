@@ -27,6 +27,7 @@ test("unist -> ProseMirror conversion", () => {
       "\n" +
       "[link2]: https://link2.test",
   );
+
   expect(result).toEqualProsemirrorNode(
     schema.nodes.doc.createAndFill({}, [
       schema.nodes.blockquote.createAndFill({}, [
@@ -142,6 +143,7 @@ test("ProseMirror -> unist conversion", () => {
       ])!,
     ])!,
   );
+
   expect(result).toBe(
     "> Inside a blockquote\n" +
       "\n" +

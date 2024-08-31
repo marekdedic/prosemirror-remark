@@ -150,9 +150,11 @@ export class SyntaxExtensionTester<
     if (this.unistNodeMatches.length === 0) {
       return;
     }
+
     test("Matches correct unist nodes", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(this.unistNodeMatches.length);
+
       for (const { node, shouldMatch } of this.unistNodeMatches) {
         expect(this.extension.unistToProseMirrorTest(node)).toBe(shouldMatch);
       }
@@ -163,9 +165,11 @@ export class SyntaxExtensionTester<
     if (this.unistNodeConversions.length === 0) {
       return;
     }
+
     test("Converts unist -> ProseMirror correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(this.unistNodeConversions.length);
+
       for (const { source, target, injectNodes } of this.unistNodeConversions) {
         const annotatedPmu = this.pmu as unknown as {
           unistToProseMirrorConverter: {
@@ -184,6 +188,7 @@ export class SyntaxExtensionTester<
           context,
         );
         this.extension.postUnistToProseMirrorHook(context);
+
         expect(result).toStrictEqual(target);
       }
     });
@@ -193,9 +198,11 @@ export class SyntaxExtensionTester<
     if (this.proseMirrorNodeConversions.length === 0) {
       return;
     }
+
     test("Converts ProseMirror -> unist correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(this.proseMirrorNodeConversions.length);
+
       for (const { source, target } of this.proseMirrorNodeConversions) {
         expect(
           (
@@ -214,9 +221,11 @@ export class SyntaxExtensionTester<
     if (this.keymapMatches.length === 0) {
       return;
     }
+
     test("Supports keymap correctly", () => {
       // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
       expect.assertions(3 * this.keymapMatches.length);
+
       for (const {
         proseMirrorBefore,
         selection,
@@ -243,6 +252,7 @@ export class SyntaxExtensionTester<
               this.pmu.serialize(content.doc).replace(/^\s+|\s+$/g, ""),
             ).toBe(markdownOutput);
           });
+
         expect(console.warn).not.toHaveBeenCalled();
       }
     });
