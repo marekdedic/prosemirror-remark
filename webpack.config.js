@@ -7,7 +7,7 @@ function createConfig(libraryType, extension) {
     module: {
       rules: [
         {
-          test: /\.ts$/,
+          test: /\.ts$/u,
           use: {
             loader: "ts-loader",
             options: {

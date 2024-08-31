@@ -94,11 +94,11 @@ export class CodeBlockExtension extends NodeExtension<Code> {
   ): Array<InputRule> {
     return [
       textblockTypeInputRule(
-        /^\s{0,3}```$/,
+        /^\s{0,3}```$/u,
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
       textblockTypeInputRule(
-        /^\s{4}$/,
+        /^\s{4}$/u,
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
     ];

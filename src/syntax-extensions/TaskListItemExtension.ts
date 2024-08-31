@@ -162,7 +162,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
-      new InputRule(/^\[([x\s]?)\][\s\S]$/, (state, match, start) => {
+      new InputRule(/^\[([x\s]?)\][\s\S]$/u, (state, match, start) => {
         const wrappingNode = state.doc.resolve(start).node(-1);
         if (wrappingNode.type.name !== "regular_list_item") {
           return null;

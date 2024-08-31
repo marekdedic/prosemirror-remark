@@ -38,7 +38,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
   ): Array<InputRule> {
     return [
       wrappingInputRule(
-        /^\s{0,3}>\s$/,
+        /^\s{0,3}>\s$/u,
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
     ];

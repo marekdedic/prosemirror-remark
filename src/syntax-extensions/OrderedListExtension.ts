@@ -75,7 +75,7 @@ export class OrderedListExtension extends NodeExtension<List> {
   ): Array<InputRule> {
     return [
       wrappingInputRule(
-        /^\s{0,3}(\d+)\.\s$/,
+        /^\s{0,3}(\d+)\.\s$/u,
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
         (match) => ({ start: +match[1] }),
         (match, node) =>

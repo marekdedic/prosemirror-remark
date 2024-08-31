@@ -162,7 +162,7 @@ export class NodeExtensionTester<
           .callback((content) => {
             expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
             expect(
-              this.pmu.serialize(content.doc).replace(/^\s+|\s+$/g, ""),
+              this.pmu.serialize(content.doc).replace(/^\s+|\s+$/gu, ""),
             ).toBe(markdownOutput);
           });
 

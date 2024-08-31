@@ -49,7 +49,7 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
         {
           style: "text-decoration",
           getAttrs: (value) =>
-            /(^|[\s])line-through([\s]|$)/.test(value) && null,
+            /(^|[\s])line-through([\s]|$)/u.test(value) && null,
         },
       ],
       toDOM(): DOMOutputSpec {
@@ -63,11 +63,11 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
   ): Array<InputRule> {
     return [
       new MarkInputRule(
-        /~([^\s](?:.*[^\s~])?)~([^~])$/,
+        /~([^\s](?:.*[^\s~])?)~([^~])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
       new MarkInputRule(
-        /~~([^\s](?:.*[^\s])?)~~([\s\S])$/,
+        /~~([^\s](?:.*[^\s])?)~~([\s\S])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
     ];

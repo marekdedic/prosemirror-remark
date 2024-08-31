@@ -29,7 +29,7 @@ export class BoldExtension extends MarkExtension<Strong> {
         { tag: "strong" },
         {
           style: "font-weight",
-          getAttrs: (value) => /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null,
+          getAttrs: (value) => /^(bold(er)?|[5-9]\d{2,})$/u.test(value) && null,
         },
       ],
       toDOM(): DOMOutputSpec {
@@ -43,11 +43,11 @@ export class BoldExtension extends MarkExtension<Strong> {
   ): Array<InputRule> {
     return [
       new MarkInputRule(
-        /\*\*([^\s](?:.*[^\s])?)\*\*([\s\S])$/,
+        /\*\*([^\s](?:.*[^\s])?)\*\*([\s\S])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
       new MarkInputRule(
-        /__([^\s](?:.*[^\s])?)__([\s\S])$/,
+        /__([^\s](?:.*[^\s])?)__([\s\S])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
     ];

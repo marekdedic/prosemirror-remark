@@ -249,7 +249,7 @@ export class SyntaxExtensionTester<
           .callback((content) => {
             expect(content.doc).toEqualProsemirrorNode(proseMirrorTreeAfter);
             expect(
-              this.pmu.serialize(content.doc).replace(/^\s+|\s+$/g, ""),
+              this.pmu.serialize(content.doc).replace(/^\s+|\s+$/gu, ""),
             ).toBe(markdownOutput);
           });
 
