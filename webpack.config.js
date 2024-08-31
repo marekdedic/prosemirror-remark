@@ -24,7 +24,7 @@ function createConfig(libraryType, extension) {
       "prosemirror-remark": "./src/index.ts",
     },
     output: {
-      filename: "[name]." + extension,
+      filename: `[name].${extension}`,
       library: {
         type: libraryType,
       },

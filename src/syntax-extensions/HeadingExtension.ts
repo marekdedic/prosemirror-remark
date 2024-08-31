@@ -107,7 +107,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
         { tag: "h6", attrs: { level: 6 } },
       ],
       toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return ["h" + (node.attrs.level as number).toString(), 0];
+        return [`h${(node.attrs.level as number).toString()}`, 0];
       },
     };
   }

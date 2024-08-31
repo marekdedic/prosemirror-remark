@@ -179,7 +179,7 @@ export class MarkExtensionTester<
           .callback((content) => {
             expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
             expect(this.pmu.serialize(content.doc)).toBe(
-              "BEGIN" + markdownOutput + "END\n",
+              `BEGIN${markdownOutput}END\n`,
             );
           });
 
