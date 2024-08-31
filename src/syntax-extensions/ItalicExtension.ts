@@ -15,28 +15,10 @@ import { MarkExtension, MarkInputRule } from "prosemirror-unified";
  * @public
  */
 export class ItalicExtension extends MarkExtension<Emphasis> {
-  public override unistNodeName(): "emphasis" {
-    return "emphasis";
-  }
-
-  public override proseMirrorMarkName(): string {
-    return "em";
-  }
-
-  public override proseMirrorMarkSpec(): MarkSpec {
-    return {
-      parseDOM: [
-        { tag: "i" },
-        { tag: "em" },
-        {
-          style: "font-style",
-          getAttrs: (value) => value === "italic" && null,
-        },
-      ],
-      toDOM(): DOMOutputSpec {
-        return ["em"];
-      },
-    };
+  public override processConvertedUnistNode(
+    convertedNode: Strong | Text,
+  ): Emphasis {
+    return { type: this.unistNodeName(), children: [convertedNode] };
   }
 
   public override proseMirrorInputRules(
@@ -64,6 +46,30 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
     };
   }
 
+  public override proseMirrorMarkName(): string {
+    return "em";
+  }
+
+  public override proseMirrorMarkSpec(): MarkSpec {
+    return {
+      parseDOM: [
+        { tag: "i" },
+        { tag: "em" },
+        {
+          style: "font-style",
+          getAttrs: (value) => value === "italic" && null,
+        },
+      ],
+      toDOM(): DOMOutputSpec {
+        return ["em"];
+      },
+    };
+  }
+
+  public override unistNodeName(): "emphasis" {
+    return "emphasis";
+  }
+
   public override unistNodeToProseMirrorNodes(
     _node: Emphasis,
     proseMirrorSchema: Schema<string, string>,
@@ -76,11 +82,5 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
         ]),
       ),
     );
-  }
-
-  public override processConvertedUnistNode(
-    convertedNode: Strong | Text,
-  ): Emphasis {
-    return { type: this.unistNodeName(), children: [convertedNode] };
   }
 }

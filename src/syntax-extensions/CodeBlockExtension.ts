@@ -68,28 +68,6 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     return [new TextExtension()];
   }
 
-  public override unistNodeName(): "code" {
-    return "code";
-  }
-
-  public override proseMirrorNodeName(): string {
-    return "code_block";
-  }
-
-  public override proseMirrorNodeSpec(): NodeSpec {
-    return {
-      content: "text*",
-      group: "block",
-      code: true,
-      defining: true,
-      marks: "",
-      parseDOM: [{ tag: "pre", preserveWhitespace: "full" }],
-      toDOM(): DOMOutputSpec {
-        return ["pre", ["code", 0]];
-      },
-    };
-  }
-
   public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
@@ -116,15 +94,22 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     };
   }
 
-  public override unistNodeToProseMirrorNodes(
-    node: Code,
-    proseMirrorSchema: Schema<string, string>,
-  ): Array<ProseMirrorNode> {
-    return createProseMirrorNode(
-      this.proseMirrorNodeName(),
-      proseMirrorSchema,
-      [proseMirrorSchema.text(node.value)],
-    );
+  public override proseMirrorNodeName(): string {
+    return "code_block";
+  }
+
+  public override proseMirrorNodeSpec(): NodeSpec {
+    return {
+      content: "text*",
+      group: "block",
+      code: true,
+      defining: true,
+      marks: "",
+      parseDOM: [{ tag: "pre", preserveWhitespace: "full" }],
+      toDOM(): DOMOutputSpec {
+        return ["pre", ["code", 0]];
+      },
+    };
   }
 
   public override proseMirrorNodeToUnistNodes(
@@ -137,5 +122,20 @@ export class CodeBlockExtension extends NodeExtension<Code> {
         value: convertedChildren.map((child) => child.value).join(""),
       },
     ];
+  }
+
+  public override unistNodeName(): "code" {
+    return "code";
+  }
+
+  public override unistNodeToProseMirrorNodes(
+    node: Code,
+    proseMirrorSchema: Schema<string, string>,
+  ): Array<ProseMirrorNode> {
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      proseMirrorSchema,
+      [proseMirrorSchema.text(node.value)],
+    );
   }
 }

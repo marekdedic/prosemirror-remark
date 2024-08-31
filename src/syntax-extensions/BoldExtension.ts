@@ -15,28 +15,10 @@ import { MarkExtension, MarkInputRule } from "prosemirror-unified";
  * @public
  */
 export class BoldExtension extends MarkExtension<Strong> {
-  public override unistNodeName(): "strong" {
-    return "strong";
-  }
-
-  public override proseMirrorMarkName(): string {
-    return "strong";
-  }
-
-  public override proseMirrorMarkSpec(): MarkSpec {
-    return {
-      parseDOM: [
-        { tag: "b" },
-        { tag: "strong" },
-        {
-          style: "font-weight",
-          getAttrs: (value) => /^(bold(er)?|[5-9]\d{2,})$/u.test(value) && null,
-        },
-      ],
-      toDOM(): DOMOutputSpec {
-        return ["strong"];
-      },
-    };
+  public override processConvertedUnistNode(
+    convertedNode: Emphasis | Text,
+  ): Strong {
+    return { type: this.unistNodeName(), children: [convertedNode] };
   }
 
   public override proseMirrorInputRules(
@@ -64,6 +46,30 @@ export class BoldExtension extends MarkExtension<Strong> {
     };
   }
 
+  public override proseMirrorMarkName(): string {
+    return "strong";
+  }
+
+  public override proseMirrorMarkSpec(): MarkSpec {
+    return {
+      parseDOM: [
+        { tag: "b" },
+        { tag: "strong" },
+        {
+          style: "font-weight",
+          getAttrs: (value) => /^(bold(er)?|[5-9]\d{2,})$/u.test(value) && null,
+        },
+      ],
+      toDOM(): DOMOutputSpec {
+        return ["strong"];
+      },
+    };
+  }
+
+  public override unistNodeName(): "strong" {
+    return "strong";
+  }
+
   public override unistNodeToProseMirrorNodes(
     _node: Strong,
     proseMirrorSchema: Schema<string, string>,
@@ -76,11 +82,5 @@ export class BoldExtension extends MarkExtension<Strong> {
         ]),
       ),
     );
-  }
-
-  public override processConvertedUnistNode(
-    convertedNode: Emphasis | Text,
-  ): Strong {
-    return { type: this.unistNodeName(), children: [convertedNode] };
   }
 }

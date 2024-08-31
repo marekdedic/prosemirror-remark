@@ -23,19 +23,6 @@ import { TextExtension } from "./TextExtension";
  * @public
  */
 export class HeadingExtension extends NodeExtension<Heading> {
-  private static isAtStart(
-    state: EditorState,
-    view: EditorView | undefined,
-  ): boolean {
-    if (!state.selection.empty) {
-      return false;
-    }
-    if (view !== undefined) {
-      return view.endOfTextblock("backward", state);
-    }
-    return state.selection.$anchor.parentOffset > 0;
-  }
-
   private static headingLevelCommandBuilder(
     proseMirrorSchema: Schema<string, string>,
     levelUpdate: -1 | 1,
@@ -81,36 +68,21 @@ export class HeadingExtension extends NodeExtension<Heading> {
     };
   }
 
+  private static isAtStart(
+    state: EditorState,
+    view: EditorView | undefined,
+  ): boolean {
+    if (!state.selection.empty) {
+      return false;
+    }
+    if (view !== undefined) {
+      return view.endOfTextblock("backward", state);
+    }
+    return state.selection.$anchor.parentOffset > 0;
+  }
+
   public override dependencies(): Array<Extension> {
     return [new ParagraphExtension(), new TextExtension()];
-  }
-
-  public override unistNodeName(): "heading" {
-    return "heading";
-  }
-
-  public override proseMirrorNodeName(): string {
-    return "heading";
-  }
-
-  public override proseMirrorNodeSpec(): NodeSpec {
-    return {
-      attrs: { level: { default: 1 } },
-      content: "text*",
-      group: "block",
-      defining: true,
-      parseDOM: [
-        { tag: "h1", attrs: { level: 1 } },
-        { tag: "h2", attrs: { level: 2 } },
-        { tag: "h3", attrs: { level: 3 } },
-        { tag: "h4", attrs: { level: 4 } },
-        { tag: "h5", attrs: { level: 5 } },
-        { tag: "h6", attrs: { level: 6 } },
-      ],
-      toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return [`h${(node.attrs.level as number).toString()}`, 0];
-      },
-    };
   }
 
   public override proseMirrorInputRules(
@@ -161,19 +133,28 @@ export class HeadingExtension extends NodeExtension<Heading> {
     return keymap;
   }
 
-  public override unistNodeToProseMirrorNodes(
-    node: Heading,
-    proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>,
-  ): Array<ProseMirrorNode> {
-    return createProseMirrorNode(
-      this.proseMirrorNodeName(),
-      proseMirrorSchema,
-      convertedChildren,
-      {
-        level: node.depth,
+  public override proseMirrorNodeName(): string {
+    return "heading";
+  }
+
+  public override proseMirrorNodeSpec(): NodeSpec {
+    return {
+      attrs: { level: { default: 1 } },
+      content: "text*",
+      group: "block",
+      defining: true,
+      parseDOM: [
+        { tag: "h1", attrs: { level: 1 } },
+        { tag: "h2", attrs: { level: 2 } },
+        { tag: "h3", attrs: { level: 3 } },
+        { tag: "h4", attrs: { level: 4 } },
+        { tag: "h5", attrs: { level: 5 } },
+        { tag: "h6", attrs: { level: 6 } },
+      ],
+      toDOM(node: ProseMirrorNode): DOMOutputSpec {
+        return [`h${(node.attrs.level as number).toString()}`, 0];
       },
-    );
+    };
   }
 
   public override proseMirrorNodeToUnistNodes(
@@ -187,5 +168,24 @@ export class HeadingExtension extends NodeExtension<Heading> {
         children: convertedChildren,
       },
     ];
+  }
+
+  public override unistNodeName(): "heading" {
+    return "heading";
+  }
+
+  public override unistNodeToProseMirrorNodes(
+    node: Heading,
+    proseMirrorSchema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>,
+  ): Array<ProseMirrorNode> {
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      proseMirrorSchema,
+      convertedChildren,
+      {
+        level: node.depth,
+      },
+    );
   }
 }

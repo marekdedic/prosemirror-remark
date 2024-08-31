@@ -15,22 +15,8 @@ import { MarkExtension, MarkInputRule } from "prosemirror-unified";
  * @public
  */
 export class InlineCodeExtension extends MarkExtension<InlineCode> {
-  public override unistNodeName(): "inlineCode" {
-    return "inlineCode";
-  }
-
-  public override proseMirrorMarkName(): string {
-    return "code";
-  }
-
-  public override proseMirrorMarkSpec(): MarkSpec {
-    return {
-      inclusive: false,
-      parseDOM: [{ tag: "code" }],
-      toDOM(): DOMOutputSpec {
-        return ["code"];
-      },
-    };
+  public override processConvertedUnistNode(convertedNode: Text): InlineCode {
+    return { type: this.unistNodeName(), value: convertedNode.value };
   }
 
   public override proseMirrorInputRules(
@@ -53,6 +39,24 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
     };
   }
 
+  public override proseMirrorMarkName(): string {
+    return "code";
+  }
+
+  public override proseMirrorMarkSpec(): MarkSpec {
+    return {
+      inclusive: false,
+      parseDOM: [{ tag: "code" }],
+      toDOM(): DOMOutputSpec {
+        return ["code"];
+      },
+    };
+  }
+
+  public override unistNodeName(): "inlineCode" {
+    return "inlineCode";
+  }
+
   public override unistNodeToProseMirrorNodes(
     node: InlineCode,
     proseMirrorSchema: Schema<string, string>,
@@ -62,9 +66,5 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
         .text(node.value)
         .mark([proseMirrorSchema.marks[this.proseMirrorMarkName()].create()]),
     ];
-  }
-
-  public override processConvertedUnistNode(convertedNode: Text): InlineCode {
-    return { type: this.unistNodeName(), value: convertedNode.value };
   }
 }

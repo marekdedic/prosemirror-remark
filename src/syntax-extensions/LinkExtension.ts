@@ -13,8 +13,18 @@ import { MarkExtension } from "prosemirror-unified";
  * @public
  */
 export class LinkExtension extends MarkExtension<Link> {
-  public override unistNodeName(): "link" {
-    return "link";
+  public override processConvertedUnistNode(
+    convertedNode: Text,
+    originalMark: Mark,
+  ): Link {
+    return {
+      type: this.unistNodeName(),
+      url: originalMark.attrs.href as string,
+      ...(originalMark.attrs.title !== null && {
+        title: originalMark.attrs.title as string,
+      }),
+      children: [convertedNode],
+    };
   }
 
   public override proseMirrorMarkName(): string {
@@ -45,6 +55,10 @@ export class LinkExtension extends MarkExtension<Link> {
     };
   }
 
+  public override unistNodeName(): "link" {
+    return "link";
+  }
+
   public override unistNodeToProseMirrorNodes(
     node: Link,
     proseMirrorSchema: Schema<string, string>,
@@ -60,19 +74,5 @@ export class LinkExtension extends MarkExtension<Link> {
         ]),
       ),
     );
-  }
-
-  public override processConvertedUnistNode(
-    convertedNode: Text,
-    originalMark: Mark,
-  ): Link {
-    return {
-      type: this.unistNodeName(),
-      url: originalMark.attrs.href as string,
-      ...(originalMark.attrs.title !== null && {
-        title: originalMark.attrs.title as string,
-      }),
-      children: [convertedNode],
-    };
   }
 }

@@ -12,10 +12,6 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class ParagraphExtension extends NodeExtension<Paragraph> {
-  public override unistNodeName(): "paragraph" {
-    return "paragraph";
-  }
-
   public override proseMirrorNodeName(): string {
     return "paragraph";
   }
@@ -31,6 +27,17 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
     };
   }
 
+  public override proseMirrorNodeToUnistNodes(
+    _node: ProseMirrorNode,
+    convertedChildren: Array<PhrasingContent>,
+  ): Array<Paragraph> {
+    return [{ type: this.unistNodeName(), children: convertedChildren }];
+  }
+
+  public override unistNodeName(): "paragraph" {
+    return "paragraph";
+  }
+
   public override unistNodeToProseMirrorNodes(
     _node: Paragraph,
     proseMirrorSchema: Schema<string, string>,
@@ -41,12 +48,5 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
       proseMirrorSchema,
       convertedChildren,
     );
-  }
-
-  public override proseMirrorNodeToUnistNodes(
-    _node: ProseMirrorNode,
-    convertedChildren: Array<PhrasingContent>,
-  ): Array<Paragraph> {
-    return [{ type: this.unistNodeName(), children: convertedChildren }];
   }
 }

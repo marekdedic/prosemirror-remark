@@ -22,10 +22,6 @@ export class ImageExtension extends NodeExtension<Image> {
     return [new ParagraphExtension()];
   }
 
-  public override unistNodeName(): "image" {
-    return "image";
-  }
-
   public override proseMirrorNodeName(): string {
     return "image";
   }
@@ -62,6 +58,23 @@ export class ImageExtension extends NodeExtension<Image> {
     };
   }
 
+  public override proseMirrorNodeToUnistNodes(
+    node: ProseMirrorNode,
+  ): Array<Image> {
+    return [
+      {
+        type: this.unistNodeName(),
+        url: node.attrs.src as string,
+        ...(node.attrs.alt !== null && { alt: node.attrs.alt as string }),
+        ...(node.attrs.title !== null && { title: node.attrs.title as string }),
+      },
+    ];
+  }
+
+  public override unistNodeName(): "image" {
+    return "image";
+  }
+
   public override unistNodeToProseMirrorNodes(
     node: Image,
     proseMirrorSchema: Schema<string, string>,
@@ -77,18 +90,5 @@ export class ImageExtension extends NodeExtension<Image> {
         title: node.title,
       },
     );
-  }
-
-  public override proseMirrorNodeToUnistNodes(
-    node: ProseMirrorNode,
-  ): Array<Image> {
-    return [
-      {
-        type: this.unistNodeName(),
-        url: node.attrs.src as string,
-        ...(node.attrs.alt !== null && { alt: node.attrs.alt as string }),
-        ...(node.attrs.title !== null && { title: node.attrs.title as string }),
-      },
-    ];
   }
 }

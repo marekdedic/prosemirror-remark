@@ -22,20 +22,25 @@ import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
  * @public
  */
 export class StrikethroughExtension extends MarkExtension<Delete> {
-  public override unifiedInitializationHook(
-    processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
-  ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
-    return processor.use(
-      buildUnifiedExtension(
-        [gfmStrikethrough()],
-        [gfmStrikethroughFromMarkdown()],
-        [gfmStrikethroughToMarkdown()],
-      ),
-    );
+  public override processConvertedUnistNode(
+    convertedNode: Emphasis | Text,
+  ): Delete {
+    return { type: this.unistNodeName(), children: [convertedNode] };
   }
 
-  public override unistNodeName(): "delete" {
-    return "delete";
+  public override proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>,
+  ): Array<InputRule> {
+    return [
+      new MarkInputRule(
+        /~([^\s](?:.*[^\s~])?)~([^~])$/u,
+        proseMirrorSchema.marks[this.proseMirrorMarkName()],
+      ),
+      new MarkInputRule(
+        /~~([^\s](?:.*[^\s])?)~~([\s\S])$/u,
+        proseMirrorSchema.marks[this.proseMirrorMarkName()],
+      ),
+    ];
   }
 
   public override proseMirrorMarkName(): string {
@@ -59,19 +64,20 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
     };
   }
 
-  public override proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>,
-  ): Array<InputRule> {
-    return [
-      new MarkInputRule(
-        /~([^\s](?:.*[^\s~])?)~([^~])$/u,
-        proseMirrorSchema.marks[this.proseMirrorMarkName()],
+  public override unifiedInitializationHook(
+    processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
+  ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
+    return processor.use(
+      buildUnifiedExtension(
+        [gfmStrikethrough()],
+        [gfmStrikethroughFromMarkdown()],
+        [gfmStrikethroughToMarkdown()],
       ),
-      new MarkInputRule(
-        /~~([^\s](?:.*[^\s])?)~~([\s\S])$/u,
-        proseMirrorSchema.marks[this.proseMirrorMarkName()],
-      ),
-    ];
+    );
+  }
+
+  public override unistNodeName(): "delete" {
+    return "delete";
   }
 
   public override unistNodeToProseMirrorNodes(
@@ -86,11 +92,5 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
         ]),
       ),
     );
-  }
-
-  public override processConvertedUnistNode(
-    convertedNode: Emphasis | Text,
-  ): Delete {
-    return { type: this.unistNodeName(), children: [convertedNode] };
   }
 }

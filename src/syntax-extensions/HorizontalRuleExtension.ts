@@ -14,24 +14,6 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
-  public override unistNodeName(): "thematicBreak" {
-    return "thematicBreak";
-  }
-
-  public override proseMirrorNodeName(): string {
-    return "horizontal_rule";
-  }
-
-  public override proseMirrorNodeSpec(): NodeSpec {
-    return {
-      group: "block",
-      parseDOM: [{ tag: "hr" }],
-      toDOM(): DOMOutputSpec {
-        return ["div", ["hr"]];
-      },
-    };
-  }
-
   public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
@@ -69,6 +51,32 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     };
   }
 
+  public override proseMirrorNodeName(): string {
+    return "horizontal_rule";
+  }
+
+  public override proseMirrorNodeSpec(): NodeSpec {
+    return {
+      group: "block",
+      parseDOM: [{ tag: "hr" }],
+      toDOM(): DOMOutputSpec {
+        return ["div", ["hr"]];
+      },
+    };
+  }
+
+  public override proseMirrorNodeToUnistNodes(): Array<ThematicBreak> {
+    return [
+      {
+        type: this.unistNodeName(),
+      },
+    ];
+  }
+
+  public override unistNodeName(): "thematicBreak" {
+    return "thematicBreak";
+  }
+
   public override unistNodeToProseMirrorNodes(
     _node: ThematicBreak,
     proseMirrorSchema: Schema<string, string>,
@@ -79,13 +87,5 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
       proseMirrorSchema,
       convertedChildren,
     );
-  }
-
-  public override proseMirrorNodeToUnistNodes(): Array<ThematicBreak> {
-    return [
-      {
-        type: this.unistNodeName(),
-      },
-    ];
   }
 }

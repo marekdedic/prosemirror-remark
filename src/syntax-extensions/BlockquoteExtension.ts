@@ -15,25 +15,6 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class BlockquoteExtension extends NodeExtension<Blockquote> {
-  public override unistNodeName(): "blockquote" {
-    return "blockquote";
-  }
-
-  public override proseMirrorNodeName(): string {
-    return "blockquote";
-  }
-
-  public override proseMirrorNodeSpec(): NodeSpec {
-    return {
-      content: "block+",
-      group: "block",
-      parseDOM: [{ tag: "blockquote" }],
-      toDOM(): DOMOutputSpec {
-        return ["blockquote", 0];
-      },
-    };
-  }
-
   public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
@@ -53,16 +34,19 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     };
   }
 
-  public override unistNodeToProseMirrorNodes(
-    _node: Blockquote,
-    proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>,
-  ): Array<ProseMirrorNode> {
-    return createProseMirrorNode(
-      this.proseMirrorNodeName(),
-      proseMirrorSchema,
-      convertedChildren,
-    );
+  public override proseMirrorNodeName(): string {
+    return "blockquote";
+  }
+
+  public override proseMirrorNodeSpec(): NodeSpec {
+    return {
+      content: "block+",
+      group: "block",
+      parseDOM: [{ tag: "blockquote" }],
+      toDOM(): DOMOutputSpec {
+        return ["blockquote", 0];
+      },
+    };
   }
 
   public override proseMirrorNodeToUnistNodes(
@@ -75,5 +59,21 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
         children: convertedChildren,
       },
     ];
+  }
+
+  public override unistNodeName(): "blockquote" {
+    return "blockquote";
+  }
+
+  public override unistNodeToProseMirrorNodes(
+    _node: Blockquote,
+    proseMirrorSchema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>,
+  ): Array<ProseMirrorNode> {
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      proseMirrorSchema,
+      convertedChildren,
+    );
   }
 }

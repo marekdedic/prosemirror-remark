@@ -22,18 +22,18 @@ export class MarkExtensionTester<
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
   protected readonly extension: MarkExtension<UNode, UnistToProseMirrorContext>;
 
-  private readonly proseMirrorMarkName: string | null;
+  private readonly inputRuleMatches: Array<{
+    editorInput: string;
+    proseMirrorNodes: Array<ProseMirrorNode>;
+    markdownOutput: string;
+  }>;
 
   private readonly proseMirrorMarkMatches: Array<{
     mark: Mark;
     shouldMatch: boolean;
   }>;
 
-  private readonly inputRuleMatches: Array<{
-    editorInput: string;
-    proseMirrorNodes: Array<ProseMirrorNode>;
-    markdownOutput: string;
-  }>;
+  private readonly proseMirrorMarkName: string | null;
 
   public constructor(
     extension: MarkExtension<UNode, UnistToProseMirrorContext>,
@@ -47,74 +47,6 @@ export class MarkExtensionTester<
     this.inputRuleMatches = [];
   }
 
-  public shouldMatchProseMirrorMark(
-    mark: (schema: Schema<string, string>) => Mark,
-  ): this {
-    this.proseMirrorMarkMatches.push({
-      mark: mark(this.pmu.schema()),
-      shouldMatch: true,
-    });
-    return this;
-  }
-
-  public shouldNotMatchProseMirrorMark(
-    mark: (schema: Schema<string, string>) => Mark,
-  ): this {
-    this.proseMirrorMarkMatches.push({
-      mark: mark(this.pmu.schema()),
-      shouldMatch: false,
-    });
-    return this;
-  }
-
-  public shouldMatchInputRule(
-    editorInput: string,
-    markdownOutput: string,
-    proseMirrorContents:
-      | ((schema: Schema<string, string>) => Array<ProseMirrorNode>)
-      | string,
-  ): this {
-    this.inputRuleMatches.push({
-      editorInput,
-      proseMirrorNodes:
-        typeof proseMirrorContents === "string"
-          ? [
-              this.pmu
-                .schema()
-                .text(proseMirrorContents)
-                .mark([
-                  this.pmu.schema().mark(this.extension.proseMirrorMarkName()!),
-                ]),
-            ]
-          : proseMirrorContents(this.pmu.schema()),
-      markdownOutput,
-    });
-    return this;
-  }
-
-  public shouldNotMatchInputRule(
-    editorInput: string,
-    markdownOutput: string,
-    proseMirrorContents?: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
-  ): this {
-    this.inputRuleMatches.push({
-      editorInput,
-      proseMirrorNodes: proseMirrorContents?.(this.pmu.schema()) ?? [
-        this.pmu.schema().text(editorInput),
-      ],
-      markdownOutput,
-    });
-    return this;
-  }
-
-  public test(): void {
-    describe(this.extension.constructor.name, () => {
-      this.enqueueTests();
-    });
-  }
-
   protected enqueueTests(): void {
     super.enqueueTests();
 
@@ -126,23 +58,6 @@ export class MarkExtensionTester<
 
     this.enqueueProseMirrorNodeMatchTests();
     this.enqueueInputRuleTests();
-  }
-
-  private enqueueProseMirrorNodeMatchTests(): void {
-    if (this.proseMirrorMarkMatches.length === 0) {
-      return;
-    }
-
-    test("Matches correct ProseMirror nodes", () => {
-      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(this.proseMirrorMarkMatches.length);
-
-      for (const { mark, shouldMatch } of this.proseMirrorMarkMatches) {
-        expect(mark.type.name === this.extension.proseMirrorMarkName()).toBe(
-          shouldMatch,
-        );
-      }
-    });
   }
 
   private enqueueInputRuleTests(): void {
@@ -187,6 +102,91 @@ export class MarkExtensionTester<
         // eslint-disable-next-line no-console -- Testing for console
         expect(console.warn).not.toHaveBeenCalled();
       }
+    });
+  }
+
+  private enqueueProseMirrorNodeMatchTests(): void {
+    if (this.proseMirrorMarkMatches.length === 0) {
+      return;
+    }
+
+    test("Matches correct ProseMirror nodes", () => {
+      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
+      expect.assertions(this.proseMirrorMarkMatches.length);
+
+      for (const { mark, shouldMatch } of this.proseMirrorMarkMatches) {
+        expect(mark.type.name === this.extension.proseMirrorMarkName()).toBe(
+          shouldMatch,
+        );
+      }
+    });
+  }
+
+  public shouldMatchInputRule(
+    editorInput: string,
+    markdownOutput: string,
+    proseMirrorContents:
+      | ((schema: Schema<string, string>) => Array<ProseMirrorNode>)
+      | string,
+  ): this {
+    this.inputRuleMatches.push({
+      editorInput,
+      proseMirrorNodes:
+        typeof proseMirrorContents === "string"
+          ? [
+              this.pmu
+                .schema()
+                .text(proseMirrorContents)
+                .mark([
+                  this.pmu.schema().mark(this.extension.proseMirrorMarkName()!),
+                ]),
+            ]
+          : proseMirrorContents(this.pmu.schema()),
+      markdownOutput,
+    });
+    return this;
+  }
+
+  public shouldMatchProseMirrorMark(
+    mark: (schema: Schema<string, string>) => Mark,
+  ): this {
+    this.proseMirrorMarkMatches.push({
+      mark: mark(this.pmu.schema()),
+      shouldMatch: true,
+    });
+    return this;
+  }
+
+  public shouldNotMatchInputRule(
+    editorInput: string,
+    markdownOutput: string,
+    proseMirrorContents?: (
+      schema: Schema<string, string>,
+    ) => Array<ProseMirrorNode>,
+  ): this {
+    this.inputRuleMatches.push({
+      editorInput,
+      proseMirrorNodes: proseMirrorContents?.(this.pmu.schema()) ?? [
+        this.pmu.schema().text(editorInput),
+      ],
+      markdownOutput,
+    });
+    return this;
+  }
+
+  public shouldNotMatchProseMirrorMark(
+    mark: (schema: Schema<string, string>) => Mark,
+  ): this {
+    this.proseMirrorMarkMatches.push({
+      mark: mark(this.pmu.schema()),
+      shouldMatch: false,
+    });
+    return this;
+  }
+
+  public test(): void {
+    describe(this.extension.constructor.name, () => {
+      this.enqueueTests();
     });
   }
 }

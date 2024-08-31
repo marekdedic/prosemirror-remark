@@ -14,26 +14,6 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class BreakExtension extends NodeExtension<Break> {
-  public override unistNodeName(): "break" {
-    return "break";
-  }
-
-  public override proseMirrorNodeName(): string {
-    return "hard_break";
-  }
-
-  public override proseMirrorNodeSpec(): NodeSpec {
-    return {
-      inline: true,
-      group: "inline",
-      selectable: false,
-      parseDOM: [{ tag: "br" }],
-      toDOM(): DOMOutputSpec {
-        return ["br"];
-      },
-    };
-  }
-
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
@@ -62,6 +42,30 @@ export class BreakExtension extends NodeExtension<Break> {
     };
   }
 
+  public override proseMirrorNodeName(): string {
+    return "hard_break";
+  }
+
+  public override proseMirrorNodeSpec(): NodeSpec {
+    return {
+      inline: true,
+      group: "inline",
+      selectable: false,
+      parseDOM: [{ tag: "br" }],
+      toDOM(): DOMOutputSpec {
+        return ["br"];
+      },
+    };
+  }
+
+  public override proseMirrorNodeToUnistNodes(): Array<Break> {
+    return [{ type: this.unistNodeName() }];
+  }
+
+  public override unistNodeName(): "break" {
+    return "break";
+  }
+
   public override unistNodeToProseMirrorNodes(
     _node: Break,
     proseMirrorSchema: Schema<string, string>,
@@ -72,9 +76,5 @@ export class BreakExtension extends NodeExtension<Break> {
       proseMirrorSchema,
       convertedChildren,
     );
-  }
-
-  public override proseMirrorNodeToUnistNodes(): Array<Break> {
-    return [{ type: this.unistNodeName() }];
   }
 }

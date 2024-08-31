@@ -19,8 +19,15 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
  * @public
  */
 export class ListItemExtension extends NodeExtension<ListItem> {
-  public override unistNodeName(): "listItem" {
-    return "listItem";
+  public override proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>,
+  ): Record<string, Command> {
+    const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
+    return {
+      Enter: splitListItem(nodeType),
+      "Shift-Tab": liftListItem(nodeType),
+      Tab: sinkListItem(nodeType),
+    };
   }
 
   public override proseMirrorNodeName(): string {
@@ -39,22 +46,20 @@ export class ListItemExtension extends NodeExtension<ListItem> {
     };
   }
 
-  public unistToProseMirrorTest(node: UnistNode): boolean {
-    return (
-      node.type === this.unistNodeName() &&
-      (!("checked" in node) || typeof node.checked !== "boolean")
-    );
+  public override proseMirrorNodeToUnistNodes(
+    _node: ProseMirrorNode,
+    convertedChildren: Array<BlockContent | DefinitionContent>,
+  ): Array<ListItem> {
+    return [
+      {
+        type: this.unistNodeName(),
+        children: convertedChildren,
+      },
+    ];
   }
 
-  public override proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>,
-  ): Record<string, Command> {
-    const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
-    return {
-      Enter: splitListItem(nodeType),
-      "Shift-Tab": liftListItem(nodeType),
-      Tab: sinkListItem(nodeType),
-    };
+  public override unistNodeName(): "listItem" {
+    return "listItem";
   }
 
   public override unistNodeToProseMirrorNodes(
@@ -69,15 +74,10 @@ export class ListItemExtension extends NodeExtension<ListItem> {
     );
   }
 
-  public override proseMirrorNodeToUnistNodes(
-    _node: ProseMirrorNode,
-    convertedChildren: Array<BlockContent | DefinitionContent>,
-  ): Array<ListItem> {
-    return [
-      {
-        type: this.unistNodeName(),
-        children: convertedChildren,
-      },
-    ];
+  public unistToProseMirrorTest(node: UnistNode): boolean {
+    return (
+      node.type === this.unistNodeName() &&
+      (!("checked" in node) || typeof node.checked !== "boolean")
+    );
   }
 }
