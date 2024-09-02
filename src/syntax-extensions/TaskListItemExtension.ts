@@ -1,18 +1,11 @@
 import type { BlockContent, DefinitionContent, ListItem } from "mdast";
-import {
-  gfmTaskListItemFromMarkdown,
-  gfmTaskListItemToMarkdown,
-} from "mdast-util-gfm-task-list-item";
-import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
-import { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
-  Node as ProseMirrorNode,
   NodeSpec,
+  Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
 import type { Command, EditorState } from "prosemirror-state";
-import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 import type {
   EditorView,
   NodeView,
@@ -21,11 +14,19 @@ import type {
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
 
+import {
+  gfmTaskListItemFromMarkdown,
+  gfmTaskListItemToMarkdown,
+} from "mdast-util-gfm-task-list-item";
+import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
+import { InputRule } from "prosemirror-inputrules";
+import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
+
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 
 class TaskListItemView implements NodeView {
-  public readonly dom: HTMLElement;
   public readonly contentDOM: HTMLElement;
+  public readonly dom: HTMLElement;
 
   public constructor(
     node: ProseMirrorNode,
@@ -85,85 +86,15 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     }
     if (view !== undefined) {
       return view.endOfTextblock("backward", state);
-    } else {
-      return state.selection.$anchor.parentOffset > 0;
     }
-  }
-
-  public override unifiedInitializationHook(
-    processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
-  ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
-    return processor.use(
-      buildUnifiedExtension(
-        [gfmTaskListItem()],
-        [gfmTaskListItemFromMarkdown()],
-        [gfmTaskListItemToMarkdown()],
-      ),
-    );
-  }
-
-  public override unistNodeName(): "listItem" {
-    return "listItem";
-  }
-
-  public override proseMirrorNodeName(): string {
-    return "task_list_item";
-  }
-
-  public override proseMirrorNodeSpec(): NodeSpec {
-    return {
-      content: "paragraph block*",
-      defining: true,
-      group: "list_item",
-      attrs: { checked: { default: false } },
-      parseDOM: [
-        {
-          tag: "li",
-          getAttrs(dom: Node | string): false | { checked: boolean } {
-            const checkbox = (dom as HTMLElement).firstChild;
-            if (!(checkbox instanceof HTMLInputElement)) {
-              return false;
-            }
-            return { checked: checkbox.checked };
-          },
-        },
-      ],
-      toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return [
-          "li",
-          { style: "list-style-type: none;, margin-left: -30px;" },
-          [
-            "span",
-            {
-              contenteditable: "false",
-              style: "position: absolute; left: 5px;",
-            },
-            [
-              "input",
-              {
-                type: "checkbox",
-                checked: (node.attrs.checked as boolean)
-                  ? "checked"
-                  : undefined,
-                disabled: "disabled",
-              },
-            ],
-          ],
-          ["span", { style: "position: relative; left: 30px" }, 0],
-        ];
-      },
-    };
-  }
-
-  public override proseMirrorNodeView(): NodeViewConstructor | null {
-    return (node, view, getPos) => new TaskListItemView(node, view, getPos);
+    return state.selection.$anchor.parentOffset > 0;
   }
 
   public proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
-      new InputRule(/^\[([x\s]?)\][\s\S]$/, (state, match, start) => {
+      new InputRule(/^\[([x\s]?)\][\s\S]$/u, (state, match, start) => {
         const wrappingNode = state.doc.resolve(start).node(-1);
         if (wrappingNode.type.name !== "regular_list_item") {
           return null;
@@ -210,12 +141,86 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     };
   }
 
-  public override unistToProseMirrorTest(node: UnistNode): boolean {
-    return (
-      node.type === this.unistNodeName() &&
-      "checked" in node &&
-      typeof node.checked === "boolean"
+  public override proseMirrorNodeName(): string {
+    return "task_list_item";
+  }
+
+  public override proseMirrorNodeSpec(): NodeSpec {
+    return {
+      attrs: { checked: { default: false } },
+      content: "paragraph block*",
+      defining: true,
+      group: "list_item",
+      parseDOM: [
+        {
+          getAttrs(dom: Node | string): false | { checked: boolean } {
+            const checkbox = (dom as HTMLElement).firstChild;
+            if (!(checkbox instanceof HTMLInputElement)) {
+              return false;
+            }
+            return { checked: checkbox.checked };
+          },
+          tag: "li",
+        },
+      ],
+      toDOM(node: ProseMirrorNode): DOMOutputSpec {
+        return [
+          "li",
+          { style: "list-style-type: none;, margin-left: -30px;" },
+          [
+            "span",
+            {
+              contenteditable: "false",
+              style: "position: absolute; left: 5px;",
+            },
+            [
+              "input",
+              {
+                checked: (node.attrs.checked as boolean)
+                  ? "checked"
+                  : undefined,
+                disabled: "disabled",
+                type: "checkbox",
+              },
+            ],
+          ],
+          ["span", { style: "position: relative; left: 30px" }, 0],
+        ];
+      },
+    };
+  }
+
+  public override proseMirrorNodeToUnistNodes(
+    node: ProseMirrorNode,
+    convertedChildren: Array<BlockContent | DefinitionContent>,
+  ): Array<ListItem> {
+    return [
+      {
+        checked: node.attrs.checked as boolean,
+        children: convertedChildren,
+        type: this.unistNodeName(),
+      },
+    ];
+  }
+
+  public override proseMirrorNodeView(): NodeViewConstructor | null {
+    return (node, view, getPos) => new TaskListItemView(node, view, getPos);
+  }
+
+  public override unifiedInitializationHook(
+    processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
+  ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
+    return processor.use(
+      buildUnifiedExtension(
+        [gfmTaskListItem()],
+        [gfmTaskListItemFromMarkdown()],
+        [gfmTaskListItemToMarkdown()],
+      ),
     );
+  }
+
+  public override unistNodeName(): "listItem" {
+    return "listItem";
   }
 
   public override unistNodeToProseMirrorNodes(
@@ -231,16 +236,11 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     );
   }
 
-  public override proseMirrorNodeToUnistNodes(
-    node: ProseMirrorNode,
-    convertedChildren: Array<BlockContent | DefinitionContent>,
-  ): Array<ListItem> {
-    return [
-      {
-        type: this.unistNodeName(),
-        checked: node.attrs.checked as boolean,
-        children: convertedChildren,
-      },
-    ];
+  public override unistToProseMirrorTest(node: UnistNode): boolean {
+    return (
+      node.type === this.unistNodeName() &&
+      "checked" in node &&
+      typeof node.checked === "boolean"
+    );
   }
 }

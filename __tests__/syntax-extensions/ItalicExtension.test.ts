@@ -5,16 +5,16 @@ import { ItalicExtension } from "../../src/syntax-extensions/ItalicExtension";
 import { MarkExtensionTester } from "../utils/MarkExtensionTester";
 
 new MarkExtensionTester(new ItalicExtension(), {
+  otherExtensionsInTest: [new BoldExtension()],
   proseMirrorMarkName: "em",
   unistNodeName: "emphasis",
-  otherExtensionsInTest: [new BoldExtension()],
 })
-  .shouldMatchUnistNode({ type: "emphasis", children: [] })
+  .shouldMatchUnistNode({ children: [], type: "emphasis" })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
     {
-      type: "emphasis",
       children: [{ type: "text", value: "Hello World!" }],
+      type: "emphasis",
     },
     (schema) => [schema.text("Hello World!").mark([schema.marks.em.create()])],
   )
@@ -26,19 +26,19 @@ new MarkExtensionTester(new ItalicExtension(), {
         .mark([schema.mark("em"), schema.mark("strong")]),
     [
       {
-        type: "strong",
         children: [
           {
-            type: "emphasis",
             children: [{ type: "text", value: "Hello World!" }],
+            type: "emphasis",
           },
         ],
+        type: "strong",
       } as UnistNode,
     ],
   )
   .shouldConvertProseMirrorNode(
     (schema) => schema.text("Hello World!").mark([schema.mark("em")]),
-    [{ type: "emphasis", children: [{ type: "text", value: "Hello World!" }] }],
+    [{ children: [{ type: "text", value: "Hello World!" }], type: "emphasis" }],
   )
   .shouldSupportKeymap(
     () => [],

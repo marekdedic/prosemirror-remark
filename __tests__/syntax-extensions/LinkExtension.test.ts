@@ -6,27 +6,27 @@ new MarkExtensionTester(new LinkExtension(), {
   unistNodeName: "link",
 })
   .shouldMatchUnistNode({
-    type: "link",
-    url: "https://example.test",
     children: [],
-  })
-  .shouldMatchUnistNode({
     type: "link",
     url: "https://example.test",
+  })
+  .shouldMatchUnistNode({
     children: [{ type: "text", value: "Click me!" }],
-  })
-  .shouldMatchUnistNode({
     type: "link",
     url: "https://example.test",
+  })
+  .shouldMatchUnistNode({
+    children: [{ type: "text", value: "Click me!" }],
     title: "This link has a title",
-    children: [{ type: "text", value: "Click me!" }],
+    type: "link",
+    url: "https://example.test",
   })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
     {
+      children: [{ type: "text", value: "Click me!" }],
       type: "link",
       url: "https://example.test",
-      children: [{ type: "text", value: "Click me!" }],
     },
     (schema) => [
       schema
@@ -36,10 +36,10 @@ new MarkExtensionTester(new LinkExtension(), {
   )
   .shouldConvertUnistNode(
     {
+      children: [{ type: "text", value: "Click me!" }],
+      title: "This link has a title",
       type: "link",
       url: "https://example.test",
-      title: "This link has a title",
-      children: [{ type: "text", value: "Click me!" }],
     },
     (schema) => [
       schema.text("Click me!").mark([
@@ -60,9 +60,9 @@ new MarkExtensionTester(new LinkExtension(), {
         .mark([schema.mark("link", { href: "https://example.test" })]),
     [
       {
+        children: [{ type: "text", value: "Click me!" }],
         type: "link",
         url: "https://example.test",
-        children: [{ type: "text", value: "Click me!" }],
       },
     ],
   )
@@ -76,10 +76,10 @@ new MarkExtensionTester(new LinkExtension(), {
       ]),
     [
       {
+        children: [{ type: "text", value: "Click me!" }],
+        title: "This link has a title",
         type: "link",
         url: "https://example.test",
-        title: "This link has a title",
-        children: [{ type: "text", value: "Click me!" }],
       },
     ],
   )

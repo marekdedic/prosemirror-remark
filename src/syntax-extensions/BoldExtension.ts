@@ -1,5 +1,4 @@
 import type { Emphasis, Strong, Text } from "mdast";
-import { toggleMark } from "prosemirror-commands";
 import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
@@ -8,34 +7,18 @@ import type {
   Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
+
+import { toggleMark } from "prosemirror-commands";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
 /**
  * @public
  */
 export class BoldExtension extends MarkExtension<Strong> {
-  public override unistNodeName(): "strong" {
-    return "strong";
-  }
-
-  public override proseMirrorMarkName(): string {
-    return "strong";
-  }
-
-  public override proseMirrorMarkSpec(): MarkSpec {
-    return {
-      parseDOM: [
-        { tag: "b" },
-        { tag: "strong" },
-        {
-          style: "font-weight",
-          getAttrs: (value) => /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null,
-        },
-      ],
-      toDOM(): DOMOutputSpec {
-        return ["strong"];
-      },
-    };
+  public override processConvertedUnistNode(
+    convertedNode: Emphasis | Text,
+  ): Strong {
+    return { children: [convertedNode], type: this.unistNodeName() };
   }
 
   public override proseMirrorInputRules(
@@ -43,11 +26,11 @@ export class BoldExtension extends MarkExtension<Strong> {
   ): Array<InputRule> {
     return [
       new MarkInputRule(
-        /\*\*([^\s](?:.*[^\s])?)\*\*([\s\S])$/,
+        /\*\*([^\s](?:.*[^\s])?)\*\*([\s\S])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
       new MarkInputRule(
-        /__([^\s](?:.*[^\s])?)__([\s\S])$/,
+        /__([^\s](?:.*[^\s])?)__([\s\S])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
     ];
@@ -63,6 +46,30 @@ export class BoldExtension extends MarkExtension<Strong> {
     };
   }
 
+  public override proseMirrorMarkName(): string {
+    return "strong";
+  }
+
+  public override proseMirrorMarkSpec(): MarkSpec {
+    return {
+      parseDOM: [
+        { tag: "b" },
+        { tag: "strong" },
+        {
+          getAttrs: (value) => /^(bold(er)?|[5-9]\d{2,})$/u.test(value) && null,
+          style: "font-weight",
+        },
+      ],
+      toDOM(): DOMOutputSpec {
+        return ["strong"];
+      },
+    };
+  }
+
+  public override unistNodeName(): "strong" {
+    return "strong";
+  }
+
   public override unistNodeToProseMirrorNodes(
     _node: Strong,
     proseMirrorSchema: Schema<string, string>,
@@ -75,11 +82,5 @@ export class BoldExtension extends MarkExtension<Strong> {
         ]),
       ),
     );
-  }
-
-  public override processConvertedUnistNode(
-    convertedNode: Emphasis | Text,
-  ): Strong {
-    return { type: this.unistNodeName(), children: [convertedNode] };
   }
 }

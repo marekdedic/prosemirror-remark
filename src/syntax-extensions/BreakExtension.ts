@@ -1,38 +1,19 @@
 import type { Break } from "mdast";
-import { chainCommands, exitCode } from "prosemirror-commands";
 import type {
   DOMOutputSpec,
-  Node as ProseMirrorNode,
   NodeSpec,
+  Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
+
+import { chainCommands, exitCode } from "prosemirror-commands";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 /**
  * @public
  */
 export class BreakExtension extends NodeExtension<Break> {
-  public override unistNodeName(): "break" {
-    return "break";
-  }
-
-  public override proseMirrorNodeName(): string {
-    return "hard_break";
-  }
-
-  public override proseMirrorNodeSpec(): NodeSpec {
-    return {
-      inline: true,
-      group: "inline",
-      selectable: false,
-      parseDOM: [{ tag: "br" }],
-      toDOM(): DOMOutputSpec {
-        return ["br"];
-      },
-    };
-  }
-
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
@@ -50,8 +31,8 @@ export class BreakExtension extends NodeExtension<Break> {
     });
 
     const isMac =
-      typeof navigator != "undefined"
-        ? /Mac|iP(hone|[oa]d)/.test(navigator.platform) // eslint-disable-line deprecation/deprecation -- In the tested systems, it will be defined
+      typeof navigator !== "undefined"
+        ? /Mac|iP(hone|[oa]d)/u.test(navigator.platform) // eslint-disable-line @typescript-eslint/no-deprecated -- In the tested systems, it will be defined
         : false;
 
     return {
@@ -59,6 +40,30 @@ export class BreakExtension extends NodeExtension<Break> {
       "Shift-Enter": command,
       ...(isMac && { "Ctrl-Enter": command }),
     };
+  }
+
+  public override proseMirrorNodeName(): string {
+    return "hard_break";
+  }
+
+  public override proseMirrorNodeSpec(): NodeSpec {
+    return {
+      group: "inline",
+      inline: true,
+      parseDOM: [{ tag: "br" }],
+      selectable: false,
+      toDOM(): DOMOutputSpec {
+        return ["br"];
+      },
+    };
+  }
+
+  public override proseMirrorNodeToUnistNodes(): Array<Break> {
+    return [{ type: this.unistNodeName() }];
+  }
+
+  public override unistNodeName(): "break" {
+    return "break";
   }
 
   public override unistNodeToProseMirrorNodes(
@@ -71,9 +76,5 @@ export class BreakExtension extends NodeExtension<Break> {
       proseMirrorSchema,
       convertedChildren,
     );
-  }
-
-  public override proseMirrorNodeToUnistNodes(): Array<Break> {
-    return [{ type: this.unistNodeName() }];
   }
 }

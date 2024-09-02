@@ -6,14 +6,25 @@ import type {
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
+
 import { MarkExtension } from "prosemirror-unified";
 
 /**
  * @public
  */
 export class LinkExtension extends MarkExtension<Link> {
-  public override unistNodeName(): "link" {
-    return "link";
+  public override processConvertedUnistNode(
+    convertedNode: Text,
+    originalMark: Mark,
+  ): Link {
+    return {
+      type: this.unistNodeName(),
+      url: originalMark.attrs.href as string,
+      ...(originalMark.attrs.title !== null && {
+        title: originalMark.attrs.title as string,
+      }),
+      children: [convertedNode],
+    };
   }
 
   public override proseMirrorMarkName(): string {
@@ -26,7 +37,6 @@ export class LinkExtension extends MarkExtension<Link> {
       inclusive: false,
       parseDOM: [
         {
-          tag: "a[href]",
           getAttrs(dom: Node | string): {
             href: string | null;
             title: string | null;
@@ -36,12 +46,17 @@ export class LinkExtension extends MarkExtension<Link> {
               title: (dom as HTMLElement).getAttribute("title"),
             };
           },
+          tag: "a[href]",
         },
       ],
       toDOM(node: Mark): DOMOutputSpec {
         return ["a", node.attrs];
       },
     };
+  }
+
+  public override unistNodeName(): "link" {
+    return "link";
   }
 
   public override unistNodeToProseMirrorNodes(
@@ -59,19 +74,5 @@ export class LinkExtension extends MarkExtension<Link> {
         ]),
       ),
     );
-  }
-
-  public override processConvertedUnistNode(
-    convertedNode: Text,
-    originalMark: Mark,
-  ): Link {
-    return {
-      type: this.unistNodeName(),
-      url: originalMark.attrs.href as string,
-      ...(originalMark.attrs.title !== null && {
-        title: originalMark.attrs.title as string,
-      }),
-      children: [convertedNode],
-    };
   }
 }

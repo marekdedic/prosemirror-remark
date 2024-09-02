@@ -8,100 +8,100 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
   unistNodeName: "imageReference",
 })
   .shouldMatchUnistNode({
-    type: "imageReference",
+    identifier: "imageId",
     referenceType: "full",
-    identifier: "imageId",
+    type: "imageReference",
   })
   .shouldMatchUnistNode({
-    type: "imageReference",
+    identifier: "imageId",
     referenceType: "collapsed",
-    identifier: "imageId",
+    type: "imageReference",
   })
   .shouldMatchUnistNode({
-    type: "imageReference",
-    referenceType: "shortcut",
     identifier: "imageId",
+    referenceType: "shortcut",
+    type: "imageReference",
   })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
     {
-      type: "imageReference",
-      referenceType: "full",
       identifier: "imageId",
+      referenceType: "full",
+      type: "imageReference",
     },
     (schema) => [
       schema.nodes.image.createAndFill({ src: "https://example.test" })!,
     ],
     [
       {
-        type: "definition",
         identifier: "imageId",
+        type: "definition",
         url: "https://example.test",
       } as UnistNode,
     ],
   )
   .shouldConvertUnistNode(
     {
-      type: "imageReference",
+      identifier: "imageId",
       referenceType: "collapsed",
-      identifier: "imageId",
+      type: "imageReference",
     },
     (schema) => [
       schema.nodes.image.createAndFill({ src: "https://example.test" })!,
     ],
     [
       {
-        type: "definition",
         identifier: "imageId",
+        type: "definition",
         url: "https://example.test",
       } as UnistNode,
     ],
   )
   .shouldConvertUnistNode(
     {
-      type: "imageReference",
+      identifier: "imageId",
       referenceType: "shortcut",
-      identifier: "imageId",
+      type: "imageReference",
     },
     (schema) => [
       schema.nodes.image.createAndFill({ src: "https://example.test" })!,
     ],
     [
       {
-        type: "definition",
         identifier: "imageId",
+        type: "definition",
         url: "https://example.test",
       } as UnistNode,
     ],
   )
   .shouldConvertUnistNode(
     {
-      type: "imageReference",
-      referenceType: "full",
-      identifier: "imageId",
       alt: "Awesome image",
+      identifier: "imageId",
+      referenceType: "full",
+      type: "imageReference",
     },
     (schema) => [
       schema.nodes.image.createAndFill({
-        src: "https://example.test",
         alt: "Awesome image",
+        src: "https://example.test",
         title: "Image title",
       })!,
     ],
     [
       {
-        type: "definition",
         identifier: "imageId",
-        url: "https://example.test",
         title: "Image title",
+        type: "definition",
+        url: "https://example.test",
       } as UnistNode,
     ],
   )
   .shouldConvertUnistNode(
     {
-      type: "imageReference",
-      referenceType: "full",
       identifier: "imageId",
+      referenceType: "full",
+      type: "imageReference",
     },
     (schema) => [schema.nodes.image.createAndFill({ src: "" })!],
   )

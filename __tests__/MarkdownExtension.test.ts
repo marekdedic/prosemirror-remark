@@ -27,6 +27,7 @@ test("unist -> ProseMirror conversion", () => {
       "\n" +
       "[link2]: https://link2.test",
   );
+
   expect(result).toEqualProsemirrorNode(
     schema.nodes.doc.createAndFill({}, [
       schema.nodes.blockquote.createAndFill({}, [
@@ -44,14 +45,14 @@ test("unist -> ProseMirror conversion", () => {
       schema.nodes.horizontal_rule.createAndFill()!,
       schema.nodes.paragraph.createAndFill({}, [
         schema.nodes.image.createAndFill({
-          src: "https://example.test",
           alt: "Awesome image",
+          src: "https://example.test",
         })!,
       ])!,
       schema.nodes.paragraph.createAndFill({}, [
         schema.nodes.image.createAndFill({
-          src: "https://img2.test",
           alt: "Image 2",
+          src: "https://img2.test",
         })!,
       ])!,
       schema.nodes.ordered_list.createAndFill({}, [
@@ -109,8 +110,8 @@ test("ProseMirror -> unist conversion", () => {
       schema.nodes.horizontal_rule.createAndFill()!,
       schema.nodes.paragraph.createAndFill({}, [
         schema.nodes.image.createAndFill({
-          src: "https://example.test",
           alt: "Awesome image",
+          src: "https://example.test",
         })!,
       ])!,
       schema.nodes.ordered_list.createAndFill({}, [
@@ -142,6 +143,7 @@ test("ProseMirror -> unist conversion", () => {
       ])!,
     ])!,
   );
+
   expect(result).toBe(
     "> Inside a blockquote\n" +
       "\n" +

@@ -1,19 +1,20 @@
 import type { List, ListContent } from "mdast";
-import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
-  Node as ProseMirrorNode,
   NodeSpec,
+  Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
-import { wrapInList } from "prosemirror-schema-list";
 import type { Command } from "prosemirror-state";
+import type { Node as UnistNode } from "unist";
+
+import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
+import { wrapInList } from "prosemirror-schema-list";
 import {
   createProseMirrorNode,
   type Extension,
   NodeExtension,
 } from "prosemirror-unified";
-import type { Node as UnistNode } from "unist";
 
 import { ListItemExtension } from "./ListItemExtension";
 
@@ -25,14 +26,25 @@ export class UnorderedListExtension extends NodeExtension<List> {
     return [new ListItemExtension()];
   }
 
-  public override unistNodeName(): "list" {
-    return "list";
+  public override proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>,
+  ): Array<InputRule> {
+    return [
+      wrappingInputRule(
+        /^\s{0,3}([-+*])\s$/u,
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
+      ),
+    ];
   }
 
-  public override unistToProseMirrorTest(node: UnistNode): boolean {
-    return (
-      node.type === this.unistNodeName() && (node as List).ordered !== true
-    );
+  public override proseMirrorKeymap(
+    proseMirrorSchema: Schema<string, string>,
+  ): Record<string, Command> {
+    return {
+      "Shift-Mod-8": wrapInList(
+        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
+      ),
+    };
   }
 
   public override proseMirrorNodeName(): string {
@@ -41,9 +53,9 @@ export class UnorderedListExtension extends NodeExtension<List> {
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
+      attrs: { spread: { default: false } },
       content: "list_item+",
       group: "block",
-      attrs: { spread: { default: false } },
       parseDOM: [
         {
           getAttrs(dom: Node | string): { spread: boolean } {
@@ -61,25 +73,26 @@ export class UnorderedListExtension extends NodeExtension<List> {
     };
   }
 
-  public override proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>,
-  ): Array<InputRule> {
+  public override proseMirrorNodeToUnistNodes(
+    node: ProseMirrorNode,
+    convertedChildren: Array<ListContent>,
+  ): Array<List> {
+    const spread = node.attrs.spread as boolean;
     return [
-      wrappingInputRule(
-        /^\s{0,3}([-+*])\s$/,
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-      ),
+      {
+        children: convertedChildren.map((child) => {
+          child.spread = spread;
+          return child;
+        }),
+        ordered: false,
+        spread,
+        type: this.unistNodeName(),
+      },
     ];
   }
 
-  public override proseMirrorKeymap(
-    proseMirrorSchema: Schema<string, string>,
-  ): Record<string, Command> {
-    return {
-      "Shift-Mod-8": wrapInList(
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-      ),
-    };
+  public override unistNodeName(): "list" {
+    return "list";
   }
 
   public override unistNodeToProseMirrorNodes(
@@ -97,21 +110,9 @@ export class UnorderedListExtension extends NodeExtension<List> {
     );
   }
 
-  public override proseMirrorNodeToUnistNodes(
-    node: ProseMirrorNode,
-    convertedChildren: Array<ListContent>,
-  ): Array<List> {
-    const spread = node.attrs.spread as boolean;
-    return [
-      {
-        type: this.unistNodeName(),
-        ordered: false,
-        spread,
-        children: convertedChildren.map((child) => {
-          child.spread = spread;
-          return child;
-        }),
-      },
-    ];
+  public override unistToProseMirrorTest(node: UnistNode): boolean {
+    return (
+      node.type === this.unistNodeName() && (node as List).ordered !== true
+    );
   }
 }

@@ -1,9 +1,4 @@
 import type { Delete, Emphasis, Text } from "mdast";
-import {
-  gfmStrikethroughFromMarkdown,
-  gfmStrikethroughToMarkdown,
-} from "mdast-util-gfm-strikethrough";
-import { gfmStrikethrough } from "micromark-extension-gfm-strikethrough";
 import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
@@ -11,9 +6,15 @@ import type {
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
-import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
+
+import {
+  gfmStrikethroughFromMarkdown,
+  gfmStrikethroughToMarkdown,
+} from "mdast-util-gfm-strikethrough";
+import { gfmStrikethrough } from "micromark-extension-gfm-strikethrough";
+import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 
@@ -21,6 +22,48 @@ import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
  * @public
  */
 export class StrikethroughExtension extends MarkExtension<Delete> {
+  public override processConvertedUnistNode(
+    convertedNode: Emphasis | Text,
+  ): Delete {
+    return { children: [convertedNode], type: this.unistNodeName() };
+  }
+
+  public override proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>,
+  ): Array<InputRule> {
+    return [
+      new MarkInputRule(
+        /~([^\s](?:.*[^\s~])?)~([^~])$/u,
+        proseMirrorSchema.marks[this.proseMirrorMarkName()],
+      ),
+      new MarkInputRule(
+        /~~([^\s](?:.*[^\s])?)~~([\s\S])$/u,
+        proseMirrorSchema.marks[this.proseMirrorMarkName()],
+      ),
+    ];
+  }
+
+  public override proseMirrorMarkName(): string {
+    return "strikethrough";
+  }
+
+  public override proseMirrorMarkSpec(): MarkSpec {
+    return {
+      parseDOM: [
+        { tag: "s" },
+        { tag: "del" },
+        {
+          getAttrs: (value) =>
+            /(^|[\s])line-through([\s]|$)/u.test(value) && null,
+          style: "text-decoration",
+        },
+      ],
+      toDOM(): DOMOutputSpec {
+        return ["s"];
+      },
+    };
+  }
+
   public override unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
   ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
@@ -37,42 +80,6 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
     return "delete";
   }
 
-  public override proseMirrorMarkName(): string {
-    return "strikethrough";
-  }
-
-  public override proseMirrorMarkSpec(): MarkSpec {
-    return {
-      parseDOM: [
-        { tag: "s" },
-        { tag: "del" },
-        {
-          style: "text-decoration",
-          getAttrs: (value) =>
-            /(^|[\s])line-through([\s]|$)/.test(value) && null,
-        },
-      ],
-      toDOM(): DOMOutputSpec {
-        return ["s"];
-      },
-    };
-  }
-
-  public override proseMirrorInputRules(
-    proseMirrorSchema: Schema<string, string>,
-  ): Array<InputRule> {
-    return [
-      new MarkInputRule(
-        /~([^\s](?:.*[^\s~])?)~([^~])$/,
-        proseMirrorSchema.marks[this.proseMirrorMarkName()],
-      ),
-      new MarkInputRule(
-        /~~([^\s](?:.*[^\s])?)~~([\s\S])$/,
-        proseMirrorSchema.marks[this.proseMirrorMarkName()],
-      ),
-    ];
-  }
-
   public override unistNodeToProseMirrorNodes(
     _node: Delete,
     proseMirrorSchema: Schema<string, string>,
@@ -85,11 +92,5 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
         ]),
       ),
     );
-  }
-
-  public override processConvertedUnistNode(
-    convertedNode: Emphasis | Text,
-  ): Delete {
-    return { type: this.unistNodeName(), children: [convertedNode] };
   }
 }

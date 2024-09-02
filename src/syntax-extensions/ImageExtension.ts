@@ -1,10 +1,11 @@
 import type { Image } from "mdast";
 import type {
   DOMOutputSpec,
-  Node as ProseMirrorNode,
   NodeSpec,
+  Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
+
 import {
   createProseMirrorNode,
   type Extension,
@@ -21,34 +22,30 @@ export class ImageExtension extends NodeExtension<Image> {
     return [new ParagraphExtension()];
   }
 
-  public override unistNodeName(): "image" {
-    return "image";
-  }
-
   public override proseMirrorNodeName(): string {
     return "image";
   }
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
-      inline: true,
       attrs: {
-        src: {},
         alt: { default: null },
+        src: {},
         title: { default: null },
       },
-      group: "inline",
       draggable: true,
+      group: "inline",
+      inline: true,
       parseDOM: [
         {
           getAttrs(dom: Node | string): {
-            src: string | null;
             alt: string | null;
+            src: string | null;
             title: string | null;
           } {
             return {
-              src: (dom as HTMLElement).getAttribute("src"),
               alt: (dom as HTMLElement).getAttribute("alt"),
+              src: (dom as HTMLElement).getAttribute("src"),
               title: (dom as HTMLElement).getAttribute("title"),
             };
           },
@@ -59,23 +56,6 @@ export class ImageExtension extends NodeExtension<Image> {
         return ["img", node.attrs];
       },
     };
-  }
-
-  public override unistNodeToProseMirrorNodes(
-    node: Image,
-    proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>,
-  ): Array<ProseMirrorNode> {
-    return createProseMirrorNode(
-      this.proseMirrorNodeName(),
-      proseMirrorSchema,
-      convertedChildren,
-      {
-        src: node.url,
-        alt: node.alt,
-        title: node.title,
-      },
-    );
   }
 
   public override proseMirrorNodeToUnistNodes(
@@ -89,5 +69,26 @@ export class ImageExtension extends NodeExtension<Image> {
         ...(node.attrs.title !== null && { title: node.attrs.title as string }),
       },
     ];
+  }
+
+  public override unistNodeName(): "image" {
+    return "image";
+  }
+
+  public override unistNodeToProseMirrorNodes(
+    node: Image,
+    proseMirrorSchema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>,
+  ): Array<ProseMirrorNode> {
+    return createProseMirrorNode(
+      this.proseMirrorNodeName(),
+      proseMirrorSchema,
+      convertedChildren,
+      {
+        alt: node.alt,
+        src: node.url,
+        title: node.title,
+      },
+    );
   }
 }

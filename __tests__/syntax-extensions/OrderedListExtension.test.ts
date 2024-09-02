@@ -7,57 +7,57 @@ new NodeExtensionTester(new OrderedListExtension(), {
   proseMirrorNodeName: "ordered_list",
   unistNodeName: "list",
 })
-  .shouldMatchUnistNode({ type: "list", ordered: true, children: [] })
+  .shouldMatchUnistNode({ children: [], ordered: true, type: "list" })
   .shouldMatchUnistNode({
-    type: "list",
+    children: [],
     ordered: true,
     spread: true,
-    children: [],
+    type: "list",
   })
   .shouldMatchUnistNode({
-    type: "list",
+    children: [],
     ordered: true,
     spread: true,
     start: 1,
-    children: [],
+    type: "list",
   })
   .shouldMatchUnistNode({
-    type: "list",
+    children: [],
     ordered: true,
     spread: true,
     start: 42,
-    children: [],
+    type: "list",
   })
   .shouldNotMatchUnistNode({
-    type: "list",
-    ordered: false,
     children: [],
+    ordered: false,
+    type: "list",
   } as UnistNode)
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
     {
-      type: "list",
-      ordered: true,
       children: [],
+      ordered: true,
+      type: "list",
     },
     (schema) => [schema.nodes.ordered_list.createAndFill()!],
   )
   .shouldConvertUnistNode(
     {
-      type: "list",
+      children: [],
       ordered: true,
       spread: true,
-      children: [],
+      type: "list",
     },
     (schema) => [schema.nodes.ordered_list.createAndFill({ spread: true })!],
   )
   .shouldConvertUnistNode(
     {
-      type: "list",
+      children: [],
       ordered: true,
       spread: true,
       start: 42,
-      children: [],
+      type: "list",
     },
     (schema) => [
       schema.nodes.ordered_list.createAndFill({ spread: true, start: 42 })!,
@@ -65,9 +65,9 @@ new NodeExtensionTester(new OrderedListExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "list",
+      children: [{ children: [], type: "listItem" }],
       ordered: true,
-      children: [{ type: "listItem", children: [] }],
+      type: "list",
     },
     (schema) => [
       schema.nodes.ordered_list.createAndFill({}, [
@@ -77,9 +77,9 @@ new NodeExtensionTester(new OrderedListExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "list",
+      children: [{ children: [], spread: true, type: "listItem" }],
       ordered: true,
-      children: [{ type: "listItem", spread: true, children: [] }],
+      type: "list",
     },
     (schema) => [
       schema.nodes.ordered_list.createAndFill({}, [
@@ -89,19 +89,19 @@ new NodeExtensionTester(new OrderedListExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "list",
-      ordered: true,
       children: [
         {
-          type: "listItem",
           children: [
             {
-              type: "paragraph",
               children: [{ type: "text", value: "Hello World!" }],
+              type: "paragraph",
             },
           ],
+          type: "listItem",
         },
       ],
+      ordered: true,
+      type: "list",
     },
     (schema) => [
       schema.nodes.ordered_list.createAndFill({}, [
@@ -149,17 +149,17 @@ new NodeExtensionTester(new OrderedListExtension(), {
     (schema) => schema.nodes.ordered_list.createAndFill()!,
     [
       {
-        type: "list",
+        children: [
+          {
+            children: [{ children: [], type: "paragraph" }],
+            spread: false,
+            type: "listItem",
+          },
+        ],
         ordered: true,
         spread: false,
         start: 1,
-        children: [
-          {
-            type: "listItem",
-            spread: false,
-            children: [{ type: "paragraph", children: [] }],
-          },
-        ],
+        type: "list",
       },
     ],
   )
@@ -167,17 +167,17 @@ new NodeExtensionTester(new OrderedListExtension(), {
     (schema) => schema.nodes.ordered_list.createAndFill({ spread: true })!,
     [
       {
-        type: "list",
+        children: [
+          {
+            children: [{ children: [], type: "paragraph" }],
+            spread: true,
+            type: "listItem",
+          },
+        ],
         ordered: true,
         spread: true,
         start: 1,
-        children: [
-          {
-            type: "listItem",
-            spread: true,
-            children: [{ type: "paragraph", children: [] }],
-          },
-        ],
+        type: "list",
       },
     ],
   )
@@ -186,17 +186,17 @@ new NodeExtensionTester(new OrderedListExtension(), {
       schema.nodes.ordered_list.createAndFill({ spread: true, start: 42 })!,
     [
       {
-        type: "list",
+        children: [
+          {
+            children: [{ children: [], type: "paragraph" }],
+            spread: true,
+            type: "listItem",
+          },
+        ],
         ordered: true,
         spread: true,
         start: 42,
-        children: [
-          {
-            type: "listItem",
-            spread: true,
-            children: [{ type: "paragraph", children: [] }],
-          },
-        ],
+        type: "list",
       },
     ],
   )
@@ -207,17 +207,17 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ])!,
     [
       {
-        type: "list",
+        children: [
+          {
+            children: [{ children: [], type: "paragraph" }],
+            spread: false,
+            type: "listItem",
+          },
+        ],
         ordered: true,
         spread: false,
         start: 1,
-        children: [
-          {
-            type: "listItem",
-            spread: false,
-            children: [{ type: "paragraph", children: [] }],
-          },
-        ],
+        type: "list",
       },
     ],
   )
@@ -228,17 +228,17 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ])!,
     [
       {
-        type: "list",
+        children: [
+          {
+            children: [{ children: [], type: "paragraph" }],
+            spread: true,
+            type: "listItem",
+          },
+        ],
         ordered: true,
         spread: true,
         start: 1,
-        children: [
-          {
-            type: "listItem",
-            spread: true,
-            children: [{ type: "paragraph", children: [] }],
-          },
-        ],
+        type: "list",
       },
     ],
   )
@@ -253,22 +253,22 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ])!,
     [
       {
-        type: "list",
+        children: [
+          {
+            children: [
+              {
+                children: [{ type: "text", value: "Hello World!" }],
+                type: "paragraph",
+              },
+            ],
+            spread: false,
+            type: "listItem",
+          },
+        ],
         ordered: true,
         spread: false,
         start: 1,
-        children: [
-          {
-            type: "listItem",
-            spread: false,
-            children: [
-              {
-                type: "paragraph",
-                children: [{ type: "text", value: "Hello World!" }],
-              },
-            ],
-          },
-        ],
+        type: "list",
       },
     ],
   )

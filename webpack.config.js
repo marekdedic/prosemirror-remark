@@ -1,33 +1,13 @@
-/* eslint-env node */
+/* eslint-disable @typescript-eslint/naming-convention -- Not applicable to this config file */
 
 function createConfig(libraryType, extension) {
   return {
-    mode: "production",
     devtool: "source-map",
-    module: {
-      rules: [
-        {
-          test: /\.ts$/,
-          use: {
-            loader: "ts-loader",
-            options: {
-              onlyCompileBundledFiles: true,
-            },
-          },
-        },
-      ],
-    },
-    resolve: {
-      extensions: [".ts", ".js"],
-    },
     entry: {
       "prosemirror-remark": "./src/index.ts",
     },
-    output: {
-      filename: "[name]." + extension,
-      library: {
-        type: libraryType,
-      },
+    experiments: {
+      outputModule: true,
     },
     externals: {
       "prosemirror-commands": "module prosemirror-commands",
@@ -40,13 +20,35 @@ function createConfig(libraryType, extension) {
       "remark-stringify": "module remark-stringify",
       unified: "module unified",
     },
+    mode: "production",
+    module: {
+      rules: [
+        {
+          test: /\.ts$/u,
+          use: {
+            loader: "ts-loader",
+            options: {
+              onlyCompileBundledFiles: true,
+            },
+          },
+        },
+      ],
+    },
     optimization: {
       minimize: false,
     },
-    experiments: {
-      outputModule: true,
+    output: {
+      filename: `[name].${extension}`,
+      library: {
+        type: libraryType,
+      },
+    },
+    resolve: {
+      extensions: [".ts", ".js"],
     },
   };
 }
 
 export default [createConfig("module", "js"), createConfig("commonjs2", "cjs")];
+
+/* eslint-enable */

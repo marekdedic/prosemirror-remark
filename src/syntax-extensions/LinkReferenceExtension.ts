@@ -1,5 +1,6 @@
 import type { LinkReference } from "mdast";
 import type { Mark, Node as ProseMirrorNode, Schema } from "prosemirror-model";
+
 import { type Extension, MarkExtension } from "prosemirror-unified";
 
 import {
@@ -21,45 +22,6 @@ export interface LinkReferenceExtensionContext {
 export class LinkReferenceExtension extends MarkExtension<LinkReference> {
   public override dependencies(): Array<Extension> {
     return [new DefinitionExtension(), new LinkExtension()];
-  }
-
-  public override unistNodeName(): "linkReference" {
-    return "linkReference";
-  }
-
-  public override proseMirrorMarkName(): null {
-    return null;
-  }
-
-  public override proseMirrorMarkSpec(): null {
-    return null;
-  }
-
-  public override unistNodeToProseMirrorNodes(
-    node: LinkReference,
-    proseMirrorSchema: Schema<string, string>,
-    convertedChildren: Array<ProseMirrorNode>,
-    context: Partial<{
-      LinkReferenceExtension: LinkReferenceExtensionContext;
-    }>,
-  ): Array<ProseMirrorNode> {
-    const mark = proseMirrorSchema.marks.link.create({
-      href: null,
-      title: null,
-    });
-    if (context.LinkReferenceExtension === undefined) {
-      context.LinkReferenceExtension = { marks: {} };
-    }
-    context.LinkReferenceExtension.marks[node.identifier] = mark;
-    return convertedChildren.map((child) =>
-      child.mark(child.marks.concat([mark])),
-    );
-  }
-
-  public override processConvertedUnistNode(
-    convertedNode: LinkReference,
-  ): LinkReference {
-    return convertedNode;
   }
 
   public override postUnistToProseMirrorHook(
@@ -89,5 +51,44 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
         attrs.title = definition.title;
       }
     }
+  }
+
+  public override processConvertedUnistNode(
+    convertedNode: LinkReference,
+  ): LinkReference {
+    return convertedNode;
+  }
+
+  public override proseMirrorMarkName(): null {
+    return null;
+  }
+
+  public override proseMirrorMarkSpec(): null {
+    return null;
+  }
+
+  public override unistNodeName(): "linkReference" {
+    return "linkReference";
+  }
+
+  public override unistNodeToProseMirrorNodes(
+    node: LinkReference,
+    proseMirrorSchema: Schema<string, string>,
+    convertedChildren: Array<ProseMirrorNode>,
+    context: Partial<{
+      LinkReferenceExtension: LinkReferenceExtensionContext;
+    }>,
+  ): Array<ProseMirrorNode> {
+    const mark = proseMirrorSchema.marks.link.create({
+      href: null,
+      title: null,
+    });
+    if (context.LinkReferenceExtension === undefined) {
+      context.LinkReferenceExtension = { marks: {} };
+    }
+    context.LinkReferenceExtension.marks[node.identifier] = mark;
+    return convertedChildren.map((child) =>
+      child.mark(child.marks.concat([mark])),
+    );
   }
 }

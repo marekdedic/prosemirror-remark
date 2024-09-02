@@ -6,12 +6,12 @@ new NodeExtensionTester(new CodeBlockExtension(), {
   unistNodeName: "code",
 })
   .shouldMatchUnistNode({ type: "code", value: "Hello World!" })
-  .shouldMatchUnistNode({ type: "code", value: "Hello World!", lang: "ts" })
+  .shouldMatchUnistNode({ lang: "ts", type: "code", value: "Hello World!" })
   .shouldMatchUnistNode({
-    type: "code",
-    value: "Hello World!",
     lang: "ts",
     meta: "startline=2",
+    type: "code",
+    value: "Hello World!",
   })
   .shouldNotMatchUnistNode({ type: "code_block" })
   .shouldNotMatchUnistNode({ type: "other" })
@@ -19,7 +19,7 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     schema.nodes.code_block.createAndFill({}, [schema.text("Hello World!")])!,
   ])
   .shouldConvertUnistNode(
-    { type: "code", value: "Hello World!", lang: "ts" },
+    { lang: "ts", type: "code", value: "Hello World!" },
     (schema) => [
       schema.nodes.code_block.createAndFill({ lang: "ts" }, [
         schema.text("Hello World!"),
@@ -27,7 +27,7 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     ],
   )
   .shouldConvertUnistNode(
-    { type: "code", value: "Hello World!", lang: "ts", meta: "startline=2" },
+    { lang: "ts", meta: "startline=2", type: "code", value: "Hello World!" },
     (schema) => [
       schema.nodes.code_block.createAndFill(
         { lang: "ts", meta: "startline=2" },

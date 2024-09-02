@@ -4,9 +4,9 @@ import { ItalicExtension } from "../../src/syntax-extensions/ItalicExtension";
 import { NodeExtensionTester } from "../utils/NodeExtensionTester";
 
 new NodeExtensionTester(new HorizontalRuleExtension(), {
+  otherExtensionsInTest: [new BoldExtension(), new ItalicExtension()],
   proseMirrorNodeName: "horizontal_rule",
   unistNodeName: "thematicBreak",
-  otherExtensionsInTest: [new BoldExtension(), new ItalicExtension()],
 })
   .shouldMatchUnistNode({ type: "thematicBreak" })
   .shouldNotMatchUnistNode({ type: "horizontal_rule" })

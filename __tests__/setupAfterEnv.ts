@@ -7,11 +7,11 @@ function supportRangeDOMRect(): void {
       height: 0,
       left: 0,
       right: 0,
+      toJSON: (): Record<string, never> => ({}),
       top: 0,
       width: 0,
       x: 0,
       y: 0,
-      toJSON: (): Record<string, never> => ({}),
     });
 
     range.getClientRects = (): DOMRectList => ({

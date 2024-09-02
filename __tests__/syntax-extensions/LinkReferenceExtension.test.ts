@@ -8,30 +8,30 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
   unistNodeName: "linkReference",
 })
   .shouldMatchUnistNode({
-    type: "linkReference",
+    children: [],
     identifier: "linkId",
     referenceType: "full",
-    children: [],
+    type: "linkReference",
   })
   .shouldMatchUnistNode({
-    type: "linkReference",
+    children: [],
     identifier: "linkId",
     referenceType: "collapsed",
-    children: [],
+    type: "linkReference",
   })
   .shouldMatchUnistNode({
-    type: "linkReference",
+    children: [],
     identifier: "linkId",
     referenceType: "shortcut",
-    children: [],
+    type: "linkReference",
   })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
     {
-      type: "linkReference",
+      children: [{ type: "text", value: "Click me!" }],
       identifier: "linkId",
       referenceType: "full",
-      children: [{ type: "text", value: "Click me!" }],
+      type: "linkReference",
     },
     (schema) => [
       schema
@@ -40,18 +40,18 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
     ],
     [
       {
-        type: "definition",
         identifier: "linkId",
+        type: "definition",
         url: "https://example.test",
       } as UnistNode,
     ],
   )
   .shouldConvertUnistNode(
     {
-      type: "linkReference",
+      children: [{ type: "text", value: "Click me!" }],
       identifier: "linkId",
       referenceType: "collapsed",
-      children: [{ type: "text", value: "Click me!" }],
+      type: "linkReference",
     },
     (schema) => [
       schema
@@ -60,18 +60,18 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
     ],
     [
       {
-        type: "definition",
         identifier: "linkId",
+        type: "definition",
         url: "https://example.test",
       } as UnistNode,
     ],
   )
   .shouldConvertUnistNode(
     {
-      type: "linkReference",
+      children: [{ type: "text", value: "Click me!" }],
       identifier: "linkId",
       referenceType: "shortcut",
-      children: [{ type: "text", value: "Click me!" }],
+      type: "linkReference",
     },
     (schema) => [
       schema
@@ -80,18 +80,18 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
     ],
     [
       {
-        type: "definition",
         identifier: "linkId",
+        type: "definition",
         url: "https://example.test",
       } as UnistNode,
     ],
   )
   .shouldConvertUnistNode(
     {
-      type: "linkReference",
+      children: [{ type: "text", value: "Click me!" }],
       identifier: "linkId",
       referenceType: "full",
-      children: [{ type: "text", value: "Click me!" }],
+      type: "linkReference",
     },
     (schema) => [
       schema.text("Click me!").mark([
@@ -103,19 +103,19 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
     ],
     [
       {
-        type: "definition",
         identifier: "linkId",
-        url: "https://example.test",
         title: "This link has a title",
+        type: "definition",
+        url: "https://example.test",
       } as UnistNode,
     ],
   )
   .shouldConvertUnistNode(
     {
-      type: "linkReference",
+      children: [{ type: "text", value: "Click me!" }],
       identifier: "linkId",
       referenceType: "full",
-      children: [{ type: "text", value: "Click me!" }],
+      type: "linkReference",
     },
     (schema) => [
       schema.text("Click me!").mark([

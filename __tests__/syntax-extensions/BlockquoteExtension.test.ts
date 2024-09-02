@@ -5,26 +5,26 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   proseMirrorNodeName: "blockquote",
   unistNodeName: "blockquote",
 })
-  .shouldMatchUnistNode({ type: "blockquote", children: [] })
+  .shouldMatchUnistNode({ children: [], type: "blockquote" })
   .shouldMatchUnistNode({
-    type: "blockquote",
     children: [
       {
-        type: "paragraph",
         children: [{ type: "text", value: "Hello World!" }],
+        type: "paragraph",
       },
     ],
+    type: "blockquote",
   })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
     {
-      type: "blockquote",
       children: [
         {
-          type: "paragraph",
           children: [{ type: "text", value: "Hello World!" }],
+          type: "paragraph",
         },
       ],
+      type: "blockquote",
     },
     (schema) => [
       schema.nodes.blockquote.createAndFill({}, [
@@ -36,17 +36,17 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   )
   .shouldConvertUnistNode(
     {
-      type: "blockquote",
       children: [
         {
-          type: "paragraph",
           children: [{ type: "text", value: "Hello World!" }],
+          type: "paragraph",
         },
         {
-          type: "paragraph",
           children: [{ type: "text", value: "Second paragraph" }],
+          type: "paragraph",
         },
       ],
+      type: "blockquote",
     },
     (schema) => [
       schema.nodes.blockquote.createAndFill({}, [
@@ -71,13 +71,13 @@ new NodeExtensionTester(new BlockquoteExtension(), {
       ])!,
     [
       {
-        type: "blockquote",
         children: [
           {
-            type: "paragraph",
             children: [{ type: "text", value: "Hello World!" }],
+            type: "paragraph",
           },
         ],
+        type: "blockquote",
       },
     ],
   )
@@ -93,17 +93,17 @@ new NodeExtensionTester(new BlockquoteExtension(), {
       ])!,
     [
       {
-        type: "blockquote",
         children: [
           {
-            type: "paragraph",
             children: [{ type: "text", value: "Hello World!" }],
+            type: "paragraph",
           },
           {
-            type: "paragraph",
             children: [{ type: "text", value: "Second paragraph" }],
+            type: "paragraph",
           },
         ],
+        type: "blockquote",
       },
     ],
   )

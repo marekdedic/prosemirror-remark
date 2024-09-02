@@ -1,19 +1,20 @@
 import type { Heading, PhrasingContent } from "mdast";
-import { setBlockType } from "prosemirror-commands";
-import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
-  Node as ProseMirrorNode,
   NodeSpec,
+  Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
 import type { Command, EditorState } from "prosemirror-state";
+import type { EditorView } from "prosemirror-view";
+
+import { setBlockType } from "prosemirror-commands";
+import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
 import {
   createProseMirrorNode,
   type Extension,
   NodeExtension,
 } from "prosemirror-unified";
-import type { EditorView } from "prosemirror-view";
 
 import { ParagraphExtension } from "./ParagraphExtension";
 import { TextExtension } from "./TextExtension";
@@ -22,20 +23,6 @@ import { TextExtension } from "./TextExtension";
  * @public
  */
 export class HeadingExtension extends NodeExtension<Heading> {
-  private static isAtStart(
-    state: EditorState,
-    view: EditorView | undefined,
-  ): boolean {
-    if (!state.selection.empty) {
-      return false;
-    }
-    if (view !== undefined) {
-      return view.endOfTextblock("backward", state);
-    } else {
-      return state.selection.$anchor.parentOffset > 0;
-    }
-  }
-
   private static headingLevelCommandBuilder(
     proseMirrorSchema: Schema<string, string>,
     levelUpdate: -1 | 1,
@@ -81,36 +68,21 @@ export class HeadingExtension extends NodeExtension<Heading> {
     };
   }
 
+  private static isAtStart(
+    state: EditorState,
+    view: EditorView | undefined,
+  ): boolean {
+    if (!state.selection.empty) {
+      return false;
+    }
+    if (view !== undefined) {
+      return view.endOfTextblock("backward", state);
+    }
+    return state.selection.$anchor.parentOffset > 0;
+  }
+
   public override dependencies(): Array<Extension> {
     return [new ParagraphExtension(), new TextExtension()];
-  }
-
-  public override unistNodeName(): "heading" {
-    return "heading";
-  }
-
-  public override proseMirrorNodeName(): string {
-    return "heading";
-  }
-
-  public override proseMirrorNodeSpec(): NodeSpec {
-    return {
-      attrs: { level: { default: 1 } },
-      content: "text*",
-      group: "block",
-      defining: true,
-      parseDOM: [
-        { tag: "h1", attrs: { level: 1 } },
-        { tag: "h2", attrs: { level: 2 } },
-        { tag: "h3", attrs: { level: 3 } },
-        { tag: "h4", attrs: { level: 4 } },
-        { tag: "h5", attrs: { level: 5 } },
-        { tag: "h6", attrs: { level: 6 } },
-      ],
-      toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return ["h" + (node.attrs.level as number).toString(), 0];
-      },
-    };
   }
 
   public override proseMirrorInputRules(
@@ -118,7 +90,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
   ): Array<InputRule> {
     return [
       textblockTypeInputRule(
-        /^\s{0,3}(#{1,6})\s$/,
+        /^\s{0,3}(#{1,6})\s$/u,
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
         (match) => ({ level: match[1].length }),
       ),
@@ -129,15 +101,15 @@ export class HeadingExtension extends NodeExtension<Heading> {
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const keymap: Record<string, Command> = {
-      Tab: HeadingExtension.headingLevelCommandBuilder(
-        proseMirrorSchema,
-        +1,
-        false,
-      ),
       // eslint-disable-next-line @typescript-eslint/naming-convention -- This is a key
       "#": HeadingExtension.headingLevelCommandBuilder(
         proseMirrorSchema,
         +1,
+        true,
+      ),
+      Backspace: HeadingExtension.headingLevelCommandBuilder(
+        proseMirrorSchema,
+        -1,
         true,
       ),
       "Shift-Tab": HeadingExtension.headingLevelCommandBuilder(
@@ -145,10 +117,10 @@ export class HeadingExtension extends NodeExtension<Heading> {
         -1,
         false,
       ),
-      Backspace: HeadingExtension.headingLevelCommandBuilder(
+      Tab: HeadingExtension.headingLevelCommandBuilder(
         proseMirrorSchema,
-        -1,
-        true,
+        +1,
+        false,
       ),
     };
 
@@ -159,6 +131,47 @@ export class HeadingExtension extends NodeExtension<Heading> {
       );
     }
     return keymap;
+  }
+
+  public override proseMirrorNodeName(): string {
+    return "heading";
+  }
+
+  public override proseMirrorNodeSpec(): NodeSpec {
+    return {
+      attrs: { level: { default: 1 } },
+      content: "text*",
+      defining: true,
+      group: "block",
+      parseDOM: [
+        { attrs: { level: 1 }, tag: "h1" },
+        { attrs: { level: 2 }, tag: "h2" },
+        { attrs: { level: 3 }, tag: "h3" },
+        { attrs: { level: 4 }, tag: "h4" },
+        { attrs: { level: 5 }, tag: "h5" },
+        { attrs: { level: 6 }, tag: "h6" },
+      ],
+      toDOM(node: ProseMirrorNode): DOMOutputSpec {
+        return [`h${(node.attrs.level as number).toString()}`, 0];
+      },
+    };
+  }
+
+  public override proseMirrorNodeToUnistNodes(
+    node: ProseMirrorNode,
+    convertedChildren: Array<PhrasingContent>,
+  ): Array<Heading> {
+    return [
+      {
+        children: convertedChildren,
+        depth: node.attrs.level as 1 | 2 | 3 | 4 | 5 | 6,
+        type: this.unistNodeName(),
+      },
+    ];
+  }
+
+  public override unistNodeName(): "heading" {
+    return "heading";
   }
 
   public override unistNodeToProseMirrorNodes(
@@ -174,18 +187,5 @@ export class HeadingExtension extends NodeExtension<Heading> {
         level: node.depth,
       },
     );
-  }
-
-  public override proseMirrorNodeToUnistNodes(
-    node: ProseMirrorNode,
-    convertedChildren: Array<PhrasingContent>,
-  ): Array<Heading> {
-    return [
-      {
-        type: this.unistNodeName(),
-        depth: node.attrs.level as 1 | 2 | 3 | 4 | 5 | 6,
-        children: convertedChildren,
-      },
-    ];
   }
 }
