@@ -1,18 +1,24 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "sourceMap": true,
     "declaration": true,
     "declarationDir": "types",
-    "strict": true,
-    "types": []
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "target": "es6",
+    "types": [],
+
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true
   }
 }
