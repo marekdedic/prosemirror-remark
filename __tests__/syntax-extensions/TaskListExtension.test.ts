@@ -58,7 +58,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [schema.nodes.bullet_list.createAndFill()!],
+    (schema) => [schema.nodes["bullet_list"].createAndFill()!],
   )
   .shouldConvertUnistNode(
     {
@@ -67,7 +67,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       spread: true,
       type: "list",
     },
-    (schema) => [schema.nodes.bullet_list.createAndFill({ spread: true })!],
+    (schema) => [schema.nodes["bullet_list"].createAndFill({ spread: true })!],
   )
   .shouldConvertUnistNode(
     {
@@ -76,8 +76,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: false })!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: false })!,
       ])!,
     ],
   )
@@ -88,8 +88,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: true })!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: true })!,
       ])!,
     ],
   )
@@ -100,8 +100,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({ spread: true })!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({ spread: true })!,
       ])!,
     ],
   )
@@ -122,9 +122,9 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -149,9 +149,9 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: false }, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: false }, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -176,9 +176,9 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: true }, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: true }, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -186,40 +186,40 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes.bullet_list.createAndFill()!,
+    (schema) => schema.nodes["bullet_list"].createAndFill()!,
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes.bullet_list.createAndFill({ spread: true })!,
+    (schema) => schema.nodes["bullet_list"].createAndFill({ spread: true })!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill()!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill()!,
       ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({ spread: true })!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({ spread: true })!,
       ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: false })!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: false })!,
       ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: true })!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: true })!,
       ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: false }, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: false }, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -227,16 +227,16 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: true }, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: true }, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
       ])!,
   )
   .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes.bullet_list.createAndFill()!,
+    (schema) => schema.nodes["bullet_list"].createAndFill()!,
     [
       {
         children: [
@@ -254,8 +254,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill()!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill()!,
       ])!,
     [
       {
@@ -274,8 +274,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill()!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill()!,
       ])!,
     [
       {
@@ -295,8 +295,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: false })!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: false })!,
       ])!,
     [
       {
@@ -316,8 +316,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: true })!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: true })!,
       ])!,
     [
       {
@@ -337,8 +337,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({ spread: true }, [
-        schema.nodes.task_list_item.createAndFill({
+      schema.nodes["bullet_list"].createAndFill({ spread: true }, [
+        schema.nodes["task_list_item"].createAndFill({
           checked: true,
           spread: true,
         })!,
@@ -361,9 +361,9 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({ checked: true }, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({ checked: true }, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -392,21 +392,21 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   /* TODO: Re-enable when jest-prosemirror can handle keymaps with Enter
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
       ])!,
     ],
     3,
     "Enter",
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hel")])!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hel")])!,
         ])!,
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("lo")])!,
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("lo")])!,
         ])!,
       ])!,
     ],
@@ -415,24 +415,24 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   */
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
     ],
     3,
     "Tab",
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
     ],
@@ -441,24 +441,24 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   /* TODO: Re-enable once jest-prosemirror can handle keymaps with Tab
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
     ],
     10,
     "Tab",
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
-          schema.nodes.bullet_list.createAndFill({}, [
-            schema.nodes.task_list_item.createAndFill({}, [
-              schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
+          schema.nodes["bullet_list"].createAndFill({}, [
+            schema.nodes["task_list_item"].createAndFill({}, [
+              schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
             ])!,
           ])!,
         ])!,
@@ -468,12 +468,12 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
-          schema.nodes.bullet_list.createAndFill({}, [
-            schema.nodes.task_list_item.createAndFill({}, [
-              schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
+          schema.nodes["bullet_list"].createAndFill({}, [
+            schema.nodes["task_list_item"].createAndFill({}, [
+              schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
             ])!,
           ])!,
         ])!,
@@ -482,12 +482,12 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     10,
     "Shift-Tab",
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
     ],
@@ -497,24 +497,24 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   /* TODO: Re-enable when jest-prosemirrr supports keymaps with backspace
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
     ],
     0,
     "Backspace",
     (schema) => [
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
     ],

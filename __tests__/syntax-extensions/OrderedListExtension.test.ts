@@ -40,7 +40,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ordered: true,
       type: "list",
     },
-    (schema) => [schema.nodes.ordered_list.createAndFill()!],
+    (schema) => [schema.nodes["ordered_list"].createAndFill()!],
   )
   .shouldConvertUnistNode(
     {
@@ -49,7 +49,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
       spread: true,
       type: "list",
     },
-    (schema) => [schema.nodes.ordered_list.createAndFill({ spread: true })!],
+    (schema) => [schema.nodes["ordered_list"].createAndFill({ spread: true })!],
   )
   .shouldConvertUnistNode(
     {
@@ -60,7 +60,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({ spread: true, start: 42 })!,
+      schema.nodes["ordered_list"].createAndFill({ spread: true, start: 42 })!,
     ],
   )
   .shouldConvertUnistNode(
@@ -70,8 +70,8 @@ new NodeExtensionTester(new OrderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill()!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill()!,
       ])!,
     ],
   )
@@ -82,8 +82,8 @@ new NodeExtensionTester(new OrderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({ spread: true })!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({ spread: true })!,
       ])!,
     ],
   )
@@ -104,9 +104,9 @@ new NodeExtensionTester(new OrderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -114,39 +114,39 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes.ordered_list.createAndFill()!,
+    (schema) => schema.nodes["ordered_list"].createAndFill()!,
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes.ordered_list.createAndFill({ spread: true })!,
-  )
-  .shouldMatchProseMirrorNode(
-    (schema) =>
-      schema.nodes.ordered_list.createAndFill({ spread: true, start: 42 })!,
+    (schema) => schema.nodes["ordered_list"].createAndFill({ spread: true })!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill()!,
+      schema.nodes["ordered_list"].createAndFill({ spread: true, start: 42 })!,
+  )
+  .shouldMatchProseMirrorNode(
+    (schema) =>
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill()!,
       ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({ spread: true })!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({ spread: true })!,
       ])!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
       ])!,
   )
   .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes.ordered_list.createAndFill()!,
+    (schema) => schema.nodes["ordered_list"].createAndFill()!,
     [
       {
         children: [
@@ -164,7 +164,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes.ordered_list.createAndFill({ spread: true })!,
+    (schema) => schema.nodes["ordered_list"].createAndFill({ spread: true })!,
     [
       {
         children: [
@@ -183,7 +183,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.ordered_list.createAndFill({ spread: true, start: 42 })!,
+      schema.nodes["ordered_list"].createAndFill({ spread: true, start: 42 })!,
     [
       {
         children: [
@@ -202,8 +202,8 @@ new NodeExtensionTester(new OrderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill()!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill()!,
       ])!,
     [
       {
@@ -223,8 +223,8 @@ new NodeExtensionTester(new OrderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.ordered_list.createAndFill({ spread: true }, [
-        schema.nodes.regular_list_item.createAndFill({ spread: true })!,
+      schema.nodes["ordered_list"].createAndFill({ spread: true }, [
+        schema.nodes["regular_list_item"].createAndFill({ spread: true })!,
       ])!,
     [
       {
@@ -244,9 +244,9 @@ new NodeExtensionTester(new OrderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -274,15 +274,15 @@ new NodeExtensionTester(new OrderedListExtension(), {
   )
   .shouldMatchInputRule(
     "1. ",
-    (schema) => [schema.nodes.ordered_list.createAndFill()!],
+    (schema) => [schema.nodes["ordered_list"].createAndFill()!],
     "1.",
   )
   .shouldMatchInputRule(
     "1. Hello World!",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -293,9 +293,9 @@ new NodeExtensionTester(new OrderedListExtension(), {
   .shouldMatchInputRule(
     " 1. Hello World!",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -306,9 +306,9 @@ new NodeExtensionTester(new OrderedListExtension(), {
   .shouldMatchInputRule(
     "  1. Hello World!",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -319,9 +319,9 @@ new NodeExtensionTester(new OrderedListExtension(), {
   .shouldMatchInputRule(
     "   1. Hello World!",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -332,9 +332,9 @@ new NodeExtensionTester(new OrderedListExtension(), {
   .shouldMatchInputRule(
     "42. Hello World!",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({ start: 42 }, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({ start: 42 }, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
@@ -346,14 +346,14 @@ new NodeExtensionTester(new OrderedListExtension(), {
   .shouldMatchInputRule(
     "1. Hello World!\n\n\n2. Second item",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Hello World!"),
           ])!,
         ])!,
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Second line"),
           ])!,
         ])!,
@@ -364,14 +364,14 @@ new NodeExtensionTester(new OrderedListExtension(), {
   */
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
     ],
     3,
     "Shift-Mod-9",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
       ])!,
     ],
@@ -380,21 +380,21 @@ new NodeExtensionTester(new OrderedListExtension(), {
   /* TODO: Re-enable when jest-prosemirror can handle keymaps with Enter
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
       ])!,
     ],
     3,
     "Enter",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hel")])!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hel")])!,
         ])!,
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("lo")])!,
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("lo")])!,
         ])!,
       ])!,
     ],
@@ -403,24 +403,24 @@ new NodeExtensionTester(new OrderedListExtension(), {
   */
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
     ],
     3,
     "Tab",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
     ],
@@ -429,24 +429,24 @@ new NodeExtensionTester(new OrderedListExtension(), {
   /* TODO: Re-enable once jest-prosemirror can handle keymaps with Tab
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
     ],
     10,
     "Tab",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
-          schema.nodes.ordered_list.createAndFill({}, [
-            schema.nodes.regular_list_item.createAndFill({}, [
-              schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
+          schema.nodes["ordered_list"].createAndFill({}, [
+            schema.nodes["regular_list_item"].createAndFill({}, [
+              schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
             ])!,
           ])!,
         ])!,
@@ -456,12 +456,12 @@ new NodeExtensionTester(new OrderedListExtension(), {
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
-          schema.nodes.ordered_list.createAndFill({}, [
-            schema.nodes.regular_list_item.createAndFill({}, [
-              schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
+          schema.nodes["ordered_list"].createAndFill({}, [
+            schema.nodes["regular_list_item"].createAndFill({}, [
+              schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
             ])!,
           ])!,
         ])!,
@@ -470,12 +470,12 @@ new NodeExtensionTester(new OrderedListExtension(), {
     10,
     "Shift-Tab",
     (schema) => [
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
         ])!,
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("World")])!,
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
         ])!,
       ])!,
     ],

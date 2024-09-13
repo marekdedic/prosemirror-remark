@@ -19,9 +19,9 @@ export class LinkExtension extends MarkExtension<Link> {
   ): Link {
     return {
       type: this.unistNodeName(),
-      url: originalMark.attrs.href as string,
-      ...(originalMark.attrs.title !== null && {
-        title: originalMark.attrs.title as string,
+      url: originalMark.attrs["href"] as string,
+      ...(originalMark.attrs["title"] !== null && {
+        title: originalMark.attrs["title"] as string,
       }),
       children: [convertedNode],
     };

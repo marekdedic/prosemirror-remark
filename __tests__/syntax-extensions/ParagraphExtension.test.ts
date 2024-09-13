@@ -12,28 +12,34 @@ new NodeExtensionTester(new ParagraphExtension(), {
   })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode({ children: [], type: "paragraph" }, (schema) => [
-    schema.nodes.paragraph.createAndFill()!,
+    schema.nodes["paragraph"].createAndFill()!,
   ])
   .shouldConvertUnistNode(
     { children: [{ type: "text", value: "Hello World!" }], type: "paragraph" },
     (schema) => [
-      schema.nodes.paragraph.createAndFill({}, [schema.text("Hello World!")])!,
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.text("Hello World!"),
+      ])!,
     ],
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes.paragraph.createAndFill()!,
+    (schema) => schema.nodes["paragraph"].createAndFill()!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.paragraph.createAndFill({}, [schema.text("Hello World!")])!,
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.text("Hello World!"),
+      ])!,
   )
   .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes.paragraph.createAndFill()!,
+    (schema) => schema.nodes["paragraph"].createAndFill()!,
     [{ children: [], type: "paragraph" }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.paragraph.createAndFill({}, [schema.text("Hello World!")])!,
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.text("Hello World!"),
+      ])!,
     [
       {
         children: [{ type: "text", value: "Hello World!" }],

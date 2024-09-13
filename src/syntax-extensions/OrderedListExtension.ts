@@ -35,7 +35,7 @@ export class OrderedListExtension extends NodeExtension<List> {
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
         (match) => ({ start: +match[1] }),
         (match, node) =>
-          node.childCount + (node.attrs.start as number) === +match[1],
+          node.childCount + (node.attrs["start"] as number) === +match[1],
       ),
     ];
   }
@@ -76,8 +76,8 @@ export class OrderedListExtension extends NodeExtension<List> {
         return [
           "ol",
           {
-            "data-spread": node.attrs.spread as boolean,
-            start: node.attrs.start as number,
+            "data-spread": node.attrs["spread"] as boolean,
+            start: node.attrs["start"] as number,
           },
           0,
         ];
@@ -89,7 +89,7 @@ export class OrderedListExtension extends NodeExtension<List> {
     node: ProseMirrorNode,
     convertedChildren: Array<ListContent>,
   ): Array<List> {
-    const spread = node.attrs.spread as boolean;
+    const spread = node.attrs["spread"] as boolean;
     return [
       {
         children: convertedChildren.map((child) => {
@@ -98,7 +98,7 @@ export class OrderedListExtension extends NodeExtension<List> {
         }),
         ordered: true,
         spread,
-        start: node.attrs.start as number,
+        start: node.attrs["start"] as number,
         type: this.unistNodeName(),
       },
     ];

@@ -46,9 +46,9 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Attrs can be any
         any
       >;
-      attrs.href = definition.url;
+      attrs["href"] = definition.url;
       if (definition.title !== undefined) {
-        attrs.title = definition.title;
+        attrs["title"] = definition.title;
       }
     }
   }
@@ -79,7 +79,7 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
       LinkReferenceExtension: LinkReferenceExtensionContext;
     }>,
   ): Array<ProseMirrorNode> {
-    const mark = proseMirrorSchema.marks.link.create({
+    const mark = proseMirrorSchema.marks["link"].create({
       href: null,
       title: null,
     });

@@ -64,9 +64,11 @@ export class ImageExtension extends NodeExtension<Image> {
     return [
       {
         type: this.unistNodeName(),
-        url: node.attrs.src as string,
-        ...(node.attrs.alt !== null && { alt: node.attrs.alt as string }),
-        ...(node.attrs.title !== null && { title: node.attrs.title as string }),
+        url: node.attrs["src"] as string,
+        ...(node.attrs["alt"] !== null && { alt: node.attrs["alt"] as string }),
+        ...(node.attrs["title"] !== null && {
+          title: node.attrs["title"] as string,
+        }),
       },
     ];
   }

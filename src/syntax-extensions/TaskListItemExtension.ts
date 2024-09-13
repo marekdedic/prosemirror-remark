@@ -36,7 +36,7 @@ class TaskListItemView implements NodeView {
     const checkbox = document.createElement("input");
     checkbox.setAttribute("type", "checkbox");
     checkbox.setAttribute("style", "cursor: pointer;");
-    if (node.attrs.checked === true) {
+    if (node.attrs["checked"] === true) {
       checkbox.setAttribute("checked", "checked");
     }
     checkbox.addEventListener("click", (e) => {
@@ -45,7 +45,7 @@ class TaskListItemView implements NodeView {
         view.state.tr.setNodeAttribute(
           getPos()!,
           "checked",
-          !(node.attrs.checked as boolean),
+          !(node.attrs["checked"] as boolean),
         ),
       );
     });
@@ -90,7 +90,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     return state.selection.$anchor.parentOffset > 0;
   }
 
-  public proseMirrorInputRules(
+  public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
@@ -130,7 +130,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
           state.tr.replaceRangeWith(
             state.selection.$from.before() - 2,
             state.selection.$from.before() + taskListItemNode.nodeSize,
-            proseMirrorSchema.nodes.regular_list_item.createAndFill(
+            proseMirrorSchema.nodes["regular_list_item"].createAndFill(
               {},
               taskListItemNode.content,
             )!,
@@ -176,7 +176,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
             [
               "input",
               {
-                checked: (node.attrs.checked as boolean)
+                checked: (node.attrs["checked"] as boolean)
                   ? "checked"
                   : undefined,
                 disabled: "disabled",
@@ -196,7 +196,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   ): Array<ListItem> {
     return [
       {
-        checked: node.attrs.checked as boolean,
+        checked: node.attrs["checked"] as boolean,
         children: convertedChildren,
         type: this.unistNodeName(),
       },

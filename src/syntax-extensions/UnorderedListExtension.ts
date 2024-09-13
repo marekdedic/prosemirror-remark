@@ -68,7 +68,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
         },
       ],
       toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return ["ul", { "data-spread": node.attrs.spread as boolean }, 0];
+        return ["ul", { "data-spread": node.attrs["spread"] as boolean }, 0];
       },
     };
   }
@@ -77,7 +77,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
     node: ProseMirrorNode,
     convertedChildren: Array<ListContent>,
   ): Array<List> {
-    const spread = node.attrs.spread as boolean;
+    const spread = node.attrs["spread"] as boolean;
     return [
       {
         children: convertedChildren.map((child) => {

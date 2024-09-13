@@ -31,7 +31,7 @@ new MarkExtensionTester(new LinkExtension(), {
     (schema) => [
       schema
         .text("Click me!")
-        .mark([schema.marks.link.create({ href: "https://example.test" })]),
+        .mark([schema.marks["link"].create({ href: "https://example.test" })]),
     ],
   )
   .shouldConvertUnistNode(
@@ -43,7 +43,7 @@ new MarkExtensionTester(new LinkExtension(), {
     },
     (schema) => [
       schema.text("Click me!").mark([
-        schema.marks.link.create({
+        schema.marks["link"].create({
           href: "https://example.test",
           title: "This link has a title",
         }),

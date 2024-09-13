@@ -30,72 +30,78 @@ test("unist -> ProseMirror conversion", () => {
   );
 
   expect(result).toEqualProsemirrorNode(
-    schema.nodes.doc.createAndFill({}, [
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [
+    schema.nodes["doc"].createAndFill({}, [
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Inside a blockquote"),
         ])!,
       ])!,
-      schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["paragraph"].createAndFill({}, [
         schema.text("Paragraph with a"),
-        schema.nodes.hard_break.createAndFill()!,
+        schema.nodes["hard_break"].createAndFill()!,
         schema.text("hard break"),
       ])!,
-      schema.nodes.code_block.createAndFill({}, [schema.text("Code")])!,
-      schema.nodes.heading.createAndFill({}, [schema.text("Hello")])!,
-      schema.nodes.horizontal_rule.createAndFill()!,
-      schema.nodes.paragraph.createAndFill({}, [
-        schema.nodes.image.createAndFill({
+      schema.nodes["code_block"].createAndFill({}, [schema.text("Code")])!,
+      schema.nodes["heading"].createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["horizontal_rule"].createAndFill()!,
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.nodes["image"].createAndFill({
           alt: "Awesome image",
           src: "https://example.test",
         })!,
       ])!,
-      schema.nodes.paragraph.createAndFill({}, [
-        schema.nodes.image.createAndFill({
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.nodes["image"].createAndFill({
           alt: "Image 2",
           src: "https://img2.test",
         })!,
       ])!,
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Ordered list"),
           ])!,
         ])!,
       ])!,
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Unordered list"),
           ])!,
         ])!,
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Task list")])!,
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
+            schema.text("Task list"),
+          ])!,
         ])!,
       ])!,
-      schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["paragraph"].createAndFill({}, [
         schema.text("A text with a "),
-        schema.text("bold part").mark([schema.marks.strong.create()]),
+        schema.text("bold part").mark([schema.marks["strong"].create()]),
         schema.text(", some "),
-        schema.text("inline code").mark([schema.marks.code.create()]),
+        schema.text("inline code").mark([schema.marks["code"].create()]),
         schema.text(", a bit "),
-        schema.text("that is italic").mark([schema.marks.em.create()]),
+        schema.text("that is italic").mark([schema.marks["em"].create()]),
         schema.text(", one that is "),
         schema
           .text("striked through")
-          .mark([schema.marks.strikethrough.create()]),
+          .mark([schema.marks["strikethrough"].create()]),
         schema.text(", one "),
         schema
           .text("link")
-          .mark([schema.marks.link.create({ href: "https://example.test" })]),
+          .mark([
+            schema.marks["link"].create({ href: "https://example.test" }),
+          ]),
         schema.text(", one simple link to "),
         schema
           .text("www.github.com")
-          .mark([schema.marks.link.create({ href: "http://www.github.com" })]),
+          .mark([
+            schema.marks["link"].create({ href: "http://www.github.com" }),
+          ]),
         schema.text(" and another "),
         schema
           .text("type of link")
-          .mark([schema.marks.link.create({ href: "https://link2.test" })]),
+          .mark([schema.marks["link"].create({ href: "https://link2.test" })]),
         schema.text("."),
       ])!,
     ])!,
@@ -106,72 +112,78 @@ test("ProseMirror -> unist conversion", () => {
   const pmu = new ProseMirrorUnified([new GFMExtension()]);
   const schema = pmu.schema();
   const result = pmu.serialize(
-    schema.nodes.doc.createAndFill({}, [
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [
+    schema.nodes["doc"].createAndFill({}, [
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Inside a blockquote"),
         ])!,
       ])!,
-      schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["paragraph"].createAndFill({}, [
         schema.text("Paragraph with a"),
-        schema.nodes.hard_break.createAndFill()!,
+        schema.nodes["hard_break"].createAndFill()!,
         schema.text("hard break"),
       ])!,
-      schema.nodes.code_block.createAndFill({}, [schema.text("Code")])!,
-      schema.nodes.heading.createAndFill({}, [schema.text("Hello")])!,
-      schema.nodes.horizontal_rule.createAndFill()!,
-      schema.nodes.paragraph.createAndFill({}, [
-        schema.nodes.image.createAndFill({
+      schema.nodes["code_block"].createAndFill({}, [schema.text("Code")])!,
+      schema.nodes["heading"].createAndFill({}, [schema.text("Hello")])!,
+      schema.nodes["horizontal_rule"].createAndFill()!,
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.nodes["image"].createAndFill({
           alt: "Awesome image",
           src: "https://example.test",
         })!,
       ])!,
-      schema.nodes.paragraph.createAndFill({}, [
-        schema.nodes.image.createAndFill({
+      schema.nodes["paragraph"].createAndFill({}, [
+        schema.nodes["image"].createAndFill({
           alt: "Image 2",
           src: "https://img2.test",
         })!,
       ])!,
-      schema.nodes.ordered_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["ordered_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Ordered list"),
           ])!,
         ])!,
       ])!,
-      schema.nodes.bullet_list.createAndFill({}, [
-        schema.nodes.regular_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["bullet_list"].createAndFill({}, [
+        schema.nodes["regular_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
             schema.text("Unordered list"),
           ])!,
         ])!,
-        schema.nodes.task_list_item.createAndFill({}, [
-          schema.nodes.paragraph.createAndFill({}, [schema.text("Task list")])!,
+        schema.nodes["task_list_item"].createAndFill({}, [
+          schema.nodes["paragraph"].createAndFill({}, [
+            schema.text("Task list"),
+          ])!,
         ])!,
       ])!,
-      schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["paragraph"].createAndFill({}, [
         schema.text("A text with a "),
-        schema.text("bold part").mark([schema.marks.strong.create()]),
+        schema.text("bold part").mark([schema.marks["strong"].create()]),
         schema.text(", some "),
-        schema.text("inline code").mark([schema.marks.code.create()]),
+        schema.text("inline code").mark([schema.marks["code"].create()]),
         schema.text(", a bit "),
-        schema.text("that is italic").mark([schema.marks.em.create()]),
+        schema.text("that is italic").mark([schema.marks["em"].create()]),
         schema.text(", one that is "),
         schema
           .text("striked through")
-          .mark([schema.marks.strikethrough.create()]),
+          .mark([schema.marks["strikethrough"].create()]),
         schema.text(", one "),
         schema
           .text("link")
-          .mark([schema.marks.link.create({ href: "https://example.test" })]),
+          .mark([
+            schema.marks["link"].create({ href: "https://example.test" }),
+          ]),
         schema.text(", one simple link to "),
         schema
           .text("www.github.com")
-          .mark([schema.marks.link.create({ href: "http://www.github.com" })]),
+          .mark([
+            schema.marks["link"].create({ href: "http://www.github.com" }),
+          ]),
         schema.text(" and another "),
         schema
           .text("type of link")
-          .mark([schema.marks.link.create({ href: "https://link2.test" })]),
+          .mark([schema.marks["link"].create({ href: "https://link2.test" })]),
         schema.text("."),
       ])!,
     ])!,

@@ -15,7 +15,7 @@ new MarkExtensionTester(new BoldExtension(), {
       type: "strong",
     },
     (schema) => [
-      schema.text("Hello World!").mark([schema.marks.strong.create()]),
+      schema.text("Hello World!").mark([schema.marks["strong"].create()]),
     ],
   )
   .shouldMatchProseMirrorMark((schema) => schema.mark("strong"))
@@ -49,12 +49,12 @@ new MarkExtensionTester(new BoldExtension(), {
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.paragraph.createAndFill({}, [schema.text("abcdef")])!,
+      schema.nodes["paragraph"].createAndFill({}, [schema.text("abcdef")])!,
     ],
     { from: 3, to: 5 },
     "Mod-b",
     (schema) => [
-      schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["paragraph"].createAndFill({}, [
         schema.text("ab"),
         schema.text("cd").mark([schema.mark("strong")]),
         schema.text("ef"),
@@ -71,12 +71,12 @@ new MarkExtensionTester(new BoldExtension(), {
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.paragraph.createAndFill({}, [schema.text("abcdef")])!,
+      schema.nodes["paragraph"].createAndFill({}, [schema.text("abcdef")])!,
     ],
     { from: 3, to: 5 },
     "Mod-B",
     (schema) => [
-      schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["paragraph"].createAndFill({}, [
         schema.text("ab"),
         schema.text("cd").mark([schema.mark("strong")]),
         schema.text("ef"),

@@ -18,7 +18,9 @@ new MarkExtensionTester(new StrikethroughExtension(), {
       type: "delete",
     },
     (schema) => [
-      schema.text("Hello World!").mark([schema.marks.strikethrough.create()]),
+      schema
+        .text("Hello World!")
+        .mark([schema.marks["strikethrough"].create()]),
     ],
   )
   .shouldConvertUnistNode(
@@ -34,7 +36,10 @@ new MarkExtensionTester(new StrikethroughExtension(), {
     (schema) => [
       schema
         .text("Hello World!")
-        .mark([schema.marks.em.create(), schema.marks.strikethrough.create()]),
+        .mark([
+          schema.marks["em"].create(),
+          schema.marks["strikethrough"].create(),
+        ]),
     ],
   )
   .shouldConvertUnistNode(
@@ -50,7 +55,10 @@ new MarkExtensionTester(new StrikethroughExtension(), {
     (schema) => [
       schema
         .text("Hello World!")
-        .mark([schema.marks.strikethrough.create(), schema.marks.em.create()]),
+        .mark([
+          schema.marks["strikethrough"].create(),
+          schema.marks["em"].create(),
+        ]),
     ],
   )
   .shouldConvertUnistNode(
@@ -67,8 +75,8 @@ new MarkExtensionTester(new StrikethroughExtension(), {
       schema
         .text("Hello World!")
         .mark([
-          schema.marks.strong.create(),
-          schema.marks.strikethrough.create(),
+          schema.marks["strong"].create(),
+          schema.marks["strikethrough"].create(),
         ]),
     ],
   )
@@ -86,8 +94,8 @@ new MarkExtensionTester(new StrikethroughExtension(), {
       schema
         .text("Hello World!")
         .mark([
-          schema.marks.strikethrough.create(),
-          schema.marks.strong.create(),
+          schema.marks["strikethrough"].create(),
+          schema.marks["strong"].create(),
         ]),
     ],
   )
