@@ -20,7 +20,7 @@ export class MarkExtensionTester<
     never
   >,
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
-  protected readonly extension: MarkExtension<UNode, UnistToProseMirrorContext>;
+  protected override readonly extension: MarkExtension<UNode, UnistToProseMirrorContext>;
 
   private readonly inputRuleMatches: Array<{
     editorInput: string;
@@ -47,7 +47,7 @@ export class MarkExtensionTester<
     this.inputRuleMatches = [];
   }
 
-  protected enqueueTests(): void {
+  protected override enqueueTests(): void {
     super.enqueueTests();
 
     test("Provides the correct ProseMirror mark", () => {

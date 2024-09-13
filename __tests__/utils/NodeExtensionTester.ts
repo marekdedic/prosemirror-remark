@@ -20,7 +20,7 @@ export class NodeExtensionTester<
     never
   >,
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
-  protected readonly extension: NodeExtension<UNode, UnistToProseMirrorContext>;
+  protected override readonly extension: NodeExtension<UNode, UnistToProseMirrorContext>;
 
   private readonly inputRuleMatches: Array<{
     editorInput: string;
@@ -47,7 +47,7 @@ export class NodeExtensionTester<
     this.inputRuleMatches = [];
   }
 
-  protected enqueueTests(): void {
+  protected override enqueueTests(): void {
     super.enqueueTests();
 
     test("Provides the correct ProseMirror node", () => {

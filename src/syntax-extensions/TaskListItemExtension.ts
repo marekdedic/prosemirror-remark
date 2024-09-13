@@ -90,7 +90,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     return state.selection.$anchor.parentOffset > 0;
   }
 
-  public proseMirrorInputRules(
+  public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
