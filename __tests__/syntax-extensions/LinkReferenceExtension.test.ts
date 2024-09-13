@@ -36,7 +36,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
     (schema) => [
       schema
         .text("Click me!")
-        .mark([schema.marks.link.create({ href: "https://example.test" })]),
+        .mark([schema.marks["link"].create({ href: "https://example.test" })]),
     ],
     [
       {
@@ -56,7 +56,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
     (schema) => [
       schema
         .text("Click me!")
-        .mark([schema.marks.link.create({ href: "https://example.test" })]),
+        .mark([schema.marks["link"].create({ href: "https://example.test" })]),
     ],
     [
       {
@@ -76,7 +76,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
     (schema) => [
       schema
         .text("Click me!")
-        .mark([schema.marks.link.create({ href: "https://example.test" })]),
+        .mark([schema.marks["link"].create({ href: "https://example.test" })]),
     ],
     [
       {
@@ -95,7 +95,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
     },
     (schema) => [
       schema.text("Click me!").mark([
-        schema.marks.link.create({
+        schema.marks["link"].create({
           href: "https://example.test",
           title: "This link has a title",
         }),
@@ -119,7 +119,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
     },
     (schema) => [
       schema.text("Click me!").mark([
-        schema.marks.link.create({
+        schema.marks["link"].create({
           href: null,
         }),
       ]),

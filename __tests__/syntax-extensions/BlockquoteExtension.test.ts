@@ -27,8 +27,8 @@ new NodeExtensionTester(new BlockquoteExtension(), {
       type: "blockquote",
     },
     (schema) => [
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Hello World!"),
         ])!,
       ])!,
@@ -49,23 +49,23 @@ new NodeExtensionTester(new BlockquoteExtension(), {
       type: "blockquote",
     },
     (schema) => [
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Hello World!"),
         ])!,
-        schema.nodes.paragraph.createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Second paragraph"),
         ])!,
       ])!,
     ],
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes.blockquote.createAndFill()!,
+    (schema) => schema.nodes["blockquote"].createAndFill()!,
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Hello World!"),
         ])!,
       ])!,
@@ -83,11 +83,11 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Hello World!"),
         ])!,
-        schema.nodes.paragraph.createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Second paragraph"),
         ])!,
       ])!,
@@ -111,31 +111,31 @@ new NodeExtensionTester(new BlockquoteExtension(), {
     () => [],
     "start",
     "Mod->",
-    (schema) => [schema.nodes.blockquote.createAndFill()!],
+    (schema) => [schema.nodes["blockquote"].createAndFill()!],
     ">",
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.paragraph.createAndFill({}, [schema.text("abcd")])!,
+      schema.nodes["paragraph"].createAndFill({}, [schema.text("abcd")])!,
     ],
     3,
     "Mod->",
     (schema) => [
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [schema.text("abcd")])!,
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [schema.text("abcd")])!,
       ])!,
     ],
     "> abcd",
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.paragraph.createAndFill({}, [schema.text("abcd")])!,
+      schema.nodes["paragraph"].createAndFill({}, [schema.text("abcd")])!,
     ],
     { from: 1, to: 3 },
     "Mod->",
     (schema) => [
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [schema.text("abcd")])!,
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [schema.text("abcd")])!,
       ])!,
     ],
     "> abcd",
@@ -143,8 +143,8 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   .shouldMatchInputRule(
     "> Hello World!",
     (schema) => [
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Hello World!"),
         ])!,
       ])!,
@@ -154,8 +154,8 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   .shouldMatchInputRule(
     " > Hello World!",
     (schema) => [
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Hello World!"),
         ])!,
       ])!,
@@ -165,8 +165,8 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   .shouldMatchInputRule(
     "  > Hello World!",
     (schema) => [
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Hello World!"),
         ])!,
       ])!,
@@ -176,8 +176,8 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   .shouldMatchInputRule(
     "   > Hello World!",
     (schema) => [
-      schema.nodes.blockquote.createAndFill({}, [
-        schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["blockquote"].createAndFill({}, [
+        schema.nodes["paragraph"].createAndFill({}, [
           schema.text("Hello World!"),
         ])!,
       ])!,

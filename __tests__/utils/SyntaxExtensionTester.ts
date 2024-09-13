@@ -110,10 +110,10 @@ export class SyntaxExtensionTester<
       } of this.keymapMatches) {
         const proseMirrorTreeBefore = this.pmu
           .schema()
-          .nodes.doc.createAndFill({}, proseMirrorBefore)!;
+          .nodes["doc"].createAndFill({}, proseMirrorBefore)!;
         const proseMirrorTreeAfter = this.pmu
           .schema()
-          .nodes.doc.createAndFill({}, proseMirrorAfter)!;
+          .nodes["doc"].createAndFill({}, proseMirrorAfter)!;
 
         jest.spyOn(console, "warn").mockImplementation();
         createEditor(proseMirrorTreeBefore, {

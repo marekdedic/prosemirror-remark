@@ -14,7 +14,7 @@ new MarkExtensionTester(new InlineCodeExtension(), {
       value: "Hello World!",
     },
     (schema) => [
-      schema.text("Hello World!").mark([schema.marks.code.create()]),
+      schema.text("Hello World!").mark([schema.marks["code"].create()]),
     ],
   )
   .shouldMatchProseMirrorMark((schema) => schema.mark("code"))
@@ -31,12 +31,12 @@ new MarkExtensionTester(new InlineCodeExtension(), {
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.paragraph.createAndFill({}, [schema.text("abcdef")])!,
+      schema.nodes["paragraph"].createAndFill({}, [schema.text("abcdef")])!,
     ],
     { from: 3, to: 5 },
     "Ctrl-`",
     (schema) => [
-      schema.nodes.paragraph.createAndFill({}, [
+      schema.nodes["paragraph"].createAndFill({}, [
         schema.text("ab"),
         schema.text("cd").mark([schema.mark("code")]),
         schema.text("ef"),

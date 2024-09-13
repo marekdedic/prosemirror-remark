@@ -39,7 +39,8 @@ export class HeadingExtension extends NodeExtension<Heading> {
         return false;
       }
 
-      const newHeadingLevel = (headingNode.attrs.level as number) + levelUpdate;
+      const newHeadingLevel =
+        (headingNode.attrs["level"] as number) + levelUpdate;
 
       if (newHeadingLevel < 0 || newHeadingLevel > 6) {
         return false;
@@ -60,7 +61,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
         dispatch(
           state.tr.setNodeMarkup(
             headingPosition,
-            proseMirrorSchema.nodes.paragraph,
+            proseMirrorSchema.nodes["paragraph"],
           ),
         );
       }
@@ -152,7 +153,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
         { attrs: { level: 6 }, tag: "h6" },
       ],
       toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return [`h${(node.attrs.level as number).toString()}`, 0];
+        return [`h${(node.attrs["level"] as number).toString()}`, 0];
       },
     };
   }
@@ -164,7 +165,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
     return [
       {
         children: convertedChildren,
-        depth: node.attrs.level as 1 | 2 | 3 | 4 | 5 | 6,
+        depth: node.attrs["level"] as 1 | 2 | 3 | 4 | 5 | 6,
         type: this.unistNodeName(),
       },
     ];

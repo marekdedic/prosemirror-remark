@@ -21,7 +21,7 @@ new NodeExtensionTester(new HeadingExtension(), {
       type: "heading",
     },
     (schema) => [
-      schema.nodes.heading.createAndFill(
+      schema.nodes["heading"].createAndFill(
         {
           level: 1,
         },
@@ -36,7 +36,7 @@ new NodeExtensionTester(new HeadingExtension(), {
       type: "heading",
     },
     (schema) => [
-      schema.nodes.heading.createAndFill(
+      schema.nodes["heading"].createAndFill(
         {
           level: 3,
         },
@@ -51,7 +51,7 @@ new NodeExtensionTester(new HeadingExtension(), {
       type: "heading",
     },
     (schema) => [
-      schema.nodes.heading.createAndFill(
+      schema.nodes["heading"].createAndFill(
         {
           level: 6,
         },
@@ -60,27 +60,27 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes.heading.createAndFill({ level: 1 })!,
+    (schema) => schema.nodes["heading"].createAndFill({ level: 1 })!,
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes.heading.createAndFill({ level: 3 })!,
+    (schema) => schema.nodes["heading"].createAndFill({ level: 3 })!,
   )
   .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes.heading.createAndFill({ level: 6 })!,
+    (schema) => schema.nodes["heading"].createAndFill({ level: 6 })!,
   )
   .shouldMatchProseMirrorNode(
     (schema) =>
-      schema.nodes.heading.createAndFill({ level: 3 }, [
+      schema.nodes["heading"].createAndFill({ level: 3 }, [
         schema.text("Hello World!"),
       ])!,
   )
   .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes.heading.createAndFill({ level: 4 })!,
+    (schema) => schema.nodes["heading"].createAndFill({ level: 4 })!,
     [{ children: [], depth: 4, type: "heading" }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.heading.createAndFill({ level: 1 }, [
+      schema.nodes["heading"].createAndFill({ level: 1 }, [
         schema.text("Hello World!"),
       ])!,
     [
@@ -93,7 +93,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.heading.createAndFill({ level: 3 }, [
+      schema.nodes["heading"].createAndFill({ level: 3 }, [
         schema.text("Hello World!"),
       ])!,
     [
@@ -106,7 +106,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes.heading.createAndFill({ level: 6 }, [
+      schema.nodes["heading"].createAndFill({ level: 6 }, [
         schema.text("Hello World!"),
       ])!,
     [
@@ -126,74 +126,98 @@ new NodeExtensionTester(new HeadingExtension(), {
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 1 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 1 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "start",
     "#",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 2 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 2 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "## Hello",
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 2 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 2 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "start",
     "#",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 3 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 3 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "### Hello",
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 3 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 3 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "start",
     "#",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 4 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 4 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "#### Hello",
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 4 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 4 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "start",
     "#",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 5 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 5 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "##### Hello",
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 5 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 5 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "start",
     "#",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 6 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 6 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "###### Hello",
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 6 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 6 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "start",
     "#",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 6 }, [schema.text("Hello")])!,
+      schema.nodes["heading"].createAndFill({ level: 6 }, [
+        schema.text("Hello"),
+      ])!,
     ],
     "###### Hello",
   )
   .shouldMatchInputRule(
     "# Hello World!",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 1 }, [
+      schema.nodes["heading"].createAndFill({ level: 1 }, [
         schema.text("Hello World!"),
       ])!,
     ],
@@ -202,7 +226,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   .shouldMatchInputRule(
     "## Hello World!",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 2 }, [
+      schema.nodes["heading"].createAndFill({ level: 2 }, [
         schema.text("Hello World!"),
       ])!,
     ],
@@ -211,7 +235,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   .shouldMatchInputRule(
     "### Hello World!",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 3 }, [
+      schema.nodes["heading"].createAndFill({ level: 3 }, [
         schema.text("Hello World!"),
       ])!,
     ],
@@ -220,7 +244,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   .shouldMatchInputRule(
     "#### Hello World!",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 4 }, [
+      schema.nodes["heading"].createAndFill({ level: 4 }, [
         schema.text("Hello World!"),
       ])!,
     ],
@@ -229,7 +253,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   .shouldMatchInputRule(
     "##### Hello World!",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 5 }, [
+      schema.nodes["heading"].createAndFill({ level: 5 }, [
         schema.text("Hello World!"),
       ])!,
     ],
@@ -238,7 +262,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   .shouldMatchInputRule(
     "###### Hello World!",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 6 }, [
+      schema.nodes["heading"].createAndFill({ level: 6 }, [
         schema.text("Hello World!"),
       ])!,
     ],
@@ -247,7 +271,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   .shouldMatchInputRule(
     " # Hello World!",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 1 }, [
+      schema.nodes["heading"].createAndFill({ level: 1 }, [
         schema.text("Hello World!"),
       ])!,
     ],
@@ -256,7 +280,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   .shouldMatchInputRule(
     "  # Hello World!",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 1 }, [
+      schema.nodes["heading"].createAndFill({ level: 1 }, [
         schema.text("Hello World!"),
       ])!,
     ],
@@ -265,7 +289,7 @@ new NodeExtensionTester(new HeadingExtension(), {
   .shouldMatchInputRule(
     "   # Hello World!",
     (schema) => [
-      schema.nodes.heading.createAndFill({ level: 1 }, [
+      schema.nodes["heading"].createAndFill({ level: 1 }, [
         schema.text("Hello World!"),
       ])!,
     ],

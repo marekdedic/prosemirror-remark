@@ -20,7 +20,10 @@ export class NodeExtensionTester<
     never
   >,
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
-  protected override readonly extension: NodeExtension<UNode, UnistToProseMirrorContext>;
+  protected override readonly extension: NodeExtension<
+    UNode,
+    UnistToProseMirrorContext
+  >;
 
   private readonly inputRuleMatches: Array<{
     editorInput: string;
@@ -75,7 +78,7 @@ export class NodeExtensionTester<
         const proseMirrorRoot = this.pmu.parse(source);
         const proseMirrorTree = this.pmu
           .schema()
-          .nodes.doc.createAndFill({}, proseMirrorNodes)!;
+          .nodes["doc"].createAndFill({}, proseMirrorNodes)!;
 
         jest.spyOn(console, "warn").mockImplementation();
         createEditor(proseMirrorRoot, {
@@ -149,9 +152,9 @@ export class NodeExtensionTester<
       proseMirrorNodes: proseMirrorNodes?.(this.pmu.schema()) ?? [
         this.pmu
           .schema()
-          .nodes.paragraph.createAndFill({}, [
-            this.pmu.schema().text(editorInput),
-          ])!,
+          .nodes[
+            "paragraph"
+          ].createAndFill({}, [this.pmu.schema().text(editorInput)])!,
       ],
     });
     return this;

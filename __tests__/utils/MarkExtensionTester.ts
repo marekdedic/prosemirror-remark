@@ -20,7 +20,10 @@ export class MarkExtensionTester<
     never
   >,
 > extends SyntaxExtensionTester<UNode, UnistToProseMirrorContext> {
-  protected override readonly extension: MarkExtension<UNode, UnistToProseMirrorContext>;
+  protected override readonly extension: MarkExtension<
+    UNode,
+    UnistToProseMirrorContext
+  >;
 
   private readonly inputRuleMatches: Array<{
     editorInput: string;
@@ -75,15 +78,9 @@ export class MarkExtensionTester<
         const proseMirrorRoot = this.pmu.parse(source);
         const proseMirrorTree = this.pmu
           .schema()
-          .nodes.doc.createAndFill({}, [
-            this.pmu
-              .schema()
-              .nodes.paragraph.createAndFill({}, [
-                this.pmu.schema().text("BEGIN"),
-                ...proseMirrorNodes,
-                this.pmu.schema().text("END"),
-              ])!,
-          ])!;
+          .nodes[
+            "doc"
+          ].createAndFill({}, [this.pmu.schema().nodes["paragraph"].createAndFill({}, [this.pmu.schema().text("BEGIN"), ...proseMirrorNodes, this.pmu.schema().text("END")])!])!;
 
         jest.spyOn(console, "warn").mockImplementation();
         createEditor(proseMirrorRoot, {

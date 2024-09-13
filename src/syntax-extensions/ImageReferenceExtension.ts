@@ -47,9 +47,9 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Attrs can be any
         any
       >;
-      attrs.src = definition.url;
+      attrs["src"] = definition.url;
       if (definition.title !== undefined) {
-        attrs.title = definition.title;
+        attrs["title"] = definition.title;
       }
     }
   }
@@ -78,7 +78,7 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
       ImageReferenceExtension: ImageReferenceExtensionContext;
     }>,
   ): Array<ProseMirrorNode> {
-    const proseMirrorNode = proseMirrorSchema.nodes.image.createAndFill(
+    const proseMirrorNode = proseMirrorSchema.nodes["image"].createAndFill(
       { alt: node.alt, src: "", title: node.label },
       convertedChildren,
     );
