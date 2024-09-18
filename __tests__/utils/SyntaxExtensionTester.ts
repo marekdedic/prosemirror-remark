@@ -111,10 +111,10 @@ export class SyntaxExtensionTester<
 
           const proseMirrorTreeBefore = this.pmu
             .schema()
-            .nodes["doc"].createAndFill({}, proseMirrorBefore)!;
+            .nodes["doc"].create({}, proseMirrorBefore);
           const proseMirrorTreeAfter = this.pmu
             .schema()
-            .nodes["doc"].createAndFill({}, proseMirrorAfter)!;
+            .nodes["doc"].create({}, proseMirrorAfter);
 
           jest.spyOn(console, "warn").mockImplementation();
           createEditor(proseMirrorTreeBefore, {

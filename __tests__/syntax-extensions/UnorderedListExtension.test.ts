@@ -32,7 +32,13 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [schema.nodes["bullet_list"].createAndFill()!],
+    (schema) => [
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create(),
+        ]),
+      ]),
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -41,7 +47,13 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       spread: true,
       type: "list",
     },
-    (schema) => [schema.nodes["bullet_list"].createAndFill({ spread: true })!],
+    (schema) => [
+      schema.nodes["bullet_list"].create({ spread: true }, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create(),
+        ]),
+      ]),
+    ],
   )
   .shouldConvertUnistNode(
     {
@@ -50,9 +62,11 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill()!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create(),
+        ]),
+      ]),
     ],
   )
   .shouldConvertUnistNode(
@@ -62,9 +76,11 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({ spread: true })!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({ spread: true }, [
+          schema.nodes["paragraph"].create(),
+        ]),
+      ]),
     ],
   )
   .shouldConvertUnistNode(
@@ -84,82 +100,41 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       type: "list",
     },
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Hello World!"),
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+        ]),
+      ]),
     ],
   )
-  .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["bullet_list"].createAndFill()!,
+  .shouldMatchProseMirrorNode((schema) => schema.nodes["bullet_list"].create())
+  .shouldMatchProseMirrorNode((schema) =>
+    schema.nodes["bullet_list"].create({ spread: true }),
   )
-  .shouldMatchProseMirrorNode(
-    (schema) => schema.nodes["bullet_list"].createAndFill({ spread: true })!,
+  .shouldMatchProseMirrorNode((schema) =>
+    schema.nodes["bullet_list"].create({}, [
+      schema.nodes["regular_list_item"].create(),
+    ]),
   )
-  .shouldMatchProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill()!,
-      ])!,
+  .shouldMatchProseMirrorNode((schema) =>
+    schema.nodes["bullet_list"].create({}, [
+      schema.nodes["regular_list_item"].create({ spread: true }),
+    ]),
   )
-  .shouldMatchProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({ spread: true })!,
-      ])!,
-  )
-  .shouldMatchProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Hello World!"),
-          ])!,
-        ])!,
-      ])!,
-  )
-  .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes["bullet_list"].createAndFill()!,
-    [
-      {
-        children: [
-          {
-            children: [{ children: [], type: "paragraph" }],
-            spread: false,
-            type: "listItem",
-          },
-        ],
-        ordered: false,
-        spread: false,
-        type: "list",
-      },
-    ],
-  )
-  .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes["bullet_list"].createAndFill({ spread: true })!,
-    [
-      {
-        children: [
-          {
-            children: [{ children: [], type: "paragraph" }],
-            spread: true,
-            type: "listItem",
-          },
-        ],
-        ordered: false,
-        spread: true,
-        type: "list",
-      },
-    ],
+  .shouldMatchProseMirrorNode((schema) =>
+    schema.nodes["bullet_list"].create({}, [
+      schema.nodes["regular_list_item"].create({}, [
+        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+      ]),
+    ]),
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill()!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create(),
+        ]),
+      ]),
     [
       {
         children: [
@@ -177,9 +152,11 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes["bullet_list"].createAndFill({ spread: true }, [
-        schema.nodes["regular_list_item"].createAndFill({ spread: true })!,
-      ])!,
+      schema.nodes["bullet_list"].create({ spread: true }, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create(),
+        ]),
+      ]),
     [
       {
         children: [
@@ -197,13 +174,55 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Hello World!"),
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create(),
+        ]),
+      ]),
+    [
+      {
+        children: [
+          {
+            children: [{ children: [], type: "paragraph" }],
+            spread: false,
+            type: "listItem",
+          },
+        ],
+        ordered: false,
+        spread: false,
+        type: "list",
+      },
+    ],
+  )
+  .shouldConvertProseMirrorNode(
+    (schema) =>
+      schema.nodes["bullet_list"].create({ spread: true }, [
+        schema.nodes["regular_list_item"].create({ spread: true }, [
+          schema.nodes["paragraph"].create(),
+        ]),
+      ]),
+    [
+      {
+        children: [
+          {
+            children: [{ children: [], type: "paragraph" }],
+            spread: true,
+            type: "listItem",
+          },
+        ],
+        ordered: false,
+        spread: true,
+        type: "list",
+      },
+    ],
+  )
+  .shouldConvertProseMirrorNode(
+    (schema) =>
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+        ]),
+      ]),
     [
       {
         children: [
@@ -226,84 +245,78 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   .shouldMatchInputRule(
     "* ",
-    (schema) => [schema.nodes["bullet_list"].createAndFill()!],
+    (schema) => [
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create(),
+        ]),
+      ]),
+    ],
     "*",
   )
   .shouldMatchInputRule(
     "* Hello World!",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Hello World!"),
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+        ]),
+      ]),
     ],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     "- Hello World!",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Hello World!"),
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+        ]),
+      ]),
     ],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     "+ Hello World!",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Hello World!"),
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+        ]),
+      ]),
     ],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     " * Hello World!",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Hello World!"),
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+        ]),
+      ]),
     ],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     "  * Hello World!",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Hello World!"),
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+        ]),
+      ]),
     ],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     " * Hello World!",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Hello World!"),
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+        ]),
+      ]),
     ],
     "* Hello World!",
   )
@@ -311,138 +324,132 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   .shouldMatchInputRule(
     "* Hello World!\n\n\n* Second item",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Hello World!"),
-          ])!,
-        ])!,
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Second line"),
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+        ]),
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Second line")]),
+        ]),
+      ]),
     ],
     "* Hello World!\n2. Second item",
   )
   */
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
-    ],
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
     3,
     "Shift-Mod-8",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+      ]),
     ],
     "* Hello",
   )
   /* TODO: Re-enable when jest-prosemirror can handle keymaps with Enter
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+      ]),
     ],
     3,
     "Enter",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hel")])!,
-        ])!,
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("lo")])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hel")]),
+        ]),
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("lo")]),
+        ]),
+      ]),
     ],
     "* Hel\n* lo",
   )
   */
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
-        ])!,
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("World")]),
+        ]),
+      ]),
     ],
     3,
     "Tab",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
-        ])!,
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("World")]),
+        ]),
+      ]),
     ],
     "* Hello\n* World",
   )
   /* TODO: Re-enable once jest-prosemirror can handle keymaps with Tab
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
-        ])!,
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("World")]),
+        ]),
+      ]),
     ],
     10,
     "Tab",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
-          schema.nodes["bullet_list"].createAndFill({}, [
-            schema.nodes["regular_list_item"].createAndFill({}, [
-              schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
-            ])!,
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+          schema.nodes["bullet_list"].create({}, [
+            schema.nodes["regular_list_item"].create({}, [
+              schema.nodes["paragraph"].create({}, [schema.text("World")]),
+            ]),
+          ]),
+        ]),
+      ]),
     ],
     "* Hello\n    * World",
   )
   .shouldSupportKeymap(
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
-          schema.nodes["bullet_list"].createAndFill({}, [
-            schema.nodes["regular_list_item"].createAndFill({}, [
-              schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
-            ])!,
-          ])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+          schema.nodes["bullet_list"].create({}, [
+            schema.nodes["regular_list_item"].create({}, [
+              schema.nodes["paragraph"].create({}, [schema.text("World")]),
+            ]),
+          ]),
+        ]),
+      ]),
     ],
     10,
     "Shift-Tab",
     (schema) => [
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("Hello")])!,
-        ])!,
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [schema.text("World")])!,
-        ])!,
-      ])!,
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("World")]),
+        ]),
+      ]),
     ],
     "* Hello\n* World",
   )
