@@ -97,40 +97,42 @@ export class SyntaxExtensionTester<
       return;
     }
 
-    test("Supports keymap correctly", () => {
-      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(3 * this.keymapMatches.length);
+    describe("Supports keymap correctly", () => {
+      test.each(this.keymapMatches)(
+        "%p",
+        ({
+          key,
+          markdownOutput,
+          proseMirrorAfter,
+          proseMirrorBefore,
+          selection,
+        }) => {
+          expect.assertions(3);
 
-      for (const {
-        key,
-        markdownOutput,
-        proseMirrorAfter,
-        proseMirrorBefore,
-        selection,
-      } of this.keymapMatches) {
-        const proseMirrorTreeBefore = this.pmu
-          .schema()
-          .nodes["doc"].createAndFill({}, proseMirrorBefore)!;
-        const proseMirrorTreeAfter = this.pmu
-          .schema()
-          .nodes["doc"].createAndFill({}, proseMirrorAfter)!;
+          const proseMirrorTreeBefore = this.pmu
+            .schema()
+            .nodes["doc"].createAndFill({}, proseMirrorBefore)!;
+          const proseMirrorTreeAfter = this.pmu
+            .schema()
+            .nodes["doc"].createAndFill({}, proseMirrorAfter)!;
 
-        jest.spyOn(console, "warn").mockImplementation();
-        createEditor(proseMirrorTreeBefore, {
-          plugins: [this.pmu.keymapPlugin()],
-        })
-          .selectText(selection)
-          .shortcut(key)
-          .callback((content) => {
-            expect(content.doc).toEqualProsemirrorNode(proseMirrorTreeAfter);
-            expect(
-              this.pmu.serialize(content.doc).replace(/^\s+|\s+$/gu, ""),
-            ).toBe(markdownOutput);
-          });
+          jest.spyOn(console, "warn").mockImplementation();
+          createEditor(proseMirrorTreeBefore, {
+            plugins: [this.pmu.keymapPlugin()],
+          })
+            .selectText(selection)
+            .shortcut(key)
+            .callback((content) => {
+              expect(content.doc).toEqualProsemirrorNode(proseMirrorTreeAfter);
+              expect(
+                this.pmu.serialize(content.doc).replace(/^\s+|\s+$/gu, ""),
+              ).toBe(markdownOutput);
+            });
 
-        // eslint-disable-next-line no-console -- Testing for console
-        expect(console.warn).not.toHaveBeenCalled();
-      }
+          // eslint-disable-next-line no-console -- Testing for console
+          expect(console.warn).not.toHaveBeenCalled();
+        },
+      );
     });
   }
 
