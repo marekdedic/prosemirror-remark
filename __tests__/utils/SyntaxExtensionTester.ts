@@ -139,11 +139,9 @@ export class SyntaxExtensionTester<
       return;
     }
 
-    test("Converts ProseMirror -> unist correctly", () => {
-      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(this.proseMirrorNodeConversions.length);
-
-      for (const { source, target } of this.proseMirrorNodeConversions) {
+    describe("Converts ProseMirror -> unist correctly", () => {
+      test.each(this.proseMirrorNodeConversions)("%p", ({ source, target }) => {
+        expect.assertions(1);
         expect(
           (
             this.pmu as unknown as {
@@ -153,7 +151,7 @@ export class SyntaxExtensionTester<
             }
           ).proseMirrorToUnistConverter.convertNode(source),
         ).toStrictEqual(target);
-      }
+      });
     });
   }
 
