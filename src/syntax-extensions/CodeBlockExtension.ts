@@ -53,7 +53,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
             // Insert empty paragraph
             .insert(
               $from.pos - 1,
-              tr.doc.type.schema.nodes["paragraph"].createAndFill()!,
+              tr.doc.type.schema.nodes["paragraph"].create(),
             )
             // Put the cursor into the empty paragraph
             .setSelection(Selection.near(tr.doc.resolve($from.pos), 1))

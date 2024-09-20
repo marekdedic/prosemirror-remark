@@ -40,10 +40,14 @@ class TaskListItemView implements NodeView {
       checkbox.setAttribute("checked", "checked");
     }
     checkbox.addEventListener("click", (e) => {
+      const pos = getPos();
+      if (pos === undefined) {
+        return;
+      }
       e.preventDefault();
       view.dispatch(
         view.state.tr.setNodeAttribute(
-          getPos()!,
+          pos,
           "checked",
           !(node.attrs["checked"] as boolean),
         ),
@@ -102,10 +106,10 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
         return state.tr.replaceRangeWith(
           start - 2,
           start + wrappingNode.nodeSize,
-          proseMirrorSchema.nodes[this.proseMirrorNodeName()].createAndFill(
+          proseMirrorSchema.nodes[this.proseMirrorNodeName()].create(
             { checked: match[1] === "x" },
             wrappingNode.content.cut(3 + match[1].length),
-          )!,
+          ),
         );
       }),
     ];
@@ -130,10 +134,10 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
           state.tr.replaceRangeWith(
             state.selection.$from.before() - 2,
             state.selection.$from.before() + taskListItemNode.nodeSize,
-            proseMirrorSchema.nodes["regular_list_item"].createAndFill(
+            proseMirrorSchema.nodes["regular_list_item"].create(
               {},
               taskListItemNode.content,
-            )!,
+            ),
           ),
         );
         return true;
