@@ -195,13 +195,11 @@ export class SyntaxExtensionTester<
       return;
     }
 
-    test("Matches correct unist nodes", () => {
-      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(this.unistNodeMatches.length);
-
-      for (const { node, shouldMatch } of this.unistNodeMatches) {
+    describe("Matches correct unist nodes", () => {
+      test.each(this.unistNodeMatches)("%p", ({ node, shouldMatch }) => {
+        expect.assertions(1);
         expect(this.extension.unistToProseMirrorTest(node)).toBe(shouldMatch);
-      }
+      });
     });
   }
 
