@@ -30,52 +30,46 @@ test("unist -> ProseMirror conversion", () => {
   );
 
   expect(result).toEqualProsemirrorNode(
-    schema.nodes["doc"].createAndFill({}, [
-      schema.nodes["blockquote"].createAndFill({}, [
-        schema.nodes["paragraph"].createAndFill({}, [
+    schema.nodes["doc"].create({}, [
+      schema.nodes["blockquote"].create({}, [
+        schema.nodes["paragraph"].create({}, [
           schema.text("Inside a blockquote"),
-        ])!,
-      ])!,
-      schema.nodes["paragraph"].createAndFill({}, [
+        ]),
+      ]),
+      schema.nodes["paragraph"].create({}, [
         schema.text("Paragraph with a"),
-        schema.nodes["hard_break"].createAndFill()!,
+        schema.nodes["hard_break"].create(),
         schema.text("hard break"),
-      ])!,
-      schema.nodes["code_block"].createAndFill({}, [schema.text("Code")])!,
-      schema.nodes["heading"].createAndFill({}, [schema.text("Hello")])!,
-      schema.nodes["horizontal_rule"].createAndFill()!,
-      schema.nodes["paragraph"].createAndFill({}, [
-        schema.nodes["image"].createAndFill({
+      ]),
+      schema.nodes["code_block"].create({}, [schema.text("Code")]),
+      schema.nodes["heading"].create({}, [schema.text("Hello")]),
+      schema.nodes["horizontal_rule"].create(),
+      schema.nodes["paragraph"].create({}, [
+        schema.nodes["image"].create({
           alt: "Awesome image",
           src: "https://example.test",
-        })!,
-      ])!,
-      schema.nodes["paragraph"].createAndFill({}, [
-        schema.nodes["image"].createAndFill({
+        }),
+      ]),
+      schema.nodes["paragraph"].create({}, [
+        schema.nodes["image"].create({
           alt: "Image 2",
           src: "https://img2.test",
-        })!,
-      ])!,
-      schema.nodes["ordered_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Ordered list"),
-          ])!,
-        ])!,
-      ])!,
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Unordered list"),
-          ])!,
-        ])!,
-        schema.nodes["task_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Task list"),
-          ])!,
-        ])!,
-      ])!,
-      schema.nodes["paragraph"].createAndFill({}, [
+        }),
+      ]),
+      schema.nodes["ordered_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Ordered list")]),
+        ]),
+      ]),
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Unordered list")]),
+        ]),
+        schema.nodes["task_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Task list")]),
+        ]),
+      ]),
+      schema.nodes["paragraph"].create({}, [
         schema.text("A text with a "),
         schema.text("bold part").mark([schema.marks["strong"].create()]),
         schema.text(", some "),
@@ -103,8 +97,8 @@ test("unist -> ProseMirror conversion", () => {
           .text("type of link")
           .mark([schema.marks["link"].create({ href: "https://link2.test" })]),
         schema.text("."),
-      ])!,
-    ])!,
+      ]),
+    ]),
   );
 });
 
@@ -112,52 +106,46 @@ test("ProseMirror -> unist conversion", () => {
   const pmu = new ProseMirrorUnified([new GFMExtension()]);
   const schema = pmu.schema();
   const result = pmu.serialize(
-    schema.nodes["doc"].createAndFill({}, [
-      schema.nodes["blockquote"].createAndFill({}, [
-        schema.nodes["paragraph"].createAndFill({}, [
+    schema.nodes["doc"].create({}, [
+      schema.nodes["blockquote"].create({}, [
+        schema.nodes["paragraph"].create({}, [
           schema.text("Inside a blockquote"),
-        ])!,
-      ])!,
-      schema.nodes["paragraph"].createAndFill({}, [
+        ]),
+      ]),
+      schema.nodes["paragraph"].create({}, [
         schema.text("Paragraph with a"),
-        schema.nodes["hard_break"].createAndFill()!,
+        schema.nodes["hard_break"].create(),
         schema.text("hard break"),
-      ])!,
-      schema.nodes["code_block"].createAndFill({}, [schema.text("Code")])!,
-      schema.nodes["heading"].createAndFill({}, [schema.text("Hello")])!,
-      schema.nodes["horizontal_rule"].createAndFill()!,
-      schema.nodes["paragraph"].createAndFill({}, [
-        schema.nodes["image"].createAndFill({
+      ]),
+      schema.nodes["code_block"].create({}, [schema.text("Code")]),
+      schema.nodes["heading"].create({}, [schema.text("Hello")]),
+      schema.nodes["horizontal_rule"].create(),
+      schema.nodes["paragraph"].create({}, [
+        schema.nodes["image"].create({
           alt: "Awesome image",
           src: "https://example.test",
-        })!,
-      ])!,
-      schema.nodes["paragraph"].createAndFill({}, [
-        schema.nodes["image"].createAndFill({
+        }),
+      ]),
+      schema.nodes["paragraph"].create({}, [
+        schema.nodes["image"].create({
           alt: "Image 2",
           src: "https://img2.test",
-        })!,
-      ])!,
-      schema.nodes["ordered_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Ordered list"),
-          ])!,
-        ])!,
-      ])!,
-      schema.nodes["bullet_list"].createAndFill({}, [
-        schema.nodes["regular_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Unordered list"),
-          ])!,
-        ])!,
-        schema.nodes["task_list_item"].createAndFill({}, [
-          schema.nodes["paragraph"].createAndFill({}, [
-            schema.text("Task list"),
-          ])!,
-        ])!,
-      ])!,
-      schema.nodes["paragraph"].createAndFill({}, [
+        }),
+      ]),
+      schema.nodes["ordered_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Ordered list")]),
+        ]),
+      ]),
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Unordered list")]),
+        ]),
+        schema.nodes["task_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Task list")]),
+        ]),
+      ]),
+      schema.nodes["paragraph"].create({}, [
         schema.text("A text with a "),
         schema.text("bold part").mark([schema.marks["strong"].create()]),
         schema.text(", some "),
@@ -185,8 +173,8 @@ test("ProseMirror -> unist conversion", () => {
           .text("type of link")
           .mark([schema.marks["link"].create({ href: "https://link2.test" })]),
         schema.text("."),
-      ])!,
-    ])!,
+      ]),
+    ]),
   );
 
   expect(result).toBe(

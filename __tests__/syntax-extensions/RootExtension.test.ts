@@ -17,7 +17,7 @@ new NodeExtensionTester(new RootExtension(), {
   })
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode({ children: [], type: "root" }, (schema) => [
-    schema.nodes["doc"].createAndFill()!,
+    schema.nodes["doc"].create({}, [schema.nodes["paragraph"].create()]),
   ])
   .shouldConvertUnistNode(
     {
@@ -30,33 +30,27 @@ new NodeExtensionTester(new RootExtension(), {
       type: "root",
     },
     (schema) => [
-      schema.nodes["doc"].createAndFill({}, [
-        schema.nodes["paragraph"].createAndFill({}, [
-          schema.text("Hello World!"),
-        ])!,
-      ])!,
+      schema.nodes["doc"].create({}, [
+        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+      ]),
     ],
   )
-  .shouldMatchProseMirrorNode((schema) => schema.nodes["doc"].createAndFill()!)
-  .shouldMatchProseMirrorNode(
-    (schema) =>
-      schema.nodes["doc"].createAndFill({}, [
-        schema.nodes["paragraph"].createAndFill({}, [
-          schema.text("Hello World!"),
-        ])!,
-      ])!,
+  .shouldMatchProseMirrorNode((schema) => schema.nodes["doc"].create())
+  .shouldMatchProseMirrorNode((schema) =>
+    schema.nodes["doc"].create({}, [
+      schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+    ]),
   )
   .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes["doc"].createAndFill()!,
+    (schema) =>
+      schema.nodes["doc"].create({}, [schema.nodes["paragraph"].create()]),
     [{ children: [{ children: [], type: "paragraph" }], type: "root" }],
   )
   .shouldConvertProseMirrorNode(
     (schema) =>
-      schema.nodes["doc"].createAndFill({}, [
-        schema.nodes["paragraph"].createAndFill({}, [
-          schema.text("Hello World!"),
-        ])!,
-      ])!,
+      schema.nodes["doc"].create({}, [
+        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
+      ]),
     [
       {
         children: [

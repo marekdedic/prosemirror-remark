@@ -80,7 +80,7 @@ export class MarkExtensionTester<
             .schema()
             .nodes[
               "doc"
-            ].createAndFill({}, [this.pmu.schema().nodes["paragraph"].createAndFill({}, [this.pmu.schema().text("BEGIN"), ...proseMirrorNodes, this.pmu.schema().text("END")])!])!;
+            ].create({}, [this.pmu.schema().nodes["paragraph"].create({}, [this.pmu.schema().text("BEGIN"), ...proseMirrorNodes, this.pmu.schema().text("END")])]);
 
           jest.spyOn(console, "warn").mockImplementation();
           createEditor(proseMirrorRoot, {
@@ -125,6 +125,10 @@ export class MarkExtensionTester<
       | ((schema: Schema<string, string>) => Array<ProseMirrorNode>)
       | string,
   ): this {
+    const markName = this.extension.proseMirrorMarkName();
+    if (markName === null) {
+      throw new Error("Testing input rules for extension without a name");
+    }
     this.inputRuleMatches.push({
       editorInput,
       markdownOutput,
@@ -134,9 +138,7 @@ export class MarkExtensionTester<
               this.pmu
                 .schema()
                 .text(proseMirrorContents)
-                .mark([
-                  this.pmu.schema().mark(this.extension.proseMirrorMarkName()!),
-                ]),
+                .mark([this.pmu.schema().mark(markName)]),
             ]
           : proseMirrorContents(this.pmu.schema()),
     });

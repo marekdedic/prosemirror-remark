@@ -23,24 +23,22 @@ new MarkExtensionTester(new InlineCodeExtension(), {
     [{ type: "inlineCode", value: "Hello World!" }],
   )
   .shouldSupportKeymap(
-    () => [],
+    (schema) => [schema.nodes["paragraph"].create()],
     "start",
     "Ctrl-`",
-    () => [],
+    (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [schema.text("abcdef")])!,
-    ],
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
     "Ctrl-`",
     (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [
+      schema.nodes["paragraph"].create({}, [
         schema.text("ab"),
         schema.text("cd").mark([schema.mark("code")]),
         schema.text("ef"),
-      ])!,
+      ]),
     ],
     "ab`cd`ef",
   )

@@ -43,46 +43,42 @@ new MarkExtensionTester(new ItalicExtension(), {
     [{ children: [{ type: "text", value: "Hello World!" }], type: "emphasis" }],
   )
   .shouldSupportKeymap(
-    () => [],
+    (schema) => [schema.nodes["paragraph"].create()],
     "start",
     "Mod-i",
-    () => [],
+    (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [schema.text("abcdef")])!,
-    ],
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
     "Mod-i",
     (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [
+      schema.nodes["paragraph"].create({}, [
         schema.text("ab"),
         schema.text("cd").mark([schema.mark("em")]),
         schema.text("ef"),
-      ])!,
+      ]),
     ],
     "ab*cd*ef",
   )
   .shouldSupportKeymap(
-    () => [],
+    (schema) => [schema.nodes["paragraph"].create()],
     "start",
     "Mod-I",
-    () => [],
+    (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [schema.text("abcdef")])!,
-    ],
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
     "Mod-I",
     (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [
+      schema.nodes["paragraph"].create({}, [
         schema.text("ab"),
         schema.text("cd").mark([schema.mark("em")]),
         schema.text("ef"),
-      ])!,
+      ]),
     ],
     "ab*cd*ef",
   )

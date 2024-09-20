@@ -29,9 +29,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "full",
       type: "imageReference",
     },
-    (schema) => [
-      schema.nodes["image"].createAndFill({ src: "https://example.test" })!,
-    ],
+    (schema) => [schema.nodes["image"].create({ src: "https://example.test" })],
     [
       {
         identifier: "imageId",
@@ -46,9 +44,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "collapsed",
       type: "imageReference",
     },
-    (schema) => [
-      schema.nodes["image"].createAndFill({ src: "https://example.test" })!,
-    ],
+    (schema) => [schema.nodes["image"].create({ src: "https://example.test" })],
     [
       {
         identifier: "imageId",
@@ -63,9 +59,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "shortcut",
       type: "imageReference",
     },
-    (schema) => [
-      schema.nodes["image"].createAndFill({ src: "https://example.test" })!,
-    ],
+    (schema) => [schema.nodes["image"].create({ src: "https://example.test" })],
     [
       {
         identifier: "imageId",
@@ -82,11 +76,11 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       type: "imageReference",
     },
     (schema) => [
-      schema.nodes["image"].createAndFill({
+      schema.nodes["image"].create({
         alt: "Awesome image",
         src: "https://example.test",
         title: "Image title",
-      })!,
+      }),
     ],
     [
       {
@@ -103,6 +97,6 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "full",
       type: "imageReference",
     },
-    (schema) => [schema.nodes["image"].createAndFill({ src: "" })!],
+    (schema) => [schema.nodes["image"].create({ src: "" })],
   )
   .test();

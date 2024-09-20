@@ -41,46 +41,42 @@ new MarkExtensionTester(new BoldExtension(), {
     ],
   )
   .shouldSupportKeymap(
-    () => [],
+    (schema) => [schema.nodes["paragraph"].create()],
     "start",
     "Mod-b",
-    () => [],
+    (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [schema.text("abcdef")])!,
-    ],
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
     "Mod-b",
     (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [
+      schema.nodes["paragraph"].create({}, [
         schema.text("ab"),
         schema.text("cd").mark([schema.mark("strong")]),
         schema.text("ef"),
-      ])!,
+      ]),
     ],
     "ab**cd**ef",
   )
   .shouldSupportKeymap(
-    () => [],
+    (schema) => [schema.nodes["paragraph"].create()],
     "start",
     "Mod-B",
-    () => [],
+    (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [schema.text("abcdef")])!,
-    ],
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
     "Mod-B",
     (schema) => [
-      schema.nodes["paragraph"].createAndFill({}, [
+      schema.nodes["paragraph"].create({}, [
         schema.text("ab"),
         schema.text("cd").mark([schema.mark("strong")]),
         schema.text("ef"),
-      ])!,
+      ]),
     ],
     "ab**cd**ef",
   )
