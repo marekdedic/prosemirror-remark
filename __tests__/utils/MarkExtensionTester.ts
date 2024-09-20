@@ -108,15 +108,13 @@ export class MarkExtensionTester<
       return;
     }
 
-    test("Matches correct ProseMirror nodes", () => {
-      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(this.proseMirrorMarkMatches.length);
-
-      for (const { mark, shouldMatch } of this.proseMirrorMarkMatches) {
+    describe("Matches correct ProseMirror nodes", () => {
+      test.each(this.proseMirrorMarkMatches)("%p", ({ mark, shouldMatch }) => {
+        expect.assertions(1);
         expect(mark.type.name === this.extension.proseMirrorMarkName()).toBe(
           shouldMatch,
         );
-      }
+      });
     });
   }
 
