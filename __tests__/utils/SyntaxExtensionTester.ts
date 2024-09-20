@@ -162,31 +162,33 @@ export class SyntaxExtensionTester<
       return;
     }
 
-    test("Converts unist -> ProseMirror correctly", () => {
-      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(this.unistNodeConversions.length);
+    describe("Converts unist -> ProseMirror correctly", () => {
+      test.each(this.unistNodeConversions)(
+        "%p",
+        ({ injectNodes, source, target }) => {
+          expect.assertions(1);
 
-      for (const { injectNodes, source, target } of this.unistNodeConversions) {
-        const annotatedPmu = this.pmu as unknown as {
-          unistToProseMirrorConverter: {
-            convertNode(
-              node: UnistNode,
-              context: Record<string, unknown>,
-            ): Array<ProseMirrorNode>;
+          const annotatedPmu = this.pmu as unknown as {
+            unistToProseMirrorConverter: {
+              convertNode(
+                node: UnistNode,
+                context: Record<string, unknown>,
+              ): Array<ProseMirrorNode>;
+            };
           };
-        };
-        const context = {} as UnistToProseMirrorContext;
-        for (const node of injectNodes) {
-          annotatedPmu.unistToProseMirrorConverter.convertNode(node, context);
-        }
-        const result = annotatedPmu.unistToProseMirrorConverter.convertNode(
-          source,
-          context,
-        );
-        this.extension.postUnistToProseMirrorHook(context);
+          const context = {} as UnistToProseMirrorContext;
+          for (const node of injectNodes) {
+            annotatedPmu.unistToProseMirrorConverter.convertNode(node, context);
+          }
+          const result = annotatedPmu.unistToProseMirrorConverter.convertNode(
+            source,
+            context,
+          );
+          this.extension.postUnistToProseMirrorHook(context);
 
-        expect(result).toStrictEqual(target);
-      }
+          expect(result).toStrictEqual(target);
+        },
+      );
     });
   }
 
