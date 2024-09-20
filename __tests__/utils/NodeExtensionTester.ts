@@ -68,34 +68,35 @@ export class NodeExtensionTester<
       return;
     }
 
-    test("Matches input rules correctly", () => {
-      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(3 * this.inputRuleMatches.length);
+    describe("Matches input rules correctly", () => {
+      test.each(this.inputRuleMatches)(
+        "%p",
+        ({ editorInput, markdownOutput, proseMirrorNodes }) => {
+          expect.assertions(3);
 
-      for (const { editorInput, markdownOutput, proseMirrorNodes } of this
-        .inputRuleMatches) {
-        const source = "";
-        const proseMirrorRoot = this.pmu.parse(source);
-        const proseMirrorTree = this.pmu
-          .schema()
-          .nodes["doc"].createAndFill({}, proseMirrorNodes)!;
+          const source = "";
+          const proseMirrorRoot = this.pmu.parse(source);
+          const proseMirrorTree = this.pmu
+            .schema()
+            .nodes["doc"].createAndFill({}, proseMirrorNodes)!;
 
-        jest.spyOn(console, "warn").mockImplementation();
-        createEditor(proseMirrorRoot, {
-          plugins: [this.pmu.inputRulesPlugin()],
-        })
-          .selectText("end")
-          .insertText(editorInput)
-          .callback((content) => {
-            expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
-            expect(
-              this.pmu.serialize(content.doc).replace(/^\s+|\s+$/gu, ""),
-            ).toBe(markdownOutput);
-          });
+          jest.spyOn(console, "warn").mockImplementation();
+          createEditor(proseMirrorRoot, {
+            plugins: [this.pmu.inputRulesPlugin()],
+          })
+            .selectText("end")
+            .insertText(editorInput)
+            .callback((content) => {
+              expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
+              expect(
+                this.pmu.serialize(content.doc).replace(/^\s+|\s+$/gu, ""),
+              ).toBe(markdownOutput);
+            });
 
-        // eslint-disable-next-line no-console -- Testing for console
-        expect(console.warn).not.toHaveBeenCalled();
-      }
+          // eslint-disable-next-line no-console -- Testing for console
+          expect(console.warn).not.toHaveBeenCalled();
+        },
+      );
     });
   }
 
@@ -104,13 +105,11 @@ export class NodeExtensionTester<
       return;
     }
 
-    test("Matches correct ProseMirror nodes", () => {
-      // eslint-disable-next-line jest/prefer-expect-assertions -- The rule requires a number literal
-      expect.assertions(this.proseMirrorNodeMatches.length);
-
-      for (const { node, shouldMatch } of this.proseMirrorNodeMatches) {
+    describe("Matches correct ProseMirror nodes", () => {
+      test.each(this.proseMirrorNodeMatches)("%p", ({ node, shouldMatch }) => {
+        expect.assertions(1);
         expect(this.extension.proseMirrorToUnistTest(node)).toBe(shouldMatch);
-      }
+      });
     });
   }
 
