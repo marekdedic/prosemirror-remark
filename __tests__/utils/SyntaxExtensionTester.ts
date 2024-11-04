@@ -14,11 +14,13 @@ import { ParserProviderExtension } from "./ParserProviderExtension";
 import { RootExtension } from "./RootExtension";
 import { TextExtension } from "./TextExtension";
 
+// eslint-disable-next-line jest/no-export -- Not a test file
 export interface SyntaxExtensionTesterConfig {
   otherExtensionsInTest?: Array<Extension>;
   unistNodeName: string;
 }
 
+// eslint-disable-next-line jest/no-export -- Not a test file
 export class SyntaxExtensionTester<
   UNode extends UnistNode,
   UnistToProseMirrorContext extends Record<string, unknown> = Record<

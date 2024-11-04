@@ -13,6 +13,7 @@ interface NodeExtensionTesterConfig extends SyntaxExtensionTesterConfig {
   proseMirrorNodeName: string | null;
 }
 
+// eslint-disable-next-line jest/no-export -- Not a test file
 export class NodeExtensionTester<
   UNode extends UnistNode,
   UnistToProseMirrorContext extends Record<string, unknown> = Record<
@@ -168,6 +169,7 @@ export class NodeExtensionTester<
   }
 
   public test(): void {
+    // eslint-disable-next-line jest/valid-title -- The rule can't parse that this is a string
     describe(this.extension.constructor.name, () => {
       this.enqueueTests();
     });
