@@ -91,19 +91,27 @@ new MarkExtensionTester(new BoldExtension(), {
     schema.text("Test").mark([schema.mark("strong")]),
     schema.text("\n"),
   ])
-  .shouldNotMatchInputRule("*_Test**", "*\\_Test\\**", (schema) => [
-    schema.text("_Test*").mark([schema.mark("em")]),
-  ])
-  .shouldNotMatchInputRule("_*Test**", "\\_*Test\\**", (schema) => [
-    schema.text("_"),
+  .shouldNotMatchInputRule(
+    "X*_Test**X",
+    "&#x58;*\\_Test\\**&#x58;",
+    (schema) => [
+      schema.text("X"),
+      schema.text("_Test*").mark([schema.mark("em")]),
+      schema.text("X"),
+    ],
+  )
+  .shouldNotMatchInputRule("X_*Test**X", "X\\_*Test\\**&#x58;", (schema) => [
+    schema.text("X_"),
     schema.text("Test*").mark([schema.mark("em")]),
+    schema.text("X"),
   ])
   .shouldNotMatchInputRule("**Test__", "\\*\\*Test\\_\\_")
   .shouldNotMatchInputRule("**Test_*", "\\*\\*Test\\_\\*")
   .shouldNotMatchInputRule("**Test*_", "\\*\\*Test\\*\\_")
-  .shouldNotMatchInputRule("* *Test**", "\\* *Test\\**", (schema) => [
-    schema.text("* "),
+  .shouldNotMatchInputRule("X* *Test**X", "X\\* *Test\\**&#x58;", (schema) => [
+    schema.text("X* "),
     schema.text("Test*").mark([schema.mark("em")]),
+    schema.text("X"),
   ])
   .shouldNotMatchInputRule("**Test* *", "\\*\\*Test\\* \\*")
   .test();
