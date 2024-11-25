@@ -51,74 +51,6 @@ export class MarkExtensionTester<
     this.inputRuleMatches = [];
   }
 
-  protected override enqueueTests(): void {
-    super.enqueueTests();
-
-    test("Provides the correct ProseMirror mark", () => {
-      expect(this.extension.proseMirrorMarkName()).toBe(
-        this.proseMirrorMarkName,
-      );
-    });
-
-    this.enqueueProseMirrorNodeMatchTests();
-    this.enqueueInputRuleTests();
-  }
-
-  private enqueueInputRuleTests(): void {
-    if (this.inputRuleMatches.length === 0) {
-      return;
-    }
-
-    describe("Matches input rules correctly", () => {
-      test.each(this.inputRuleMatches)(
-        "%p",
-        ({ editorInput, markdownOutput, proseMirrorNodes }) => {
-          expect.assertions(3);
-
-          const source = "BEGIN";
-          const proseMirrorRoot = this.pmu.parse(source);
-          const proseMirrorTree = this.pmu
-            .schema()
-            .nodes[
-              "doc"
-            ].create({}, [this.pmu.schema().nodes["paragraph"].create({}, [this.pmu.schema().text("BEGIN"), ...proseMirrorNodes, this.pmu.schema().text("END")])]);
-
-          jest.spyOn(console, "warn").mockImplementation();
-          createEditor(proseMirrorRoot, {
-            plugins: [this.pmu.inputRulesPlugin()],
-          })
-            .selectText("end")
-            .insertText(editorInput)
-            .insertText("END")
-            .callback((content) => {
-              expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
-              expect(this.pmu.serialize(content.doc)).toBe(
-                `BEGIN${markdownOutput}END\n`,
-              );
-            });
-
-          // eslint-disable-next-line no-console -- Testing for console
-          expect(console.warn).not.toHaveBeenCalled();
-        },
-      );
-    });
-  }
-
-  private enqueueProseMirrorNodeMatchTests(): void {
-    if (this.proseMirrorMarkMatches.length === 0) {
-      return;
-    }
-
-    describe("Matches correct ProseMirror nodes", () => {
-      test.each(this.proseMirrorMarkMatches)("%p", ({ mark, shouldMatch }) => {
-        expect.assertions(1);
-        expect(mark.type.name === this.extension.proseMirrorMarkName()).toBe(
-          shouldMatch,
-        );
-      });
-    });
-  }
-
   public shouldMatchInputRule(
     editorInput: string,
     markdownOutput: string,
@@ -187,6 +119,74 @@ export class MarkExtensionTester<
     // eslint-disable-next-line jest/valid-title -- The rule can't parse that this is a string
     describe(this.extension.constructor.name, () => {
       this.enqueueTests();
+    });
+  }
+
+  protected override enqueueTests(): void {
+    super.enqueueTests();
+
+    test("Provides the correct ProseMirror mark", () => {
+      expect(this.extension.proseMirrorMarkName()).toBe(
+        this.proseMirrorMarkName,
+      );
+    });
+
+    this.enqueueProseMirrorNodeMatchTests();
+    this.enqueueInputRuleTests();
+  }
+
+  private enqueueInputRuleTests(): void {
+    if (this.inputRuleMatches.length === 0) {
+      return;
+    }
+
+    describe("Matches input rules correctly", () => {
+      test.each(this.inputRuleMatches)(
+        "%p",
+        ({ editorInput, markdownOutput, proseMirrorNodes }) => {
+          expect.assertions(3);
+
+          const source = "BEGIN";
+          const proseMirrorRoot = this.pmu.parse(source);
+          const proseMirrorTree = this.pmu
+            .schema()
+            .nodes[
+              "doc"
+            ].create({}, [this.pmu.schema().nodes["paragraph"].create({}, [this.pmu.schema().text("BEGIN"), ...proseMirrorNodes, this.pmu.schema().text("END")])]);
+
+          jest.spyOn(console, "warn").mockImplementation();
+          createEditor(proseMirrorRoot, {
+            plugins: [this.pmu.inputRulesPlugin()],
+          })
+            .selectText("end")
+            .insertText(editorInput)
+            .insertText("END")
+            .callback((content) => {
+              expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
+              expect(this.pmu.serialize(content.doc)).toBe(
+                `BEGIN${markdownOutput}END\n`,
+              );
+            });
+
+          // eslint-disable-next-line no-console -- Testing for console
+          expect(console.warn).not.toHaveBeenCalled();
+        },
+      );
+    });
+  }
+
+  private enqueueProseMirrorNodeMatchTests(): void {
+    if (this.proseMirrorMarkMatches.length === 0) {
+      return;
+    }
+
+    describe("Matches correct ProseMirror nodes", () => {
+      test.each(this.proseMirrorMarkMatches)("%p", ({ mark, shouldMatch }) => {
+        expect.assertions(1);
+        expect(mark.type.name === this.extension.proseMirrorMarkName()).toBe(
+          shouldMatch,
+        );
+      });
     });
   }
 }

@@ -51,6 +51,67 @@ export class NodeExtensionTester<
     this.inputRuleMatches = [];
   }
 
+  public shouldMatchInputRule(
+    editorInput: string,
+    proseMirrorNodes: (
+      schema: Schema<string, string>,
+    ) => Array<ProseMirrorNode>,
+    markdownOutput: string,
+  ): this {
+    this.inputRuleMatches.push({
+      editorInput,
+      markdownOutput,
+      proseMirrorNodes: proseMirrorNodes(this.pmu.schema()),
+    });
+    return this;
+  }
+
+  public shouldMatchProseMirrorNode(
+    node: (schema: Schema<string, string>) => ProseMirrorNode,
+  ): this {
+    this.proseMirrorNodeMatches.push({
+      node: node(this.pmu.schema()),
+      shouldMatch: true,
+    });
+    return this;
+  }
+
+  public shouldNotMatchInputRule(
+    editorInput: string,
+    markdownOutput: string,
+    proseMirrorNodes?: (
+      schema: Schema<string, string>,
+    ) => Array<ProseMirrorNode>,
+  ): this {
+    this.inputRuleMatches.push({
+      editorInput,
+      markdownOutput,
+      proseMirrorNodes: proseMirrorNodes?.(this.pmu.schema()) ?? [
+        this.pmu
+          .schema()
+          .nodes["paragraph"].create({}, [this.pmu.schema().text(editorInput)]),
+      ],
+    });
+    return this;
+  }
+
+  public shouldNotMatchProseMirrorNode(
+    node: (schema: Schema<string, string>) => ProseMirrorNode,
+  ): this {
+    this.proseMirrorNodeMatches.push({
+      node: node(this.pmu.schema()),
+      shouldMatch: false,
+    });
+    return this;
+  }
+
+  public test(): void {
+    // eslint-disable-next-line jest/valid-title -- The rule can't parse that this is a string
+    describe(this.extension.constructor.name, () => {
+      this.enqueueTests();
+    });
+  }
+
   protected override enqueueTests(): void {
     super.enqueueTests();
 
@@ -111,67 +172,6 @@ export class NodeExtensionTester<
         expect.assertions(1);
         expect(this.extension.proseMirrorToUnistTest(node)).toBe(shouldMatch);
       });
-    });
-  }
-
-  public shouldMatchInputRule(
-    editorInput: string,
-    proseMirrorNodes: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
-    markdownOutput: string,
-  ): this {
-    this.inputRuleMatches.push({
-      editorInput,
-      markdownOutput,
-      proseMirrorNodes: proseMirrorNodes(this.pmu.schema()),
-    });
-    return this;
-  }
-
-  public shouldMatchProseMirrorNode(
-    node: (schema: Schema<string, string>) => ProseMirrorNode,
-  ): this {
-    this.proseMirrorNodeMatches.push({
-      node: node(this.pmu.schema()),
-      shouldMatch: true,
-    });
-    return this;
-  }
-
-  public shouldNotMatchInputRule(
-    editorInput: string,
-    markdownOutput: string,
-    proseMirrorNodes?: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
-  ): this {
-    this.inputRuleMatches.push({
-      editorInput,
-      markdownOutput,
-      proseMirrorNodes: proseMirrorNodes?.(this.pmu.schema()) ?? [
-        this.pmu
-          .schema()
-          .nodes["paragraph"].create({}, [this.pmu.schema().text(editorInput)]),
-      ],
-    });
-    return this;
-  }
-
-  public shouldNotMatchProseMirrorNode(
-    node: (schema: Schema<string, string>) => ProseMirrorNode,
-  ): this {
-    this.proseMirrorNodeMatches.push({
-      node: node(this.pmu.schema()),
-      shouldMatch: false,
-    });
-    return this;
-  }
-
-  public test(): void {
-    // eslint-disable-next-line jest/valid-title -- The rule can't parse that this is a string
-    describe(this.extension.constructor.name, () => {
-      this.enqueueTests();
     });
   }
 }
