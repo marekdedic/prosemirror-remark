@@ -83,6 +83,61 @@ export class SyntaxExtensionTester<
     ]);
   }
 
+  public shouldConvertProseMirrorNode(
+    source: (schema: Schema<string, string>) => ProseMirrorNode,
+    target: Array<UnistNode | UNode>,
+  ): this {
+    this.proseMirrorNodeConversions.push({
+      source: source(this.pmu.schema()),
+      target,
+    });
+    return this;
+  }
+
+  public shouldConvertUnistNode(
+    source: UnistNode | UNode,
+    target: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
+    injectNodes: Array<UnistNode> = [],
+  ): this {
+    this.unistNodeConversions.push({
+      injectNodes,
+      source,
+      target: target(this.pmu.schema()),
+    });
+    return this;
+  }
+
+  public shouldMatchUnistNode(node: UNode): this {
+    this.unistNodeMatches.push({ node, shouldMatch: true });
+    return this;
+  }
+
+  public shouldNotMatchUnistNode(node: UnistNode): this {
+    this.unistNodeMatches.push({ node, shouldMatch: false });
+    return this;
+  }
+
+  public shouldSupportKeymap(
+    proseMirrorBefore: (
+      schema: Schema<string, string>,
+    ) => Array<ProseMirrorNode>,
+    selection: PrimitiveSelection,
+    key: string,
+    proseMirrorAfter: (
+      schema: Schema<string, string>,
+    ) => Array<ProseMirrorNode>,
+    markdownOutput: string,
+  ): this {
+    this.keymapMatches.push({
+      key,
+      markdownOutput,
+      proseMirrorAfter: proseMirrorAfter(this.pmu.schema()),
+      proseMirrorBefore: proseMirrorBefore(this.pmu.schema()),
+      selection,
+    });
+    return this;
+  }
+
   protected enqueueTests(): void {
     test("Handles the correct unist node", () => {
       expect(this.extension.unistNodeName()).toBe(this.unistNodeName);
@@ -205,60 +260,5 @@ export class SyntaxExtensionTester<
         expect(this.extension.unistToProseMirrorTest(node)).toBe(shouldMatch);
       });
     });
-  }
-
-  public shouldConvertProseMirrorNode(
-    source: (schema: Schema<string, string>) => ProseMirrorNode,
-    target: Array<UnistNode | UNode>,
-  ): this {
-    this.proseMirrorNodeConversions.push({
-      source: source(this.pmu.schema()),
-      target,
-    });
-    return this;
-  }
-
-  public shouldConvertUnistNode(
-    source: UnistNode | UNode,
-    target: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
-    injectNodes: Array<UnistNode> = [],
-  ): this {
-    this.unistNodeConversions.push({
-      injectNodes,
-      source,
-      target: target(this.pmu.schema()),
-    });
-    return this;
-  }
-
-  public shouldMatchUnistNode(node: UNode): this {
-    this.unistNodeMatches.push({ node, shouldMatch: true });
-    return this;
-  }
-
-  public shouldNotMatchUnistNode(node: UnistNode): this {
-    this.unistNodeMatches.push({ node, shouldMatch: false });
-    return this;
-  }
-
-  public shouldSupportKeymap(
-    proseMirrorBefore: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
-    selection: PrimitiveSelection,
-    key: string,
-    proseMirrorAfter: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
-    markdownOutput: string,
-  ): this {
-    this.keymapMatches.push({
-      key,
-      markdownOutput,
-      proseMirrorAfter: proseMirrorAfter(this.pmu.schema()),
-      proseMirrorBefore: proseMirrorBefore(this.pmu.schema()),
-      selection,
-    });
-    return this;
   }
 }
