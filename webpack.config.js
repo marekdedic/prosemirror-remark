@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention -- Not applicable to this config file */
-
 function createConfig(libraryType, extension) {
   return {
     devtool: "source-map",
@@ -50,5 +48,3 @@ function createConfig(libraryType, extension) {
 }
 
 export default [createConfig("module", "js"), createConfig("commonjs2", "cjs")];
-
-/* eslint-enable */
