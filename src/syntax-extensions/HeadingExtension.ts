@@ -102,7 +102,6 @@ export class HeadingExtension extends NodeExtension<Heading> {
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const keymap: Record<string, Command> = {
-      // eslint-disable-next-line @typescript-eslint/naming-convention -- This is a key
       "#": HeadingExtension.headingLevelCommandBuilder(
         proseMirrorSchema,
         +1,
