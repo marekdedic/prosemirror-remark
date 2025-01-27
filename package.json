@@ -31,7 +31,9 @@
     "clean": "rimraf dist/* types/*",
     "prebuild": "npm run clean",
     "build": "vite build",
-    "lint": "eslint --color 'src/**/*.ts' '__tests__/**/*.ts' '*.config.{js,ts}'",
+    "lint:typecheck": "tsc --noEmit",
+    "lint:eslint": "eslint --color 'src/**/*.ts' '__tests__/**/*.ts' '*.config.{js,ts}'",
+    "lint": "run-p -c --aggregate-output lint:*",
     "test": "jest"
   },
   "dependencies": {
@@ -72,6 +74,7 @@
     "mdast-util-from-markdown": "^2.0.0",
     "mdast-util-to-markdown": "^2.1.0",
     "micromark-util-types": "^2.0.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.0.0",
     "prosemirror-view": "^1.30.2",
     "rimraf": "^6.0.1",
