@@ -30,10 +30,10 @@
   "scripts": {
     "clean": "rimraf dist/* types/*",
     "prebuild": "npm run clean",
-    "build:webpack": "webpack",
-    "build:api-extractor": "api-extractor run",
-    "build": "npm run build:webpack && npm run build:api-extractor",
-    "lint": "eslint --color 'src/**/*.ts' '__tests__/**/*.ts' '*.config.{js,ts}'",
+    "build": "vite build",
+    "lint:typecheck": "tsc --noEmit",
+    "lint:eslint": "eslint --color 'src/**/*.ts' '__tests__/**/*.ts' '*.config.{js,ts}'",
+    "lint": "run-p -c --aggregate-output lint:*",
     "test": "jest"
   },
   "dependencies": {
@@ -74,14 +74,14 @@
     "mdast-util-from-markdown": "^2.0.0",
     "mdast-util-to-markdown": "^2.1.0",
     "micromark-util-types": "^2.0.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.0.0",
     "prosemirror-view": "^1.30.2",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.1.0",
-    "ts-loader": "^9.4.2",
     "typescript": "^5.5.4 <5.6",
     "typescript-eslint": "^8.3.0",
-    "webpack": "^5.80.0",
-    "webpack-cli": "^6.0.1"
+    "vite": "^6.0.11",
+    "vite-plugin-dts": "^4.5.0"
   }
 }
