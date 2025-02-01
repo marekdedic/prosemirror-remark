@@ -50,7 +50,7 @@ export class LinkExtension extends MarkExtension<Link> {
         },
       ],
       toDOM(node: Mark): DOMOutputSpec {
-        return ["a", node.attrs];
+        return ["a", node.attrs, 0];
       },
     };
   }
