@@ -59,7 +59,7 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
         },
       ],
       toDOM(): DOMOutputSpec {
-        return ["s"];
+        return ["s", 0];
       },
     };
   }

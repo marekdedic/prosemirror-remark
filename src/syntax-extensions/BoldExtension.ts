@@ -61,7 +61,7 @@ export class BoldExtension extends MarkExtension<Strong> {
         },
       ],
       toDOM(): DOMOutputSpec {
-        return ["strong"];
+        return ["strong", 0];
       },
     };
   }
