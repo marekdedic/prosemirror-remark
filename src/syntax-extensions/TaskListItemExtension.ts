@@ -105,19 +105,23 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   ): Array<InputRule> {
     return [
       new InputRule(/^\[([x\s]?)\][\s\S]$/u, (state, match, start) => {
-        const wrappingNode = state.doc.resolve(start).node(-1);
-        if (wrappingNode.type.name !== "regular_list_item") {
-          return null;
-        }
-        return state.tr.replaceRangeWith(
-          start - 2,
-          start + wrappingNode.nodeSize,
-          proseMirrorSchema.nodes[this.proseMirrorNodeName()].create(
-            { checked: match[1] === "x" },
-            wrappingNode.content.cut(3 + match[1].length),
-          ),
-        );
-      }),
+          const resolvedPos = state.doc.resolve(start);
+          const wrappingNode = resolvedPos.node(-1);
+          if (wrappingNode.type.name !== "regular_list_item") {
+            return null;
+          }
+  
+          const regularListItemStartPos = resolvedPos.before(-1);
+          const regularListItemEndPos = resolvedPos.after(-1);
+          return state.tr.replaceRangeWith(
+            regularListItemStartPos,
+            regularListItemEndPos,
+            proseMirrorSchema.nodes[this.proseMirrorNodeName()].create(
+              { checked: match[1] === "x" },
+              wrappingNode.content.cut(3 + match[1].length),
+            ),
+          );
+        }),
     ];
   }
 
