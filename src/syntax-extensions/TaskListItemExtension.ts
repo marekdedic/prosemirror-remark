@@ -24,6 +24,12 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 
+import {
+  liftListItem,
+  sinkListItem,
+  splitListItem,
+} from "prosemirror-schema-list";
+
 class TaskListItemView implements NodeView {
   public readonly contentDOM: HTMLElement;
   public readonly dom: HTMLElement;
@@ -118,30 +124,28 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
+    const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
     return {
-      Backspace: (state, dispatch, view): boolean => {
+      Enter: splitListItem(nodeType),
+      "Shift-Tab": liftListItem(nodeType),
+      Tab: sinkListItem(nodeType),
+      Backspace: ((state: EditorState, dispatch: (tr: Transaction) => void, view: EditorView) => {
         if (!TaskListItemExtension.isAtStart(state, view)) {
-          return false;
+            return false;
         }
         const taskListItemNode = state.selection.$anchor.node(-1);
         if (taskListItemNode.type.name !== "task_list_item") {
-          return false;
+            return false;
         }
         if (dispatch === undefined) {
-          return true;
+            return true;
         }
-        dispatch(
-          state.tr.replaceRangeWith(
-            state.selection.$from.before() - 2,
-            state.selection.$from.before() + taskListItemNode.nodeSize,
-            proseMirrorSchema.nodes["regular_list_item"].create(
-              {},
-              taskListItemNode.content,
-            ),
-          ),
-        );
+        
+        const startPos = state.selection.$anchor.before(-1);
+        const endPos = state.selection.$anchor.after(-1); 
+        dispatch(state.tr.replaceRangeWith(startPos, endPos, proseMirrorSchema.nodes["regular_list_item"].create({}, taskListItemNode.content)));
         return true;
-      },
+    }),
     };
   }
 
