@@ -20,15 +20,14 @@ import {
 } from "mdast-util-gfm-task-list-item";
 import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
 import { InputRule } from "prosemirror-inputrules";
-import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
-
-import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
-
 import {
   liftListItem,
   sinkListItem,
   splitListItem,
 } from "prosemirror-schema-list";
+import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
+
+import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 
 class TaskListItemView implements NodeView {
   public readonly contentDOM: HTMLElement;
@@ -105,23 +104,23 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   ): Array<InputRule> {
     return [
       new InputRule(/^\[([x\s]?)\][\s\S]$/u, (state, match, start) => {
-          const resolvedPos = state.doc.resolve(start);
-          const wrappingNode = resolvedPos.node(-1);
-          if (wrappingNode.type.name !== "regular_list_item") {
-            return null;
-          }
-  
-          const regularListItemStartPos = resolvedPos.before(-1);
-          const regularListItemEndPos = resolvedPos.after(-1);
-          return state.tr.replaceRangeWith(
-            regularListItemStartPos,
-            regularListItemEndPos,
-            proseMirrorSchema.nodes[this.proseMirrorNodeName()].create(
-              { checked: match[1] === "x" },
-              wrappingNode.content.cut(3 + match[1].length),
-            ),
-          );
-        }),
+        const resolvedPos = state.doc.resolve(start);
+        const wrappingNode = resolvedPos.node(-1);
+        if (wrappingNode.type.name !== "regular_list_item") {
+          return null;
+        }
+
+        const regularListItemStartPos = resolvedPos.before(-1);
+        const regularListItemEndPos = resolvedPos.after(-1);
+        return state.tr.replaceRangeWith(
+          regularListItemStartPos,
+          regularListItemEndPos,
+          proseMirrorSchema.nodes[this.proseMirrorNodeName()].create(
+            { checked: match[1] === "x" },
+            wrappingNode.content.cut(3 + match[1].length),
+          ),
+        );
+      }),
     ];
   }
 
@@ -130,26 +129,35 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   ): Record<string, Command> {
     const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
     return {
-      Enter: splitListItem(nodeType),
-      "Shift-Tab": liftListItem(nodeType),
-      Tab: sinkListItem(nodeType),
-      Backspace: ((state: EditorState, dispatch: (tr: Transaction) => void, view: EditorView) => {
+      Backspace: (state, dispatch, view): boolean => {
         if (!TaskListItemExtension.isAtStart(state, view)) {
-            return false;
+          return false;
         }
         const taskListItemNode = state.selection.$anchor.node(-1);
         if (taskListItemNode.type.name !== "task_list_item") {
-            return false;
+          return false;
         }
         if (dispatch === undefined) {
-            return true;
+          return true;
         }
-        
+
         const startPos = state.selection.$anchor.before(-1);
-        const endPos = state.selection.$anchor.after(-1); 
-        dispatch(state.tr.replaceRangeWith(startPos, endPos, proseMirrorSchema.nodes["regular_list_item"].create({}, taskListItemNode.content)));
+        const endPos = state.selection.$anchor.after(-1);
+        dispatch(
+          state.tr.replaceRangeWith(
+            startPos,
+            endPos,
+            proseMirrorSchema.nodes["regular_list_item"].create(
+              {},
+              taskListItemNode.content,
+            ),
+          ),
+        );
         return true;
-    }),
+      },
+      Enter: splitListItem(nodeType),
+      "Shift-Tab": liftListItem(nodeType),
+      Tab: sinkListItem(nodeType),
     };
   }
 
