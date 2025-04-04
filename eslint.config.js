@@ -148,6 +148,9 @@ export default tseslint.config(
     },
   },
   {
+    files: ["tests/**/*.test.ts"],
+  },
+  {
     ...jest.configs["flat/recommended"],
     ...jest.configs["flat/style"],
     files: ["__tests__/**/*.ts"],
