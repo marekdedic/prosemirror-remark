@@ -1,26 +1,24 @@
-import type { PrimitiveSelection } from "@remirror/core-types";
 import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
-import { createEditor } from "jest-prosemirror";
 import {
   type Extension,
   ProseMirrorUnified,
   type SyntaxExtension,
 } from "prosemirror-unified";
+import { describe, expect, test, vi } from "vitest";
+import { ProseMirrorTester, type TesterSelection } from "vitest-prosemirror";
 
 import { ParagraphExtension } from "./ParagraphExtension";
 import { ParserProviderExtension } from "./ParserProviderExtension";
 import { RootExtension } from "./RootExtension";
 import { TextExtension } from "./TextExtension";
 
-// eslint-disable-next-line jest/no-export -- Not a test file
 export interface SyntaxExtensionTesterConfig {
   otherExtensionsInTest?: Array<Extension>;
   unistNodeName: string;
 }
 
-// eslint-disable-next-line jest/no-export -- Not a test file
 export class SyntaxExtensionTester<
   UNode extends UnistNode,
   UnistToProseMirrorContext extends Record<string, unknown> = Record<
@@ -40,7 +38,7 @@ export class SyntaxExtensionTester<
     markdownOutput: string;
     proseMirrorAfter: Array<ProseMirrorNode>;
     proseMirrorBefore: Array<ProseMirrorNode>;
-    selection: PrimitiveSelection;
+    selection: TesterSelection;
   }>;
 
   private readonly proseMirrorNodeConversions: Array<{
@@ -121,7 +119,7 @@ export class SyntaxExtensionTester<
     proseMirrorBefore: (
       schema: Schema<string, string>,
     ) => Array<ProseMirrorNode>,
-    selection: PrimitiveSelection,
+    selection: TesterSelection,
     key: string,
     proseMirrorAfter: (
       schema: Schema<string, string>,
@@ -156,7 +154,7 @@ export class SyntaxExtensionTester<
 
     describe("Supports keymap correctly", () => {
       test.each(this.keymapMatches)(
-        "%p",
+        "$selection, $key -> $markdownOutput",
         ({
           key,
           markdownOutput,
@@ -173,18 +171,17 @@ export class SyntaxExtensionTester<
             .schema()
             .nodes["doc"].create({}, proseMirrorAfter);
 
-          jest.spyOn(console, "warn").mockImplementation();
-          createEditor(proseMirrorTreeBefore, {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function -- Empty mock function
+          vi.spyOn(console, "warn").mockImplementation(() => {});
+          const testEditor = new ProseMirrorTester(proseMirrorTreeBefore, {
             plugins: [this.pmu.keymapPlugin()],
-          })
-            .selectText(selection)
-            .shortcut(key)
-            .callback((content) => {
-              expect(content.doc).toEqualProsemirrorNode(proseMirrorTreeAfter);
-              expect(
-                this.pmu.serialize(content.doc).replace(/^\s+|\s+$/gu, ""),
-              ).toBe(markdownOutput);
-            });
+          });
+          testEditor.selectText(selection);
+          testEditor.shortcut(key);
+          expect(testEditor.doc).toEqualProseMirrorNode(proseMirrorTreeAfter);
+          expect(
+            this.pmu.serialize(testEditor.doc).replace(/^\s+|\s+$/gu, ""),
+          ).toBe(markdownOutput);
 
           // eslint-disable-next-line no-console -- Testing for console
           expect(console.warn).not.toHaveBeenCalled();
@@ -199,18 +196,21 @@ export class SyntaxExtensionTester<
     }
 
     describe("Converts ProseMirror -> unist correctly", () => {
-      test.each(this.proseMirrorNodeConversions)("%p", ({ source, target }) => {
-        expect.assertions(1);
-        expect(
-          (
-            this.pmu as unknown as {
-              proseMirrorToUnistConverter: {
-                convertNode(node: ProseMirrorNode): Array<UnistNode>;
-              };
-            }
-          ).proseMirrorToUnistConverter.convertNode(source),
-        ).toStrictEqual(target);
-      });
+      test.each(this.proseMirrorNodeConversions)(
+        "$source.type.name -> $target",
+        ({ source, target }) => {
+          expect.assertions(1);
+          expect(
+            (
+              this.pmu as unknown as {
+                proseMirrorToUnistConverter: {
+                  convertNode(node: ProseMirrorNode): Array<UnistNode>;
+                };
+              }
+            ).proseMirrorToUnistConverter.convertNode(source),
+          ).toStrictEqual(target);
+        },
+      );
     });
   }
 
@@ -221,7 +221,7 @@ export class SyntaxExtensionTester<
 
     describe("Converts unist -> ProseMirror correctly", () => {
       test.each(this.unistNodeConversions)(
-        "%p",
+        "$source.type -> $target",
         ({ injectNodes, source, target }) => {
           expect.assertions(1);
 
@@ -255,10 +255,13 @@ export class SyntaxExtensionTester<
     }
 
     describe("Matches correct unist nodes", () => {
-      test.each(this.unistNodeMatches)("%p", ({ node, shouldMatch }) => {
-        expect.assertions(1);
-        expect(this.extension.unistToProseMirrorTest(node)).toBe(shouldMatch);
-      });
+      test.each(this.unistNodeMatches)(
+        "$shouldMatch, $node.type",
+        ({ node, shouldMatch }) => {
+          expect.assertions(1);
+          expect(this.extension.unistToProseMirrorTest(node)).toBe(shouldMatch);
+        },
+      );
     });
   }
 }

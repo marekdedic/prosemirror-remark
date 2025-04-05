@@ -32,9 +32,10 @@
     "prebuild": "npm run clean",
     "build": "vite build",
     "lint:typecheck": "tsc --noEmit",
-    "lint:eslint": "eslint --color 'src/**/*.ts' '__tests__/**/*.ts' '*.config.{js,ts}'",
+    "lint:eslint": "eslint --color \"src/**/*.ts\" \"tests/**/*.ts\" \"*.config.{js,ts}\"",
     "lint": "run-p -c --aggregate-output lint:*",
-    "test": "jest"
+    "test": "vitest",
+    "test-coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@types/mdast": "^4.0.1",
@@ -48,7 +49,7 @@
     "prosemirror-commands": "^1.5.1",
     "prosemirror-inputrules": "^1.4.0",
     "prosemirror-schema-list": "^1.2.2",
-    "prosemirror-unified": "=0.8.1",
+    "prosemirror-unified": "=0.8.3",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
     "unified": "^11.0.4"
@@ -61,16 +62,13 @@
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.0",
     "@eslint/js": "^9.9.1",
     "@microsoft/api-extractor": "^7.34.9",
-    "@types/jest": "^29.5.2",
+    "@vitest/coverage-v8": "^3.1.1",
+    "@vitest/eslint-plugin": "^1.1.39",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^10.0.1",
-    "eslint-plugin-jest": "^28.7.0",
     "eslint-plugin-perfectionist": "^4.0.3",
     "eslint-plugin-prefer-arrow-functions": "^3.4.0",
     "eslint-plugin-prettier": "^5.0.0",
-    "jest": "^29.5.0",
-    "jest-environment-jsdom": "^29.6.0",
-    "jest-prosemirror": "^3.0.0",
     "mdast-util-from-markdown": "^2.0.0",
     "mdast-util-to-markdown": "^2.1.0",
     "micromark-util-types": "^2.0.0",
@@ -78,10 +76,11 @@
     "prettier": "^3.0.0",
     "prosemirror-view": "^1.30.2",
     "rimraf": "^6.0.1",
-    "ts-jest": "^29.1.0",
     "typescript": "^5.5.4 <5.6",
     "typescript-eslint": "^8.3.0",
     "vite": "^6.0.11",
-    "vite-plugin-dts": "^4.5.0"
+    "vite-plugin-dts": "^4.5.0",
+    "vitest": "^3.0.7",
+    "vitest-prosemirror": "^0.2.1"
   }
 }

@@ -1,7 +1,7 @@
 import eslintComments from "@eslint-community/eslint-plugin-eslint-comments";
 import commentsConfig from "@eslint-community/eslint-plugin-eslint-comments/configs";
 import js from "@eslint/js";
-import jest from "eslint-plugin-jest";
+import vitest from "@vitest/eslint-plugin";
 import perfectionist from "eslint-plugin-perfectionist";
 import preferArrowFunctions from "eslint-plugin-prefer-arrow-functions";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
@@ -25,7 +25,6 @@ export default tseslint.config(
     },
     plugins: {
       "eslint-comments": eslintComments,
-      jest,
       "prefer-arrow-functions": preferArrowFunctions,
     },
     rules: {
@@ -148,24 +147,31 @@ export default tseslint.config(
     },
   },
   {
-    ...jest.configs["flat/recommended"],
-    ...jest.configs["flat/style"],
-    files: ["__tests__/**/*.ts"],
+    files: ["tests/**/*.test.ts"],
+    ...vitest.configs.recommended,
     rules: {
-      ...jest.configs["flat/recommended"].rules,
-      ...jest.configs["flat/style"].rules,
-      "jest/consistent-test-it": ["error", { withinDescribe: "test" }],
-      "jest/no-conditional-in-test": "error",
-      "jest/no-confusing-set-timeout": "error",
-      "jest/no-duplicate-hooks": "error",
-      "jest/no-test-return-statement": "error",
-      "jest/no-untyped-mock-factory": "error",
-      "jest/padding-around-all": "error",
-      "jest/prefer-called-with": "error",
-      "jest/prefer-comparison-matcher": "error",
-      "jest/prefer-each": "error",
-      "jest/prefer-equality-matcher": "error",
-      "jest/prefer-expect-assertions": [
+      ...vitest.configs.recommended.rules,
+      "@typescript-eslint/unbound-method": "off",
+      "vitest/consistent-test-it": ["error", { withinDescribe: "test" }],
+      "vitest/no-alias-methods": "error",
+      "vitest/no-conditional-expect": "error",
+      "vitest/no-conditional-in-test": "error",
+      "vitest/no-conditional-tests": "error",
+      "vitest/no-disabled-tests": "error",
+      "vitest/no-duplicate-hooks": "error",
+      "vitest/no-focused-tests": "error",
+      "vitest/no-interpolation-in-snapshots": "error",
+      "vitest/no-large-snapshots": "error",
+      "vitest/no-mocks-import": "error",
+      "vitest/no-standalone-expect": "error",
+      "vitest/no-test-prefixes": "error",
+      "vitest/no-test-return-statement": "error",
+      "vitest/padding-around-all": "error",
+      "vitest/prefer-called-with": "error",
+      "vitest/prefer-comparison-matcher": "error",
+      "vitest/prefer-each": "error",
+      "vitest/prefer-equality-matcher": "error",
+      "vitest/prefer-expect-assertions": [
         "error",
         {
           onlyFunctionsWithAsyncKeyword: true,
@@ -173,15 +179,22 @@ export default tseslint.config(
           onlyFunctionsWithExpectInLoop: true,
         },
       ],
-      "jest/prefer-expect-resolves": "error",
-      "jest/prefer-hooks-in-order": "error",
-      "jest/prefer-hooks-on-top": "error",
-      "jest/prefer-jest-mocked": "error",
-      "jest/prefer-mock-promise-shorthand": "error",
-      "jest/prefer-spy-on": "error",
-      "jest/prefer-strict-equal": "error",
-      "jest/require-to-throw-message": "error",
-      "jest/unbound-method": "error",
+      "vitest/prefer-expect-resolves": "error",
+      "vitest/prefer-hooks-in-order": "error",
+      "vitest/prefer-hooks-on-top": "error",
+      "vitest/prefer-mock-promise-shorthand": "error",
+      "vitest/prefer-snapshot-hint": "error",
+      "vitest/prefer-spy-on": "error",
+      "vitest/prefer-strict-equal": "error",
+      "vitest/prefer-to-be": "error",
+      "vitest/prefer-to-be-object": "error",
+      "vitest/prefer-to-contain": "error",
+      "vitest/prefer-to-have-length": "error",
+      "vitest/prefer-todo": "error",
+      "vitest/prefer-vi-mocked": "error",
+      "vitest/require-hook": "off", // Incompatible with tester classes
+      "vitest/require-to-throw-message": "error",
+      "vitest/valid-expect-in-promise": "error",
     },
   },
   {

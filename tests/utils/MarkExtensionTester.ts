@@ -2,7 +2,8 @@ import type { Mark, Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { MarkExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
-import { createEditor } from "jest-prosemirror";
+import { describe, expect, test, vi } from "vitest";
+import { ProseMirrorTester, trimProseMirrorNode } from "vitest-prosemirror";
 
 import {
   SyntaxExtensionTester,
@@ -13,7 +14,6 @@ interface MarkExtensionTesterConfig extends SyntaxExtensionTesterConfig {
   proseMirrorMarkName: string | null;
 }
 
-// eslint-disable-next-line jest/no-export -- Not a test file
 export class MarkExtensionTester<
   UNode extends UnistNode,
   UnistToProseMirrorContext extends Record<string, unknown> = Record<
@@ -116,7 +116,6 @@ export class MarkExtensionTester<
   }
 
   public test(): void {
-    // eslint-disable-next-line jest/valid-title -- The rule can't parse that this is a string
     describe(this.extension.constructor.name, () => {
       this.enqueueTests();
     });
@@ -142,7 +141,7 @@ export class MarkExtensionTester<
 
     describe("Matches input rules correctly", () => {
       test.each(this.inputRuleMatches)(
-        "%p",
+        "$editorInput -> $markdownOutput",
         ({ editorInput, markdownOutput, proseMirrorNodes }) => {
           expect.assertions(3);
 
@@ -154,19 +153,20 @@ export class MarkExtensionTester<
               "doc"
             ].create({}, [this.pmu.schema().nodes["paragraph"].create({}, [this.pmu.schema().text("BEGIN"), ...proseMirrorNodes, this.pmu.schema().text("END")])]);
 
-          jest.spyOn(console, "warn").mockImplementation();
-          createEditor(proseMirrorRoot, {
+          // eslint-disable-next-line @typescript-eslint/no-empty-function -- Empty mock function
+          vi.spyOn(console, "warn").mockImplementation(() => {});
+          const testEditor = new ProseMirrorTester(proseMirrorRoot, {
             plugins: [this.pmu.inputRulesPlugin()],
-          })
-            .selectText("end")
-            .insertText(editorInput)
-            .insertText("END")
-            .callback((content) => {
-              expect(content.doc).toEqualProsemirrorNode(proseMirrorTree);
-              expect(this.pmu.serialize(content.doc)).toBe(
-                `BEGIN${markdownOutput}END\n`,
-              );
-            });
+          });
+          testEditor.selectText("end");
+          testEditor.insertText(editorInput);
+          testEditor.insertText("END");
+          expect(trimProseMirrorNode(testEditor.doc)).toEqualProseMirrorNode(
+            proseMirrorTree,
+          );
+          expect(this.pmu.serialize(testEditor.doc)).toBe(
+            `BEGIN${markdownOutput}END\n`,
+          );
 
           // eslint-disable-next-line no-console -- Testing for console
           expect(console.warn).not.toHaveBeenCalled();
@@ -181,12 +181,15 @@ export class MarkExtensionTester<
     }
 
     describe("Matches correct ProseMirror nodes", () => {
-      test.each(this.proseMirrorMarkMatches)("%p", ({ mark, shouldMatch }) => {
-        expect.assertions(1);
-        expect(mark.type.name === this.extension.proseMirrorMarkName()).toBe(
-          shouldMatch,
-        );
-      });
+      test.each(this.proseMirrorMarkMatches)(
+        "$shouldMatch, $mark.type.name",
+        ({ mark, shouldMatch }) => {
+          expect.assertions(1);
+          expect(mark.type.name === this.extension.proseMirrorMarkName()).toBe(
+            shouldMatch,
+          );
+        },
+      );
     });
   }
 }
