@@ -2,7 +2,6 @@ import eslintComments from "@eslint-community/eslint-plugin-eslint-comments";
 import commentsConfig from "@eslint-community/eslint-plugin-eslint-comments/configs";
 import js from "@eslint/js";
 import vitest from "@vitest/eslint-plugin";
-import jest from "eslint-plugin-jest";
 import perfectionist from "eslint-plugin-perfectionist";
 import preferArrowFunctions from "eslint-plugin-prefer-arrow-functions";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
@@ -26,7 +25,6 @@ export default tseslint.config(
     },
     plugins: {
       "eslint-comments": eslintComments,
-      jest,
       "prefer-arrow-functions": preferArrowFunctions,
     },
     rules: {
@@ -197,43 +195,6 @@ export default tseslint.config(
       "vitest/require-hook": "off", // Incompatible with tester classes
       "vitest/require-to-throw-message": "error",
       "vitest/valid-expect-in-promise": "error",
-    },
-  },
-  {
-    ...jest.configs["flat/recommended"],
-    ...jest.configs["flat/style"],
-    files: ["__tests__/**/*.ts"],
-    rules: {
-      ...jest.configs["flat/recommended"].rules,
-      ...jest.configs["flat/style"].rules,
-      "jest/consistent-test-it": ["error", { withinDescribe: "test" }],
-      "jest/no-conditional-in-test": "error",
-      "jest/no-confusing-set-timeout": "error",
-      "jest/no-duplicate-hooks": "error",
-      "jest/no-test-return-statement": "error",
-      "jest/no-untyped-mock-factory": "error",
-      "jest/padding-around-all": "error",
-      "jest/prefer-called-with": "error",
-      "jest/prefer-comparison-matcher": "error",
-      "jest/prefer-each": "error",
-      "jest/prefer-equality-matcher": "error",
-      "jest/prefer-expect-assertions": [
-        "error",
-        {
-          onlyFunctionsWithAsyncKeyword: true,
-          onlyFunctionsWithExpectInCallback: true,
-          onlyFunctionsWithExpectInLoop: true,
-        },
-      ],
-      "jest/prefer-expect-resolves": "error",
-      "jest/prefer-hooks-in-order": "error",
-      "jest/prefer-hooks-on-top": "error",
-      "jest/prefer-jest-mocked": "error",
-      "jest/prefer-mock-promise-shorthand": "error",
-      "jest/prefer-spy-on": "error",
-      "jest/prefer-strict-equal": "error",
-      "jest/require-to-throw-message": "error",
-      "jest/unbound-method": "error",
     },
   },
   {
