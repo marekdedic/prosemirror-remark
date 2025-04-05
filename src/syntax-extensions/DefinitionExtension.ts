@@ -41,9 +41,7 @@ export class DefinitionExtension extends NodeExtension<Definition> {
       DefinitionExtension: DefinitionExtensionContext;
     }>,
   ): Array<ProseMirrorNode> {
-    if (context.DefinitionExtension === undefined) {
-      context.DefinitionExtension = { definitions: {} };
-    }
+    context.DefinitionExtension ??= { definitions: {} };
     context.DefinitionExtension.definitions[node.identifier] = {
       title: node.title,
       url: node.url,

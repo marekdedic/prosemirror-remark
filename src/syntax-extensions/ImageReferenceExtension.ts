@@ -85,9 +85,7 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
     if (proseMirrorNode === null) {
       return [];
     }
-    if (context.ImageReferenceExtension === undefined) {
-      context.ImageReferenceExtension = { proseMirrorNodes: {} };
-    }
+    context.ImageReferenceExtension ??= { proseMirrorNodes: {} };
     context.ImageReferenceExtension.proseMirrorNodes[node.identifier] =
       proseMirrorNode;
     return [proseMirrorNode];
