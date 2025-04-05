@@ -1,4 +1,6 @@
 import { ProseMirrorUnified } from "prosemirror-unified";
+import { expect, test } from "vitest";
+import "vitest-prosemirror";
 
 import { MarkdownExtension } from "../src/MarkdownExtension";
 
@@ -28,7 +30,7 @@ test("unist -> ProseMirror conversion", () => {
       "[link2]: https://link2.test",
   );
 
-  expect(result).toEqualProsemirrorNode(
+  expect(result).toEqualProseMirrorNode(
     schema.nodes["doc"].create({}, [
       schema.nodes["blockquote"].create({}, [
         schema.nodes["paragraph"].create({}, [
