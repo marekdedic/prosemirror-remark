@@ -83,9 +83,7 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
       href: null,
       title: null,
     });
-    if (context.LinkReferenceExtension === undefined) {
-      context.LinkReferenceExtension = { marks: {} };
-    }
+    context.LinkReferenceExtension ??= { marks: {} };
     context.LinkReferenceExtension.marks[node.identifier] = mark;
     return convertedChildren.map((child) =>
       child.mark(child.marks.concat([mark])),
