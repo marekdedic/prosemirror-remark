@@ -187,9 +187,9 @@ export class SyntaxExtensionTester<
           testEditor.selectText(selection);
           testEditor.insertText(key, modifiers);
           expect(testEditor.doc).toEqualProseMirrorNode(proseMirrorTreeAfter);
-          expect(
-            this.pmu.serialize(testEditor.doc).replace(/^\s+|\s+$/gu, ""),
-          ).toBe(markdownOutput);
+          expect(this.pmu.serialize(testEditor.doc).replace(/\n$/gu, "")).toBe(
+            markdownOutput,
+          );
 
           // eslint-disable-next-line no-console -- Testing for console
           expect(console.warn).not.toHaveBeenCalled();

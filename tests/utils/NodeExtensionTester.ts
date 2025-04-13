@@ -3,7 +3,7 @@ import type { NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import { describe, expect, test, vi } from "vitest";
-import { ProseMirrorTester, trimProseMirrorNode } from "vitest-prosemirror";
+import { ProseMirrorTester } from "vitest-prosemirror";
 
 import {
   SyntaxExtensionTester,
@@ -135,25 +135,26 @@ export class NodeExtensionTester<
         ({ editorInput, markdownOutput, proseMirrorNodes }) => {
           expect.assertions(3);
 
-          const source = "";
-          const proseMirrorRoot = this.pmu.parse(source);
-          const proseMirrorTree = this.pmu
+          const proseMirrorTreeBefore = this.pmu
+            .schema()
+            .nodes[
+              "doc"
+            ].create({}, [this.pmu.schema().nodes["paragraph"].create()]);
+          const proseMirrorTreeAfter = this.pmu
             .schema()
             .nodes["doc"].create({}, proseMirrorNodes);
 
           // eslint-disable-next-line @typescript-eslint/no-empty-function -- Empty mock function
           vi.spyOn(console, "warn").mockImplementation(() => {});
-          const testEditor = new ProseMirrorTester(proseMirrorRoot, {
-            plugins: [this.pmu.inputRulesPlugin()],
+          const testEditor = new ProseMirrorTester(proseMirrorTreeBefore, {
+            plugins: [this.pmu.inputRulesPlugin(), this.pmu.keymapPlugin()],
           });
           testEditor.selectText("end");
           testEditor.insertText(editorInput);
-          expect(trimProseMirrorNode(testEditor.doc)).toEqualProseMirrorNode(
-            proseMirrorTree,
+          expect(testEditor.doc).toEqualProseMirrorNode(proseMirrorTreeAfter);
+          expect(this.pmu.serialize(testEditor.doc)).toBe(
+            `${markdownOutput}\n`,
           );
-          expect(
-            this.pmu.serialize(testEditor.doc).replace(/^\s+|\s+$/gu, ""),
-          ).toBe(markdownOutput);
 
           // eslint-disable-next-line no-console -- Testing for console
           expect(console.warn).not.toHaveBeenCalled();

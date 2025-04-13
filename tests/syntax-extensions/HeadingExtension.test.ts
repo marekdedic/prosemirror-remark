@@ -119,8 +119,8 @@ new NodeExtensionTester(new HeadingExtension(), {
     "start",
     "{Tab}",
     {},
-    (schema) => [schema.nodes["paragraph"].create()],
-    "",
+    (schema) => [schema.nodes["paragraph"].create({}, schema.text("\t"))],
+    "&#x9;",
   )
   .shouldSupportKeymap(
     (schema) => [
@@ -190,9 +190,9 @@ new NodeExtensionTester(new HeadingExtension(), {
     "#",
     {},
     (schema) => [
-      schema.nodes["heading"].create({ level: 6 }, [schema.text("Hello")]),
+      schema.nodes["heading"].create({ level: 6 }, [schema.text("#Hello")]),
     ],
-    "###### Hello",
+    "###### #Hello",
   )
   .shouldMatchInputRule(
     "# Hello World!",

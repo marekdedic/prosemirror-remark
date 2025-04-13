@@ -87,35 +87,45 @@ new MarkExtensionTester(new BoldExtension(), {
   .shouldMatchInputRule("**Test**", "**Test**", "Test")
   .shouldMatchInputRule("__Test__", "**Test**", "Test")
   .shouldMatchInputRule("**Hello World**", "**Hello World**", "Hello World")
-  .shouldMatchInputRule("**Test**\n", "**Test**\n", (schema) => [
-    schema.text("Test").mark([schema.mark("strong")]),
-    schema.text("\n"),
+  .shouldMatchInputRule("**Test**{Enter}", "**Test**\n\n", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Test").mark([schema.mark("strong")]),
+    ]),
+    schema.nodes["paragraph"].create({}, []),
   ])
-  .shouldMatchInputRule("__Test__\n", "**Test**\n", (schema) => [
-    schema.text("Test").mark([schema.mark("strong")]),
-    schema.text("\n"),
+  .shouldMatchInputRule("__Test__{Enter}", "**Test**\n\n", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Test").mark([schema.mark("strong")]),
+    ]),
+    schema.nodes["paragraph"].create({}, []),
   ])
   .shouldNotMatchInputRule(
     "X*_Test**X",
     "&#x58;*\\_Test\\**&#x58;",
     (schema) => [
-      schema.text("X"),
-      schema.text("_Test*").mark([schema.mark("em")]),
-      schema.text("X"),
+      schema.nodes["paragraph"].create({}, [
+        schema.text("X"),
+        schema.text("_Test*").mark([schema.mark("em")]),
+        schema.text("X"),
+      ]),
     ],
   )
   .shouldNotMatchInputRule("X_*Test**X", "X\\_*Test\\**&#x58;", (schema) => [
-    schema.text("X_"),
-    schema.text("Test*").mark([schema.mark("em")]),
-    schema.text("X"),
+    schema.nodes["paragraph"].create({}, [
+      schema.text("X_"),
+      schema.text("Test*").mark([schema.mark("em")]),
+      schema.text("X"),
+    ]),
   ])
   .shouldNotMatchInputRule("**Test__", "\\*\\*Test\\_\\_")
   .shouldNotMatchInputRule("**Test_*", "\\*\\*Test\\_\\*")
   .shouldNotMatchInputRule("**Test*_", "\\*\\*Test\\*\\_")
   .shouldNotMatchInputRule("X* *Test**X", "X\\* *Test\\**&#x58;", (schema) => [
-    schema.text("X* "),
-    schema.text("Test*").mark([schema.mark("em")]),
-    schema.text("X"),
+    schema.nodes["paragraph"].create({}, [
+      schema.text("X* "),
+      schema.text("Test*").mark([schema.mark("em")]),
+      schema.text("X"),
+    ]),
   ])
   .shouldNotMatchInputRule("**Test* *", "\\*\\*Test\\* \\*")
   .test();

@@ -55,49 +55,82 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   )
   .shouldMatchInputRule(
     "***{Enter}",
-    (schema) => [schema.nodes["horizontal_rule"].create()],
-    "---",
+    (schema) => [
+      schema.nodes["paragraph"].create(),
+      schema.nodes["horizontal_rule"].create(),
+      schema.nodes["paragraph"].create(),
+    ],
+    "\n\n---\n",
   )
   .shouldMatchInputRule(
     "---{Enter}",
-    (schema) => [schema.nodes["horizontal_rule"].create()],
-    "---",
+    (schema) => [
+      schema.nodes["paragraph"].create(),
+      schema.nodes["horizontal_rule"].create(),
+      schema.nodes["paragraph"].create(),
+    ],
+    "\n\n---\n",
   )
   .shouldMatchInputRule(
     "___{Enter}",
-    (schema) => [schema.nodes["horizontal_rule"].create()],
-    "---",
+    (schema) => [
+      schema.nodes["paragraph"].create(),
+      schema.nodes["horizontal_rule"].create(),
+      schema.nodes["paragraph"].create(),
+    ],
+    "\n\n---\n",
   )
   .shouldMatchInputRule(
     " ***{Enter}",
-    (schema) => [schema.nodes["horizontal_rule"].create()],
-    "---",
+    (schema) => [
+      schema.nodes["paragraph"].create(),
+      schema.nodes["horizontal_rule"].create(),
+      schema.nodes["paragraph"].create(),
+    ],
+    "\n\n---\n",
   )
   .shouldMatchInputRule(
     "  ***{Enter}",
-    (schema) => [schema.nodes["horizontal_rule"].create()],
-    "---",
+    (schema) => [
+      schema.nodes["paragraph"].create(),
+      schema.nodes["horizontal_rule"].create(),
+      schema.nodes["paragraph"].create(),
+    ],
+    "\n\n---\n",
   )
   .shouldMatchInputRule(
     "   ***{Enter}",
-    (schema) => [schema.nodes["horizontal_rule"].create()],
-    "---",
+    (schema) => [
+      schema.nodes["paragraph"].create(),
+      schema.nodes["horizontal_rule"].create(),
+      schema.nodes["paragraph"].create(),
+    ],
+    "\n\n---\n",
   )
-  .shouldNotMatchInputRule("*-*\n", "*-*", (schema) => [
+  .shouldNotMatchInputRule("*-*{Enter}", "*-*\n", (schema) => [
     schema.nodes["paragraph"].create({}, [
       schema.text("-").mark([schema.marks["em"].create()]),
-      schema.text("\n"),
     ]),
+    schema.nodes["paragraph"].create(),
   ])
-  .shouldNotMatchInputRule("*_*\n", "*\\_*", (schema) => [
+  .shouldNotMatchInputRule("*_*{Enter}", "*\\_*\n", (schema) => [
     schema.nodes["paragraph"].create({}, [
       schema.text("_").mark([schema.marks["em"].create()]),
-      schema.text("\n"),
     ]),
+    schema.nodes["paragraph"].create(),
   ])
-  .shouldNotMatchInputRule("* **\n", "\\* \\*\\*")
-  .shouldNotMatchInputRule("** *\n", "\\*\\* \\*")
-  .shouldNotMatchInputRule("a***\n", "a\\*\\*\\*")
+  .shouldNotMatchInputRule("* **{Enter}", "\\* \\*\\*\n", (schema) => [
+    schema.nodes["paragraph"].create({}, [schema.text("* **")]),
+    schema.nodes["paragraph"].create(),
+  ])
+  .shouldNotMatchInputRule("** *{Enter}", "\\*\\* \\*\n", (schema) => [
+    schema.nodes["paragraph"].create({}, [schema.text("** *")]),
+    schema.nodes["paragraph"].create(),
+  ])
+  .shouldNotMatchInputRule("a***{Enter}", "a\\*\\*\\*\n", (schema) => [
+    schema.nodes["paragraph"].create({}, [schema.text("a***")]),
+    schema.nodes["paragraph"].create(),
+  ])
   .shouldNotMatchInputRule(
     "***bold italic***",
     "**\\*bold italic**\\*",
