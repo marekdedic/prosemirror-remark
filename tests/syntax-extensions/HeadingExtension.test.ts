@@ -117,7 +117,8 @@ new NodeExtensionTester(new HeadingExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create()],
     "start",
-    "Tab",
+    "{Tab}",
+    {},
     (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
@@ -127,6 +128,7 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
     "start",
     "#",
+    {},
     (schema) => [
       schema.nodes["heading"].create({ level: 2 }, [schema.text("Hello")]),
     ],
@@ -138,6 +140,7 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
     "start",
     "#",
+    {},
     (schema) => [
       schema.nodes["heading"].create({ level: 3 }, [schema.text("Hello")]),
     ],
@@ -149,6 +152,7 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
     "start",
     "#",
+    {},
     (schema) => [
       schema.nodes["heading"].create({ level: 4 }, [schema.text("Hello")]),
     ],
@@ -160,6 +164,7 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
     "start",
     "#",
+    {},
     (schema) => [
       schema.nodes["heading"].create({ level: 5 }, [schema.text("Hello")]),
     ],
@@ -171,6 +176,7 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
     "start",
     "#",
+    {},
     (schema) => [
       schema.nodes["heading"].create({ level: 6 }, [schema.text("Hello")]),
     ],
@@ -182,6 +188,7 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
     "start",
     "#",
+    {},
     (schema) => [
       schema.nodes["heading"].create({ level: 6 }, [schema.text("Hello")]),
     ],

@@ -24,14 +24,16 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   .shouldSupportKeymap(
     () => [],
     "start",
-    "Mod-_",
+    "_",
+    { ctrlKey: true },
     (schema) => [schema.nodes["horizontal_rule"].create()],
     "---",
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     4,
-    "Mod-_",
+    "_",
+    { ctrlKey: true },
     (schema) => [
       schema.nodes["paragraph"].create({}, [schema.text("abc")]),
       schema.nodes["horizontal_rule"].create(),
@@ -42,7 +44,8 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
-    "Mod-_",
+    "_",
+    { ctrlKey: true },
     (schema) => [
       schema.nodes["paragraph"].create({}, [schema.text("ab")]),
       schema.nodes["horizontal_rule"].create(),
@@ -51,32 +54,32 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
     "ab\n\n---\n\nef",
   )
   .shouldMatchInputRule(
-    "***\n",
+    "***{Enter}",
     (schema) => [schema.nodes["horizontal_rule"].create()],
     "---",
   )
   .shouldMatchInputRule(
-    "---\n",
+    "---{Enter}",
     (schema) => [schema.nodes["horizontal_rule"].create()],
     "---",
   )
   .shouldMatchInputRule(
-    "___\n",
+    "___{Enter}",
     (schema) => [schema.nodes["horizontal_rule"].create()],
     "---",
   )
   .shouldMatchInputRule(
-    " ***\n",
+    " ***{Enter}",
     (schema) => [schema.nodes["horizontal_rule"].create()],
     "---",
   )
   .shouldMatchInputRule(
-    "  ***\n",
+    "  ***{Enter}",
     (schema) => [schema.nodes["horizontal_rule"].create()],
     "---",
   )
   .shouldMatchInputRule(
-    "   ***\n",
+    "   ***{Enter}",
     (schema) => [schema.nodes["horizontal_rule"].create()],
     "---",
   )

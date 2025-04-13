@@ -25,14 +25,16 @@ new MarkExtensionTester(new InlineCodeExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create()],
     "start",
-    "Ctrl-`",
+    "`",
+    { ctrlKey: true },
     (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
-    "Ctrl-`",
+    "`",
+    { ctrlKey: true },
     (schema) => [
       schema.nodes["paragraph"].create({}, [
         schema.text("ab"),

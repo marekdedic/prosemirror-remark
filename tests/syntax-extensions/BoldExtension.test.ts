@@ -43,14 +43,16 @@ new MarkExtensionTester(new BoldExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create()],
     "start",
-    "Mod-b",
+    "b",
+    { ctrlKey: true },
     (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
-    "Mod-b",
+    "b",
+    { ctrlKey: true },
     (schema) => [
       schema.nodes["paragraph"].create({}, [
         schema.text("ab"),
@@ -63,14 +65,16 @@ new MarkExtensionTester(new BoldExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create()],
     "start",
-    "Mod-B",
+    "B",
+    { ctrlKey: true },
     (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
-    "Mod-B",
+    "B",
+    { ctrlKey: true },
     (schema) => [
       schema.nodes["paragraph"].create({}, [
         schema.text("ab"),

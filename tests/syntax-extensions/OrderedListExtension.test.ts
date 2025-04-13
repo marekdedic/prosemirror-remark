@@ -383,7 +383,8 @@ new NodeExtensionTester(new OrderedListExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
     3,
-    "Shift-Mod-9",
+    "9",
+    { ctrlKey: true, shiftKey: true },
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -429,7 +430,8 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ]),
     ],
     3,
-    "Tab",
+    "{Tab}",
+    {},
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [

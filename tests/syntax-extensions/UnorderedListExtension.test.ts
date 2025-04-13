@@ -339,7 +339,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
     3,
-    "Shift-Mod-8",
+    "8",
+    { ctrlKey: true, shiftKey: true },
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -385,7 +386,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ]),
     ],
     3,
-    "Tab",
+    "{Tab}",
+    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [

@@ -439,7 +439,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ]),
     ],
     3,
-    "Tab",
+    "{Tab}",
+    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["task_list_item"].create({}, [
