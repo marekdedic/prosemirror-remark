@@ -176,20 +176,28 @@ new MarkExtensionTester(new StrikethroughExtension(), {
   .shouldMatchInputRule("~Test~", "~~Test~~", "Test")
   .shouldMatchInputRule("~~Test~~", "~~Test~~", "Test")
   .shouldMatchInputRule("~Hello World~", "~~Hello World~~", "Hello World")
-  .shouldMatchInputRule("~Test~\n", "~~Test~~\n", (schema) => [
-    schema.text("Test").mark([schema.mark("strikethrough")]),
-    schema.text("\n"),
+  .shouldMatchInputRule("~Test~{Enter}", "~~Test~~\n\n", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Test").mark([schema.mark("strikethrough")]),
+    ]),
+    schema.nodes["paragraph"].create(),
   ])
-  .shouldMatchInputRule("~~Test~~\n", "~~Test~~\n", (schema) => [
-    schema.text("Test").mark([schema.mark("strikethrough")]),
-    schema.text("\n"),
+  .shouldMatchInputRule("~~Test~~{Enter}", "~~Test~~\n\n", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Test").mark([schema.mark("strikethrough")]),
+    ]),
+    schema.nodes["paragraph"].create(),
   ])
   .shouldMatchInputRule("~ ~Test~", "\\~ ~~Test~~", (schema) => [
-    schema.text("~ "),
-    schema.text("Test").mark([schema.mark("strikethrough")]),
+    schema.nodes["paragraph"].create({}, [
+      schema.text("~ "),
+      schema.text("Test").mark([schema.mark("strikethrough")]),
+    ]),
   ])
   .shouldMatchInputRule("~Test~ ~", "~~Test~~ \\~", (schema) => [
-    schema.text("Test").mark([schema.mark("strikethrough")]),
-    schema.text(" ~"),
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Test").mark([schema.mark("strikethrough")]),
+      schema.text(" ~"),
+    ]),
   ])
   .test();

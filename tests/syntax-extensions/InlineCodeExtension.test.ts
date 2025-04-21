@@ -25,14 +25,16 @@ new MarkExtensionTester(new InlineCodeExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create()],
     "start",
-    "Ctrl-`",
+    "`",
+    { ctrlKey: true },
     (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
-    "Ctrl-`",
+    "`",
+    { ctrlKey: true },
     (schema) => [
       schema.nodes["paragraph"].create({}, [
         schema.text("ab"),
@@ -44,8 +46,10 @@ new MarkExtensionTester(new InlineCodeExtension(), {
   )
   .shouldMatchInputRule("`Test`", "`Test`", "Test")
   .shouldMatchInputRule("`Hello World`", "`Hello World`", "Hello World")
-  .shouldMatchInputRule("`Test`\n", "`Test`\n", (schema) => [
-    schema.text("Test").mark([schema.mark("code")]),
-    schema.text("\n"),
+  .shouldMatchInputRule("`Test`{Enter}", "`Test`\n\n", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Test").mark([schema.mark("code")]),
+    ]),
+    schema.nodes["paragraph"].create(),
   ])
   .test();

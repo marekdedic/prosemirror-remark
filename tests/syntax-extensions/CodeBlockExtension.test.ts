@@ -67,7 +67,8 @@ new NodeExtensionTester(new CodeBlockExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
     3,
-    "Shift-Mod-\\",
+    "\\",
+    { ctrlKey: true, shiftKey: true },
     (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
     "```\nHello\n```",
   )
@@ -77,7 +78,8 @@ new NodeExtensionTester(new CodeBlockExtension(), {
       schema.nodes["paragraph"].create({}, [schema.text("World")]),
     ],
     3,
-    "Shift-Mod-\\",
+    "\\",
+    { ctrlKey: true, shiftKey: true },
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hello")]),
       schema.nodes["paragraph"].create({}, [schema.text("World")]),

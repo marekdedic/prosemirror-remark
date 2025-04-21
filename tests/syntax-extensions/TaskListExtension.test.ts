@@ -439,18 +439,19 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ]),
     ],
     3,
-    "Tab",
+    "{Tab}",
+    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["task_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+          schema.nodes["paragraph"].create({}, [schema.text("\tHello")]),
         ]),
         schema.nodes["task_list_item"].create({}, [
           schema.nodes["paragraph"].create({}, [schema.text("World")]),
         ]),
       ]),
     ],
-    "* [ ] Hello\n* [ ] World",
+    "* [ ] &#x9;Hello\n* [ ] World",
   )
   /* TODO: Re-enable once jest-prosemirror can handle keymaps with Tab
   .shouldSupportKeymap(

@@ -45,14 +45,16 @@ new MarkExtensionTester(new ItalicExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create()],
     "start",
-    "Mod-i",
+    "i",
+    { ctrlKey: true },
     (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
-    "Mod-i",
+    "i",
+    { ctrlKey: true },
     (schema) => [
       schema.nodes["paragraph"].create({}, [
         schema.text("ab"),
@@ -65,14 +67,16 @@ new MarkExtensionTester(new ItalicExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create()],
     "start",
-    "Mod-I",
+    "I",
+    { ctrlKey: true },
     (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     { from: 3, to: 5 },
-    "Mod-I",
+    "I",
+    { ctrlKey: true },
     (schema) => [
       schema.nodes["paragraph"].create({}, [
         schema.text("ab"),
@@ -85,13 +89,17 @@ new MarkExtensionTester(new ItalicExtension(), {
   .shouldMatchInputRule("*Test*", "*Test*", "Test")
   .shouldMatchInputRule("_Test_", "*Test*", "Test")
   .shouldMatchInputRule("*Hello World*", "*Hello World*", "Hello World")
-  .shouldMatchInputRule("*Test*\n", "*Test*\n", (schema) => [
-    schema.text("Test").mark([schema.mark("em")]),
-    schema.text("\n"),
+  .shouldMatchInputRule("*Test*{Enter}", "*Test*\n\n", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Test").mark([schema.mark("em")]),
+    ]),
+    schema.nodes["paragraph"].create(),
   ])
-  .shouldMatchInputRule("_Test_\n", "*Test*\n", (schema) => [
-    schema.text("Test").mark([schema.mark("em")]),
-    schema.text("\n"),
+  .shouldMatchInputRule("_Test_{Enter}", "*Test*\n\n", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Test").mark([schema.mark("em")]),
+    ]),
+    schema.nodes["paragraph"].create(),
   ])
   .shouldNotMatchInputRule("*Test_", "\\*Test\\_")
   .test();

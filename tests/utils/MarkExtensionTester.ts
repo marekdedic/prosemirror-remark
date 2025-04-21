@@ -3,7 +3,7 @@ import type { MarkExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import { describe, expect, test, vi } from "vitest";
-import { ProseMirrorTester, trimProseMirrorNode } from "vitest-prosemirror";
+import { ProseMirrorTester } from "vitest-prosemirror";
 
 import {
   SyntaxExtensionTester,
@@ -68,10 +68,12 @@ export class MarkExtensionTester<
       proseMirrorNodes:
         typeof proseMirrorContents === "string"
           ? [
-              this.pmu
-                .schema()
-                .text(proseMirrorContents)
-                .mark([this.pmu.schema().mark(markName)]),
+              this.pmu.schema().nodes["paragraph"].create({}, [
+                this.pmu
+                  .schema()
+                  .text(proseMirrorContents)
+                  .mark([this.pmu.schema().mark(markName)]),
+              ]),
             ]
           : proseMirrorContents(this.pmu.schema()),
     });
@@ -99,7 +101,9 @@ export class MarkExtensionTester<
       editorInput,
       markdownOutput,
       proseMirrorNodes: proseMirrorContents?.(this.pmu.schema()) ?? [
-        this.pmu.schema().text(editorInput),
+        this.pmu
+          .schema()
+          .nodes["paragraph"].create({}, [this.pmu.schema().text(editorInput)]),
       ],
     });
     return this;
@@ -145,25 +149,26 @@ export class MarkExtensionTester<
         ({ editorInput, markdownOutput, proseMirrorNodes }) => {
           expect.assertions(3);
 
-          const source = "BEGIN";
-          const proseMirrorRoot = this.pmu.parse(source);
-          const proseMirrorTree = this.pmu
+          const proseMirrorTreeBefore = this.pmu
             .schema()
             .nodes[
               "doc"
-            ].create({}, [this.pmu.schema().nodes["paragraph"].create({}, [this.pmu.schema().text("BEGIN"), ...proseMirrorNodes, this.pmu.schema().text("END")])]);
+            ].create({}, [this.pmu.schema().nodes["paragraph"].create({}, [this.pmu.schema().text("BEGIN")])]);
+          const proseMirrorTreeAfter = this.pmu
+            .schema()
+            .nodes["doc"].create({}, proseMirrorNodes);
 
           // eslint-disable-next-line @typescript-eslint/no-empty-function -- Empty mock function
           vi.spyOn(console, "warn").mockImplementation(() => {});
-          const testEditor = new ProseMirrorTester(proseMirrorRoot, {
-            plugins: [this.pmu.inputRulesPlugin()],
+          const testEditor = new ProseMirrorTester(proseMirrorTreeBefore, {
+            plugins: [this.pmu.inputRulesPlugin(), this.pmu.keymapPlugin()],
           });
           testEditor.selectText("end");
           testEditor.insertText(editorInput);
           testEditor.insertText("END");
-          expect(trimProseMirrorNode(testEditor.doc)).toEqualProseMirrorNode(
-            proseMirrorTree,
-          );
+          expect(
+            testEditor.doc.cut(6, testEditor.doc.content.size - 4),
+          ).toEqualProseMirrorNode(proseMirrorTreeAfter);
           expect(this.pmu.serialize(testEditor.doc)).toBe(
             `BEGIN${markdownOutput}END\n`,
           );

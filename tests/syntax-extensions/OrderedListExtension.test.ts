@@ -383,7 +383,8 @@ new NodeExtensionTester(new OrderedListExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
     3,
-    "Shift-Mod-9",
+    "9",
+    { ctrlKey: true, shiftKey: true },
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -429,18 +430,19 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ]),
     ],
     3,
-    "Tab",
+    "{Tab}",
+    {},
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+          schema.nodes["paragraph"].create({}, [schema.text("\tHello")]),
         ]),
         schema.nodes["regular_list_item"].create({}, [
           schema.nodes["paragraph"].create({}, [schema.text("World")]),
         ]),
       ]),
     ],
-    "1. Hello\n2. World",
+    "1. &#x9;Hello\n2. World",
   )
   /* TODO: Re-enable once jest-prosemirror can handle keymaps with Tab
   .shouldSupportKeymap(
