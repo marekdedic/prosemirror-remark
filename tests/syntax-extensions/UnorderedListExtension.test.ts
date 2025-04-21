@@ -320,22 +320,20 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* Hello World!",
   )
-  /* TODO: Enable when jest-prosemirror supports input rules with Enter
   .shouldMatchInputRule(
-    "* Hello World!\n\n\n* Second item",
+    "* Hello World!{Enter}Second item",
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
           schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
         ]),
         schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Second line")]),
+          schema.nodes["paragraph"].create({}, [schema.text("Second item")]),
         ]),
       ]),
     ],
-    "* Hello World!\n2. Second item",
+    "* Hello World!\n* Second item",
   )
-  */
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
     3,
@@ -350,7 +348,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* Hello",
   )
-  /* TODO: Re-enable when jest-prosemirror can handle keymaps with Enter
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
@@ -359,8 +356,9 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ]),
       ]),
     ],
-    3,
-    "Enter",
+    6,
+    "{Enter}",
+    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -373,7 +371,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* Hel\n* lo",
   )
-  */
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
@@ -400,7 +397,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* &#x9;Hello\n* World",
   )
-  /* TODO: Re-enable once jest-prosemirror can handle keymaps with Tab
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
@@ -413,7 +409,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ]),
     ],
     10,
-    "Tab",
+    "{Tab}",
+    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -426,7 +423,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ]),
       ]),
     ],
-    "* Hello\n    * World",
+    "* Hello\n  * World",
   )
   .shouldSupportKeymap(
     (schema) => [
@@ -442,7 +439,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ]),
     ],
     10,
-    "Shift-Tab",
+    "{Tab}",
+    { shiftKey: true },
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -455,5 +453,4 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* Hello\n* World",
   )
-  */
   .test();

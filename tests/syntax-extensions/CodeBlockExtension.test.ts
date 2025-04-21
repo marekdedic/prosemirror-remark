@@ -86,11 +86,11 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     ],
     "```\nHello\n```\n\nWorld",
   )
-  /* TODO: Enable once jest-prosemirror supports keymaps with Enter
   .shouldSupportKeymap(
     (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
-    3,
-    "Enter",
+    4,
+    "{Enter}",
+    {},
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hel\nlo")]),
     ],
@@ -98,8 +98,9 @@ new NodeExtensionTester(new CodeBlockExtension(), {
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
-    5,
-    "Enter",
+    6,
+    "{Enter}",
+    {},
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hello\n")]),
     ],
@@ -109,8 +110,9 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hello\n")]),
     ],
-    5,
-    "Enter",
+    6,
+    "{Enter}",
+    {},
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hello\n\n")]),
     ],
@@ -120,13 +122,13 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hello\n\n")]),
     ],
-    5,
-    "Enter",
+    8,
+    "{Enter}",
+    {},
     (schema) => [
-      schema.nodes["code_block"].create({}, [schema.text("Hello\n\n")]),
+      schema.nodes["code_block"].create({}, [schema.text("Hello")]),
       schema.nodes["paragraph"].create({}, []),
     ],
-    "```\nHello\n\n\n```\n",
+    "```\nHello\n```\n",
   )
-  */
   .test();
