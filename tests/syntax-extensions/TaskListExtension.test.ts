@@ -403,7 +403,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       },
     ],
   )
-  /* TODO: Re-enable when jest-prosemirror can handle keymaps with Enter
+  /* TODO
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
@@ -412,8 +412,9 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ]),
       ]),
     ],
-    3,
-    "Enter",
+    6,
+    "{Enter}",
+    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["task_list_item"].create({}, [
@@ -453,7 +454,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* [ ] &#x9;Hello\n* [ ] World",
   )
-  /* TODO: Re-enable once jest-prosemirror can handle keymaps with Tab
+  /* TODO
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
@@ -465,8 +466,9 @@ new NodeExtensionTester(new UnorderedListExtension(), {
         ]),
       ]),
     ],
-    10,
-    "Tab",
+    12,
+    "{Tab}",
+    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["task_list_item"].create({}, [
@@ -495,7 +497,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ]),
     ],
     10,
-    "Shift-Tab",
+    "{Tab}",
+    { shiftKey: true },
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["task_list_item"].create({}, [
@@ -509,7 +512,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     "* [ ] Hello\n* [ ] World",
   )
   */
-  /* TODO: Re-enable when jest-prosemirrr supports keymaps with backspace
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
@@ -522,7 +524,8 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ]),
     ],
     0,
-    "Backspace",
+    "{Backspace}",
+    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -535,5 +538,4 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* Hello\n* [ ] World",
   )
-  */
   .test();

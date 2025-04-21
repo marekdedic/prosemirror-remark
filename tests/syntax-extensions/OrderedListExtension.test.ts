@@ -364,22 +364,20 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
     "42. Hello World!",
   )
-  /* TODO: Enable when jest-prosemirror supports input rules with Enter
   .shouldMatchInputRule(
-    "1. Hello World!\n\n\n2. Second item",
+    "1. Hello World!{Enter}Second item",
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
           schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
         ]),
         schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Second line")]),
+          schema.nodes["paragraph"].create({}, [schema.text("Second item")]),
         ]),
       ]),
     ],
     "1. Hello World!\n2. Second item",
   )
-  */
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
     3,
@@ -394,7 +392,6 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
     "1. Hello",
   )
-  /* TODO: Re-enable when jest-prosemirror can handle keymaps with Enter
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
@@ -403,8 +400,9 @@ new NodeExtensionTester(new OrderedListExtension(), {
         ]),
       ]),
     ],
-    3,
-    "Enter",
+    6,
+    "{Enter}",
+    {},
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -417,7 +415,6 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
     "1. Hel\n2. lo",
   )
-  */
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
@@ -444,7 +441,6 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
     "1. &#x9;Hello\n2. World",
   )
-  /* TODO: Re-enable once jest-prosemirror can handle keymaps with Tab
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
@@ -457,7 +453,8 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ]),
     ],
     10,
-    "Tab",
+    "{Tab}",
+    {},
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -470,7 +467,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
         ]),
       ]),
     ],
-    "1. Hello\n    1. World",
+    "1. Hello\n   1. World",
   )
   .shouldSupportKeymap(
     (schema) => [
@@ -486,7 +483,8 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ]),
     ],
     10,
-    "Shift-Tab",
+    "{Tab}",
+    { shiftKey: true },
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -499,5 +497,4 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
     "1. Hello\n2. World",
   )
-  */
   .test();
