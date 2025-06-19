@@ -5,9 +5,11 @@ import vitest from "@vitest/eslint-plugin";
 import perfectionist from "eslint-plugin-perfectionist";
 import preferArrowFunctions from "eslint-plugin-prefer-arrow-functions";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
+import { globalIgnores } from "eslint/config";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
+  globalIgnores(["dist/"]),
   {
     extends: [
       js.configs.recommended,

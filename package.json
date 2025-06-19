@@ -32,7 +32,7 @@
     "prebuild": "npm run clean",
     "build": "vite build",
     "lint:typecheck": "tsc --noEmit",
-    "lint:eslint": "eslint --color \"src/**/*.ts\" \"tests/**/*.ts\" \"*.config.{js,ts}\"",
+    "lint:eslint": "eslint --color",
     "lint": "run-p -c --aggregate-output lint:*",
     "test": "vitest",
     "test-coverage": "vitest run --coverage"
