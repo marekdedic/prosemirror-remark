@@ -11,29 +11,29 @@
   "bugs": {
     "url": "https://github.com/marekdedic/prosemirror-remark/issues"
   },
-  "license": "MIT",
-  "author": "Marek Dědič",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marekdedic/prosemirror-remark.git"
   },
+  "license": "MIT",
+  "author": "Marek Dědič",
+  "sideEffects": false,
+  "type": "module",
   "main": "dist/prosemirror-remark.cjs",
   "module": "dist/prosemirror-remark.js",
   "types": "dist/prosemirror-remark.d.ts",
-  "sideEffects": false,
   "files": [
     "dist",
     "LICENSE",
     "README.md"
   ],
-  "type": "module",
   "scripts": {
-    "clean": "rimraf dist/* types/*",
     "prebuild": "npm run clean",
     "build": "vite build",
-    "lint:typecheck": "tsc --noEmit",
-    "lint:eslint": "eslint --color \"src/**/*.ts\" \"tests/**/*.ts\" \"*.config.{js,ts}\"",
+    "clean": "rimraf dist/* types/*",
     "lint": "run-p -c --aggregate-output lint:*",
+    "lint:eslint": "eslint --color",
+    "lint:typecheck": "tsc --noEmit",
     "test": "vitest",
     "test-coverage": "vitest run --coverage"
   },
@@ -54,18 +54,17 @@
     "remark-stringify": "^11.0.0",
     "unified": "^11.0.4"
   },
-  "peerDependencies": {
-    "prosemirror-model": "^1.19.3",
-    "prosemirror-state": "^1.4.3"
-  },
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.0",
     "@eslint/js": "^9.9.1",
+    "@eslint/json": "^0.12.0",
+    "@eslint/markdown": "^6.5.0",
     "@microsoft/api-extractor": "^7.34.9",
     "@vitest/coverage-v8": "^3.1.1",
     "@vitest/eslint-plugin": "^1.1.39",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-package-json": "^0.40.2",
     "eslint-plugin-perfectionist": "^4.0.3",
     "eslint-plugin-prefer-arrow-functions": "^3.4.0",
     "eslint-plugin-prettier": "^5.0.0",
@@ -82,5 +81,9 @@
     "vite-plugin-dts": "^4.5.0",
     "vitest": "^3.0.7",
     "vitest-prosemirror": "^0.3.0"
+  },
+  "peerDependencies": {
+    "prosemirror-model": "^1.19.3",
+    "prosemirror-state": "^1.4.3"
   }
 }

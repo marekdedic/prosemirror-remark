@@ -48,6 +48,7 @@ If you want finer-grained control over how Markdown is processed and viewed, ins
 - `BoldExtension` provides support for `**bold text**`
 - `BreakExtension` provides support for `hard breaks at the end of a line\`
 - `CodeBlockExtension` provides support for code blocks like
+<!-- eslint-disable-next-line markdown/fenced-code-language -- Markdown example -->
   ````
   ```
   this
