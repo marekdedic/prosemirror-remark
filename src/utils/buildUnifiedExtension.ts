@@ -9,7 +9,6 @@ export function buildUnifiedExtension(
   toMarkdownExtensions: Array<ToMarkdownExtension>,
 ): () => void {
   return function (this: Processor) {
-    // eslint-disable-next-line no-invalid-this -- this provided by unified
     const data = this.data();
 
     data.micromarkExtensions ??= [];
