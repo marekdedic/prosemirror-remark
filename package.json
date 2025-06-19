@@ -11,29 +11,29 @@
   "bugs": {
     "url": "https://github.com/marekdedic/prosemirror-remark/issues"
   },
-  "license": "MIT",
-  "author": "Marek Dědič",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/marekdedic/prosemirror-remark.git"
   },
+  "license": "MIT",
+  "author": "Marek Dědič",
+  "sideEffects": false,
+  "type": "module",
   "main": "dist/prosemirror-remark.cjs",
   "module": "dist/prosemirror-remark.js",
   "types": "dist/prosemirror-remark.d.ts",
-  "sideEffects": false,
   "files": [
     "dist",
     "LICENSE",
     "README.md"
   ],
-  "type": "module",
   "scripts": {
-    "clean": "rimraf dist/* types/*",
     "prebuild": "npm run clean",
     "build": "vite build",
-    "lint:typecheck": "tsc --noEmit",
-    "lint:eslint": "eslint --color",
+    "clean": "rimraf dist/* types/*",
     "lint": "run-p -c --aggregate-output lint:*",
+    "lint:eslint": "eslint --color",
+    "lint:typecheck": "tsc --noEmit",
     "test": "vitest",
     "test-coverage": "vitest run --coverage"
   },
@@ -53,10 +53,6 @@
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
     "unified": "^11.0.4"
-  },
-  "peerDependencies": {
-    "prosemirror-model": "^1.19.3",
-    "prosemirror-state": "^1.4.3"
   },
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.0",
@@ -85,5 +81,9 @@
     "vite-plugin-dts": "^4.5.0",
     "vitest": "^3.0.7",
     "vitest-prosemirror": "^0.3.0"
+  },
+  "peerDependencies": {
+    "prosemirror-model": "^1.19.3",
+    "prosemirror-state": "^1.4.3"
   }
 }
