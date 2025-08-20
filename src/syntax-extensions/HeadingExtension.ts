@@ -104,7 +104,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
     const keymap: Record<string, Command> = {
       "#": HeadingExtension.headingLevelCommandBuilder(
         proseMirrorSchema,
-        +1,
+        1,
         true,
       ),
       Backspace: HeadingExtension.headingLevelCommandBuilder(
@@ -119,7 +119,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
       ),
       Tab: HeadingExtension.headingLevelCommandBuilder(
         proseMirrorSchema,
-        +1,
+        1,
         false,
       ),
     };
