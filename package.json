@@ -23,9 +23,7 @@
   "module": "dist/prosemirror-remark.js",
   "types": "dist/prosemirror-remark.d.ts",
   "files": [
-    "dist",
-    "LICENSE",
-    "README.md"
+    "dist"
   ],
   "scripts": {
     "prebuild": "npm run clean",
