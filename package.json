@@ -47,7 +47,6 @@
     "prosemirror-commands": "^1.5.1",
     "prosemirror-inputrules": "^1.4.0",
     "prosemirror-schema-list": "^1.2.2",
-    "prosemirror-unified": "=0.8.3",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
     "unified": "^11.0.4"
@@ -83,6 +82,7 @@
   },
   "peerDependencies": {
     "prosemirror-model": "^1.19.3",
-    "prosemirror-state": "^1.4.3"
+    "prosemirror-state": "^1.4.3",
+    "prosemirror-unified": "^0.8.3"
   }
 }
