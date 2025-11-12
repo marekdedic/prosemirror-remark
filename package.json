@@ -19,6 +19,18 @@
   "author": "Marek Dědič",
   "sideEffects": false,
   "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/prosemirror-remark.d.ts",
+        "default": "./dist/prosemirror-remark.js"
+      },
+      "require": {
+        "types": "./dist/prosemirror-remark.d.cts",
+        "default": "./dist/prosemirror-remark.cjs"
+      }
+    }
+  },
   "main": "dist/prosemirror-remark.cjs",
   "module": "dist/prosemirror-remark.js",
   "types": "dist/prosemirror-remark.d.ts",
@@ -27,7 +39,7 @@
   ],
   "scripts": {
     "prebuild": "npm run clean",
-    "build": "vite build",
+    "build": "vite build && cp dist/prosemirror-remark.d.ts dist/prosemirror-remark.d.cts",
     "clean": "rimraf dist/* types/*",
     "lint": "run-p -c --aggregate-output lint:*",
     "lint:attw": "attw --pack",
