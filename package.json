@@ -30,8 +30,10 @@
     "build": "vite build",
     "clean": "rimraf dist/* types/*",
     "lint": "run-p -c --aggregate-output lint:*",
+    "lint:attw": "attw --pack",
     "lint:eslint": "eslint --color",
     "lint:typecheck": "tsc --noEmit",
+    "prepack": "npm run build",
     "test": "vitest",
     "test-coverage": "vitest run --coverage"
   },
@@ -52,6 +54,7 @@
     "unified": "^11.0.4"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.0",
     "@eslint/js": "^9.9.1",
     "@eslint/json": "^0.14.0",
