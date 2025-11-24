@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
 
       - name: "Cache NPM dependencies"
         uses: actions/cache@v4.3.0
@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
 
       - name: "Cache NPM dependencies"
         uses: actions/cache@v4.3.0
@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.0
 
       - name: "Cache NPM dependencies"
         uses: actions/cache@v4.3.0
