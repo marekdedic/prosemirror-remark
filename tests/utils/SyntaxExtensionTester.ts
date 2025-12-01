@@ -86,9 +86,10 @@ export class SyntaxExtensionTester<
     ]);
   }
 
-  public shouldConvertProseMirrorNode(
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Generic fixes error with unknown properties
+  public shouldConvertProseMirrorNode<TNode extends UnistNode>(
     source: (schema: Schema<string, string>) => ProseMirrorNode,
-    target: Array<UnistNode | UNode>,
+    target: Array<TNode>,
   ): this {
     this.proseMirrorNodeConversions.push({
       source: source(this.pmu.schema()),
@@ -97,8 +98,9 @@ export class SyntaxExtensionTester<
     return this;
   }
 
-  public shouldConvertUnistNode(
-    source: UnistNode | UNode,
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Generic fixes error with unknown properties
+  public shouldConvertUnistNode<SNode extends UnistNode>(
+    source: SNode,
     target: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
     injectNodes: Array<UnistNode> = [],
   ): this {

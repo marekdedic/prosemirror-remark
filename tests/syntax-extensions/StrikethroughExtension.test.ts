@@ -51,7 +51,7 @@ new MarkExtensionTester(new StrikethroughExtension(), {
         },
       ],
       type: "emphasis",
-    } as UnistNode,
+    },
     (schema) => [
       schema
         .text("Hello World!")

@@ -1,5 +1,3 @@
-import type { Node as UnistNode } from "unist";
-
 import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
 import { ItalicExtension } from "../../src/syntax-extensions/ItalicExtension";
 import { MarkExtensionTester } from "../utils/MarkExtensionTester";
@@ -35,7 +33,7 @@ new MarkExtensionTester(new ItalicExtension(), {
           },
         ],
         type: "strong",
-      } as UnistNode,
+      },
     ],
   )
   .shouldConvertProseMirrorNode(
