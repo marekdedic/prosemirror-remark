@@ -81,7 +81,7 @@
     "eslint-plugin-perfectionist": "^5.0.0",
     "eslint-plugin-prefer-arrow-functions": "^3.4.0",
     "eslint-plugin-prettier": "^5.0.0",
-    "jsdom": "^27.0.0",
+    "jsdom": "^28.0.0",
     "mdast-util-from-markdown": "^2.0.0",
     "mdast-util-to-markdown": "^2.1.0",
     "micromark-util-types": "^2.0.0",
