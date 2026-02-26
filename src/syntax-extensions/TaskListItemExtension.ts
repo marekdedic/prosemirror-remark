@@ -20,6 +20,11 @@ import {
 } from "mdast-util-gfm-task-list-item";
 import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
 import { InputRule } from "prosemirror-inputrules";
+import {
+  liftListItem,
+  sinkListItem,
+  splitListItem,
+} from "prosemirror-schema-list";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
@@ -99,13 +104,17 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   ): Array<InputRule> {
     return [
       new InputRule(/^\[([x\s]?)\][\s\S]$/u, (state, match, start) => {
-        const wrappingNode = state.doc.resolve(start).node(-1);
+        const resolvedPos = state.doc.resolve(start);
+        const wrappingNode = resolvedPos.node(-1);
         if (wrappingNode.type.name !== "regular_list_item") {
           return null;
         }
+
+        const regularListItemStartPos = resolvedPos.before(-1);
+        const regularListItemEndPos = resolvedPos.after(-1);
         return state.tr.replaceRangeWith(
-          start - 2,
-          start + wrappingNode.nodeSize,
+          regularListItemStartPos,
+          regularListItemEndPos,
           proseMirrorSchema.nodes[this.proseMirrorNodeName()].create(
             { checked: match[1] === "x" },
             wrappingNode.content.cut(3 + match[1].length),
@@ -118,6 +127,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
+    const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
     return {
       Backspace: (state, dispatch, view): boolean => {
         if (!TaskListItemExtension.isAtStart(state, view)) {
@@ -130,10 +140,13 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
         if (dispatch === undefined) {
           return true;
         }
+
+        const startPos = state.selection.$anchor.before(-1);
+        const endPos = state.selection.$anchor.after(-1);
         dispatch(
           state.tr.replaceRangeWith(
-            state.selection.$from.before() - 2,
-            state.selection.$from.before() + taskListItemNode.nodeSize,
+            startPos,
+            endPos,
             proseMirrorSchema.nodes["regular_list_item"].create(
               {},
               taskListItemNode.content,
@@ -142,6 +155,9 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
         );
         return true;
       },
+      Enter: splitListItem(nodeType),
+      "Shift-Tab": liftListItem(nodeType),
+      Tab: sinkListItem(nodeType),
     };
   }
 
