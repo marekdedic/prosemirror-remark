@@ -94,8 +94,8 @@
     "rimraf": "^6.0.1",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.0",
+    "unplugin-dts": "^1.0.1",
     "vite": "^8.0.3",
-    "vite-plugin-dts": "^5.0.0",
     "vitest": "^4.1.0",
     "vitest-prosemirror": "^0.3.1"
   },

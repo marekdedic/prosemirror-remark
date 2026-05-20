@@ -1,7 +1,7 @@
 /// <reference types="vitest/config" />
 
+import dts from "unplugin-dts/vite";
 import { defineConfig } from "vite";
-import dts from "vite-plugin-dts";
 
 export default defineConfig({
   build: {
@@ -27,7 +27,7 @@ export default defineConfig({
     },
     sourcemap: true,
   },
-  plugins: [dts({ rollupTypes: true })],
+  plugins: [dts({ bundleTypes: true })],
   test: {
     environment: "jsdom",
     mockReset: true,
