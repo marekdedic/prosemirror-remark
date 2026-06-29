@@ -137,9 +137,9 @@ export class NodeExtensionTester<
 
           const proseMirrorTreeBefore = this.pmu
             .schema()
-            .nodes[
-              "doc"
-            ].create({}, [this.pmu.schema().nodes["paragraph"].create()]);
+            .nodes["doc"].create({}, [
+              this.pmu.schema().nodes["paragraph"].create(),
+            ]);
           const proseMirrorTreeAfter = this.pmu
             .schema()
             .nodes["doc"].create({}, proseMirrorNodes);

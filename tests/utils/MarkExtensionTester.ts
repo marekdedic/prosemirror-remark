@@ -55,8 +55,7 @@ export class MarkExtensionTester<
     editorInput: string,
     markdownOutput: string,
     proseMirrorContents:
-      | ((schema: Schema<string, string>) => Array<ProseMirrorNode>)
-      | string,
+      ((schema: Schema<string, string>) => Array<ProseMirrorNode>) | string,
   ): this {
     const markName = this.extension.proseMirrorMarkName();
     if (markName === null) {
@@ -151,9 +150,13 @@ export class MarkExtensionTester<
 
           const proseMirrorTreeBefore = this.pmu
             .schema()
-            .nodes[
-              "doc"
-            ].create({}, [this.pmu.schema().nodes["paragraph"].create({}, [this.pmu.schema().text("BEGIN")])]);
+            .nodes["doc"].create({}, [
+              this.pmu
+                .schema()
+                .nodes["paragraph"].create({}, [
+                  this.pmu.schema().text("BEGIN"),
+                ]),
+            ]);
           const proseMirrorTreeAfter = this.pmu
             .schema()
             .nodes["doc"].create({}, proseMirrorNodes);
