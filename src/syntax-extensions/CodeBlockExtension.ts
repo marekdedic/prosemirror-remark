@@ -106,9 +106,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
       group: "block",
       marks: "",
       parseDOM: [{ preserveWhitespace: "full", tag: "pre" }],
-      toDOM(): DOMOutputSpec {
-        return ["pre", ["code", 0]];
-      },
+      toDOM: (): DOMOutputSpec => ["pre", ["code", 0]],
     };
   }
 

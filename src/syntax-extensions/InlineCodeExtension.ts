@@ -47,9 +47,7 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
     return {
       inclusive: false,
       parseDOM: [{ tag: "code" }],
-      toDOM(): DOMOutputSpec {
-        return ["code", 0];
-      },
+      toDOM: (): DOMOutputSpec => ["code", 0],
     };
   }
 

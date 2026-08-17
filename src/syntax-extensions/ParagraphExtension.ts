@@ -21,9 +21,7 @@ export class ParagraphExtension extends NodeExtension<Paragraph> {
       content: "inline*",
       group: "block",
       parseDOM: [{ tag: "p" }],
-      toDOM(): DOMOutputSpec {
-        return ["p", 0];
-      },
+      toDOM: (): DOMOutputSpec => ["p", 0],
     };
   }
 

@@ -37,21 +37,19 @@ export class LinkExtension extends MarkExtension<Link> {
       inclusive: false,
       parseDOM: [
         {
-          getAttrs(dom: Node | string): {
+          getAttrs: (
+            dom: Node | string,
+          ): {
             href: string | null;
             title: string | null;
-          } {
-            return {
-              href: (dom as HTMLElement).getAttribute("href"),
-              title: (dom as HTMLElement).getAttribute("title"),
-            };
-          },
+          } => ({
+            href: (dom as HTMLElement).getAttribute("href"),
+            title: (dom as HTMLElement).getAttribute("title"),
+          }),
           tag: "a[href]",
         },
       ],
-      toDOM(node: Mark): DOMOutputSpec {
-        return ["a", node.attrs, 0];
-      },
+      toDOM: (node: Mark): DOMOutputSpec => ["a", node.attrs, 0],
     };
   }
 

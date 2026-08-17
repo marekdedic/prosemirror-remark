@@ -60,9 +60,7 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
           style: "font-style",
         },
       ],
-      toDOM(): DOMOutputSpec {
-        return ["em", 0];
-      },
+      toDOM: (): DOMOutputSpec => ["em", 0],
     };
   }
 

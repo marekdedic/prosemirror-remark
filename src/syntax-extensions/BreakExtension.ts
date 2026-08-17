@@ -52,9 +52,7 @@ export class BreakExtension extends NodeExtension<Break> {
       inline: true,
       parseDOM: [{ tag: "br" }],
       selectable: false,
-      toDOM(): DOMOutputSpec {
-        return ["br"];
-      },
+      toDOM: (): DOMOutputSpec => ["br"],
     };
   }
 

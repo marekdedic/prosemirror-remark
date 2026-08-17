@@ -59,9 +59,7 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
     return {
       group: "block",
       parseDOM: [{ tag: "hr" }],
-      toDOM(): DOMOutputSpec {
-        return ["div", ["hr"]];
-      },
+      toDOM: (): DOMOutputSpec => ["div", ["hr"]],
     };
   }
 

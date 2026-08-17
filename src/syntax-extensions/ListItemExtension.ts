@@ -40,9 +40,7 @@ export class ListItemExtension extends NodeExtension<ListItem> {
       defining: true,
       group: "list_item",
       parseDOM: [{ tag: "li" }],
-      toDOM(): DOMOutputSpec {
-        return ["li", 0];
-      },
+      toDOM: (): DOMOutputSpec => ["li", 0],
     };
   }
 

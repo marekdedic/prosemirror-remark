@@ -157,7 +157,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       group: "list_item",
       parseDOM: [
         {
-          getAttrs(dom: Node | string): false | { checked: boolean } {
+          getAttrs: (dom: Node | string): false | { checked: boolean } => {
             const checkbox = (dom as HTMLElement).firstChild;
             if (!(checkbox instanceof HTMLInputElement)) {
               return false;
@@ -167,30 +167,28 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
           tag: "li",
         },
       ],
-      toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return [
-          "li",
-          { style: "list-style-type: none;, margin-left: -30px;" },
+      toDOM: (node: ProseMirrorNode): DOMOutputSpec => [
+        "li",
+        { style: "list-style-type: none;, margin-left: -30px;" },
+        [
+          "span",
+          {
+            contenteditable: "false",
+            style: "position: absolute; left: 5px;",
+          },
           [
-            "span",
+            "input",
             {
-              contenteditable: "false",
-              style: "position: absolute; left: 5px;",
+              checked: (node.attrs["checked"] as boolean)
+                ? "checked"
+                : undefined,
+              disabled: "disabled",
+              type: "checkbox",
             },
-            [
-              "input",
-              {
-                checked: (node.attrs["checked"] as boolean)
-                  ? "checked"
-                  : undefined,
-                disabled: "disabled",
-                type: "checkbox",
-              },
-            ],
           ],
-          ["span", { style: "position: relative; left: 30px" }, 0],
-        ];
-      },
+        ],
+        ["span", { style: "position: relative; left: 30px" }, 0],
+      ],
     };
   }
 

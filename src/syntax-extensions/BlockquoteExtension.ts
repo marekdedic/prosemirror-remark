@@ -43,9 +43,7 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
       content: "block+",
       group: "block",
       parseDOM: [{ tag: "blockquote" }],
-      toDOM(): DOMOutputSpec {
-        return ["blockquote", 0];
-      },
+      toDOM: (): DOMOutputSpec => ["blockquote", 0],
     };
   }
 
