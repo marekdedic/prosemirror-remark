@@ -1,5 +1,6 @@
+---
 name: "Dependabot auto-merge"
-on: "pull_request_target"
+"on": "pull_request_target"
 
 permissions:
   pull-requests: write
@@ -18,7 +19,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Enable auto-merge for the request"
-        if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' }}
+        if: >-
+          ${{ steps.metadata.outputs.update-type !=
+          'version-update:semver-major' }}
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
