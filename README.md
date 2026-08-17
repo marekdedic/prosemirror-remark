@@ -2,7 +2,7 @@
 
 [![NPM Version](https://img.shields.io/npm/v/prosemirror-remark?logo=npm)](https://www.npmjs.com/package/prosemirror-remark)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/marekdedic/prosemirror-remark/CI.yml?branch=master&logo=github)](https://github.com/marekdedic/prosemirror-remark/actions/workflows/CI.yml)
-[![Coveralls](https://img.shields.io/coverallsCoverage/github/marekdedic/prosemirror-remark?branch=master&logo=coveralls)](https://coveralls.io/github/marekdedic/prosemirror-remark)
+[![Codecov (with branch)](https://img.shields.io/codecov/c/github/marekdedic/prosemirror-remark/master?logo=codecov)](https://app.codecov.io/gh/marekdedic/prosemirror-remark)
 [![NPM Downloads](https://img.shields.io/npm/dm/prosemirror-remark?logo=npm)](https://www.npmjs.com/package/prosemirror-remark)
 [![NPM License](https://img.shields.io/npm/l/prosemirror-remark)](https://github.com/marekdedic/prosemirror-remark/blob/master/LICENSE)
 
