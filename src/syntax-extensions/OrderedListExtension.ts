@@ -61,7 +61,9 @@ export class OrderedListExtension extends NodeExtension<List> {
       group: "block",
       parseDOM: [
         {
-          getAttrs(dom: Node | string): { spread: boolean; start: number } {
+          getAttrs: (
+            dom: Node | string,
+          ): { spread: boolean; start: number } => {
             const start = (dom as HTMLElement).getAttribute("start");
             return {
               spread:
@@ -72,16 +74,14 @@ export class OrderedListExtension extends NodeExtension<List> {
           tag: "ol",
         },
       ],
-      toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return [
-          "ol",
-          {
-            "data-spread": node.attrs["spread"] as boolean,
-            start: node.attrs["start"] as number,
-          },
-          0,
-        ];
-      },
+      toDOM: (node: ProseMirrorNode): DOMOutputSpec => [
+        "ol",
+        {
+          "data-spread": node.attrs["spread"] as boolean,
+          start: node.attrs["start"] as number,
+        },
+        0,
+      ],
     };
   }
 

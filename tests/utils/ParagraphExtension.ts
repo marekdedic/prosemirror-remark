@@ -24,9 +24,7 @@ export class ParagraphExtension extends NodeExtension<UnistParagraph> {
     return {
       content: "inline*",
       group: "block",
-      toDOM(): DOMOutputSpec {
-        return ["p", 0];
-      },
+      toDOM: (): DOMOutputSpec => ["p", 0],
     };
   }
 

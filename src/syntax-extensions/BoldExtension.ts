@@ -60,9 +60,7 @@ export class BoldExtension extends MarkExtension<Strong> {
           style: "font-weight",
         },
       ],
-      toDOM(): DOMOutputSpec {
-        return ["strong", 0];
-      },
+      toDOM: (): DOMOutputSpec => ["strong", 0],
     };
   }
 

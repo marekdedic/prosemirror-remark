@@ -38,23 +38,21 @@ export class ImageExtension extends NodeExtension<Image> {
       inline: true,
       parseDOM: [
         {
-          getAttrs(dom: Node | string): {
+          getAttrs: (
+            dom: Node | string,
+          ): {
             alt: string | null;
             src: string | null;
             title: string | null;
-          } {
-            return {
-              alt: (dom as HTMLElement).getAttribute("alt"),
-              src: (dom as HTMLElement).getAttribute("src"),
-              title: (dom as HTMLElement).getAttribute("title"),
-            };
-          },
+          } => ({
+            alt: (dom as HTMLElement).getAttribute("alt"),
+            src: (dom as HTMLElement).getAttribute("src"),
+            title: (dom as HTMLElement).getAttribute("title"),
+          }),
           tag: "img[src]",
         },
       ],
-      toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return ["img", node.attrs];
-      },
+      toDOM: (node: ProseMirrorNode): DOMOutputSpec => ["img", node.attrs],
     };
   }
 

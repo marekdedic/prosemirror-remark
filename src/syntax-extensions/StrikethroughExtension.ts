@@ -58,9 +58,7 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
           style: "text-decoration",
         },
       ],
-      toDOM(): DOMOutputSpec {
-        return ["s", 0];
-      },
+      toDOM: (): DOMOutputSpec => ["s", 0],
     };
   }
 

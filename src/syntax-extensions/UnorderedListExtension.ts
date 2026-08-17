@@ -58,18 +58,17 @@ export class UnorderedListExtension extends NodeExtension<List> {
       group: "block",
       parseDOM: [
         {
-          getAttrs(dom: Node | string): { spread: boolean } {
-            return {
-              spread:
-                (dom as HTMLElement).getAttribute("data-spread") === "true",
-            };
-          },
+          getAttrs: (dom: Node | string): { spread: boolean } => ({
+            spread: (dom as HTMLElement).getAttribute("data-spread") === "true",
+          }),
           tag: "ul",
         },
       ],
-      toDOM(node: ProseMirrorNode): DOMOutputSpec {
-        return ["ul", { "data-spread": node.attrs["spread"] as boolean }, 0];
-      },
+      toDOM: (node: ProseMirrorNode): DOMOutputSpec => [
+        "ul",
+        { "data-spread": node.attrs["spread"] as boolean },
+        0,
+      ],
     };
   }
 
