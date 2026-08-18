@@ -297,4 +297,54 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
     "<h4>Hello</h4>",
   )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes["heading"].create({ level: 2 }, [schema.text("Hello")]),
+    ],
+    "start",
+    "{Tab}",
+    { shiftKey: true },
+    (schema) => [
+      schema.nodes["heading"].create({ level: 1 }, [schema.text("Hello")]),
+    ],
+    "# Hello",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes["heading"].create({ level: 1 }, [schema.text("Hello")]),
+    ],
+    "start",
+    "{Tab}",
+    { shiftKey: true },
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+    "Hello",
+  )
+  .shouldSupportKeymap(
+    (schema) => [
+      schema.nodes["heading"].create({ level: 6 }, [schema.text("Hello")]),
+    ],
+    "start",
+    "{Tab}",
+    {},
+    (schema) => [
+      schema.nodes["heading"].create({ level: 6 }, [schema.text("\tHello")]),
+    ],
+    "###### &#x9;Hello",
+  )
+  .shouldReportKeymapApplicability(
+    (schema) => [
+      schema.nodes["heading"].create({ level: 2 }, [schema.text("Hello")]),
+    ],
+    1,
+    "Shift-Tab",
+    true,
+  )
+  .shouldReportKeymapApplicability(
+    (schema) => [
+      schema.nodes["heading"].create({ level: 2 }, [schema.text("Hello")]),
+    ],
+    { from: 2, to: 4 },
+    "#",
+    false,
+  )
   .test();

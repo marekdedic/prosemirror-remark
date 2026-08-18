@@ -7,6 +7,7 @@ import {
   type Node as ProseMirrorNode,
   type Schema,
 } from "prosemirror-model";
+import { EditorState, TextSelection } from "prosemirror-state";
 import {
   type Extension,
   ProseMirrorUnified,
@@ -53,6 +54,13 @@ export class SyntaxExtensionTester<
     source: Array<ProseMirrorNode>;
   }>;
 
+  private readonly keymapApplicabilities: Array<{
+    applicable: boolean;
+    key: string;
+    proseMirrorNodes: Array<ProseMirrorNode>;
+    selection: { from: number; to: number } | number;
+  }>;
+
   private readonly keymapMatches: Array<{
     key: string;
     markdownOutput: string;
@@ -93,6 +101,7 @@ export class SyntaxExtensionTester<
     this.keymapMatches = [];
     this.domParses = [];
     this.domRenders = [];
+    this.keymapApplicabilities = [];
 
     this.pmu = new ProseMirrorUnified([
       new ParserProviderExtension(),
@@ -156,6 +165,23 @@ export class SyntaxExtensionTester<
     return this;
   }
 
+  public shouldReportKeymapApplicability(
+    proseMirrorNodes: (
+      schema: Schema<string, string>,
+    ) => Array<ProseMirrorNode>,
+    selection: { from: number; to: number } | number,
+    key: string,
+    applicable: boolean,
+  ): this {
+    this.keymapApplicabilities.push({
+      applicable,
+      key,
+      proseMirrorNodes: proseMirrorNodes(this.pmu.schema()),
+      selection,
+    });
+    return this;
+  }
+
   public shouldSupportKeymap(
     proseMirrorBefore: (
       schema: Schema<string, string>,
@@ -190,6 +216,7 @@ export class SyntaxExtensionTester<
     this.enqueueKeymapTests();
     this.enqueueDOMParseTests();
     this.enqueueDOMRenderTests();
+    this.enqueueKeymapApplicabilityTests();
   }
 
   private enqueueDOMParseTests(): void {
@@ -231,6 +258,41 @@ export class SyntaxExtensionTester<
 
         expect(container.innerHTML).toBe(html);
       });
+    });
+  }
+
+  private enqueueKeymapApplicabilityTests(): void {
+    if (this.keymapApplicabilities.length === 0) {
+      return;
+    }
+
+    describe("Reports keymap applicability correctly", () => {
+      test.each(this.keymapApplicabilities)(
+        "$selection, $key -> $applicable",
+        ({ applicable, key, proseMirrorNodes, selection }) => {
+          expect.assertions(2);
+
+          const schema = this.pmu.schema();
+          const doc = schema.nodes["doc"].create({}, proseMirrorNodes);
+          const state = EditorState.create({ doc }).apply(
+            EditorState.create({ doc }).tr.setSelection(
+              typeof selection === "number"
+                ? TextSelection.near(doc.resolve(selection))
+                : TextSelection.between(
+                    doc.resolve(selection.from),
+                    doc.resolve(selection.to),
+                  ),
+            ),
+          );
+
+          const command = this.extension.proseMirrorKeymap(schema)[key];
+
+          // A command invoked without a dispatch function must only report
+          // Whether it applies, without modifying the document.
+          expect(command(state)).toBe(applicable);
+          expect(state.doc).toEqualProseMirrorNode(doc);
+        },
+      );
     });
   }
 
