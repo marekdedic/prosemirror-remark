@@ -125,4 +125,28 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
       ]),
     ],
   )
+  // A reference whose definition is missing, while other definitions do exist,
+  // Must be left with no href rather than picking up an unrelated definition.
+  .shouldConvertUnistNode(
+    {
+      children: [{ type: "text", value: "Click me!" }],
+      identifier: "linkId",
+      referenceType: "full",
+      type: "linkReference",
+    },
+    (schema) => [
+      schema.text("Click me!").mark([
+        schema.marks["link"].create({
+          href: null,
+        }),
+      ]),
+    ],
+    [
+      {
+        identifier: "otherId",
+        type: "definition",
+        url: "https://example.test",
+      } as UnistNode,
+    ],
+  )
   .test();

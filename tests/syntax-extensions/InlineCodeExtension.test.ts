@@ -52,4 +52,17 @@ new MarkExtensionTester(new InlineCodeExtension(), {
     ]),
     schema.nodes["paragraph"].create(),
   ])
+  .shouldParseDOM("<p><code>Hello</code></p>", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Hello").mark([schema.mark("code")]),
+    ]),
+  ])
+  .shouldRenderDOM(
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello").mark([schema.mark("code")]),
+      ]),
+    ],
+    "<p><code>Hello</code></p>",
+  )
   .test();

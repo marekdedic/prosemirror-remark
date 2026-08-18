@@ -497,4 +497,101 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
     "1. Hello\n2. World",
   )
+  .shouldParseDOM("<ol><li><p>Hello</p></li></ol>", (schema) => [
+    schema.nodes["ordered_list"].create({ start: 1 }, [
+      schema.nodes["regular_list_item"].create({}, [
+        schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+      ]),
+    ]),
+  ])
+  .shouldParseDOM('<ol start="5"><li><p>Hello</p></li></ol>', (schema) => [
+    schema.nodes["ordered_list"].create({ start: 5 }, [
+      schema.nodes["regular_list_item"].create({}, [
+        schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+      ]),
+    ]),
+  ])
+  .shouldParseDOM(
+    '<ol data-spread="true"><li><p>Hello</p></li></ol>',
+    (schema) => [
+      schema.nodes["ordered_list"].create({ spread: true, start: 1 }, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+      ]),
+    ],
+  )
+  .shouldRenderDOM(
+    (schema) => [
+      schema.nodes["ordered_list"].create({ start: 5 }, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+      ]),
+    ],
+    '<ol data-spread="false" start="5"><li><p>Hello</p></li></ol>',
+  )
+  // A number continuing the preceding list joins it; any other number starts a
+  // New list.
+  .shouldMatchInputRule(
+    "1. a{Enter}{Enter}2. b",
+    (schema) => [
+      schema.nodes["ordered_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("a")]),
+        ]),
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("b")]),
+        ]),
+      ]),
+    ],
+    "1. a\n2. b",
+  )
+  .shouldMatchInputRule(
+    "1. a{Enter}{Enter}7. b",
+    (schema) => [
+      schema.nodes["ordered_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("a")]),
+        ]),
+      ]),
+      schema.nodes["ordered_list"].create({ start: 7 }, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("b")]),
+        ]),
+      ]),
+    ],
+    "1. a\n\n7) b",
+  )
+  .shouldMatchInputRule(
+    "5. a{Enter}{Enter}6. b",
+    (schema) => [
+      schema.nodes["ordered_list"].create({ start: 5 }, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("a")]),
+        ]),
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("b")]),
+        ]),
+      ]),
+    ],
+    "5. a\n6. b",
+  )
+  .shouldMatchInputRule(
+    "1. a{Enter}b{Enter}{Enter}3. c",
+    (schema) => [
+      schema.nodes["ordered_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("a")]),
+        ]),
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("b")]),
+        ]),
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("c")]),
+        ]),
+      ]),
+    ],
+    "1. a\n2. b\n3. c",
+  )
   .test();

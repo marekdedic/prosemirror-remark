@@ -100,4 +100,38 @@ new MarkExtensionTester(new ItalicExtension(), {
     schema.nodes["paragraph"].create(),
   ])
   .shouldNotMatchInputRule("*Test_", "\\*Test\\_")
+  .shouldParseDOM("<p><i>Hello</i></p>", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Hello").mark([schema.mark("em")]),
+    ]),
+  ])
+  .shouldParseDOM("<p><em>Hello</em></p>", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Hello").mark([schema.mark("em")]),
+    ]),
+  ])
+  .shouldParseDOM(
+    '<p><span style="font-style: italic">Hello</span></p>',
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello").mark([schema.mark("em")]),
+      ]),
+    ],
+  )
+  .shouldParseDOM(
+    '<p><span style="font-style: oblique">Hello</span></p>',
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+  )
+  .shouldParseDOM(
+    '<p><span style="font-style: normal">Hello</span></p>',
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+  )
+  .shouldRenderDOM(
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello").mark([schema.mark("em")]),
+      ]),
+    ],
+    "<p><em>Hello</em></p>",
+  )
   .test();

@@ -100,4 +100,32 @@ new NodeExtensionTester(new ImageExtension(), {
       },
     ],
   )
+  .shouldParseDOM('<p><img src="https://example.test/i.png"></p>', (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.nodes["image"].create({ src: "https://example.test/i.png" }),
+    ]),
+  ])
+  .shouldParseDOM(
+    '<p><img src="https://example.test/i.png" alt="Alt" title="Title"></p>',
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.nodes["image"].create({
+          alt: "Alt",
+          src: "https://example.test/i.png",
+          title: "Title",
+        }),
+      ]),
+    ],
+  )
+  .shouldParseDOM('<p><img alt="No source"></p>', (schema) => [
+    schema.nodes["paragraph"].create(),
+  ])
+  .shouldRenderDOM(
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.nodes["image"].create({ src: "https://example.test/i.png" }),
+      ]),
+    ],
+    '<p><img src="https://example.test/i.png"></p>',
+  )
   .test();

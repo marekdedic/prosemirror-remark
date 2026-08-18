@@ -141,4 +141,11 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
       ]),
     ],
   )
+  .shouldParseDOM("<hr>", (schema) => [
+    schema.nodes["horizontal_rule"].create(),
+  ])
+  .shouldRenderDOM(
+    (schema) => [schema.nodes["horizontal_rule"].create()],
+    "<div><hr></div>",
+  )
   .test();

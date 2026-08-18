@@ -131,4 +131,11 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     ],
     "```\nHello\n```\n",
   )
+  .shouldParseDOM("<pre><code>Hello</code></pre>", (schema) => [
+    schema.nodes["code_block"].create({}, [schema.text("Hello")]),
+  ])
+  .shouldRenderDOM(
+    (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
+    "<pre><code>Hello</code></pre>",
+  )
   .test();

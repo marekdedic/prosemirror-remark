@@ -128,4 +128,54 @@ new MarkExtensionTester(new BoldExtension(), {
     ]),
   ])
   .shouldNotMatchInputRule("**Test* *", "\\*\\*Test\\* \\*")
+  .shouldParseDOM("<p><b>Hello</b></p>", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Hello").mark([schema.mark("strong")]),
+    ]),
+  ])
+  .shouldParseDOM("<p><strong>Hello</strong></p>", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Hello").mark([schema.mark("strong")]),
+    ]),
+  ])
+  .shouldParseDOM(
+    '<p><span style="font-weight: bold">Hello</span></p>',
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello").mark([schema.mark("strong")]),
+      ]),
+    ],
+  )
+  .shouldParseDOM(
+    '<p><span style="font-weight: bolder">Hello</span></p>',
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello").mark([schema.mark("strong")]),
+      ]),
+    ],
+  )
+  .shouldParseDOM(
+    '<p><span style="font-weight: 700">Hello</span></p>',
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello").mark([schema.mark("strong")]),
+      ]),
+    ],
+  )
+  .shouldParseDOM(
+    '<p><span style="font-weight: normal">Hello</span></p>',
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+  )
+  .shouldParseDOM(
+    '<p><span style="font-weight: 400">Hello</span></p>',
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+  )
+  .shouldRenderDOM(
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello").mark([schema.mark("strong")]),
+      ]),
+    ],
+    "<p><strong>Hello</strong></p>",
+  )
   .test();

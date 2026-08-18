@@ -99,4 +99,24 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
     },
     (schema) => [schema.nodes["image"].create({ src: "" })],
   )
+  // A reference whose definition is missing, while other definitions do exist,
+  // Must be left with no src rather than picking up an unrelated definition.
+  .shouldConvertUnistNode(
+    {
+      alt: "Awesome image",
+      identifier: "imageId",
+      referenceType: "full",
+      type: "imageReference",
+    },
+    (schema) => [
+      schema.nodes["image"].create({ alt: "Awesome image", src: "" }),
+    ],
+    [
+      {
+        identifier: "otherId",
+        type: "definition",
+        url: "https://example.test",
+      } as UnistNode,
+    ],
+  )
   .test();

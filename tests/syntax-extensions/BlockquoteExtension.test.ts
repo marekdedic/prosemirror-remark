@@ -165,4 +165,17 @@ new NodeExtensionTester(new BlockquoteExtension(), {
     ],
     "> Hello World!",
   )
+  .shouldParseDOM("<blockquote><p>Hello</p></blockquote>", (schema) => [
+    schema.nodes["blockquote"].create({}, [
+      schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+    ]),
+  ])
+  .shouldRenderDOM(
+    (schema) => [
+      schema.nodes["blockquote"].create({}, [
+        schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+      ]),
+    ],
+    "<blockquote><p>Hello</p></blockquote>",
+  )
   .test();
