@@ -29,6 +29,9 @@ export default defineConfig({
   },
   plugins: [dts({ bundleTypes: true })],
   test: {
+    coverage: {
+      exclude: ["tests/**"],
+    },
     environment: "jsdom",
     mockReset: true,
   },
