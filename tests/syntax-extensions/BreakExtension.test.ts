@@ -30,4 +30,21 @@ new NodeExtensionTester(new BreakExtension(), {
     ],
     "He\\\nllo",
   )
+  .shouldParseDOM("<p>Hello<br>World</p>", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Hello"),
+      schema.nodes["hard_break"].create(),
+      schema.text("World"),
+    ]),
+  ])
+  .shouldRenderDOM(
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello"),
+        schema.nodes["hard_break"].create(),
+        schema.text("World"),
+      ]),
+    ],
+    "<p>Hello<br>World</p>",
+  )
   .test();

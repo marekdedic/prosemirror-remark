@@ -453,4 +453,31 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* Hello\n* World",
   )
+  .shouldParseDOM("<ul><li><p>Hello</p></li></ul>", (schema) => [
+    schema.nodes["bullet_list"].create({}, [
+      schema.nodes["regular_list_item"].create({}, [
+        schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+      ]),
+    ]),
+  ])
+  .shouldParseDOM(
+    '<ul data-spread="true"><li><p>Hello</p></li></ul>',
+    (schema) => [
+      schema.nodes["bullet_list"].create({ spread: true }, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+      ]),
+    ],
+  )
+  .shouldRenderDOM(
+    (schema) => [
+      schema.nodes["bullet_list"].create({}, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+      ]),
+    ],
+    '<ul data-spread="false"><li><p>Hello</p></li></ul>',
+  )
   .test();

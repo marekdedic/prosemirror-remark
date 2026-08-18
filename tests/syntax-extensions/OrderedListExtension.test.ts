@@ -497,4 +497,38 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
     "1. Hello\n2. World",
   )
+  .shouldParseDOM("<ol><li><p>Hello</p></li></ol>", (schema) => [
+    schema.nodes["ordered_list"].create({ start: 1 }, [
+      schema.nodes["regular_list_item"].create({}, [
+        schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+      ]),
+    ]),
+  ])
+  .shouldParseDOM('<ol start="5"><li><p>Hello</p></li></ol>', (schema) => [
+    schema.nodes["ordered_list"].create({ start: 5 }, [
+      schema.nodes["regular_list_item"].create({}, [
+        schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+      ]),
+    ]),
+  ])
+  .shouldParseDOM(
+    '<ol data-spread="true"><li><p>Hello</p></li></ol>',
+    (schema) => [
+      schema.nodes["ordered_list"].create({ spread: true, start: 1 }, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+      ]),
+    ],
+  )
+  .shouldRenderDOM(
+    (schema) => [
+      schema.nodes["ordered_list"].create({ start: 5 }, [
+        schema.nodes["regular_list_item"].create({}, [
+          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
+        ]),
+      ]),
+    ],
+    '<ol data-spread="false" start="5"><li><p>Hello</p></li></ol>',
+  )
   .test();

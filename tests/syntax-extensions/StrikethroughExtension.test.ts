@@ -200,4 +200,42 @@ new MarkExtensionTester(new StrikethroughExtension(), {
       schema.text(" ~"),
     ]),
   ])
+  .shouldParseDOM("<p><s>Hello</s></p>", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Hello").mark([schema.mark("strikethrough")]),
+    ]),
+  ])
+  .shouldParseDOM("<p><del>Hello</del></p>", (schema) => [
+    schema.nodes["paragraph"].create({}, [
+      schema.text("Hello").mark([schema.mark("strikethrough")]),
+    ]),
+  ])
+  .shouldParseDOM(
+    '<p><span style="text-decoration: line-through">Hello</span></p>',
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello").mark([schema.mark("strikethrough")]),
+      ]),
+    ],
+  )
+  .shouldParseDOM(
+    '<p><span style="text-decoration: underline line-through">Hello</span></p>',
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello").mark([schema.mark("strikethrough")]),
+      ]),
+    ],
+  )
+  .shouldParseDOM(
+    '<p><span style="text-decoration: underline">Hello</span></p>',
+    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+  )
+  .shouldRenderDOM(
+    (schema) => [
+      schema.nodes["paragraph"].create({}, [
+        schema.text("Hello").mark([schema.mark("strikethrough")]),
+      ]),
+    ],
+    "<p><s>Hello</s></p>",
+  )
   .test();

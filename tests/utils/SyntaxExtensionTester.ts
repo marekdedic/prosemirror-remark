@@ -1,6 +1,12 @@
-import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import type { Node as UnistNode } from "unist";
 
+import {
+  DOMSerializer,
+  Fragment,
+  DOMParser as ProseMirrorDOMParser,
+  type Node as ProseMirrorNode,
+  type Schema,
+} from "prosemirror-model";
 import {
   type Extension,
   ProseMirrorUnified,
@@ -36,6 +42,16 @@ export class SyntaxExtensionTester<
   >;
 
   protected readonly pmu: ProseMirrorUnified;
+
+  private readonly domParses: Array<{
+    html: string;
+    target: Array<ProseMirrorNode>;
+  }>;
+
+  private readonly domRenders: Array<{
+    html: string;
+    source: Array<ProseMirrorNode>;
+  }>;
 
   private readonly keymapMatches: Array<{
     key: string;
@@ -75,6 +91,8 @@ export class SyntaxExtensionTester<
     this.unistNodeConversions = [];
     this.proseMirrorNodeConversions = [];
     this.keymapMatches = [];
+    this.domParses = [];
+    this.domRenders = [];
 
     this.pmu = new ProseMirrorUnified([
       new ParserProviderExtension(),
@@ -122,6 +140,22 @@ export class SyntaxExtensionTester<
     return this;
   }
 
+  public shouldParseDOM(
+    html: string,
+    target: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
+  ): this {
+    this.domParses.push({ html, target: target(this.pmu.schema()) });
+    return this;
+  }
+
+  public shouldRenderDOM(
+    source: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
+    html: string,
+  ): this {
+    this.domRenders.push({ html, source: source(this.pmu.schema()) });
+    return this;
+  }
+
   public shouldSupportKeymap(
     proseMirrorBefore: (
       schema: Schema<string, string>,
@@ -154,6 +188,50 @@ export class SyntaxExtensionTester<
     this.enqueueUnistNodeConversionTests();
     this.enqueueProseMirrorNodeConversionTests();
     this.enqueueKeymapTests();
+    this.enqueueDOMParseTests();
+    this.enqueueDOMRenderTests();
+  }
+
+  private enqueueDOMParseTests(): void {
+    if (this.domParses.length === 0) {
+      return;
+    }
+
+    describe("Parses DOM correctly", () => {
+      test.each(this.domParses)("$html", ({ html, target }) => {
+        expect.assertions(1);
+
+        const container = document.createElement("div");
+        container.innerHTML = html;
+
+        expect(
+          ProseMirrorDOMParser.fromSchema(this.pmu.schema()).parse(container),
+        ).toEqualProseMirrorNode(
+          this.pmu.schema().nodes["doc"].create({}, target),
+        );
+      });
+    });
+  }
+
+  private enqueueDOMRenderTests(): void {
+    if (this.domRenders.length === 0) {
+      return;
+    }
+
+    describe("Renders DOM correctly", () => {
+      test.each(this.domRenders)("$html", ({ html, source }) => {
+        expect.assertions(1);
+
+        const container = document.createElement("div");
+        container.appendChild(
+          DOMSerializer.fromSchema(this.pmu.schema()).serializeFragment(
+            Fragment.from(source),
+          ),
+        );
+
+        expect(container.innerHTML).toBe(html);
+      });
+    });
   }
 
   private enqueueKeymapTests(): void {
