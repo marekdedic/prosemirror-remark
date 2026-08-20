@@ -19,9 +19,6 @@ import {
 import { ParagraphExtension } from "./ParagraphExtension";
 import { TextExtension } from "./TextExtension";
 
-/**
- * @public
- */
 export class HeadingExtension extends NodeExtension<Heading> {
   private static headingLevelCommandBuilder(
     proseMirrorSchema: Schema<string, string>,

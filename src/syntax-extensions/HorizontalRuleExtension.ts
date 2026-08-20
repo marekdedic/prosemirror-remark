@@ -10,9 +10,6 @@ import type { Command } from "prosemirror-state";
 import { InputRule } from "prosemirror-inputrules";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
-/**
- * @public
- */
 export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
   public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,

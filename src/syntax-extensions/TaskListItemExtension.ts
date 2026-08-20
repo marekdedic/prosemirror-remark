@@ -77,9 +77,6 @@ class TaskListItemView implements NodeView {
   }
 }
 
-/**
- * @public
- */
 export class TaskListItemExtension extends NodeExtension<ListItem> {
   private static isAtStart(
     state: EditorState,

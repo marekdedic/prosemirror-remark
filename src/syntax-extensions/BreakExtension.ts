@@ -10,9 +10,6 @@ import type { Command } from "prosemirror-state";
 import { chainCommands, exitCode } from "prosemirror-commands";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
-/**
- * @public
- */
 export class BreakExtension extends NodeExtension<Break> {
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,

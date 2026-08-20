@@ -11,9 +11,6 @@ import type { Command } from "prosemirror-state";
 import { toggleMark } from "prosemirror-commands";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
-/**
- * @public
- */
 export class InlineCodeExtension extends MarkExtension<InlineCode> {
   public override processConvertedUnistNode(convertedNode: Text): InlineCode {
     return { type: this.unistNodeName(), value: convertedNode.value };

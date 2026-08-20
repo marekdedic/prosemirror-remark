@@ -11,9 +11,6 @@ import type { Command } from "prosemirror-state";
 import { toggleMark } from "prosemirror-commands";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
-/**
- * @public
- */
 export class ItalicExtension extends MarkExtension<Emphasis> {
   public override processConvertedUnistNode(
     convertedNode: Strong | Text,

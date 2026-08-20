@@ -8,9 +8,6 @@ import type {
 
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
-/**
- * @public
- */
 export class ParagraphExtension extends NodeExtension<Paragraph> {
   public override proseMirrorNodeName(): string {
     return "paragraph";

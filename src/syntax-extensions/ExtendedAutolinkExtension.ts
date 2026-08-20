@@ -10,9 +10,6 @@ import { Extension } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 
-/**
- * @public
- */
 export class ExtendedAutolinkExtension extends Extension {
   public override unifiedInitializationHook(
     processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,

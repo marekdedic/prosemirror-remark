@@ -11,9 +11,6 @@ import { wrapIn } from "prosemirror-commands";
 import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
-/**
- * @public
- */
 export class BlockquoteExtension extends NodeExtension<Blockquote> {
   public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
