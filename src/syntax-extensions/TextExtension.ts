@@ -7,9 +7,6 @@ import type {
 
 import { NodeExtension } from "prosemirror-unified";
 
-/**
- * @public
- */
 export class TextExtension extends NodeExtension<Text> {
   public override proseMirrorNodeName(): string {
     return "text";

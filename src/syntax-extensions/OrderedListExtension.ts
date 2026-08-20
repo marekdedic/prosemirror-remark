@@ -18,9 +18,6 @@ import {
 
 import { ListItemExtension } from "./ListItemExtension";
 
-/**
- * @public
- */
 export class OrderedListExtension extends NodeExtension<List> {
   public override dependencies(): Array<Extension> {
     return [new ListItemExtension()];

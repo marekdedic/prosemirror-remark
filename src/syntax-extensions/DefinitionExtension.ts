@@ -3,9 +3,6 @@ import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 
 import { NodeExtension } from "prosemirror-unified";
 
-/**
- * @public
- */
 export interface DefinitionExtensionContext {
   definitions: Record<
     string,
@@ -13,9 +10,6 @@ export interface DefinitionExtensionContext {
   >;
 }
 
-/**
- * @public
- */
 export class DefinitionExtension extends NodeExtension<Definition> {
   public override proseMirrorNodeName(): null {
     return null;

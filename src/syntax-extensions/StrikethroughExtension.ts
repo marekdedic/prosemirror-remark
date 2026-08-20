@@ -18,9 +18,6 @@ import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 
-/**
- * @public
- */
 export class StrikethroughExtension extends MarkExtension<Delete> {
   public override processConvertedUnistNode(
     convertedNode: Emphasis | Text,

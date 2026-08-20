@@ -9,16 +9,10 @@ import {
 } from "./DefinitionExtension";
 import { ImageExtension } from "./ImageExtension";
 
-/**
- * @public
- */
 export interface ImageReferenceExtensionContext {
   proseMirrorNodes: Record<string, ProseMirrorNode>;
 }
 
-/**
- * @public
- */
 export class ImageReferenceExtension extends NodeExtension<ImageReference> {
   public override dependencies(): Array<Extension> {
     return [new DefinitionExtension(), new ImageExtension()];

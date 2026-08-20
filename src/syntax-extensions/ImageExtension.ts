@@ -14,9 +14,6 @@ import {
 
 import { ParagraphExtension } from "./ParagraphExtension";
 
-/**
- * @public
- */
 export class ImageExtension extends NodeExtension<Image> {
   public override dependencies(): Array<Extension> {
     return [new ParagraphExtension()];

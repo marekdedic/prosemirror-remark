@@ -5,9 +5,6 @@ import { ExtendedAutolinkExtension } from "./syntax-extensions/ExtendedAutolinkE
 import { StrikethroughExtension } from "./syntax-extensions/StrikethroughExtension";
 import { TaskListItemExtension } from "./syntax-extensions/TaskListItemExtension";
 
-/**
- * @public
- */
 export class GFMExtension extends Extension {
   public override dependencies(): Array<Extension> {
     return [

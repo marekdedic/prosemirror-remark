@@ -9,16 +9,10 @@ import {
 } from "./DefinitionExtension";
 import { LinkExtension } from "./LinkExtension";
 
-/**
- * @public
- */
 export interface LinkReferenceExtensionContext {
   marks: Record<string, Mark>;
 }
 
-/**
- * @public
- */
 export class LinkReferenceExtension extends MarkExtension<LinkReference> {
   public override dependencies(): Array<Extension> {
     return [new DefinitionExtension(), new LinkExtension()];

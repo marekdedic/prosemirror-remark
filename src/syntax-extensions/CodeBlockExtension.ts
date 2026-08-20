@@ -22,9 +22,6 @@ import {
 
 import { TextExtension } from "./TextExtension";
 
-/**
- * @public
- */
 export class CodeBlockExtension extends NodeExtension<Code> {
   private static liftOutOfCodeBlock() {
     return (

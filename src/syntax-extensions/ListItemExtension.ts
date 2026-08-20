@@ -15,9 +15,6 @@ import {
 } from "prosemirror-schema-list";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
-/**
- * @public
- */
 export class ListItemExtension extends NodeExtension<ListItem> {
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,

@@ -7,9 +7,6 @@ import type {
 
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
-/**
- * @public
- */
 export class RootExtension extends NodeExtension<Root> {
   public override proseMirrorNodeName(): string {
     return "doc";
