@@ -40,7 +40,7 @@
   "scripts": {
     "prebuild": "npm run clean",
     "build": "vite build && cp dist/prosemirror-remark.d.ts dist/prosemirror-remark.d.cts",
-    "clean": "rimraf dist/* types/*",
+    "clean": "rimraf dist/*",
     "lint": "run-p -c --aggregate-output lint:*",
     "lint:attw": "attw --pack",
     "lint:eslint": "eslint --color",

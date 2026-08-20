@@ -9,7 +9,6 @@ export default defineConfig({
     lib: {
       entry: "src/index",
       formats: ["es", "cjs"],
-      name: "prosemirror-remark",
     },
     minify: false,
     rollupOptions: {
@@ -25,7 +24,6 @@ export default defineConfig({
         "unified",
       ],
     },
-    sourcemap: true,
   },
   plugins: [dts({ bundleTypes: true })],
   test: {
