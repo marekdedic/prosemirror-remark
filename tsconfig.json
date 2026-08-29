@@ -13,5 +13,6 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
-  }
+  },
+  "exclude": ["dist"]
 }
