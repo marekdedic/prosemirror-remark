@@ -24,6 +24,8 @@ export default defineConfig({
         "unified",
       ],
     },
+    // Matches `unified`, which ships ES2018.
+    target: "es2018",
   },
   plugins: [dts({ bundleTypes: true })],
   test: {
