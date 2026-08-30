@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "bundler",
-    "target": "es2015",
+    "target": "es2018",
 
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
