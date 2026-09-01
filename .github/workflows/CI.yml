@@ -88,7 +88,7 @@ jobs:
 
       - name: "Run tests"
         run: |
-          npm run test-coverage
+          npm test
 
       - name: "Upload coverage results"
         uses: codecov/codecov-action@v7.0.0
