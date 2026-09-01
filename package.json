@@ -46,7 +46,7 @@
     "check:js-compat": "es-check es2018 --module --checkFeatures 'dist/**/*.js' && es-check es2018 --checkFeatures 'dist/**/*.cjs'",
     "clean": "rimraf dist/*",
     "lint": "FORCE_COLOR=1 run-p -c --aggregate-output lint:*",
-    "lint:eslint": "eslint --color",
+    "lint:eslint": "eslint",
     "lint:ts": "FORCE_COLOR=1 run-p -c --aggregate-output lint:ts:*",
     "lint:ts:attw": "attw --pack",
     "lint:ts:typecheck": "tsc --noEmit",
