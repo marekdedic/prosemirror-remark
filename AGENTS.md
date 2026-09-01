@@ -5,7 +5,7 @@ This file provides guidance to coding agents when working with code in this repo
 ## Commands
 
 - `npm run build` — Vite library build (ESM + CJS) plus bundled `.d.ts` via `unplugin-dts`; the `.d.cts` is a copy of the `.d.ts`.
-- `npm run lint` — runs three checks in parallel: `lint:eslint`, `lint:typecheck` (`tsc --noEmit`), `lint:attw` (`attw --pack`, validates the published type entry points). Run individually when debugging one of them.
+- `npm run lint` — runs `lint:eslint` and the `lint:ts` group in parallel: `lint:ts:typecheck` (`tsc --noEmit`) and `lint:ts:attw` (`attw --pack`, validates the published type entry points). Run individually when debugging one of them.
 - `npm test` — Vitest in watch mode. `npm run test-coverage` — single run with v8 coverage (what CI runs).
 - Single test file: `npx vitest run tests/syntax-extensions/BoldExtension.test.ts`. Filter by test name with `-t "<pattern>"`.
 

@@ -44,9 +44,10 @@
     "check:js-compat": "es-check es2018 --module --checkFeatures 'dist/**/*.js' && es-check es2018 --checkFeatures 'dist/**/*.cjs'",
     "clean": "rimraf dist/*",
     "lint": "run-p -c --aggregate-output lint:*",
-    "lint:attw": "attw --pack",
     "lint:eslint": "eslint --color",
-    "lint:typecheck": "tsc --noEmit",
+    "lint:ts": "run-p -c --aggregate-output lint:ts:*",
+    "lint:ts:attw": "attw --pack",
+    "lint:ts:typecheck": "tsc --noEmit",
     "prepack": "npm run build",
     "test": "vitest",
     "test-coverage": "vitest run --coverage"
