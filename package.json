@@ -49,6 +49,7 @@
     "lint:ts:attw": "attw --pack",
     "lint:ts:typecheck": "tsc --noEmit",
     "prepack": "npm run build",
+    "start": "vite build --watch",
     "test": "vitest run --coverage",
     "test-watch": "vitest"
   },
