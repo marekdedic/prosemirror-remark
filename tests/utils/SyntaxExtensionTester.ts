@@ -20,10 +20,10 @@ import {
   type TesterSelection,
 } from "vitest-prosemirror";
 
-import { ParagraphExtension } from "./ParagraphExtension";
+import { ParagraphExtension } from "../../src/syntax-extensions/ParagraphExtension";
+import { RootExtension } from "../../src/syntax-extensions/RootExtension";
+import { TextExtension } from "../../src/syntax-extensions/TextExtension";
 import { ParserProviderExtension } from "./ParserProviderExtension";
-import { RootExtension } from "./RootExtension";
-import { TextExtension } from "./TextExtension";
 
 export interface SyntaxExtensionTesterConfig {
   otherExtensionsInTest?: Array<Extension>;

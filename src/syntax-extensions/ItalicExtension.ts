@@ -23,11 +23,11 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
   ): Array<InputRule> {
     return [
       new MarkInputRule(
-        /(?<!\*)\*([^\s*](?:.*[^\s])?)\*([^*])$/u,
+        /(?<!\*)\*(?<content>[^\s*](?:.*[^\s])?)\*(?<trailing>[^*])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
       new MarkInputRule(
-        /(?<!_)_([^\s_](?:.*[^\s])?)_([^_])$/u,
+        /(?<!_)_(?<content>[^\s_](?:.*[^\s])?)_(?<trailing>[^_])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
     ];
