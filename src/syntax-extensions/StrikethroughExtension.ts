@@ -30,11 +30,11 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
   ): Array<InputRule> {
     return [
       new MarkInputRule(
-        /~([^\s](?:.*[^\s~])?)~([^~])$/u,
+        /~(?<content>[^\s](?:.*[^\s~])?)~(?<trailing>[^~])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
       new MarkInputRule(
-        /~~([^\s](?:.*[^\s])?)~~([\s\S])$/u,
+        /~~(?<content>[^\s](?:.*[^\s])?)~~(?<trailing>[\s\S])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
     ];
