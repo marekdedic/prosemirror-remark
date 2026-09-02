@@ -2,11 +2,11 @@ import { ProseMirrorUnified } from "prosemirror-unified";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { BreakExtension } from "../../src/syntax-extensions/BreakExtension";
+import { ParagraphExtension } from "../../src/syntax-extensions/ParagraphExtension";
+import { RootExtension } from "../../src/syntax-extensions/RootExtension";
+import { TextExtension } from "../../src/syntax-extensions/TextExtension";
 import { NodeExtensionTester } from "../utils/NodeExtensionTester";
-import { ParagraphExtension } from "../utils/ParagraphExtension";
 import { ParserProviderExtension } from "../utils/ParserProviderExtension";
-import { RootExtension } from "../utils/RootExtension";
-import { TextExtension } from "../utils/TextExtension";
 
 /*
  * The Ctrl-Enter binding depends on a global, so it can't be expressed through
