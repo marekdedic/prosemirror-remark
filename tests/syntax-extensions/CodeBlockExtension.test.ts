@@ -67,8 +67,7 @@ new NodeExtensionTester(new CodeBlockExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
     3,
-    "\\",
-    { ctrlKey: true, shiftKey: true },
+    "{Mod-Shift-\\}",
     (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
     "```\nHello\n```",
   )
@@ -78,8 +77,7 @@ new NodeExtensionTester(new CodeBlockExtension(), {
       schema.nodes["paragraph"].create({}, [schema.text("World")]),
     ],
     3,
-    "\\",
-    { ctrlKey: true, shiftKey: true },
+    "{Mod-Shift-\\}",
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hello")]),
       schema.nodes["paragraph"].create({}, [schema.text("World")]),
@@ -90,7 +88,6 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
     4,
     "{Enter}",
-    {},
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hel\nlo")]),
     ],
@@ -100,7 +97,6 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
     6,
     "{Enter}",
-    {},
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hello\n")]),
     ],
@@ -112,7 +108,6 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     ],
     6,
     "{Enter}",
-    {},
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hello\n\n")]),
     ],
@@ -124,7 +119,6 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     ],
     8,
     "{Enter}",
-    {},
     (schema) => [
       schema.nodes["code_block"].create({}, [schema.text("Hello")]),
       schema.nodes["paragraph"].create({}, []),

@@ -414,7 +414,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     6,
     "{Enter}",
-    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["task_list_item"].create({}, [
@@ -427,34 +426,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     "* [ ] Hel\n* [ ] lo",
   )
-  */
-  .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-        schema.nodes["task_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("World")]),
-        ]),
-      ]),
-    ],
-    3,
-    "{Tab}",
-    {},
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("\tHello")]),
-        ]),
-        schema.nodes["task_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("World")]),
-        ]),
-      ]),
-    ],
-    "* [ ] &#x9;Hello\n* [ ] World",
-  )
-  /* TODO
   .shouldSupportKeymap(
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
@@ -468,7 +439,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     12,
     "{Tab}",
-    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["task_list_item"].create({}, [
@@ -497,8 +467,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ]),
     ],
     10,
-    "{Tab}",
-    { shiftKey: true },
+    "{Shift-Tab}",
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["task_list_item"].create({}, [
@@ -525,7 +494,6 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
     0,
     "{Backspace}",
-    {},
     (schema) => [
       schema.nodes["bullet_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [

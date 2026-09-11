@@ -96,8 +96,7 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create()],
     "start",
-    ">",
-    { ctrlKey: true },
+    "{Mod->}",
     (schema) => [
       schema.nodes["blockquote"].create({}, [
         schema.nodes["paragraph"].create(),
@@ -108,8 +107,7 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcd")])],
     3,
-    ">",
-    { ctrlKey: true },
+    "{Mod->}",
     (schema) => [
       schema.nodes["blockquote"].create({}, [
         schema.nodes["paragraph"].create({}, [schema.text("abcd")]),
@@ -119,9 +117,8 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcd")])],
-    { from: 1, to: 3 },
-    ">",
-    { ctrlKey: true },
+    { anchor: 1, head: 3 },
+    "{Mod->}",
     (schema) => [
       schema.nodes["blockquote"].create({}, [
         schema.nodes["paragraph"].create({}, [schema.text("abcd")]),
