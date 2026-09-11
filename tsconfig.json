@@ -3,6 +3,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "es2018",
+    "skipLibCheck": true,
 
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
