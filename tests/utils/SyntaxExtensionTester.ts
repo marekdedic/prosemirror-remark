@@ -14,7 +14,7 @@ import {
   type SyntaxExtension,
 } from "prosemirror-unified";
 import { describe, expect, test, vi } from "vitest";
-import { ProseMirrorTester, type TesterSelection } from "vitest-prosemirror";
+import { renderProseMirror, type TesterSelection } from "vitest-prosemirror";
 
 import { ParagraphExtension } from "../../src/syntax-extensions/ParagraphExtension";
 import { RootExtension } from "../../src/syntax-extensions/RootExtension";
@@ -315,11 +315,13 @@ export class SyntaxExtensionTester<
 
           // eslint-disable-next-line @typescript-eslint/no-empty-function -- Empty mock function
           vi.spyOn(console, "warn").mockImplementation(() => {});
-          const testEditor = new ProseMirrorTester(proseMirrorTreeBefore, {
-            plugins: [this.pmu.keymapPlugin()],
+          const testEditor = renderProseMirror(proseMirrorTreeBefore, {
+            editorProps: {
+              plugins: [this.pmu.keymapPlugin()],
+            },
           });
-          testEditor.selectText(selection);
-          testEditor.insertText(key);
+          testEditor.setSelection(selection);
+          testEditor.type(key);
           expect(testEditor.doc).toEqualProseMirrorNode(proseMirrorTreeAfter);
           expect(this.pmu.serialize(testEditor.doc).replace(/\n$/gu, "")).toBe(
             markdownOutput,

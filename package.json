@@ -105,7 +105,7 @@
     "unplugin-dts": "^1.0.1",
     "vite": "^8.0.3",
     "vitest": "^5.0.0",
-    "vitest-prosemirror": "^0.4"
+    "vitest-prosemirror": "^1.1.0"
   },
   "peerDependencies": {
     "prosemirror-model": "^1.19.3",

@@ -3,7 +3,7 @@ import type { NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import { describe, expect, test, vi } from "vitest";
-import { ProseMirrorTester } from "vitest-prosemirror";
+import { renderProseMirror } from "vitest-prosemirror";
 
 import {
   SyntaxExtensionTester,
@@ -146,11 +146,13 @@ export class NodeExtensionTester<
 
           // eslint-disable-next-line @typescript-eslint/no-empty-function -- Empty mock function
           vi.spyOn(console, "warn").mockImplementation(() => {});
-          const testEditor = new ProseMirrorTester(proseMirrorTreeBefore, {
-            plugins: [this.pmu.inputRulesPlugin(), this.pmu.keymapPlugin()],
+          const testEditor = renderProseMirror(proseMirrorTreeBefore, {
+            editorProps: {
+              plugins: [this.pmu.inputRulesPlugin(), this.pmu.keymapPlugin()],
+            },
           });
-          testEditor.selectText("end");
-          testEditor.insertText(editorInput);
+          testEditor.setSelection("end");
+          testEditor.type(editorInput);
           expect(testEditor.doc).toEqualProseMirrorNode(proseMirrorTreeAfter);
           expect(this.pmu.serialize(testEditor.doc)).toBe(
             `${markdownOutput}\n`,
