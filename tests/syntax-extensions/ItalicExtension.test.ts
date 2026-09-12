@@ -43,16 +43,14 @@ new MarkExtensionTester(new ItalicExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create()],
     "start",
-    "i",
-    { ctrlKey: true },
+    "{Mod-i}",
     (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
-    { from: 3, to: 5 },
-    "i",
-    { ctrlKey: true },
+    { anchor: 3, head: 5 },
+    "{Mod-i}",
     (schema) => [
       schema.nodes["paragraph"].create({}, [
         schema.text("ab"),
@@ -65,16 +63,14 @@ new MarkExtensionTester(new ItalicExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create()],
     "start",
-    "I",
-    { ctrlKey: true },
+    "{Mod-I}",
     (schema) => [schema.nodes["paragraph"].create()],
     "",
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
-    { from: 3, to: 5 },
-    "I",
-    { ctrlKey: true },
+    { anchor: 3, head: 5 },
+    "{Mod-I}",
     (schema) => [
       schema.nodes["paragraph"].create({}, [
         schema.text("ab"),

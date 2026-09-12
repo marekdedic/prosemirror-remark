@@ -24,16 +24,14 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   .shouldSupportKeymap(
     () => [],
     "start",
-    "_",
-    { ctrlKey: true },
+    "{Mod-_}",
     (schema) => [schema.nodes["horizontal_rule"].create()],
     "---",
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
     4,
-    "_",
-    { ctrlKey: true },
+    "{Mod-_}",
     (schema) => [
       schema.nodes["paragraph"].create({}, [schema.text("abc")]),
       schema.nodes["horizontal_rule"].create(),
@@ -43,9 +41,8 @@ new NodeExtensionTester(new HorizontalRuleExtension(), {
   )
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
-    { from: 3, to: 5 },
-    "_",
-    { ctrlKey: true },
+    { anchor: 3, head: 5 },
+    "{Mod-_}",
     (schema) => [
       schema.nodes["paragraph"].create({}, [schema.text("ab")]),
       schema.nodes["horizontal_rule"].create(),

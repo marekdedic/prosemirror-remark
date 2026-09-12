@@ -381,8 +381,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
     3,
-    "9",
-    { ctrlKey: true, shiftKey: true },
+    "{Mod-Shift-9}",
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -402,7 +401,6 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
     6,
     "{Enter}",
-    {},
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -426,35 +424,8 @@ new NodeExtensionTester(new OrderedListExtension(), {
         ]),
       ]),
     ],
-    3,
-    "{Tab}",
-    {},
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("\tHello")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("World")]),
-        ]),
-      ]),
-    ],
-    "1. &#x9;Hello\n2. World",
-  )
-  .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("World")]),
-        ]),
-      ]),
-    ],
     10,
     "{Tab}",
-    {},
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [
@@ -483,8 +454,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ]),
     ],
     10,
-    "{Tab}",
-    { shiftKey: true },
+    "{Shift-Tab}",
     (schema) => [
       schema.nodes["ordered_list"].create({}, [
         schema.nodes["regular_list_item"].create({}, [

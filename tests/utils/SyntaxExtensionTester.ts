@@ -14,11 +14,7 @@ import {
   type SyntaxExtension,
 } from "prosemirror-unified";
 import { describe, expect, test, vi } from "vitest";
-import {
-  type KeyboardModifiers,
-  ProseMirrorTester,
-  type TesterSelection,
-} from "vitest-prosemirror";
+import { ProseMirrorTester, type TesterSelection } from "vitest-prosemirror";
 
 import { ParagraphExtension } from "../../src/syntax-extensions/ParagraphExtension";
 import { RootExtension } from "../../src/syntax-extensions/RootExtension";
@@ -64,7 +60,6 @@ export class SyntaxExtensionTester<
   private readonly keymapMatches: Array<{
     key: string;
     markdownOutput: string;
-    modifiers: KeyboardModifiers;
     proseMirrorAfter: Array<ProseMirrorNode>;
     proseMirrorBefore: Array<ProseMirrorNode>;
     selection: TesterSelection;
@@ -188,7 +183,6 @@ export class SyntaxExtensionTester<
     ) => Array<ProseMirrorNode>,
     selection: TesterSelection,
     key: string,
-    modifiers: KeyboardModifiers,
     proseMirrorAfter: (
       schema: Schema<string, string>,
     ) => Array<ProseMirrorNode>,
@@ -197,7 +191,6 @@ export class SyntaxExtensionTester<
     this.keymapMatches.push({
       key,
       markdownOutput,
-      modifiers,
       proseMirrorAfter: proseMirrorAfter(this.pmu.schema()),
       proseMirrorBefore: proseMirrorBefore(this.pmu.schema()),
       selection,
@@ -307,7 +300,6 @@ export class SyntaxExtensionTester<
         ({
           key,
           markdownOutput,
-          modifiers,
           proseMirrorAfter,
           proseMirrorBefore,
           selection,
@@ -327,7 +319,7 @@ export class SyntaxExtensionTester<
             plugins: [this.pmu.keymapPlugin()],
           });
           testEditor.selectText(selection);
-          testEditor.insertText(key, modifiers);
+          testEditor.insertText(key);
           expect(testEditor.doc).toEqualProseMirrorNode(proseMirrorTreeAfter);
           expect(this.pmu.serialize(testEditor.doc).replace(/\n$/gu, "")).toBe(
             markdownOutput,

@@ -83,8 +83,7 @@ new NodeExtensionTester(new BreakExtension(), {
   .shouldSupportKeymap(
     (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
     3,
-    "{Enter}",
-    { ctrlKey: true },
+    "{Mod-Enter}",
     (schema) => [
       schema.nodes["paragraph"].create({}, [
         schema.text("He"),
