@@ -26,11 +26,7 @@ new NodeExtensionTester(new BlockquoteExtension(), {
       ],
       type: "blockquote",
     },
-    (schema) => [
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-      ]),
-    ],
+    (b) => [b.blockquote(b.p("Hello World!"))],
   )
   .shouldConvertUnistNode(
     {
@@ -46,19 +42,11 @@ new NodeExtensionTester(new BlockquoteExtension(), {
       ],
       type: "blockquote",
     },
-    (schema) => [
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        schema.nodes["paragraph"].create({}, [schema.text("Second paragraph")]),
-      ]),
-    ],
+    (b) => [b.blockquote(b.p("Hello World!"), b.p("Second paragraph"))],
   )
-  .shouldMatchProseMirrorNode((schema) => schema.nodes["blockquote"].create())
+  .shouldMatchProseMirrorNode((b) => b.blockquote())
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-      ]),
+    (b) => b.blockquote(b.p("Hello World!")),
     [
       {
         children: [
@@ -72,11 +60,7 @@ new NodeExtensionTester(new BlockquoteExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        schema.nodes["paragraph"].create({}, [schema.text("Second paragraph")]),
-      ]),
+    (b) => b.blockquote(b.p("Hello World!"), b.p("Second paragraph")),
     [
       {
         children: [
@@ -132,51 +116,29 @@ new NodeExtensionTester(new BlockquoteExtension(), {
   */
   .shouldMatchInputRule(
     "> Hello World!",
-    (schema) => [
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-      ]),
-    ],
+    (b) => [b.blockquote(b.p("Hello World!"))],
     "> Hello World!",
   )
   .shouldMatchInputRule(
     " > Hello World!",
-    (schema) => [
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-      ]),
-    ],
+    (b) => [b.blockquote(b.p("Hello World!"))],
     "> Hello World!",
   )
   .shouldMatchInputRule(
     "  > Hello World!",
-    (schema) => [
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-      ]),
-    ],
+    (b) => [b.blockquote(b.p("Hello World!"))],
     "> Hello World!",
   )
   .shouldMatchInputRule(
     "   > Hello World!",
-    (schema) => [
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-      ]),
-    ],
+    (b) => [b.blockquote(b.p("Hello World!"))],
     "> Hello World!",
   )
-  .shouldParseDOM("<blockquote><p>Hello</p></blockquote>", (schema) => [
-    schema.nodes["blockquote"].create({}, [
-      schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-    ]),
+  .shouldParseDOM("<blockquote><p>Hello</p></blockquote>", (b) => [
+    b.blockquote(b.p("Hello")),
   ])
   .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-      ]),
-    ],
+    (b) => [b.blockquote(b.p("Hello"))],
     "<blockquote><p>Hello</p></blockquote>",
   )
   .test();

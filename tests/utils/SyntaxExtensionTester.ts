@@ -1,13 +1,19 @@
 import type { Node as UnistNode } from "unist";
 
 import {
+  type Attrs,
   DOMSerializer,
   Fragment,
   DOMParser as ProseMirrorDOMParser,
-  type Node as ProseMirrorNode,
+  Node as ProseMirrorNode,
   type Schema,
 } from "prosemirror-model";
 import { EditorState, TextSelection } from "prosemirror-state";
+import {
+  builders,
+  type MarkBuilder,
+  type NodeBuilder,
+} from "prosemirror-test-builder";
 import {
   type Extension,
   ProseMirrorUnified,
@@ -21,10 +27,48 @@ import { RootExtension } from "../../src/syntax-extensions/RootExtension";
 import { TextExtension } from "../../src/syntax-extensions/TextExtension";
 import { ParserProviderExtension } from "./ParserProviderExtension";
 
+export type Builder = (
+  attrsOrFirstChild?: Attrs | BuiltNode,
+  ...children: Array<BuiltNode>
+) => BuiltNode;
+
+export type BuilderName =
+  | "blockquote"
+  | "br"
+  | "bullet_list"
+  | "code_block"
+  | "code"
+  | "doc"
+  | "em"
+  | "hard_break"
+  | "heading"
+  | "horizontal_rule"
+  | "hr"
+  | "image"
+  | "img"
+  | "li"
+  | "link"
+  | "ol"
+  | "ordered_list"
+  | "p"
+  | "paragraph"
+  | "regular_list_item"
+  | "strikethrough"
+  | "strong"
+  | "task_list_item"
+  | "taskListItem"
+  | "ul";
+
+export type BuiltNode = ReturnType<MarkBuilder> | ReturnType<NodeBuilder>;
+
 export interface SyntaxExtensionTesterConfig {
   otherExtensionsInTest?: Array<Extension>;
   unistNodeName: string;
 }
+
+export type TestBuilders = Record<BuilderName, Builder> & {
+  schema: Schema<string, string>;
+};
 
 export class SyntaxExtensionTester<
   UNode extends UnistNode,
@@ -33,6 +77,8 @@ export class SyntaxExtensionTester<
     never
   >,
 > {
+  protected readonly builders: TestBuilders;
+
   protected readonly extension: SyntaxExtension<
     UNode,
     UnistToProseMirrorContext
@@ -106,15 +152,26 @@ export class SyntaxExtensionTester<
       ...(config.otherExtensionsInTest ?? []),
       this.extension,
     ]);
+
+    this.builders = builders(this.pmu.schema(), {
+      br: { nodeType: "hard_break" },
+      hr: { nodeType: "horizontal_rule" },
+      img: { nodeType: "image" },
+      li: { nodeType: "regular_list_item" },
+      ol: { nodeType: "ordered_list" },
+      p: { nodeType: "paragraph" },
+      taskListItem: { nodeType: "task_list_item" },
+      ul: { nodeType: "bullet_list" },
+    }) as unknown as TestBuilders;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Generic fixes error with unknown properties
   public shouldConvertProseMirrorNode<TNode extends UnistNode>(
-    source: (schema: Schema<string, string>) => ProseMirrorNode,
+    source: (builders: TestBuilders) => BuiltNode,
     target: Array<TNode>,
   ): this {
     this.proseMirrorNodeConversions.push({
-      source: source(this.pmu.schema()),
+      source: this.resolveNodes(source(this.builders))[0],
       target,
     });
     return this;
@@ -123,13 +180,13 @@ export class SyntaxExtensionTester<
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Generic fixes error with unknown properties
   public shouldConvertUnistNode<SNode extends UnistNode>(
     source: SNode,
-    target: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
+    target: (builders: TestBuilders) => Array<BuiltNode>,
     injectNodes: Array<UnistNode> = [],
   ): this {
     this.unistNodeConversions.push({
       injectNodes,
       source,
-      target: target(this.pmu.schema()),
+      target: this.resolveNodes(target(this.builders)),
     });
     return this;
   }
@@ -146,24 +203,28 @@ export class SyntaxExtensionTester<
 
   public shouldParseDOM(
     html: string,
-    target: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
+    target: (builders: TestBuilders) => Array<BuiltNode>,
   ): this {
-    this.domParses.push({ html, target: target(this.pmu.schema()) });
+    this.domParses.push({
+      html,
+      target: this.resolveNodes(target(this.builders)),
+    });
     return this;
   }
 
   public shouldRenderDOM(
-    source: (schema: Schema<string, string>) => Array<ProseMirrorNode>,
+    source: (builders: TestBuilders) => Array<BuiltNode>,
     html: string,
   ): this {
-    this.domRenders.push({ html, source: source(this.pmu.schema()) });
+    this.domRenders.push({
+      html,
+      source: this.resolveNodes(source(this.builders)),
+    });
     return this;
   }
 
   public shouldReportKeymapApplicability(
-    proseMirrorNodes: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
+    proseMirrorNodes: (builders: TestBuilders) => Array<BuiltNode>,
     selection: { from: number; to: number } | number,
     key: string,
     applicable: boolean,
@@ -171,28 +232,24 @@ export class SyntaxExtensionTester<
     this.keymapApplicabilities.push({
       applicable,
       key,
-      proseMirrorNodes: proseMirrorNodes(this.pmu.schema()),
+      proseMirrorNodes: this.resolveNodes(proseMirrorNodes(this.builders)),
       selection,
     });
     return this;
   }
 
   public shouldSupportKeymap(
-    proseMirrorBefore: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
+    proseMirrorBefore: (builders: TestBuilders) => Array<BuiltNode>,
     selection: TesterSelection,
     key: string,
-    proseMirrorAfter: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
+    proseMirrorAfter: (builders: TestBuilders) => Array<BuiltNode>,
     markdownOutput: string,
   ): this {
     this.keymapMatches.push({
       key,
       markdownOutput,
-      proseMirrorAfter: proseMirrorAfter(this.pmu.schema()),
-      proseMirrorBefore: proseMirrorBefore(this.pmu.schema()),
+      proseMirrorAfter: this.resolveNodes(proseMirrorAfter(this.builders)),
+      proseMirrorBefore: this.resolveNodes(proseMirrorBefore(this.builders)),
       selection,
     });
     return this;
@@ -210,6 +267,26 @@ export class SyntaxExtensionTester<
     this.enqueueDOMParseTests();
     this.enqueueDOMRenderTests();
     this.enqueueKeymapApplicabilityTests();
+  }
+
+  /**
+   * Flattens the output of one or more builder calls into ProseMirror nodes.
+   * `NodeBuilder`s already yield nodes; `MarkBuilder`s yield `{ flat }` child
+   * specs (or, for tag-only input, a bare string that becomes a text node).
+   */
+  protected resolveNodes(
+    spec: Array<BuiltNode> | BuiltNode,
+  ): Array<ProseMirrorNode> {
+    const specs = Array.isArray(spec) ? spec : [spec];
+    return specs.flatMap((entry) => {
+      if (typeof entry === "string") {
+        return [this.pmu.schema().text(entry)];
+      }
+      if (entry instanceof ProseMirrorNode) {
+        return [entry];
+      }
+      return [...entry.flat];
+    });
   }
 
   private enqueueDOMParseTests(): void {

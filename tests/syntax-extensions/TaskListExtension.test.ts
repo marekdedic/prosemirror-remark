@@ -58,13 +58,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -73,13 +67,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       spread: true,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({ spread: true }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul({ spread: true }, b.li(b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -87,13 +75,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({ checked: false }, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.taskListItem({ checked: false }, b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -101,13 +83,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({ checked: true }, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.taskListItem({ checked: true }, b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -115,13 +91,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({ spread: true }, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li({ spread: true }, b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -139,13 +109,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello World!")))],
   )
   .shouldConvertUnistNode(
     {
@@ -164,13 +128,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({ checked: false }, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.taskListItem({ checked: false }, b.p("Hello World!")))],
   )
   .shouldConvertUnistNode(
     {
@@ -189,59 +147,22 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({ checked: true }, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.taskListItem({ checked: true }, b.p("Hello World!")))],
   )
-  .shouldMatchProseMirrorNode((schema) => schema.nodes["bullet_list"].create())
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({ spread: true }),
+  .shouldMatchProseMirrorNode((b) => b.ul())
+  .shouldMatchProseMirrorNode((b) => b.ul({ spread: true }))
+  .shouldMatchProseMirrorNode((b) => b.ul(b.li()))
+  .shouldMatchProseMirrorNode((b) => b.ul(b.li({ spread: true })))
+  .shouldMatchProseMirrorNode((b) => b.ul(b.taskListItem({ checked: false })))
+  .shouldMatchProseMirrorNode((b) => b.ul(b.taskListItem({ checked: true })))
+  .shouldMatchProseMirrorNode((b) =>
+    b.ul(b.taskListItem({ checked: false }, b.p("Hello World!"))),
   )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({}, [
-      schema.nodes["regular_list_item"].create(),
-    ]),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({}, [
-      schema.nodes["regular_list_item"].create({ spread: true }),
-    ]),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({}, [
-      schema.nodes["task_list_item"].create({ checked: false }),
-    ]),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({}, [
-      schema.nodes["task_list_item"].create({ checked: true }),
-    ]),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({}, [
-      schema.nodes["task_list_item"].create({ checked: false }, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-      ]),
-    ]),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({}, [
-      schema.nodes["task_list_item"].create({ checked: true }, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-      ]),
-    ]),
+  .shouldMatchProseMirrorNode((b) =>
+    b.ul(b.taskListItem({ checked: true }, b.p("Hello World!"))),
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ul(b.li(b.p())),
     [
       {
         children: [
@@ -258,12 +179,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ul(b.li(b.p())),
     [
       {
         children: [
@@ -280,12 +196,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ul(b.taskListItem(b.p())),
     [
       {
         children: [
@@ -303,12 +214,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({ checked: false }, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ul(b.taskListItem({ checked: false }, b.p())),
     [
       {
         children: [
@@ -326,12 +232,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({ checked: true }, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ul(b.taskListItem({ checked: true }, b.p())),
     [
       {
         children: [
@@ -349,16 +250,17 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({ spread: true }, [
-        schema.nodes["task_list_item"].create(
+    (b) =>
+      b.ul(
+        { spread: true },
+        b.taskListItem(
           {
             checked: true,
             spread: true,
           },
-          [schema.nodes["paragraph"].create()],
+          b.p(),
         ),
-      ]),
+      ),
     [
       {
         children: [
@@ -376,12 +278,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({ checked: true }, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
+    (b) => b.ul(b.taskListItem({ checked: true }, b.p("Hello World!"))),
     [
       {
         children: [
@@ -482,28 +379,10 @@ new NodeExtensionTester(new UnorderedListExtension(), {
   )
   */
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["task_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-        schema.nodes["task_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("World")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.taskListItem(b.p("Hello")), b.taskListItem(b.p("World")))],
     0,
     "{Backspace}",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-        schema.nodes["task_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("World")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello")), b.taskListItem(b.p("World")))],
     "* Hello\n* [ ] World",
   )
   .test();

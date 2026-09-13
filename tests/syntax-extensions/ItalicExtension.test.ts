@@ -14,16 +14,14 @@ new MarkExtensionTester(new ItalicExtension(), {
       children: [{ type: "text", value: "Hello World!" }],
       type: "emphasis",
     },
-    (schema) => [
-      schema.text("Hello World!").mark([schema.marks["em"].create()]),
-    ],
+    (b) => [b.em("Hello World!")],
   )
-  .shouldMatchProseMirrorMark((schema) => schema.mark("em"))
+  .shouldMatchProseMirrorMark((b) => b.schema.mark("em"))
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema
+    (b) =>
+      b.schema
         .text("Hello World!")
-        .mark([schema.mark("em"), schema.mark("strong")]),
+        .mark([b.schema.mark("em"), b.schema.mark("strong")]),
     [
       {
         children: [
@@ -37,97 +35,62 @@ new MarkExtensionTester(new ItalicExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) => schema.text("Hello World!").mark([schema.mark("em")]),
+    (b) => b.em("Hello World!"),
     [{ children: [{ type: "text", value: "Hello World!" }], type: "emphasis" }],
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create()],
+    (b) => [b.p()],
     "start",
     "{Mod-i}",
-    (schema) => [schema.nodes["paragraph"].create()],
+    (b) => [b.p()],
     "",
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
+    (b) => [b.p("abcdef")],
     { anchor: 3, head: 5 },
     "{Mod-i}",
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("ab"),
-        schema.text("cd").mark([schema.mark("em")]),
-        schema.text("ef"),
-      ]),
-    ],
+    (b) => [b.p("ab", b.em("cd"), "ef")],
     "ab*cd*ef",
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create()],
+    (b) => [b.p()],
     "start",
     "{Mod-I}",
-    (schema) => [schema.nodes["paragraph"].create()],
+    (b) => [b.p()],
     "",
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
+    (b) => [b.p("abcdef")],
     { anchor: 3, head: 5 },
     "{Mod-I}",
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("ab"),
-        schema.text("cd").mark([schema.mark("em")]),
-        schema.text("ef"),
-      ]),
-    ],
+    (b) => [b.p("ab", b.em("cd"), "ef")],
     "ab*cd*ef",
   )
   .shouldMatchInputRule("*Test*", "*Test*", "Test")
   .shouldMatchInputRule("_Test_", "*Test*", "Test")
   .shouldMatchInputRule("*Hello World*", "*Hello World*", "Hello World")
-  .shouldMatchInputRule("*Test*{Enter}", "*Test*\n\n", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Test").mark([schema.mark("em")]),
-    ]),
-    schema.nodes["paragraph"].create(),
+  .shouldMatchInputRule("*Test*{Enter}", "*Test*\n\n", (b) => [
+    b.p(b.em("Test")),
+    b.p(),
   ])
-  .shouldMatchInputRule("_Test_{Enter}", "*Test*\n\n", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Test").mark([schema.mark("em")]),
-    ]),
-    schema.nodes["paragraph"].create(),
+  .shouldMatchInputRule("_Test_{Enter}", "*Test*\n\n", (b) => [
+    b.p(b.em("Test")),
+    b.p(),
   ])
   .shouldNotMatchInputRule("*Test_", "\\*Test\\_")
-  .shouldParseDOM("<p><i>Hello</i></p>", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Hello").mark([schema.mark("em")]),
-    ]),
-  ])
-  .shouldParseDOM("<p><em>Hello</em></p>", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Hello").mark([schema.mark("em")]),
-    ]),
-  ])
+  .shouldParseDOM("<p><i>Hello</i></p>", (b) => [b.p(b.em("Hello"))])
+  .shouldParseDOM("<p><em>Hello</em></p>", (b) => [b.p(b.em("Hello"))])
   .shouldParseDOM(
     '<p><span style="font-style: italic">Hello</span></p>',
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("Hello").mark([schema.mark("em")]),
-      ]),
-    ],
+    (b) => [b.p(b.em("Hello"))],
   )
   .shouldParseDOM(
     '<p><span style="font-style: oblique">Hello</span></p>',
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+    (b) => [b.p("Hello")],
   )
   .shouldParseDOM(
     '<p><span style="font-style: normal">Hello</span></p>',
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+    (b) => [b.p("Hello")],
   )
-  .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("Hello").mark([schema.mark("em")]),
-      ]),
-    ],
-    "<p><em>Hello</em></p>",
-  )
+  .shouldRenderDOM((b) => [b.p(b.em("Hello"))], "<p><em>Hello</em></p>")
   .test();

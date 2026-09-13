@@ -20,14 +20,7 @@ new NodeExtensionTester(new HeadingExtension(), {
       depth: 1,
       type: "heading",
     },
-    (schema) => [
-      schema.nodes["heading"].create(
-        {
-          level: 1,
-        },
-        [schema.text("Hello World!")],
-      ),
-    ],
+    (b) => [b.heading({ level: 1 }, "Hello World!")],
   )
   .shouldConvertUnistNode(
     {
@@ -35,14 +28,7 @@ new NodeExtensionTester(new HeadingExtension(), {
       depth: 3,
       type: "heading",
     },
-    (schema) => [
-      schema.nodes["heading"].create(
-        {
-          level: 3,
-        },
-        [schema.text("Hello World!")],
-      ),
-    ],
+    (b) => [b.heading({ level: 3 }, "Hello World!")],
   )
   .shouldConvertUnistNode(
     {
@@ -50,36 +36,18 @@ new NodeExtensionTester(new HeadingExtension(), {
       depth: 6,
       type: "heading",
     },
-    (schema) => [
-      schema.nodes["heading"].create(
-        {
-          level: 6,
-        },
-        [schema.text("Hello World!")],
-      ),
-    ],
+    (b) => [b.heading({ level: 6 }, "Hello World!")],
   )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["heading"].create({ level: 1 }),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["heading"].create({ level: 3 }),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["heading"].create({ level: 6 }),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["heading"].create({ level: 3 }, [schema.text("Hello World!")]),
-  )
+  .shouldMatchProseMirrorNode((b) => b.heading({ level: 1 }))
+  .shouldMatchProseMirrorNode((b) => b.heading({ level: 3 }))
+  .shouldMatchProseMirrorNode((b) => b.heading({ level: 6 }))
+  .shouldMatchProseMirrorNode((b) => b.heading({ level: 3 }, "Hello World!"))
   .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes["heading"].create({ level: 4 }),
+    (b) => b.heading({ level: 4 }),
     [{ children: [], depth: 4, type: "heading" }],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["heading"].create({ level: 1 }, [
-        schema.text("Hello World!"),
-      ]),
+    (b) => b.heading({ level: 1 }, "Hello World!"),
     [
       {
         children: [{ type: "text", value: "Hello World!" }],
@@ -89,10 +57,7 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["heading"].create({ level: 3 }, [
-        schema.text("Hello World!"),
-      ]),
+    (b) => b.heading({ level: 3 }, "Hello World!"),
     [
       {
         children: [{ type: "text", value: "Hello World!" }],
@@ -102,10 +67,7 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["heading"].create({ level: 6 }, [
-        schema.text("Hello World!"),
-      ]),
+    (b) => b.heading({ level: 6 }, "Hello World!"),
     [
       {
         children: [{ type: "text", value: "Hello World!" }],
@@ -115,206 +77,120 @@ new NodeExtensionTester(new HeadingExtension(), {
     ],
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 1 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 1 }, "Hello")],
     "start",
     "#",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 2 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 2 }, "Hello")],
     "## Hello",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 2 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 2 }, "Hello")],
     "start",
     "#",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 3 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 3 }, "Hello")],
     "### Hello",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 3 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 3 }, "Hello")],
     "start",
     "#",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 4 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 4 }, "Hello")],
     "#### Hello",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 4 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 4 }, "Hello")],
     "start",
     "#",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 5 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 5 }, "Hello")],
     "##### Hello",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 5 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 5 }, "Hello")],
     "start",
     "#",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 6 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 6 }, "Hello")],
     "###### Hello",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 6 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 6 }, "Hello")],
     "start",
     "#",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 6 }, [schema.text("#Hello")]),
-    ],
+    (b) => [b.heading({ level: 6 }, "#Hello")],
     "###### #Hello",
   )
   .shouldMatchInputRule(
     "# Hello World!",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 1 }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.heading({ level: 1 }, "Hello World!")],
     "# Hello World!",
   )
   .shouldMatchInputRule(
     "## Hello World!",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 2 }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.heading({ level: 2 }, "Hello World!")],
     "## Hello World!",
   )
   .shouldMatchInputRule(
     "### Hello World!",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 3 }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.heading({ level: 3 }, "Hello World!")],
     "### Hello World!",
   )
   .shouldMatchInputRule(
     "#### Hello World!",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 4 }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.heading({ level: 4 }, "Hello World!")],
     "#### Hello World!",
   )
   .shouldMatchInputRule(
     "##### Hello World!",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 5 }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.heading({ level: 5 }, "Hello World!")],
     "##### Hello World!",
   )
   .shouldMatchInputRule(
     "###### Hello World!",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 6 }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.heading({ level: 6 }, "Hello World!")],
     "###### Hello World!",
   )
   .shouldMatchInputRule(
     " # Hello World!",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 1 }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.heading({ level: 1 }, "Hello World!")],
     "# Hello World!",
   )
   .shouldMatchInputRule(
     "  # Hello World!",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 1 }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.heading({ level: 1 }, "Hello World!")],
     "# Hello World!",
   )
   .shouldMatchInputRule(
     "   # Hello World!",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 1 }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.heading({ level: 1 }, "Hello World!")],
     "# Hello World!",
   )
   .shouldNotMatchInputRule("####### Hello World!", "\\####### Hello World!")
-  .shouldParseDOM("<h1>Hello</h1>", (schema) => [
-    schema.nodes["heading"].create({ level: 1 }, [schema.text("Hello")]),
-  ])
-  .shouldParseDOM("<h3>Hello</h3>", (schema) => [
-    schema.nodes["heading"].create({ level: 3 }, [schema.text("Hello")]),
-  ])
-  .shouldParseDOM("<h6>Hello</h6>", (schema) => [
-    schema.nodes["heading"].create({ level: 6 }, [schema.text("Hello")]),
-  ])
-  .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 1 }, [schema.text("Hello")]),
-    ],
-    "<h1>Hello</h1>",
-  )
-  .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 4 }, [schema.text("Hello")]),
-    ],
-    "<h4>Hello</h4>",
-  )
+  .shouldParseDOM("<h1>Hello</h1>", (b) => [b.heading({ level: 1 }, "Hello")])
+  .shouldParseDOM("<h3>Hello</h3>", (b) => [b.heading({ level: 3 }, "Hello")])
+  .shouldParseDOM("<h6>Hello</h6>", (b) => [b.heading({ level: 6 }, "Hello")])
+  .shouldRenderDOM((b) => [b.heading({ level: 1 }, "Hello")], "<h1>Hello</h1>")
+  .shouldRenderDOM((b) => [b.heading({ level: 4 }, "Hello")], "<h4>Hello</h4>")
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 2 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 2 }, "Hello")],
     "start",
     "{Shift-Tab}",
-    (schema) => [
-      schema.nodes["heading"].create({ level: 1 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 1 }, "Hello")],
     "# Hello",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 1 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 1 }, "Hello")],
     "start",
     "{Shift-Tab}",
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+    (b) => [b.p("Hello")],
     "Hello",
   )
   .shouldReportKeymapApplicability(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 2 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 2 }, "Hello")],
     1,
     "Shift-Tab",
     true,
   )
   .shouldReportKeymapApplicability(
-    (schema) => [
-      schema.nodes["heading"].create({ level: 2 }, [schema.text("Hello")]),
-    ],
+    (b) => [b.heading({ level: 2 }, "Hello")],
     { from: 2, to: 4 },
     "#",
     false,

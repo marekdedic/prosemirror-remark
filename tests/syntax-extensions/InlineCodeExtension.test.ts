@@ -13,54 +13,33 @@ new MarkExtensionTester(new InlineCodeExtension(), {
       type: "inlineCode",
       value: "Hello World!",
     },
-    (schema) => [
-      schema.text("Hello World!").mark([schema.marks["code"].create()]),
-    ],
+    (b) => [b.code("Hello World!")],
   )
-  .shouldMatchProseMirrorMark((schema) => schema.mark("code"))
+  .shouldMatchProseMirrorMark((b) => b.schema.mark("code"))
   .shouldConvertProseMirrorNode(
-    (schema) => schema.text("Hello World!").mark([schema.mark("code")]),
+    (b) => b.code("Hello World!"),
     [{ type: "inlineCode", value: "Hello World!" }],
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create()],
+    (b) => [b.p()],
     "start",
     "{Mod-`}",
-    (schema) => [schema.nodes["paragraph"].create()],
+    (b) => [b.p()],
     "",
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcdef")])],
+    (b) => [b.p("abcdef")],
     { anchor: 3, head: 5 },
     "{Mod-`}",
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("ab"),
-        schema.text("cd").mark([schema.mark("code")]),
-        schema.text("ef"),
-      ]),
-    ],
+    (b) => [b.p("ab", b.code("cd"), "ef")],
     "ab`cd`ef",
   )
   .shouldMatchInputRule("`Test`", "`Test`", "Test")
   .shouldMatchInputRule("`Hello World`", "`Hello World`", "Hello World")
-  .shouldMatchInputRule("`Test`{Enter}", "`Test`\n\n", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Test").mark([schema.mark("code")]),
-    ]),
-    schema.nodes["paragraph"].create(),
+  .shouldMatchInputRule("`Test`{Enter}", "`Test`\n\n", (b) => [
+    b.p(b.code("Test")),
+    b.p(),
   ])
-  .shouldParseDOM("<p><code>Hello</code></p>", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Hello").mark([schema.mark("code")]),
-    ]),
-  ])
-  .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("Hello").mark([schema.mark("code")]),
-      ]),
-    ],
-    "<p><code>Hello</code></p>",
-  )
+  .shouldParseDOM("<p><code>Hello</code></p>", (b) => [b.p(b.code("Hello"))])
+  .shouldRenderDOM((b) => [b.p(b.code("Hello"))], "<p><code>Hello</code></p>")
   .test();

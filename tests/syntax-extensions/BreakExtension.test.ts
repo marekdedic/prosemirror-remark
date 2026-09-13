@@ -72,42 +72,21 @@ new NodeExtensionTester(new BreakExtension(), {
   .shouldMatchUnistNode({ type: "break" })
   .shouldNotMatchUnistNode({ type: "hard_break" })
   .shouldNotMatchUnistNode({ type: "other" })
-  .shouldConvertUnistNode({ type: "break" }, (schema) => [
-    schema.nodes["hard_break"].create(),
-  ])
-  .shouldMatchProseMirrorNode((schema) => schema.nodes["hard_break"].create())
-  .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes["hard_break"].create(),
-    [{ type: "break" }],
-  )
+  .shouldConvertUnistNode({ type: "break" }, (b) => [b.br()])
+  .shouldMatchProseMirrorNode((b) => b.br())
+  .shouldConvertProseMirrorNode((b) => b.br(), [{ type: "break" }])
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+    (b) => [b.p("Hello")],
     3,
     "{Mod-Enter}",
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("He"),
-        schema.nodes["hard_break"].create(),
-        schema.text("llo"),
-      ]),
-    ],
+    (b) => [b.p("He", b.br(), "llo")],
     "He\\\nllo",
   )
-  .shouldParseDOM("<p>Hello<br>World</p>", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Hello"),
-      schema.nodes["hard_break"].create(),
-      schema.text("World"),
-    ]),
+  .shouldParseDOM("<p>Hello<br>World</p>", (b) => [
+    b.p("Hello", b.br(), "World"),
   ])
   .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("Hello"),
-        schema.nodes["hard_break"].create(),
-        schema.text("World"),
-      ]),
-    ],
+    (b) => [b.p("Hello", b.br(), "World")],
     "<p>Hello<br>World</p>",
   )
   .test();

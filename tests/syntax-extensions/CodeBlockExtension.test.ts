@@ -15,53 +15,36 @@ new NodeExtensionTester(new CodeBlockExtension(), {
   })
   .shouldNotMatchUnistNode({ type: "code_block" })
   .shouldNotMatchUnistNode({ type: "other" })
-  .shouldConvertUnistNode({ type: "code", value: "Hello World!" }, (schema) => [
-    schema.nodes["code_block"].create({}, [schema.text("Hello World!")]),
+  .shouldConvertUnistNode({ type: "code", value: "Hello World!" }, (b) => [
+    b.code_block("Hello World!"),
   ])
   .shouldConvertUnistNode(
     { lang: "ts", type: "code", value: "Hello World!" },
-    (schema) => [
-      schema.nodes["code_block"].create({ lang: "ts" }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.code_block({ lang: "ts" }, "Hello World!")],
   )
   .shouldConvertUnistNode(
     { lang: "ts", meta: "startline=2", type: "code", value: "Hello World!" },
-    (schema) => [
-      schema.nodes["code_block"].create({ lang: "ts", meta: "startline=2" }, [
-        schema.text("Hello World!"),
-      ]),
-    ],
+    (b) => [b.code_block({ lang: "ts", meta: "startline=2" }, "Hello World!")],
   )
-  .shouldMatchProseMirrorNode((schema) => schema.nodes["code_block"].create())
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["code_block"].create({}, [schema.text("Hello World!")]),
+  .shouldMatchProseMirrorNode((b) => b.code_block())
+  .shouldMatchProseMirrorNode((b) => b.code_block("Hello World!"))
+  .shouldMatchProseMirrorNode((b) =>
+    b.code_block({ lang: "ts" }, "Hello World!"),
   )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["code_block"].create({ lang: "ts" }, [
-      schema.text("Hello World!"),
-    ]),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["code_block"].create({ lang: "ts", meta: "startline=2" }, [
-      schema.text("Hello World!"),
-    ]),
+  .shouldMatchProseMirrorNode((b) =>
+    b.code_block({ lang: "ts", meta: "startline=2" }, "Hello World!"),
   )
   .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes["code_block"].create(),
+    (b) => b.code_block(),
     [{ type: "code", value: "" }],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["code_block"].create({}, [schema.text("Hello World!")]),
+    (b) => b.code_block("Hello World!"),
     [{ type: "code", value: "Hello World!" }],
   )
   .shouldMatchInputRule(
     "    Hello World!",
-    (schema) => [
-      schema.nodes["code_block"].create({}, [schema.text("Hello World!")]),
-    ],
+    (b) => [b.code_block("Hello World!")],
     "```\nHello World!\n```",
   )
   /* The `Shift-Mod-\` keymap cannot be expressed via vitest-prosemirror v0.4's
@@ -89,51 +72,38 @@ new NodeExtensionTester(new CodeBlockExtension(), {
   )
   */
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
+    (b) => [b.code_block("Hello")],
     4,
     "{Enter}",
-    (schema) => [
-      schema.nodes["code_block"].create({}, [schema.text("Hel\nlo")]),
-    ],
+    (b) => [b.code_block("Hel\nlo")],
     "```\nHel\nlo\n```",
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
+    (b) => [b.code_block("Hello")],
     6,
     "{Enter}",
-    (schema) => [
-      schema.nodes["code_block"].create({}, [schema.text("Hello\n")]),
-    ],
+    (b) => [b.code_block("Hello\n")],
     "```\nHello\n\n```",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["code_block"].create({}, [schema.text("Hello\n")]),
-    ],
+    (b) => [b.code_block("Hello\n")],
     6,
     "{Enter}",
-    (schema) => [
-      schema.nodes["code_block"].create({}, [schema.text("Hello\n\n")]),
-    ],
+    (b) => [b.code_block("Hello\n\n")],
     "```\nHello\n\n\n```",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["code_block"].create({}, [schema.text("Hello\n\n")]),
-    ],
+    (b) => [b.code_block("Hello\n\n")],
     8,
     "{Enter}",
-    (schema) => [
-      schema.nodes["code_block"].create({}, [schema.text("Hello")]),
-      schema.nodes["paragraph"].create({}, []),
-    ],
+    (b) => [b.code_block("Hello"), b.p()],
     "```\nHello\n```\n",
   )
-  .shouldParseDOM("<pre><code>Hello</code></pre>", (schema) => [
-    schema.nodes["code_block"].create({}, [schema.text("Hello")]),
+  .shouldParseDOM("<pre><code>Hello</code></pre>", (b) => [
+    b.code_block("Hello"),
   ])
   .shouldRenderDOM(
-    (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
+    (b) => [b.code_block("Hello")],
     "<pre><code>Hello</code></pre>",
   )
   .test();

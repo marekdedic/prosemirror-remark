@@ -29,7 +29,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "full",
       type: "imageReference",
     },
-    (schema) => [schema.nodes["image"].create({ src: "https://example.test" })],
+    (b) => [b.img({ src: "https://example.test" })],
     [
       {
         identifier: "imageId",
@@ -44,7 +44,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "collapsed",
       type: "imageReference",
     },
-    (schema) => [schema.nodes["image"].create({ src: "https://example.test" })],
+    (b) => [b.img({ src: "https://example.test" })],
     [
       {
         identifier: "imageId",
@@ -59,7 +59,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "shortcut",
       type: "imageReference",
     },
-    (schema) => [schema.nodes["image"].create({ src: "https://example.test" })],
+    (b) => [b.img({ src: "https://example.test" })],
     [
       {
         identifier: "imageId",
@@ -75,8 +75,8 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "full",
       type: "imageReference",
     },
-    (schema) => [
-      schema.nodes["image"].create({
+    (b) => [
+      b.img({
         alt: "Awesome image",
         src: "https://example.test",
         title: "Image title",
@@ -97,7 +97,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "full",
       type: "imageReference",
     },
-    (schema) => [schema.nodes["image"].create({ src: "" })],
+    (b) => [b.img({ src: "" })],
   )
   // A reference whose definition is missing, while other definitions do exist,
   // Must be left with no src rather than picking up an unrelated definition.
@@ -108,9 +108,7 @@ new NodeExtensionTester(new ImageReferenceExtension(), {
       referenceType: "full",
       type: "imageReference",
     },
-    (schema) => [
-      schema.nodes["image"].create({ alt: "Awesome image", src: "" }),
-    ],
+    (b) => [b.img({ alt: "Awesome image", src: "" })],
     [
       {
         identifier: "otherId",

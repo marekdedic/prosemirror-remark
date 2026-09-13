@@ -7,12 +7,12 @@ new NodeExtensionTester(new TextExtension(), {
 })
   .shouldMatchUnistNode({ type: "text", value: "Hello World!" })
   .shouldNotMatchUnistNode({ type: "other" })
-  .shouldConvertUnistNode({ type: "text", value: "Hello World!" }, (schema) => [
-    schema.text("Hello World!"),
+  .shouldConvertUnistNode({ type: "text", value: "Hello World!" }, (b) => [
+    b.schema.text("Hello World!"),
   ])
-  .shouldMatchProseMirrorNode((schema) => schema.text("Hello World"))
+  .shouldMatchProseMirrorNode((b) => b.schema.text("Hello World"))
   .shouldConvertProseMirrorNode(
-    (schema) => schema.text("Hello World!"),
+    (b) => b.schema.text("Hello World!"),
     [{ type: "text", value: "Hello World!" }],
   )
   .test();

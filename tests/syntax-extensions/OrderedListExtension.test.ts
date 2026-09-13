@@ -40,13 +40,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ordered: true,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -55,13 +49,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
       spread: true,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["ordered_list"].create({ spread: true }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol({ spread: true }, b.li(b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -71,13 +59,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
       start: 42,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["ordered_list"].create({ spread: true, start: 42 }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol({ spread: true, start: 42 }, b.li(b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -85,13 +67,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ordered: true,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -99,13 +75,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ordered: true,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({ spread: true }, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li({ spread: true }, b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -123,45 +93,16 @@ new NodeExtensionTester(new OrderedListExtension(), {
       ordered: true,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello World!")))],
   )
-  .shouldMatchProseMirrorNode((schema) => schema.nodes["ordered_list"].create())
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["ordered_list"].create({ spread: true }),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["ordered_list"].create({ spread: true, start: 42 }),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["ordered_list"].create({}, [
-      schema.nodes["regular_list_item"].create(),
-    ]),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["ordered_list"].create({}, [
-      schema.nodes["regular_list_item"].create({ spread: true }),
-    ]),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["ordered_list"].create({}, [
-      schema.nodes["regular_list_item"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-      ]),
-    ]),
-  )
+  .shouldMatchProseMirrorNode((b) => b.ol())
+  .shouldMatchProseMirrorNode((b) => b.ol({ spread: true }))
+  .shouldMatchProseMirrorNode((b) => b.ol({ spread: true, start: 42 }))
+  .shouldMatchProseMirrorNode((b) => b.ol(b.li()))
+  .shouldMatchProseMirrorNode((b) => b.ol(b.li({ spread: true })))
+  .shouldMatchProseMirrorNode((b) => b.ol(b.li(b.p("Hello World!"))))
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ol(b.li(b.p())),
     [
       {
         children: [
@@ -179,12 +120,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["ordered_list"].create({ spread: true }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ol({ spread: true }, b.li(b.p())),
     [
       {
         children: [
@@ -202,12 +138,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["ordered_list"].create({ spread: true, start: 42 }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ol({ spread: true, start: 42 }, b.li(b.p())),
     [
       {
         children: [
@@ -225,12 +156,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ol(b.li(b.p())),
     [
       {
         children: [
@@ -248,12 +174,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["ordered_list"].create({ spread: true }, [
-        schema.nodes["regular_list_item"].create({ spread: true }, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ol({ spread: true }, b.li({ spread: true }, b.p())),
     [
       {
         children: [
@@ -271,12 +192,7 @@ new NodeExtensionTester(new OrderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
+    (b) => b.ol(b.li(b.p("Hello World!"))),
     [
       {
         children: [
@@ -298,270 +214,98 @@ new NodeExtensionTester(new OrderedListExtension(), {
       },
     ],
   )
-  .shouldMatchInputRule(
-    "1. ",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
-    "1.",
-  )
+  .shouldMatchInputRule("1. ", (b) => [b.ol(b.li(b.p()))], "1.")
   .shouldMatchInputRule(
     "1. Hello World!",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello World!")))],
     "1. Hello World!",
   )
   .shouldMatchInputRule(
     " 1. Hello World!",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello World!")))],
     "1. Hello World!",
   )
   .shouldMatchInputRule(
     "  1. Hello World!",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello World!")))],
     "1. Hello World!",
   )
   .shouldMatchInputRule(
     "   1. Hello World!",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello World!")))],
     "1. Hello World!",
   )
   .shouldMatchInputRule(
     "42. Hello World!",
-    (schema) => [
-      schema.nodes["ordered_list"].create({ start: 42 }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol({ start: 42 }, b.li(b.p("Hello World!")))],
     "42. Hello World!",
   )
   .shouldMatchInputRule(
     "1. Hello World!{Enter}Second item",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Second item")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello World!")), b.li(b.p("Second item")))],
     "1. Hello World!\n2. Second item",
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+    (b) => [b.p("Hello")],
     3,
     "{Mod-Shift-9}",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello")))],
     "1. Hello",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello")))],
     6,
     "{Enter}",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hel")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("lo")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hel")), b.li(b.p("lo")))],
     "1. Hel\n2. lo",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("World")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello")), b.li(b.p("World")))],
     10,
     "{Tab}",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-          schema.nodes["ordered_list"].create({}, [
-            schema.nodes["regular_list_item"].create({}, [
-              schema.nodes["paragraph"].create({}, [schema.text("World")]),
-            ]),
-          ]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello"), b.ol(b.li(b.p("World")))))],
     "1. Hello\n   1. World",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-          schema.nodes["ordered_list"].create({}, [
-            schema.nodes["regular_list_item"].create({}, [
-              schema.nodes["paragraph"].create({}, [schema.text("World")]),
-            ]),
-          ]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello"), b.ol(b.li(b.p("World")))))],
     10,
     "{Shift-Tab}",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("World")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("Hello")), b.li(b.p("World")))],
     "1. Hello\n2. World",
   )
-  .shouldParseDOM("<ol><li><p>Hello</p></li></ol>", (schema) => [
-    schema.nodes["ordered_list"].create({ start: 1 }, [
-      schema.nodes["regular_list_item"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-      ]),
-    ]),
+  .shouldParseDOM("<ol><li><p>Hello</p></li></ol>", (b) => [
+    b.ol({ start: 1 }, b.li(b.p("Hello"))),
   ])
-  .shouldParseDOM('<ol start="5"><li><p>Hello</p></li></ol>', (schema) => [
-    schema.nodes["ordered_list"].create({ start: 5 }, [
-      schema.nodes["regular_list_item"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-      ]),
-    ]),
+  .shouldParseDOM('<ol start="5"><li><p>Hello</p></li></ol>', (b) => [
+    b.ol({ start: 5 }, b.li(b.p("Hello"))),
   ])
-  .shouldParseDOM(
-    '<ol data-spread="true"><li><p>Hello</p></li></ol>',
-    (schema) => [
-      schema.nodes["ordered_list"].create({ spread: true, start: 1 }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-      ]),
-    ],
-  )
+  .shouldParseDOM('<ol data-spread="true"><li><p>Hello</p></li></ol>', (b) => [
+    b.ol({ spread: true, start: 1 }, b.li(b.p("Hello"))),
+  ])
   .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["ordered_list"].create({ start: 5 }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol({ start: 5 }, b.li(b.p("Hello")))],
     '<ol data-spread="false" start="5"><li><p>Hello</p></li></ol>',
   )
   // A number continuing the preceding list joins it; any other number starts a
   // New list.
   .shouldMatchInputRule(
     "1. a{Enter}{Enter}2. b",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("a")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("b")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("a")), b.li(b.p("b")))],
     "1. a\n2. b",
   )
   .shouldMatchInputRule(
     "1. a{Enter}{Enter}7. b",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("a")]),
-        ]),
-      ]),
-      schema.nodes["ordered_list"].create({ start: 7 }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("b")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("a"))), b.ol({ start: 7 }, b.li(b.p("b")))],
     "1. a\n\n7) b",
   )
   .shouldMatchInputRule(
     "5. a{Enter}{Enter}6. b",
-    (schema) => [
-      schema.nodes["ordered_list"].create({ start: 5 }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("a")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("b")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol({ start: 5 }, b.li(b.p("a")), b.li(b.p("b")))],
     "5. a\n6. b",
   )
   .shouldMatchInputRule(
     "1. a{Enter}b{Enter}{Enter}3. c",
-    (schema) => [
-      schema.nodes["ordered_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("a")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("b")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("c")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ol(b.li(b.p("a")), b.li(b.p("b")), b.li(b.p("c")))],
     "1. a\n2. b\n3. c",
   )
   .test();

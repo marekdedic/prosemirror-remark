@@ -17,11 +17,7 @@ new MarkExtensionTester(new StrikethroughExtension(), {
       children: [{ type: "text", value: "Hello World!" }],
       type: "delete",
     },
-    (schema) => [
-      schema
-        .text("Hello World!")
-        .mark([schema.marks["strikethrough"].create()]),
-    ],
+    (b) => [b.strikethrough("Hello World!")],
   )
   .shouldConvertUnistNode(
     {
@@ -33,14 +29,7 @@ new MarkExtensionTester(new StrikethroughExtension(), {
       ],
       type: "delete",
     },
-    (schema) => [
-      schema
-        .text("Hello World!")
-        .mark([
-          schema.marks["em"].create(),
-          schema.marks["strikethrough"].create(),
-        ]),
-    ],
+    (b) => [b.strikethrough(b.em("Hello World!"))],
   )
   .shouldConvertUnistNode(
     {
@@ -52,13 +41,10 @@ new MarkExtensionTester(new StrikethroughExtension(), {
       ],
       type: "emphasis",
     },
-    (schema) => [
-      schema
+    (b) => [
+      b.schema
         .text("Hello World!")
-        .mark([
-          schema.marks["strikethrough"].create(),
-          schema.marks["em"].create(),
-        ]),
+        .mark([b.schema.mark("strikethrough"), b.schema.mark("em")]),
     ],
   )
   .shouldConvertUnistNode(
@@ -71,14 +57,7 @@ new MarkExtensionTester(new StrikethroughExtension(), {
       ],
       type: "delete",
     },
-    (schema) => [
-      schema
-        .text("Hello World!")
-        .mark([
-          schema.marks["strong"].create(),
-          schema.marks["strikethrough"].create(),
-        ]),
-    ],
+    (b) => [b.strikethrough(b.strong("Hello World!"))],
   )
   .shouldConvertUnistNode(
     {
@@ -90,26 +69,19 @@ new MarkExtensionTester(new StrikethroughExtension(), {
       ],
       type: "strong",
     } as UnistNode,
-    (schema) => [
-      schema
+    (b) => [
+      b.schema
         .text("Hello World!")
-        .mark([
-          schema.marks["strikethrough"].create(),
-          schema.marks["strong"].create(),
-        ]),
+        .mark([b.schema.mark("strikethrough"), b.schema.mark("strong")]),
     ],
   )
-  .shouldMatchProseMirrorMark((schema) => schema.mark("strikethrough"))
+  .shouldMatchProseMirrorMark((b) => b.schema.mark("strikethrough"))
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.text("Hello World!").mark([schema.mark("strikethrough")]),
+    (b) => b.strikethrough("Hello World!"),
     [{ children: [{ type: "text", value: "Hello World!" }], type: "delete" }],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema
-        .text("Hello World!")
-        .mark([schema.mark("em"), schema.mark("strikethrough")]),
+    (b) => b.strikethrough(b.em("Hello World!")),
     [
       {
         children: [
@@ -123,10 +95,10 @@ new MarkExtensionTester(new StrikethroughExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema
+    (b) =>
+      b.schema
         .text("Hello World!")
-        .mark([schema.mark("strikethrough"), schema.mark("em")]),
+        .mark([b.schema.mark("strikethrough"), b.schema.mark("em")]),
     [
       {
         children: [
@@ -140,10 +112,7 @@ new MarkExtensionTester(new StrikethroughExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema
-        .text("Hello World!")
-        .mark([schema.mark("strong"), schema.mark("strikethrough")]),
+    (b) => b.strikethrough(b.strong("Hello World!")),
     [
       {
         children: [
@@ -157,10 +126,10 @@ new MarkExtensionTester(new StrikethroughExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema
+    (b) =>
+      b.schema
         .text("Hello World!")
-        .mark([schema.mark("strikethrough"), schema.mark("strong")]),
+        .mark([b.schema.mark("strikethrough"), b.schema.mark("strong")]),
     [
       {
         children: [
@@ -176,66 +145,38 @@ new MarkExtensionTester(new StrikethroughExtension(), {
   .shouldMatchInputRule("~Test~", "~~Test~~", "Test")
   .shouldMatchInputRule("~~Test~~", "~~Test~~", "Test")
   .shouldMatchInputRule("~Hello World~", "~~Hello World~~", "Hello World")
-  .shouldMatchInputRule("~Test~{Enter}", "~~Test~~\n\n", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Test").mark([schema.mark("strikethrough")]),
-    ]),
-    schema.nodes["paragraph"].create(),
+  .shouldMatchInputRule("~Test~{Enter}", "~~Test~~\n\n", (b) => [
+    b.p(b.strikethrough("Test")),
+    b.p(),
   ])
-  .shouldMatchInputRule("~~Test~~{Enter}", "~~Test~~\n\n", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Test").mark([schema.mark("strikethrough")]),
-    ]),
-    schema.nodes["paragraph"].create(),
+  .shouldMatchInputRule("~~Test~~{Enter}", "~~Test~~\n\n", (b) => [
+    b.p(b.strikethrough("Test")),
+    b.p(),
   ])
-  .shouldMatchInputRule("~ ~Test~", "\\~ ~~Test~~", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("~ "),
-      schema.text("Test").mark([schema.mark("strikethrough")]),
-    ]),
+  .shouldMatchInputRule("~ ~Test~", "\\~ ~~Test~~", (b) => [
+    b.p("~ ", b.strikethrough("Test")),
   ])
-  .shouldMatchInputRule("~Test~ ~", "~~Test~~ \\~", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Test").mark([schema.mark("strikethrough")]),
-      schema.text(" ~"),
-    ]),
+  .shouldMatchInputRule("~Test~ ~", "~~Test~~ \\~", (b) => [
+    b.p(b.strikethrough("Test"), " ~"),
   ])
-  .shouldParseDOM("<p><s>Hello</s></p>", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Hello").mark([schema.mark("strikethrough")]),
-    ]),
-  ])
-  .shouldParseDOM("<p><del>Hello</del></p>", (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.text("Hello").mark([schema.mark("strikethrough")]),
-    ]),
+  .shouldParseDOM("<p><s>Hello</s></p>", (b) => [b.p(b.strikethrough("Hello"))])
+  .shouldParseDOM("<p><del>Hello</del></p>", (b) => [
+    b.p(b.strikethrough("Hello")),
   ])
   .shouldParseDOM(
     '<p><span style="text-decoration: line-through">Hello</span></p>',
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("Hello").mark([schema.mark("strikethrough")]),
-      ]),
-    ],
+    (b) => [b.p(b.strikethrough("Hello"))],
   )
   .shouldParseDOM(
     '<p><span style="text-decoration: underline line-through">Hello</span></p>',
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("Hello").mark([schema.mark("strikethrough")]),
-      ]),
-    ],
+    (b) => [b.p(b.strikethrough("Hello"))],
   )
   .shouldParseDOM(
     '<p><span style="text-decoration: underline">Hello</span></p>',
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+    (b) => [b.p("Hello")],
   )
   .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("Hello").mark([schema.mark("strikethrough")]),
-      ]),
-    ],
+    (b) => [b.p(b.strikethrough("Hello"))],
     "<p><s>Hello</s></p>",
   )
   .test();

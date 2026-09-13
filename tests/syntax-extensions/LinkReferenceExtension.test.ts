@@ -33,11 +33,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
       referenceType: "full",
       type: "linkReference",
     },
-    (schema) => [
-      schema
-        .text("Click me!")
-        .mark([schema.marks["link"].create({ href: "https://example.test" })]),
-    ],
+    (b) => [b.link({ href: "https://example.test" }, "Click me!")],
     [
       {
         identifier: "linkId",
@@ -53,11 +49,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
       referenceType: "collapsed",
       type: "linkReference",
     },
-    (schema) => [
-      schema
-        .text("Click me!")
-        .mark([schema.marks["link"].create({ href: "https://example.test" })]),
-    ],
+    (b) => [b.link({ href: "https://example.test" }, "Click me!")],
     [
       {
         identifier: "linkId",
@@ -73,11 +65,7 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
       referenceType: "shortcut",
       type: "linkReference",
     },
-    (schema) => [
-      schema
-        .text("Click me!")
-        .mark([schema.marks["link"].create({ href: "https://example.test" })]),
-    ],
+    (b) => [b.link({ href: "https://example.test" }, "Click me!")],
     [
       {
         identifier: "linkId",
@@ -93,13 +81,14 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
       referenceType: "full",
       type: "linkReference",
     },
-    (schema) => [
-      schema.text("Click me!").mark([
-        schema.marks["link"].create({
+    (b) => [
+      b.link(
+        {
           href: "https://example.test",
           title: "This link has a title",
-        }),
-      ]),
+        },
+        "Click me!",
+      ),
     ],
     [
       {
@@ -117,12 +106,13 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
       referenceType: "full",
       type: "linkReference",
     },
-    (schema) => [
-      schema.text("Click me!").mark([
-        schema.marks["link"].create({
+    (b) => [
+      b.link(
+        {
           href: null,
-        }),
-      ]),
+        },
+        "Click me!",
+      ),
     ],
   )
   // A reference whose definition is missing, while other definitions do exist,
@@ -134,12 +124,13 @@ new MarkExtensionTester(new LinkReferenceExtension(), {
       referenceType: "full",
       type: "linkReference",
     },
-    (schema) => [
-      schema.text("Click me!").mark([
-        schema.marks["link"].create({
+    (b) => [
+      b.link(
+        {
           href: null,
-        }),
-      ]),
+        },
+        "Click me!",
+      ),
     ],
     [
       {
