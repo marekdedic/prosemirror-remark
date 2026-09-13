@@ -1,13 +1,15 @@
-import type { Mark, Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type { Mark, Node as ProseMirrorNode } from "prosemirror-model";
 import type { MarkExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import { describe, expect, test, vi } from "vitest";
-import { ProseMirrorTester } from "vitest-prosemirror";
+import { renderProseMirror } from "vitest-prosemirror";
 
 import {
+  type BuiltNode,
   SyntaxExtensionTester,
   type SyntaxExtensionTesterConfig,
+  type TestBuilders,
 } from "./SyntaxExtensionTester";
 
 interface MarkExtensionTesterConfig extends SyntaxExtensionTesterConfig {
@@ -55,7 +57,7 @@ export class MarkExtensionTester<
     editorInput: string,
     markdownOutput: string,
     proseMirrorContents:
-      ((schema: Schema<string, string>) => Array<ProseMirrorNode>) | string,
+      ((builders: TestBuilders) => Array<BuiltNode>) | string,
   ): this {
     const markName = this.extension.proseMirrorMarkName();
     if (markName === null) {
@@ -74,16 +76,16 @@ export class MarkExtensionTester<
                   .mark([this.pmu.schema().mark(markName)]),
               ]),
             ]
-          : proseMirrorContents(this.pmu.schema()),
+          : this.resolveNodes(proseMirrorContents(this.builders)),
     });
     return this;
   }
 
   public shouldMatchProseMirrorMark(
-    mark: (schema: Schema<string, string>) => Mark,
+    mark: (builders: TestBuilders) => Mark,
   ): this {
     this.proseMirrorMarkMatches.push({
-      mark: mark(this.pmu.schema()),
+      mark: mark(this.builders),
       shouldMatch: true,
     });
     return this;
@@ -92,27 +94,29 @@ export class MarkExtensionTester<
   public shouldNotMatchInputRule(
     editorInput: string,
     markdownOutput: string,
-    proseMirrorContents?: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
+    proseMirrorContents?: (builders: TestBuilders) => Array<BuiltNode>,
   ): this {
     this.inputRuleMatches.push({
       editorInput,
       markdownOutput,
-      proseMirrorNodes: proseMirrorContents?.(this.pmu.schema()) ?? [
-        this.pmu
-          .schema()
-          .nodes["paragraph"].create({}, [this.pmu.schema().text(editorInput)]),
-      ],
+      proseMirrorNodes: proseMirrorContents
+        ? this.resolveNodes(proseMirrorContents(this.builders))
+        : [
+            this.pmu
+              .schema()
+              .nodes["paragraph"].create({}, [
+                this.pmu.schema().text(editorInput),
+              ]),
+          ],
     });
     return this;
   }
 
   public shouldNotMatchProseMirrorMark(
-    mark: (schema: Schema<string, string>) => Mark,
+    mark: (builders: TestBuilders) => Mark,
   ): this {
     this.proseMirrorMarkMatches.push({
-      mark: mark(this.pmu.schema()),
+      mark: mark(this.builders),
       shouldMatch: false,
     });
     return this;
@@ -163,12 +167,14 @@ export class MarkExtensionTester<
 
           // eslint-disable-next-line @typescript-eslint/no-empty-function -- Empty mock function
           vi.spyOn(console, "warn").mockImplementation(() => {});
-          const testEditor = new ProseMirrorTester(proseMirrorTreeBefore, {
-            plugins: [this.pmu.inputRulesPlugin(), this.pmu.keymapPlugin()],
+          const testEditor = renderProseMirror(proseMirrorTreeBefore, {
+            editorProps: {
+              plugins: [this.pmu.inputRulesPlugin(), this.pmu.keymapPlugin()],
+            },
           });
-          testEditor.selectText("end");
-          testEditor.insertText(editorInput);
-          testEditor.insertText("END");
+          testEditor.setSelection("end");
+          testEditor.type(editorInput);
+          testEditor.type("END");
           expect(
             testEditor.doc.cut(6, testEditor.doc.content.size - 4),
           ).toEqualProseMirrorNode(proseMirrorTreeAfter);

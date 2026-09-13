@@ -28,11 +28,7 @@ new MarkExtensionTester(new LinkExtension(), {
       type: "link",
       url: "https://example.test",
     },
-    (schema) => [
-      schema
-        .text("Click me!")
-        .mark([schema.marks["link"].create({ href: "https://example.test" })]),
-    ],
+    (b) => [b.link({ href: "https://example.test" }, "Click me!")],
   )
   .shouldConvertUnistNode(
     {
@@ -41,23 +37,21 @@ new MarkExtensionTester(new LinkExtension(), {
       type: "link",
       url: "https://example.test",
     },
-    (schema) => [
-      schema.text("Click me!").mark([
-        schema.marks["link"].create({
+    (b) => [
+      b.link(
+        {
           href: "https://example.test",
           title: "This link has a title",
-        }),
-      ]),
+        },
+        "Click me!",
+      ),
     ],
   )
-  .shouldMatchProseMirrorMark((schema) =>
-    schema.mark("link", { href: "https://example.test" }),
+  .shouldMatchProseMirrorMark((b) =>
+    b.schema.mark("link", { href: "https://example.test" }),
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema
-        .text("Click me!")
-        .mark([schema.mark("link", { href: "https://example.test" })]),
+    (b) => b.link({ href: "https://example.test" }, "Click me!"),
     [
       {
         children: [{ type: "text", value: "Click me!" }],
@@ -67,13 +61,14 @@ new MarkExtensionTester(new LinkExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.text("Click me!").mark([
-        schema.mark("link", {
+    (b) =>
+      b.link(
+        {
           href: "https://example.test",
           title: "This link has a title",
-        }),
-      ]),
+        },
+        "Click me!",
+      ),
     [
       {
         children: [{ type: "text", value: "Click me!" }],
@@ -85,38 +80,25 @@ new MarkExtensionTester(new LinkExtension(), {
   )
   .shouldParseDOM(
     '<p><a href="https://example.test">Click me!</a></p>',
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema
-          .text("Click me!")
-          .mark([schema.mark("link", { href: "https://example.test" })]),
-      ]),
-    ],
+    (b) => [b.p(b.link({ href: "https://example.test" }, "Click me!"))],
   )
   .shouldParseDOM(
     '<p><a href="https://example.test" title="A title">Click me!</a></p>',
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.text("Click me!").mark([
-          schema.mark("link", {
+    (b) => [
+      b.p(
+        b.link(
+          {
             href: "https://example.test",
             title: "A title",
-          }),
-        ]),
-      ]),
+          },
+          "Click me!",
+        ),
+      ),
     ],
   )
-  .shouldParseDOM("<p><a>Click me!</a></p>", (schema) => [
-    schema.nodes["paragraph"].create({}, [schema.text("Click me!")]),
-  ])
+  .shouldParseDOM("<p><a>Click me!</a></p>", (b) => [b.p("Click me!")])
   .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema
-          .text("Click me!")
-          .mark([schema.mark("link", { href: "https://example.test" })]),
-      ]),
-    ],
+    (b) => [b.p(b.link({ href: "https://example.test" }, "Click me!"))],
     '<p><a href="https://example.test">Click me!</a></p>',
   )
   .test();

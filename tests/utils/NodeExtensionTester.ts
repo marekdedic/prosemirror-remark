@@ -1,13 +1,15 @@
-import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
+import type { Node as ProseMirrorNode } from "prosemirror-model";
 import type { NodeExtension } from "prosemirror-unified";
 import type { Node as UnistNode } from "unist";
 
 import { describe, expect, test, vi } from "vitest";
-import { ProseMirrorTester } from "vitest-prosemirror";
+import { renderProseMirror } from "vitest-prosemirror";
 
 import {
+  type BuiltNode,
   SyntaxExtensionTester,
   type SyntaxExtensionTesterConfig,
+  type TestBuilders,
 } from "./SyntaxExtensionTester";
 
 interface NodeExtensionTesterConfig extends SyntaxExtensionTesterConfig {
@@ -53,24 +55,22 @@ export class NodeExtensionTester<
 
   public shouldMatchInputRule(
     editorInput: string,
-    proseMirrorNodes: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
+    proseMirrorNodes: (builders: TestBuilders) => Array<BuiltNode>,
     markdownOutput: string,
   ): this {
     this.inputRuleMatches.push({
       editorInput,
       markdownOutput,
-      proseMirrorNodes: proseMirrorNodes(this.pmu.schema()),
+      proseMirrorNodes: this.resolveNodes(proseMirrorNodes(this.builders)),
     });
     return this;
   }
 
   public shouldMatchProseMirrorNode(
-    node: (schema: Schema<string, string>) => ProseMirrorNode,
+    node: (builders: TestBuilders) => BuiltNode,
   ): this {
     this.proseMirrorNodeMatches.push({
-      node: node(this.pmu.schema()),
+      node: this.resolveNodes(node(this.builders))[0],
       shouldMatch: true,
     });
     return this;
@@ -79,27 +79,29 @@ export class NodeExtensionTester<
   public shouldNotMatchInputRule(
     editorInput: string,
     markdownOutput: string,
-    proseMirrorNodes?: (
-      schema: Schema<string, string>,
-    ) => Array<ProseMirrorNode>,
+    proseMirrorNodes?: (builders: TestBuilders) => Array<BuiltNode>,
   ): this {
     this.inputRuleMatches.push({
       editorInput,
       markdownOutput,
-      proseMirrorNodes: proseMirrorNodes?.(this.pmu.schema()) ?? [
-        this.pmu
-          .schema()
-          .nodes["paragraph"].create({}, [this.pmu.schema().text(editorInput)]),
-      ],
+      proseMirrorNodes: proseMirrorNodes
+        ? this.resolveNodes(proseMirrorNodes(this.builders))
+        : [
+            this.pmu
+              .schema()
+              .nodes["paragraph"].create({}, [
+                this.pmu.schema().text(editorInput),
+              ]),
+          ],
     });
     return this;
   }
 
   public shouldNotMatchProseMirrorNode(
-    node: (schema: Schema<string, string>) => ProseMirrorNode,
+    node: (builders: TestBuilders) => BuiltNode,
   ): this {
     this.proseMirrorNodeMatches.push({
-      node: node(this.pmu.schema()),
+      node: this.resolveNodes(node(this.builders))[0],
       shouldMatch: false,
     });
     return this;
@@ -146,11 +148,13 @@ export class NodeExtensionTester<
 
           // eslint-disable-next-line @typescript-eslint/no-empty-function -- Empty mock function
           vi.spyOn(console, "warn").mockImplementation(() => {});
-          const testEditor = new ProseMirrorTester(proseMirrorTreeBefore, {
-            plugins: [this.pmu.inputRulesPlugin(), this.pmu.keymapPlugin()],
+          const testEditor = renderProseMirror(proseMirrorTreeBefore, {
+            editorProps: {
+              plugins: [this.pmu.inputRulesPlugin(), this.pmu.keymapPlugin()],
+            },
           });
-          testEditor.selectText("end");
-          testEditor.insertText(editorInput);
+          testEditor.setSelection("end");
+          testEditor.type(editorInput);
           expect(testEditor.doc).toEqualProseMirrorNode(proseMirrorTreeAfter);
           expect(this.pmu.serialize(testEditor.doc)).toBe(
             `${markdownOutput}\n`,

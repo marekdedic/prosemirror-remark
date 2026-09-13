@@ -20,7 +20,7 @@ new NodeExtensionTester(new ImageExtension(), {
   .shouldNotMatchUnistNode({ type: "other" })
   .shouldConvertUnistNode(
     { type: "image", url: "https://example.test" },
-    (schema) => [schema.nodes["image"].create({ src: "https://example.test" })],
+    (b) => [b.img({ src: "https://example.test" })],
   )
   .shouldConvertUnistNode(
     {
@@ -28,8 +28,8 @@ new NodeExtensionTester(new ImageExtension(), {
       type: "image",
       url: "https://example.test",
     },
-    (schema) => [
-      schema.nodes["image"].create({
+    (b) => [
+      b.img({
         alt: "Awesome image",
         src: "https://example.test",
       }),
@@ -42,37 +42,35 @@ new NodeExtensionTester(new ImageExtension(), {
       type: "image",
       url: "https://example.test",
     },
-    (schema) => [
-      schema.nodes["image"].create({
+    (b) => [
+      b.img({
         alt: "Awesome image",
         src: "https://example.test",
         title: "Image title",
       }),
     ],
   )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["image"].create({ src: "https://example.test" }),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["image"].create({
+  .shouldMatchProseMirrorNode((b) => b.img({ src: "https://example.test" }))
+  .shouldMatchProseMirrorNode((b) =>
+    b.img({
       alt: "Awesome image",
       src: "https://example.test",
     }),
   )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["image"].create({
+  .shouldMatchProseMirrorNode((b) =>
+    b.img({
       alt: "Awesome image",
       src: "https://example.test",
       title: "Image title",
     }),
   )
   .shouldConvertProseMirrorNode(
-    (schema) => schema.nodes["image"].create({ src: "https://example.test" }),
+    (b) => b.img({ src: "https://example.test" }),
     [{ type: "image", url: "https://example.test" }],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["image"].create({
+    (b) =>
+      b.img({
         alt: "Awesome image",
         src: "https://example.test",
       }),
@@ -85,8 +83,8 @@ new NodeExtensionTester(new ImageExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["image"].create({
+    (b) =>
+      b.img({
         alt: "Awesome image",
         src: "https://example.test",
         title: "Image title",
@@ -100,32 +98,24 @@ new NodeExtensionTester(new ImageExtension(), {
       },
     ],
   )
-  .shouldParseDOM('<p><img src="https://example.test/i.png"></p>', (schema) => [
-    schema.nodes["paragraph"].create({}, [
-      schema.nodes["image"].create({ src: "https://example.test/i.png" }),
-    ]),
+  .shouldParseDOM('<p><img src="https://example.test/i.png"></p>', (b) => [
+    b.p(b.img({ src: "https://example.test/i.png" })),
   ])
   .shouldParseDOM(
     '<p><img src="https://example.test/i.png" alt="Alt" title="Title"></p>',
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.nodes["image"].create({
+    (b) => [
+      b.p(
+        b.img({
           alt: "Alt",
           src: "https://example.test/i.png",
           title: "Title",
         }),
-      ]),
+      ),
     ],
   )
-  .shouldParseDOM('<p><img alt="No source"></p>', (schema) => [
-    schema.nodes["paragraph"].create(),
-  ])
+  .shouldParseDOM('<p><img alt="No source"></p>', (b) => [b.p()])
   .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [
-        schema.nodes["image"].create({ src: "https://example.test/i.png" }),
-      ]),
-    ],
+    (b) => [b.p(b.img({ src: "https://example.test/i.png" }))],
     '<p><img src="https://example.test/i.png"></p>',
   )
   .test();

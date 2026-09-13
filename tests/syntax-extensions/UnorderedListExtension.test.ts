@@ -32,13 +32,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -47,13 +41,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       spread: true,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({ spread: true }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul({ spread: true }, b.li(b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -61,13 +49,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -75,13 +57,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({ spread: true }, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li({ spread: true }, b.p()))],
   )
   .shouldConvertUnistNode(
     {
@@ -99,42 +75,15 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       ordered: false,
       type: "list",
     },
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello World!")))],
   )
-  .shouldMatchProseMirrorNode((schema) => schema.nodes["bullet_list"].create())
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({ spread: true }),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({}, [
-      schema.nodes["regular_list_item"].create(),
-    ]),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({}, [
-      schema.nodes["regular_list_item"].create({ spread: true }),
-    ]),
-  )
-  .shouldMatchProseMirrorNode((schema) =>
-    schema.nodes["bullet_list"].create({}, [
-      schema.nodes["regular_list_item"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-      ]),
-    ]),
-  )
+  .shouldMatchProseMirrorNode((b) => b.ul())
+  .shouldMatchProseMirrorNode((b) => b.ul({ spread: true }))
+  .shouldMatchProseMirrorNode((b) => b.ul(b.li()))
+  .shouldMatchProseMirrorNode((b) => b.ul(b.li({ spread: true })))
+  .shouldMatchProseMirrorNode((b) => b.ul(b.li(b.p("Hello World!"))))
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ul(b.li(b.p())),
     [
       {
         children: [
@@ -151,12 +100,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({ spread: true }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ul({ spread: true }, b.li(b.p())),
     [
       {
         children: [
@@ -173,12 +117,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ul(b.li(b.p())),
     [
       {
         children: [
@@ -195,12 +134,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({ spread: true }, [
-        schema.nodes["regular_list_item"].create({ spread: true }, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
+    (b) => b.ul({ spread: true }, b.li({ spread: true }, b.p())),
     [
       {
         children: [
@@ -217,12 +151,7 @@ new NodeExtensionTester(new UnorderedListExtension(), {
     ],
   )
   .shouldConvertProseMirrorNode(
-    (schema) =>
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
+    (b) => b.ul(b.li(b.p("Hello World!"))),
     [
       {
         children: [
@@ -243,211 +172,78 @@ new NodeExtensionTester(new UnorderedListExtension(), {
       },
     ],
   )
-  .shouldMatchInputRule(
-    "* ",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create(),
-        ]),
-      ]),
-    ],
-    "*",
-  )
+  .shouldMatchInputRule("* ", (b) => [b.ul(b.li(b.p()))], "*")
   .shouldMatchInputRule(
     "* Hello World!",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello World!")))],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     "- Hello World!",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello World!")))],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     "+ Hello World!",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello World!")))],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     " * Hello World!",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello World!")))],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     "  * Hello World!",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello World!")))],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     " * Hello World!",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello World!")))],
     "* Hello World!",
   )
   .shouldMatchInputRule(
     "* Hello World!{Enter}Second item",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello World!")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Second item")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello World!")), b.li(b.p("Second item")))],
     "* Hello World!\n* Second item",
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+    (b) => [b.p("Hello")],
     3,
     "{Mod-Shift-8}",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello")))],
     "* Hello",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello")))],
     6,
     "{Enter}",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hel")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("lo")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hel")), b.li(b.p("lo")))],
     "* Hel\n* lo",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("World")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("World")))],
     10,
     "{Tab}",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-          schema.nodes["bullet_list"].create({}, [
-            schema.nodes["regular_list_item"].create({}, [
-              schema.nodes["paragraph"].create({}, [schema.text("World")]),
-            ]),
-          ]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello"), b.ul(b.li(b.p("World")))))],
     "* Hello\n  * World",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-          schema.nodes["bullet_list"].create({}, [
-            schema.nodes["regular_list_item"].create({}, [
-              schema.nodes["paragraph"].create({}, [schema.text("World")]),
-            ]),
-          ]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello"), b.ul(b.li(b.p("World")))))],
     10,
     "{Shift-Tab}",
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("World")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("World")))],
     "* Hello\n* World",
   )
-  .shouldParseDOM("<ul><li><p>Hello</p></li></ul>", (schema) => [
-    schema.nodes["bullet_list"].create({}, [
-      schema.nodes["regular_list_item"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-      ]),
-    ]),
+  .shouldParseDOM("<ul><li><p>Hello</p></li></ul>", (b) => [
+    b.ul(b.li(b.p("Hello"))),
   ])
-  .shouldParseDOM(
-    '<ul data-spread="true"><li><p>Hello</p></li></ul>',
-    (schema) => [
-      schema.nodes["bullet_list"].create({ spread: true }, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-      ]),
-    ],
-  )
+  .shouldParseDOM('<ul data-spread="true"><li><p>Hello</p></li></ul>', (b) => [
+    b.ul({ spread: true }, b.li(b.p("Hello"))),
+  ])
   .shouldRenderDOM(
-    (schema) => [
-      schema.nodes["bullet_list"].create({}, [
-        schema.nodes["regular_list_item"].create({}, [
-          schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-        ]),
-      ]),
-    ],
+    (b) => [b.ul(b.li(b.p("Hello")))],
     '<ul data-spread="false"><li><p>Hello</p></li></ul>',
   )
   .test();
