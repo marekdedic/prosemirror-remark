@@ -47,30 +47,20 @@ new NodeExtensionTester(new CodeBlockExtension(), {
     (b) => [b.code_block("Hello World!")],
     "```\nHello World!\n```",
   )
-  /* The `Shift-Mod-\` keymap cannot be expressed via vitest-prosemirror v0.4's
-  insertText key-chord syntax: inside a `{...}` group, the trailing `\}` is
-  parsed as an escaped literal `}`, so no key event is dispatched.
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("Hello")])],
+    (b) => [b.p("Hello")],
     3,
-    "{Mod-Shift-\\}",
-    (schema) => [schema.nodes["code_block"].create({}, [schema.text("Hello")])],
+    "{Mod-Shift-\\\\}",
+    (b) => [b.code_block("Hello")],
     "```\nHello\n```",
   )
   .shouldSupportKeymap(
-    (schema) => [
-      schema.nodes["paragraph"].create({}, [schema.text("Hello")]),
-      schema.nodes["paragraph"].create({}, [schema.text("World")]),
-    ],
+    (b) => [b.p("Hello"), b.p("World")],
     3,
-    "{Mod-Shift-\\}",
-    (schema) => [
-      schema.nodes["code_block"].create({}, [schema.text("Hello")]),
-      schema.nodes["paragraph"].create({}, [schema.text("World")]),
-    ],
+    "{Mod-Shift-\\\\}",
+    (b) => [b.code_block("Hello"), b.p("World")],
     "```\nHello\n```\n\nWorld",
   )
-  */
   .shouldSupportKeymap(
     (b) => [b.code_block("Hello")],
     4,
