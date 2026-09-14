@@ -77,43 +77,27 @@ new NodeExtensionTester(new BlockquoteExtension(), {
       },
     ],
   )
-  /* The `Mod->` keymap cannot be expressed via vitest-prosemirror v0.4's
-  insertText key-chord syntax: its tokenizer rejects any chord ending in `>`
-  ("Unsupported keyboard input").
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create()],
+    (b) => [b.p()],
     "start",
     "{Mod->}",
-    (schema) => [
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create(),
-      ]),
-    ],
+    (b) => [b.blockquote(b.p())],
     ">",
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcd")])],
+    (b) => [b.p("abcd")],
     3,
     "{Mod->}",
-    (schema) => [
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("abcd")]),
-      ]),
-    ],
+    (b) => [b.blockquote(b.p("abcd"))],
     "> abcd",
   )
   .shouldSupportKeymap(
-    (schema) => [schema.nodes["paragraph"].create({}, [schema.text("abcd")])],
+    (b) => [b.p("abcd")],
     { anchor: 1, head: 3 },
     "{Mod->}",
-    (schema) => [
-      schema.nodes["blockquote"].create({}, [
-        schema.nodes["paragraph"].create({}, [schema.text("abcd")]),
-      ]),
-    ],
+    (b) => [b.blockquote(b.p("abcd"))],
     "> abcd",
   )
-  */
   .shouldMatchInputRule(
     "> Hello World!",
     (b) => [b.blockquote(b.p("Hello World!"))],
