@@ -1,0 +1,92 @@
+import { ProseMirrorUnified } from "prosemirror-unified";
+import { afterEach, describe, expect, test, vi } from "vitest";
+
+import { BreakExtension } from "../../src/syntax-extensions/BreakExtension";
+import { ParagraphExtension } from "../../src/syntax-extensions/ParagraphExtension";
+import { RootExtension } from "../../src/syntax-extensions/RootExtension";
+import { TextExtension } from "../../src/syntax-extensions/TextExtension";
+import { NodeExtensionTester } from "../utils/NodeExtensionTester";
+import { ParserProviderExtension } from "../utils/ParserProviderExtension";
+
+/*
+ * The Ctrl-Enter binding depends on a global, so it can't be expressed through
+ * the tester - the keymap has to be built with navigator stubbed.
+ */
+function keymapKeys(): Array<string> {
+  const pmu = new ProseMirrorUnified([
+    new ParserProviderExtension(),
+    new RootExtension(),
+    new ParagraphExtension(),
+    new TextExtension(),
+    new BreakExtension(),
+  ]);
+  return Object.keys(new BreakExtension().proseMirrorKeymap(pmu.schema()));
+}
+
+describe("BreakExtension keymap", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  test("Binds Ctrl-Enter on a Mac", () => {
+    expect.assertions(1);
+
+    vi.stubGlobal("navigator", { platform: "MacIntel" });
+
+    expect(keymapKeys()).toStrictEqual([
+      "Mod-Enter",
+      "Shift-Enter",
+      "Ctrl-Enter",
+    ]);
+  });
+
+  test("Binds Ctrl-Enter on an iPhone", () => {
+    expect.assertions(1);
+
+    vi.stubGlobal("navigator", { platform: "iPhone" });
+
+    expect(keymapKeys()).toContain("Ctrl-Enter");
+  });
+
+  test("Doesn't bind Ctrl-Enter off a Mac", () => {
+    expect.assertions(1);
+
+    vi.stubGlobal("navigator", { platform: "Linux x86_64" });
+
+    expect(keymapKeys()).toStrictEqual(["Mod-Enter", "Shift-Enter"]);
+  });
+
+  test("Doesn't bind Ctrl-Enter without a navigator", () => {
+    expect.assertions(1);
+
+    vi.stubGlobal("navigator", undefined);
+
+    expect(keymapKeys()).toStrictEqual(["Mod-Enter", "Shift-Enter"]);
+  });
+});
+
+new NodeExtensionTester(new BreakExtension(), {
+  proseMirrorNodeName: "hard_break",
+  unistNodeName: "break",
+})
+  .shouldMatchUnistNode({ type: "break" })
+  .shouldNotMatchUnistNode({ type: "hard_break" })
+  .shouldNotMatchUnistNode({ type: "other" })
+  .shouldConvertUnistNode({ type: "break" }, (b) => [b.br()])
+  .shouldMatchProseMirrorNode((b) => b.br())
+  .shouldConvertProseMirrorNode((b) => b.br(), [{ type: "break" }])
+  .shouldSupportKeymap(
+    (b) => [b.p("Hello")],
+    3,
+    "{Mod-Enter}",
+    (b) => [b.p("He", b.br(), "llo")],
+    "He\\\nllo",
+  )
+  .shouldParseDOM("<p>Hello<br>World</p>", (b) => [
+    b.p("Hello", b.br(), "World"),
+  ])
+  .shouldRenderDOM(
+    (b) => [b.p("Hello", b.br(), "World")],
+    "<p>Hello<br>World</p>",
+  )
+  .test();

@@ -1,0 +1,116 @@
+{
+  "name": "prosemirror-remark",
+  "version": "0.6.3",
+  "description": "ProseMirror Remark integration",
+  "keywords": [
+    "prosemirror",
+    "remark",
+    "mdast"
+  ],
+  "homepage": "https://github.com/marekdedic/prosemirror-remark#readme",
+  "bugs": {
+    "url": "https://github.com/marekdedic/prosemirror-remark/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marekdedic/prosemirror-remark.git"
+  },
+  "license": "MIT",
+  "author": "Marek Dědič",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/prosemirror-remark.d.ts",
+        "default": "./dist/prosemirror-remark.js"
+      },
+      "require": {
+        "types": "./dist/prosemirror-remark.d.cts",
+        "default": "./dist/prosemirror-remark.cjs"
+      }
+    }
+  },
+  "main": "dist/prosemirror-remark.cjs",
+  "module": "dist/prosemirror-remark.js",
+  "types": "dist/prosemirror-remark.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prebuild": "npm run clean",
+    "build": "run-s build:js build:cjs-types",
+    "build:cjs-types": "cp dist/prosemirror-remark.d.ts dist/prosemirror-remark.d.cts",
+    "build:js": "vite build",
+    "check": "FORCE_COLOR=1 run-p -c --aggregate-output check:*",
+    "check:js-compat": "es-check es2018 --module --checkFeatures 'dist/**/*.js' && es-check es2018 --checkFeatures 'dist/**/*.cjs'",
+    "clean": "rimraf dist/*",
+    "lint": "FORCE_COLOR=1 run-p -c --aggregate-output lint:*",
+    "lint:eslint": "eslint",
+    "lint:ts": "FORCE_COLOR=1 run-p -c --aggregate-output lint:ts:*",
+    "lint:ts:attw": "attw --pack",
+    "lint:ts:typecheck": "tsc --noEmit",
+    "prepack": "npm run build",
+    "start": "vite build --watch",
+    "test": "vitest run --coverage",
+    "test-watch": "vitest"
+  },
+  "dependencies": {
+    "@types/mdast": "^4.0.1",
+    "@types/unist": "^3.0.0",
+    "mdast-util-gfm-autolink-literal": "^2.0.0",
+    "mdast-util-gfm-strikethrough": "^2.0.0",
+    "mdast-util-gfm-task-list-item": "^2.0.0",
+    "micromark-extension-gfm-autolink-literal": "^2.0.0",
+    "micromark-extension-gfm-strikethrough": "^2.0.0",
+    "micromark-extension-gfm-task-list-item": "^2.0.1",
+    "prosemirror-commands": "^1.5.1",
+    "prosemirror-inputrules": "^1.4.0",
+    "prosemirror-schema-list": "^1.2.2",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
+    "unified": "^11.0.4"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.4.0",
+    "@eslint/js": "^10.0.1",
+    "@eslint/json": "^2.0.0",
+    "@eslint/markdown": "^8.0.0",
+    "@microsoft/api-extractor": "^7.34.9",
+    "@types/node": "^26.0.0",
+    "@vitest/coverage-v8": "^5.0.0",
+    "@vitest/eslint-plugin": "^1.3.26",
+    "es-check": "^9.6.4",
+    "eslint": "^10.0.2",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-package-json": "^1.0.0",
+    "eslint-plugin-perfectionist": "^5.0.0",
+    "eslint-plugin-prefer-arrow-functions": "^3.4.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "jiti": "^2.7.0",
+    "jsdom": "^30.0.1",
+    "mdast-util-from-markdown": "^2.0.0",
+    "mdast-util-to-markdown": "^2.1.0",
+    "micromark-util-types": "^2.0.0",
+    "npm-run-all2": "^9.0.3",
+    "prettier": "^3.0.0",
+    "prosemirror-model": "^1.25.4",
+    "prosemirror-state": "^1.4.4",
+    "prosemirror-test-builder": "^1.1.1",
+    "prosemirror-unified": "^0.9.0",
+    "prosemirror-view": "^1.30.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.0",
+    "unplugin-dts": "^1.0.1",
+    "vite": "^8.0.3",
+    "vitest": "^5.0.0",
+    "vitest-prosemirror": "^1.1.1"
+  },
+  "peerDependencies": {
+    "prosemirror-model": "^1.19.3",
+    "prosemirror-state": "^1.4.3",
+    "prosemirror-unified": "^0.9.0"
+  }
+}

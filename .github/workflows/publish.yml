@@ -1,0 +1,64 @@
+---
+name: "Publish"
+"on":
+  release:
+    types: [published]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  cache-version: 1
+
+jobs:
+  build:
+    name: "Build & publish"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v7.0.1
+
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+
+      - name: "Cache NPM dependencies"
+        uses: actions/cache@v6.1.0
+        with:
+          path: "~/.npm"
+          key: >-
+            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-${{
+            hashFiles('package.json') }}
+          restore-keys: |
+            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-${{ hashFiles('package.json') }}
+            npm-dependencies-${{ runner.os }}-${{ env.cache-version }}-
+
+      - name: "Install NPM dependencies"
+        run: |
+          npm ci
+
+      - name: "Build"
+        env:
+          NODE_ENV: 'production'
+        run: |
+          npm run build
+
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v7
+        with:
+          name: "build-artifact"
+          path: |
+            dist
+            LICENSE
+            package.json
+            README.md
+
+      - name: "Publish"
+        run: |
+          npm publish
