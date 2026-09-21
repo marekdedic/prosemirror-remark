@@ -67,9 +67,18 @@ jobs:
   test:
     name: "Test"
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, 24, 26]
     steps:
       - name: "Checkout"
         uses: actions/checkout@v7.0.1
+
+      - name: "Setup Node"
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
 
       - name: "Cache NPM dependencies"
         uses: actions/cache@v6.1.0
@@ -91,6 +100,7 @@ jobs:
           npm test
 
       - name: "Upload coverage results"
+        if: matrix.node-version == 26
         uses: codecov/codecov-action@v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
