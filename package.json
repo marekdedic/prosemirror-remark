@@ -55,6 +55,9 @@
     "test": "vitest run --coverage",
     "test-watch": "vitest"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "@types/mdast": "^4.0.1",
     "@types/unist": "^3.0.0",
