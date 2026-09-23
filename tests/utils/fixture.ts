@@ -85,15 +85,8 @@ export type TestBuilders = Record<BuilderName, Builder> & {
 /** A raw unist node literal, permitting extra fields like `children`/`value`. */
 export type UnistLike = Record<string, unknown> & UnistNode;
 
-export function createExtensionFixture<UNode extends UnistNode>(
-  extension: SyntaxExtension<UNode>,
-  otherExtensions: Array<Extension> = [],
-): ExtensionFixture<UNode> {
-  const pmu = createTestProseMirrorUnified(extension, otherExtensions);
-
-  const schema = pmu.schema();
-
-  const b = builders(schema, {
+export function createBuilders(schema: Schema<string, string>): TestBuilders {
+  return builders(schema, {
     br: { nodeType: "hard_break" },
     hr: { nodeType: "horizontal_rule" },
     img: { nodeType: "image" },
@@ -103,6 +96,15 @@ export function createExtensionFixture<UNode extends UnistNode>(
     taskListItem: { nodeType: "task_list_item" },
     ul: { nodeType: "bullet_list" },
   }) as unknown as TestBuilders;
+}
+
+export function createExtensionFixture<UNode extends UnistNode>(
+  extension: SyntaxExtension<UNode>,
+  otherExtensions: Array<Extension> = [],
+): ExtensionFixture<UNode> {
+  const pmu = createTestProseMirrorUnified(extension, otherExtensions);
+  const schema = pmu.schema();
+  const b = createBuilders(schema);
 
   const internals = pmu as unknown as {
     proseMirrorToUnistConverter: {
