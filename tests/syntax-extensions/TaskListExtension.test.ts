@@ -1,12 +1,13 @@
 import { describe, expect, test } from "vitest";
 
+import { BlockquoteExtension } from "../../src/syntax-extensions/BlockquoteExtension";
 import { ListItemExtension } from "../../src/syntax-extensions/ListItemExtension";
+import { OrderedListExtension } from "../../src/syntax-extensions/OrderedListExtension";
 import { TaskListItemExtension } from "../../src/syntax-extensions/TaskListItemExtension";
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
-// TODO: Add input rule tests
 describe("TaskListExtension", () => {
   const fx = createExtensionFixture(new UnorderedListExtension(), [
     new ListItemExtension(),
@@ -419,6 +420,139 @@ describe("TaskListExtension", () => {
     });
   });
 
+  describe("input rules", () => {
+    test("`[ ] ` turns a regular item into an unchecked task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("<cursor>Hello")), b.li(b.p("World")))],
+        "cursor",
+        "[[ ] ",
+        (b) => [
+          b.ul(
+            b.taskListItem({ checked: false }, b.p("Hello")),
+            b.li(b.p("World")),
+          ),
+        ],
+        "* [ ] Hello\n* World",
+      );
+    });
+
+    test("`[x] ` turns a regular item into a checked task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("<cursor>Hello")), b.li(b.p("World")))],
+        "cursor",
+        "[[x] ",
+        (b) => [
+          b.ul(
+            b.taskListItem({ checked: true }, b.p("Hello")),
+            b.li(b.p("World")),
+          ),
+        ],
+        "* [x] Hello\n* World",
+      );
+    });
+
+    test("`[] ` turns a regular item into an unchecked task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("<cursor>Hello")), b.li(b.p("World")))],
+        "cursor",
+        "[[] ",
+        (b) => [
+          b.ul(
+            b.taskListItem({ checked: false }, b.p("Hello")),
+            b.li(b.p("World")),
+          ),
+        ],
+        "* [ ] Hello\n* World",
+      );
+    });
+
+    test("creates an unchecked task item in an empty document", () => {
+      expect(fx).toTransformBlockInput(
+        "- [[ ] Hello",
+        (b) => [b.ul(b.taskListItem({ checked: false }, b.p("Hello")))],
+        "* [ ] Hello",
+      );
+    });
+
+    test("creates a checked task item in an empty document", () => {
+      expect(fx).toTransformBlockInput(
+        "- [[x] Hello",
+        (b) => [b.ul(b.taskListItem({ checked: true }, b.p("Hello")))],
+        "* [x] Hello",
+      );
+    });
+
+    test("does not apply in a non-first paragraph of a list item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("Hello"), b.p("<cursor>World")))],
+        "cursor",
+        "[[ ] ",
+        (b) => [b.ul(b.li(b.p("Hello"), b.p("[ ] World")))],
+        "* Hello\n\n  \\[ ] World",
+      );
+    });
+
+    test("does not apply outside a list item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("<cursor>Hello")],
+        "cursor",
+        "[[ ] ",
+        (b) => [b.p("[ ] Hello")],
+        "\\[ ] Hello",
+      );
+    });
+
+    test("does not apply to a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem(b.p("<cursor>Hello")))],
+        "cursor",
+        "[[ ] ",
+        (b) => [b.ul(b.taskListItem(b.p("[ ] Hello")))],
+        "* [ ] \\[ ] Hello",
+      );
+    });
+
+    test("keeps the cursor in the converted item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("<cursor>Hello")), b.li(b.p("World")))],
+        "cursor",
+        "[[ ] X",
+        (b) => [
+          b.ul(
+            b.taskListItem({ checked: false }, b.p("XHello")),
+            b.li(b.p("World")),
+          ),
+        ],
+        "* [ ] XHello\n* World",
+      );
+    });
+
+    test("keeps the cursor in the converted item when it is the last one", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("<cursor>World")))],
+        "cursor",
+        "[[x] X",
+        (b) => [
+          b.ul(
+            b.li(b.p("Hello")),
+            b.taskListItem({ checked: true }, b.p("XWorld")),
+          ),
+        ],
+        "* Hello\n* [x] XWorld",
+      );
+    });
+
+    test("keeps the cursor in an item with multiple paragraphs", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("<cursor>Hello"), b.p("World")))],
+        "cursor",
+        "[[ ] X",
+        (b) => [b.ul(b.taskListItem(b.p("XHello"), b.p("World")))],
+        "* [ ] XHello\n\n  World",
+      );
+    });
+  });
+
   describe("keymap", () => {
     test("`Backspace` turns a task item into a regular item", () => {
       expect(fx).toTransformInput(
@@ -429,6 +563,46 @@ describe("TaskListExtension", () => {
         "{Backspace}",
         (b) => [b.ul(b.li(b.p("Hello")), b.taskListItem(b.p("World")))],
         "* Hello\n* [ ] World",
+      );
+    });
+
+    test("`Backspace` keeps the cursor in the converted item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("<cursor>Hello")),
+            b.taskListItem(b.p("World")),
+          ),
+        ],
+        "cursor",
+        "{Backspace}X",
+        (b) => [b.ul(b.li(b.p("XHello")), b.taskListItem(b.p("World")))],
+        "* XHello\n* [ ] World",
+      );
+    });
+
+    test("`Backspace` keeps the cursor in the converted item when it is the last one", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("Hello")),
+            b.taskListItem(b.p("<cursor>World")),
+          ),
+        ],
+        "cursor",
+        "{Backspace}X",
+        (b) => [b.ul(b.taskListItem(b.p("Hello")), b.li(b.p("XWorld")))],
+        "* [ ] Hello\n* XWorld",
+      );
+    });
+
+    test("`Backspace` keeps the cursor in an item with multiple paragraphs", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem(b.p("<cursor>Hello"), b.p("World")))],
+        "cursor",
+        "{Backspace}X",
+        (b) => [b.ul(b.li(b.p("XHello"), b.p("World")))],
+        "* XHello\n\n  World",
       );
     });
 
@@ -487,6 +661,59 @@ describe("TaskListExtension", () => {
         "* [ ] a\n* [ ] b",
       );
     });
+  });
+});
+
+describe("TaskListItemExtension input rules in other contexts", () => {
+  const fx = createExtensionFixture(new TaskListItemExtension(), [
+    new BlockquoteExtension(),
+    new ListItemExtension(),
+    new OrderedListExtension(),
+    new UnorderedListExtension(),
+  ]);
+
+  test("converts an item of an ordered list", () => {
+    expect(fx).toTransformInput(
+      (b) => [b.ol(b.li(b.p("<cursor>Hello")), b.li(b.p("World")))],
+      "cursor",
+      "[[ ] X",
+      (b) => [b.ol(b.taskListItem(b.p("XHello")), b.li(b.p("World")))],
+      "1. [ ] XHello\n2. World",
+    );
+  });
+
+  test("converts an item of a list in a blockquote", () => {
+    expect(fx).toTransformInput(
+      (b) => [
+        b.blockquote(b.ul(b.li(b.p("<cursor>Hello")), b.li(b.p("World")))),
+      ],
+      "cursor",
+      "[[ ] X",
+      (b) => [
+        b.blockquote(b.ul(b.taskListItem(b.p("XHello")), b.li(b.p("World")))),
+      ],
+      "> * [ ] XHello\n> * World",
+    );
+  });
+
+  test("converts only the innermost item of a nested list", () => {
+    expect(fx).toTransformInput(
+      (b) => [
+        b.ul(
+          b.li(b.p("Hello"), b.ul(b.li(b.p("<cursor>World")))),
+          b.li(b.p("Foo")),
+        ),
+      ],
+      "cursor",
+      "[[ ] X",
+      (b) => [
+        b.ul(
+          b.li(b.p("Hello"), b.ul(b.taskListItem(b.p("XWorld")))),
+          b.li(b.p("Foo")),
+        ),
+      ],
+      "* Hello\n  * [ ] XWorld\n* Foo",
+    );
   });
 });
 
