@@ -4,6 +4,7 @@ import type { Mark, Node as ProseMirrorNode, Schema } from "prosemirror-model";
 import { type Extension, MarkExtension } from "prosemirror-unified";
 
 import { addMarkToNodes } from "../utils/addMarkToNodes";
+import { resolveReferences } from "../utils/resolveReferences";
 import {
   DefinitionExtension,
   type DefinitionExtensionContext,
@@ -31,21 +32,11 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
     ) {
       return;
     }
-    for (const id in context.LinkReferenceExtension.marks) {
-      if (!(id in context.DefinitionExtension.definitions)) {
-        continue;
-      }
-      const definition = context.DefinitionExtension.definitions[id];
-      const attrs = context.LinkReferenceExtension.marks[id].attrs as Record<
-        string,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Attrs can be any
-        any
-      >;
-      attrs["href"] = definition.url;
-      if (definition.title !== undefined) {
-        attrs["title"] = definition.title;
-      }
-    }
+    resolveReferences(
+      context.LinkReferenceExtension.marks,
+      context.DefinitionExtension.definitions,
+      "href",
+    );
   }
 
   public override processConvertedUnistNode(
