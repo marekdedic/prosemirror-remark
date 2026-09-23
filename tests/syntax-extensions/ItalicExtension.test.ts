@@ -89,8 +89,8 @@ describe("ItalicExtension", () => {
 
     test("wraps the selection", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("abcdef")],
-        { anchor: 3, head: 5 },
+        (b) => [b.p("ab<from>cd<to>ef")],
+        { anchor: "from", head: "to" },
         "{Mod-i}",
         (b) => [b.p("ab", b.em("cd"), "ef")],
         "ab*cd*ef",
@@ -111,8 +111,8 @@ describe("ItalicExtension", () => {
 
     test("wraps the selection", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("abcdef")],
-        { anchor: 3, head: 5 },
+        (b) => [b.p("ab<from>cd<to>ef")],
+        { anchor: "from", head: "to" },
         "{Mod-I}",
         (b) => [b.p("ab", b.em("cd"), "ef")],
         "ab*cd*ef",

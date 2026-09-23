@@ -133,8 +133,8 @@ describe("HeadingExtension", () => {
   describe("reports keymap applicability", () => {
     test("Shift-Tab applies inside a heading", () => {
       expect(fx).toReportKeymapApplicability(
-        (b) => [b.heading({ level: 2 }, "Hello")],
-        1,
+        (b) => [b.heading({ level: 2 }, "<cursor>Hello")],
+        "cursor",
         "Shift-Tab",
         true,
       );
@@ -142,8 +142,8 @@ describe("HeadingExtension", () => {
 
     test("# does not apply across a selection", () => {
       expect(fx).toReportKeymapApplicability(
-        (b) => [b.heading({ level: 2 }, "Hello")],
-        { from: 2, to: 4 },
+        (b) => [b.heading({ level: 2 }, "H<from>el<to>lo")],
+        { anchor: "from", head: "to" },
         "#",
         false,
       );
