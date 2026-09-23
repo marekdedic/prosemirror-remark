@@ -9,6 +9,8 @@ import type {
 
 import { MarkExtension } from "prosemirror-unified";
 
+import { addMarkToNodes } from "../utils/addMarkToNodes";
+
 export class LinkExtension extends MarkExtension<Link> {
   public override processConvertedUnistNode(
     convertedNode: Text,
@@ -59,15 +61,12 @@ export class LinkExtension extends MarkExtension<Link> {
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
-    return convertedChildren.map((child) =>
-      child.mark(
-        child.marks.concat([
-          proseMirrorSchema.marks[this.proseMirrorMarkName()].create({
-            href: node.url,
-            title: node.title,
-          }),
-        ]),
-      ),
+    return addMarkToNodes(
+      convertedChildren,
+      proseMirrorSchema.marks[this.proseMirrorMarkName()].create({
+        href: node.url,
+        title: node.title,
+      }),
     );
   }
 }

@@ -16,6 +16,7 @@ import {
 import { gfmStrikethrough } from "micromark-extension-gfm-strikethrough";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
+import { addMarkToNodes } from "../utils/addMarkToNodes";
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 
 export class StrikethroughExtension extends MarkExtension<Delete> {
@@ -80,12 +81,9 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
-    return convertedChildren.map((child) =>
-      child.mark(
-        child.marks.concat([
-          proseMirrorSchema.marks[this.proseMirrorMarkName()].create(),
-        ]),
-      ),
+    return addMarkToNodes(
+      convertedChildren,
+      proseMirrorSchema.marks[this.proseMirrorMarkName()].create(),
     );
   }
 }

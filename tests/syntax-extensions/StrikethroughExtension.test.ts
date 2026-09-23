@@ -67,11 +67,7 @@ describe("StrikethroughExtension", () => {
           ],
           type: "emphasis",
         },
-        (b) => [
-          b.schema
-            .text("Hello World!")
-            .mark([b.schema.mark("strikethrough"), b.schema.mark("em")]),
-        ],
+        (b) => [b.em(b.strikethrough("Hello World!"))],
       );
     });
 
@@ -101,11 +97,7 @@ describe("StrikethroughExtension", () => {
           ],
           type: "strong",
         },
-        (b) => [
-          b.schema
-            .text("Hello World!")
-            .mark([b.schema.mark("strikethrough"), b.schema.mark("strong")]),
-        ],
+        (b) => [b.strong(b.strikethrough("Hello World!"))],
       );
     });
   });

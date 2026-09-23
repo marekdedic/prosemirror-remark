@@ -83,6 +83,29 @@ test("unist -> ProseMirror conversion", () => {
   ).toEqualProseMirrorNode(parsedDoc);
 });
 
+test.each([
+  ["**_nested_**", b.strong(b.em("nested"))],
+  ["_**nested**_", b.em(b.strong("nested"))],
+  [
+    "**[nested](https://example.test)**",
+    b.strong(b.link({ href: "https://example.test" }, "nested")),
+  ],
+  [
+    "_[nested](https://example.test)_",
+    b.em(b.link({ href: "https://example.test" }, "nested")),
+  ],
+  ["**`nested`**", b.strong(b.code("nested"))],
+])("unist -> ProseMirror conversion of nested marks %s", (markdown, marked) => {
+  const parsed = pmu.parse(markdown);
+
+  expect(() => {
+    parsed.check();
+  }).not.toThrow();
+  expect(parsed).toEqualProseMirrorNode(
+    b.doc(b.p(marked)) as unknown as ProseMirrorNode,
+  );
+});
+
 test("ProseMirror -> unist conversion", () => {
   expect(pmu.serialize(serializedDoc)).toBe(
     "> Inside a blockquote\n" +

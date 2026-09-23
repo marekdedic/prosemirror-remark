@@ -3,6 +3,7 @@ import type { Mark, Node as ProseMirrorNode, Schema } from "prosemirror-model";
 
 import { type Extension, MarkExtension } from "prosemirror-unified";
 
+import { addMarkToNodes } from "../utils/addMarkToNodes";
 import {
   DefinitionExtension,
   type DefinitionExtensionContext,
@@ -79,8 +80,6 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
     });
     context.LinkReferenceExtension ??= { marks: {} };
     context.LinkReferenceExtension.marks[node.identifier] = mark;
-    return convertedChildren.map((child) =>
-      child.mark(child.marks.concat([mark])),
-    );
+    return addMarkToNodes(convertedChildren, mark);
   }
 }
