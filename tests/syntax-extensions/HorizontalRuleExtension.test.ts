@@ -62,8 +62,8 @@ describe("HorizontalRuleExtension", () => {
 
     test("cursor selection", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("abcdef")],
-        4,
+        (b) => [b.p("abc<cursor>def")],
+        "cursor",
         "{Mod-_}",
         (b) => [b.p("abc"), b.hr(), b.p("def")],
         "abc\n\n---\n\ndef",
@@ -72,8 +72,8 @@ describe("HorizontalRuleExtension", () => {
 
     test("range selection", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("abcdef")],
-        { anchor: 3, head: 5 },
+        (b) => [b.p("ab<from>cd<to>ef")],
+        { anchor: "from", head: "to" },
         "{Mod-_}",
         (b) => [b.p("ab"), b.hr(), b.p("ef")],
         "ab\n\n---\n\nef",
@@ -83,8 +83,8 @@ describe("HorizontalRuleExtension", () => {
 
   test("keymap `Mod-_` reports applicability", () => {
     expect(fx).toReportKeymapApplicability(
-      (b) => [b.p("abcdef")],
-      4,
+      (b) => [b.p("abc<cursor>def")],
+      "cursor",
       "Mod-_",
       true,
     );

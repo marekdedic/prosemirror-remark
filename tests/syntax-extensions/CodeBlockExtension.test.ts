@@ -125,8 +125,8 @@ describe("CodeBlockExtension", () => {
   describe("keymap", () => {
     test("`Mod-Shift-\\` wraps a paragraph", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("Hello")],
-        3,
+        (b) => [b.p("He<cursor>llo")],
+        "cursor",
         "{Mod-Shift-\\\\}",
         (b) => [b.code_block("Hello")],
         "```\nHello\n```",
@@ -135,8 +135,8 @@ describe("CodeBlockExtension", () => {
 
     test("`Mod-Shift-\\` wraps only the current paragraph", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("Hello"), b.p("World")],
-        3,
+        (b) => [b.p("He<cursor>llo"), b.p("World")],
+        "cursor",
         "{Mod-Shift-\\\\}",
         (b) => [b.code_block("Hello"), b.p("World")],
         "```\nHello\n```\n\nWorld",
@@ -145,8 +145,8 @@ describe("CodeBlockExtension", () => {
 
     test("`Enter` inserts a newline", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.code_block("Hello")],
-        4,
+        (b) => [b.code_block("Hel<cursor>lo")],
+        "cursor",
         "{Enter}",
         (b) => [b.code_block("Hel\nlo")],
         "```\nHel\nlo\n```",
@@ -155,8 +155,8 @@ describe("CodeBlockExtension", () => {
 
     test("`Enter` at the end inserts a newline", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.code_block("Hello")],
-        6,
+        (b) => [b.code_block("Hello<cursor>")],
+        "cursor",
         "{Enter}",
         (b) => [b.code_block("Hello\n")],
         "```\nHello\n\n```",
@@ -165,8 +165,8 @@ describe("CodeBlockExtension", () => {
 
     test("`Enter` after one trailing newline inserts another", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.code_block("Hello\n")],
-        6,
+        (b) => [b.code_block("Hello<cursor>\n")],
+        "cursor",
         "{Enter}",
         (b) => [b.code_block("Hello\n\n")],
         "```\nHello\n\n\n```",
@@ -175,8 +175,8 @@ describe("CodeBlockExtension", () => {
 
     test("`Enter` after two trailing newlines exits the code block", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.code_block("Hello\n\n")],
-        8,
+        (b) => [b.code_block("Hello\n\n<cursor>")],
+        "cursor",
         "{Enter}",
         (b) => [b.code_block("Hello"), b.p()],
         "```\nHello\n```\n",
@@ -187,8 +187,8 @@ describe("CodeBlockExtension", () => {
   describe("reports keymap applicability", () => {
     test("`Enter` applies after two trailing newlines", () => {
       expect(fx).toReportKeymapApplicability(
-        (b) => [b.code_block("Hello\n\n")],
-        8,
+        (b) => [b.code_block("Hello\n\n<cursor>")],
+        "cursor",
         "Enter",
         true,
       );
@@ -196,8 +196,8 @@ describe("CodeBlockExtension", () => {
 
     test("`Enter` does not apply without two trailing newlines", () => {
       expect(fx).toReportKeymapApplicability(
-        (b) => [b.code_block("Hello\n")],
-        7,
+        (b) => [b.code_block("Hello\n<cursor>")],
+        "cursor",
         "Enter",
         false,
       );

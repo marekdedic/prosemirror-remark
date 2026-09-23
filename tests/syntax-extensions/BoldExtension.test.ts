@@ -83,8 +83,8 @@ describe("BoldExtension", () => {
 
     test("wraps the selection", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("abcdef")],
-        { anchor: 3, head: 5 },
+        (b) => [b.p("ab<from>cd<to>ef")],
+        { anchor: "from", head: "to" },
         key,
         (b) => [b.p("ab", b.strong("cd"), "ef")],
         "ab**cd**ef",

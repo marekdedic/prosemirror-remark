@@ -130,8 +130,8 @@ describe("BlockquoteExtension", () => {
 
     test("cursor selection", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("abcd")],
-        3,
+        (b) => [b.p("ab<cursor>cd")],
+        "cursor",
         "{Mod->}",
         (b) => [b.blockquote(b.p("abcd"))],
         "> abcd",
@@ -140,8 +140,8 @@ describe("BlockquoteExtension", () => {
 
     test("range selection", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("abcd")],
-        { anchor: 1, head: 3 },
+        (b) => [b.p("<from>ab<to>cd")],
+        { anchor: "from", head: "to" },
         "{Mod->}",
         (b) => [b.blockquote(b.p("abcd"))],
         "> abcd",

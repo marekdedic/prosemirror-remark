@@ -399,8 +399,8 @@ describe("OrderedListExtension", () => {
   describe("keymap", () => {
     test("`Mod-Shift-9` wraps in an ordered list", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("Hello")],
-        3,
+        (b) => [b.p("He<cursor>llo")],
+        "cursor",
         "{Mod-Shift-9}",
         (b) => [b.ol(b.li(b.p("Hello")))],
         "1. Hello",
@@ -409,8 +409,8 @@ describe("OrderedListExtension", () => {
 
     test("`Enter` splits a list item", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.ol(b.li(b.p("Hello")))],
-        6,
+        (b) => [b.ol(b.li(b.p("Hel<cursor>lo")))],
+        "cursor",
         "{Enter}",
         (b) => [b.ol(b.li(b.p("Hel")), b.li(b.p("lo")))],
         "1. Hel\n2. lo",
@@ -419,8 +419,8 @@ describe("OrderedListExtension", () => {
 
     test("`Tab` sinks a list item", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.ol(b.li(b.p("Hello")), b.li(b.p("World")))],
-        10,
+        (b) => [b.ol(b.li(b.p("Hello")), b.li(b.p("<cursor>World")))],
+        "cursor",
         "{Tab}",
         (b) => [b.ol(b.li(b.p("Hello"), b.ol(b.li(b.p("World")))))],
         "1. Hello\n   1. World",
@@ -429,8 +429,8 @@ describe("OrderedListExtension", () => {
 
     test("`Shift-Tab` lifts a list item", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.ol(b.li(b.p("Hello"), b.ol(b.li(b.p("World")))))],
-        10,
+        (b) => [b.ol(b.li(b.p("Hello"), b.ol(b.li(b.p("<cursor>World")))))],
+        "cursor",
         "{Shift-Tab}",
         (b) => [b.ol(b.li(b.p("Hello")), b.li(b.p("World")))],
         "1. Hello\n2. World",

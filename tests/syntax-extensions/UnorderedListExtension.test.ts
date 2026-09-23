@@ -317,8 +317,8 @@ describe("UnorderedListExtension", () => {
   describe("keymap", () => {
     test("`Mod-Shift-8` wraps in an unordered list", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.p("Hello")],
-        3,
+        (b) => [b.p("He<cursor>llo")],
+        "cursor",
         "{Mod-Shift-8}",
         (b) => [b.ul(b.li(b.p("Hello")))],
         "* Hello",
@@ -327,8 +327,8 @@ describe("UnorderedListExtension", () => {
 
     test("`Enter` splits a list item", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.ul(b.li(b.p("Hello")))],
-        6,
+        (b) => [b.ul(b.li(b.p("Hel<cursor>lo")))],
+        "cursor",
         "{Enter}",
         (b) => [b.ul(b.li(b.p("Hel")), b.li(b.p("lo")))],
         "* Hel\n* lo",
@@ -337,8 +337,8 @@ describe("UnorderedListExtension", () => {
 
     test("`Tab` sinks a list item", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("World")))],
-        10,
+        (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("<cursor>World")))],
+        "cursor",
         "{Tab}",
         (b) => [b.ul(b.li(b.p("Hello"), b.ul(b.li(b.p("World")))))],
         "* Hello\n  * World",
@@ -347,8 +347,8 @@ describe("UnorderedListExtension", () => {
 
     test("`Shift-Tab` lifts a list item", () => {
       expect(fx).toSupportKeymap(
-        (b) => [b.ul(b.li(b.p("Hello"), b.ul(b.li(b.p("World")))))],
-        10,
+        (b) => [b.ul(b.li(b.p("Hello"), b.ul(b.li(b.p("<cursor>World")))))],
+        "cursor",
         "{Shift-Tab}",
         (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("World")))],
         "* Hello\n* World",
