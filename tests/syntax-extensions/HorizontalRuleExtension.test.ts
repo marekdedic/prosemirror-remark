@@ -81,6 +81,15 @@ describe("HorizontalRuleExtension", () => {
     });
   });
 
+  test("keymap `Mod-_` reports applicability", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.p("abcdef")],
+      4,
+      "Mod-_",
+      true,
+    );
+  });
+
   describe("input rules", () => {
     test.each([
       ["***{Enter}"],
