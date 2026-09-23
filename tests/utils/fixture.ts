@@ -89,14 +89,7 @@ export function createExtensionFixture<UNode extends UnistNode>(
   extension: SyntaxExtension<UNode>,
   otherExtensions: Array<Extension> = [],
 ): ExtensionFixture<UNode> {
-  const pmu = new ProseMirrorUnified([
-    new ParserProviderExtension(),
-    new RootExtension(),
-    new ParagraphExtension(),
-    new TextExtension(),
-    ...otherExtensions,
-    extension,
-  ]);
+  const pmu = createTestProseMirrorUnified(extension, otherExtensions);
 
   const schema = pmu.schema();
 
@@ -145,4 +138,18 @@ export function createExtensionFixture<UNode extends UnistNode>(
     },
     schema,
   };
+}
+
+export function createTestProseMirrorUnified(
+  extension: Extension,
+  otherExtensions: Array<Extension> = [],
+): ProseMirrorUnified {
+  return new ProseMirrorUnified([
+    new ParserProviderExtension(),
+    new RootExtension(),
+    new ParagraphExtension(),
+    new TextExtension(),
+    ...otherExtensions,
+    extension,
+  ]);
 }
