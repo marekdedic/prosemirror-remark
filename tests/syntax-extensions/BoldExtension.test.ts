@@ -130,32 +130,22 @@ describe("BoldExtension", () => {
       ["__Test__", "**Test**", "Test"],
       ["**Hello World**", "**Hello World**", "Hello World"],
     ] as const)("matches %s", (input, md, contents) => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        `${input}END`,
-        (b) => [b.p("BEGIN", b.strong(contents), "END")],
-        `BEGIN${md}END`,
-      );
+      expect(fx).toTransformInlineInput(input, (b) => [b.strong(contents)], md);
     });
 
     test("matches ** across a paragraph break", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "**Test**{Enter}END",
-        (b) => [b.p("BEGIN", b.strong("Test")), b.p("END")],
-        "BEGIN**Test**\n\nEND",
+      expect(fx).toTransformInlineInput(
+        "**Test**{Enter}",
+        (b) => [b.strong("Test")],
+        "**Test**",
       );
     });
 
     test("matches __ across a paragraph break", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "__Test__{Enter}END",
-        (b) => [b.p("BEGIN", b.strong("Test")), b.p("END")],
-        "BEGIN**Test**\n\nEND",
+      expect(fx).toTransformInlineInput(
+        "__Test__{Enter}",
+        (b) => [b.strong("Test")],
+        "**Test**",
       );
     });
 
@@ -165,36 +155,24 @@ describe("BoldExtension", () => {
       ["**Test*_", "\\*\\*Test\\*\\_"],
       ["**Test* *", "\\*\\*Test\\* \\*"],
     ] as const)("does not match %s", (input, md) => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        `${input}END`,
-        (b) => [b.p(`BEGIN${input}END`)],
-        `BEGIN${md}END`,
-      );
+      expect(fx).toTransformInlineInput(input, () => [input], md);
     });
 
     test("does not match mismatched *_ pairs", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "X*_Test**XEND",
-        (b) => [b.p("BEGINX", b.em("_Test*"), "XEND")],
-        "BEGIN&#x58;*\\_Test\\**&#x58;END",
+      expect(fx).toTransformInlineInput(
+        "X*_Test**X",
+        (b) => ["X", b.em("_Test*"), "X"],
+        "&#x58;*\\_Test\\**&#x58;",
       );
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "X_*Test**XEND",
-        (b) => [b.p("BEGINX_", b.em("Test*"), "XEND")],
-        "BEGINX\\_*Test\\**&#x58;END",
+      expect(fx).toTransformInlineInput(
+        "X_*Test**X",
+        (b) => ["X_", b.em("Test*"), "X"],
+        "X\\_*Test\\**&#x58;",
       );
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "X* *Test**XEND",
-        (b) => [b.p("BEGINX* ", b.em("Test*"), "XEND")],
-        "BEGINX\\* *Test\\**&#x58;END",
+      expect(fx).toTransformInlineInput(
+        "X* *Test**X",
+        (b) => ["X* ", b.em("Test*"), "X"],
+        "X\\* *Test\\**&#x58;",
       );
     });
   });

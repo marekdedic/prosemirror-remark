@@ -74,32 +74,26 @@ describe("InlineCodeExtension", () => {
 
   describe("input rules", () => {
     test("matches `Test`", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "`Test`END",
-        (b) => [b.p("BEGIN", b.code("Test"), "END")],
-        "BEGIN`Test`END",
+      expect(fx).toTransformInlineInput(
+        "`Test`",
+        (b) => [b.code("Test")],
+        "`Test`",
       );
     });
 
     test("matches `Hello World`", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "`Hello World`END",
-        (b) => [b.p("BEGIN", b.code("Hello World"), "END")],
-        "BEGIN`Hello World`END",
+      expect(fx).toTransformInlineInput(
+        "`Hello World`",
+        (b) => [b.code("Hello World")],
+        "`Hello World`",
       );
     });
 
     test("matches ` across a paragraph break", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "`Test`{Enter}END",
-        (b) => [b.p("BEGIN", b.code("Test")), b.p("END")],
-        "BEGIN`Test`\n\nEND",
+      expect(fx).toTransformInlineInput(
+        "`Test`{Enter}",
+        (b) => [b.code("Test")],
+        "`Test`",
       );
     });
   });

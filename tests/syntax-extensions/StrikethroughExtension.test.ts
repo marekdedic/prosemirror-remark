@@ -196,72 +196,58 @@ describe("StrikethroughExtension", () => {
 
   describe("input rules", () => {
     test("matches ~Test~", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "~Test~END",
-        (b) => [b.p("BEGIN", b.strikethrough("Test"), "END")],
-        "BEGIN~~Test~~END",
+      expect(fx).toTransformInlineInput(
+        "~Test~",
+        (b) => [b.strikethrough("Test")],
+        "~~Test~~",
       );
     });
 
     test("matches ~~Test~~", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "~~Test~~END",
-        (b) => [b.p("BEGIN", b.strikethrough("Test"), "END")],
-        "BEGIN~~Test~~END",
+      expect(fx).toTransformInlineInput(
+        "~~Test~~",
+        (b) => [b.strikethrough("Test")],
+        "~~Test~~",
       );
     });
 
     test("matches ~Hello World~", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "~Hello World~END",
-        (b) => [b.p("BEGIN", b.strikethrough("Hello World"), "END")],
-        "BEGIN~~Hello World~~END",
+      expect(fx).toTransformInlineInput(
+        "~Hello World~",
+        (b) => [b.strikethrough("Hello World")],
+        "~~Hello World~~",
       );
     });
 
     test("matches ~ across a paragraph break", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "~Test~{Enter}END",
-        (b) => [b.p("BEGIN", b.strikethrough("Test")), b.p("END")],
-        "BEGIN~~Test~~\n\nEND",
+      expect(fx).toTransformInlineInput(
+        "~Test~{Enter}",
+        (b) => [b.strikethrough("Test")],
+        "~~Test~~",
       );
     });
 
     test("matches ~~ across a paragraph break", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "~~Test~~{Enter}END",
-        (b) => [b.p("BEGIN", b.strikethrough("Test")), b.p("END")],
-        "BEGIN~~Test~~\n\nEND",
+      expect(fx).toTransformInlineInput(
+        "~~Test~~{Enter}",
+        (b) => [b.strikethrough("Test")],
+        "~~Test~~",
       );
     });
 
     test("does not match a leading `~ `", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "~ ~Test~END",
-        (b) => [b.p("BEGIN~ ", b.strikethrough("Test"), "END")],
-        "BEGIN\\~ ~~Test~~END",
+      expect(fx).toTransformInlineInput(
+        "~ ~Test~",
+        (b) => ["~ ", b.strikethrough("Test")],
+        "\\~ ~~Test~~",
       );
     });
 
     test("does not match a trailing ` ~`", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p("BEGIN")],
-        "end",
-        "~Test~ ~END",
-        (b) => [b.p("BEGIN", b.strikethrough("Test"), " ~END")],
-        "BEGIN~~Test~~ \\~END",
+      expect(fx).toTransformInlineInput(
+        "~Test~ ~",
+        (b) => [b.strikethrough("Test"), " ~"],
+        "~~Test~~ \\~",
       );
     });
   });

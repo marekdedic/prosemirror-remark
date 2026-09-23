@@ -80,6 +80,41 @@ function noWarningsLogged(
   };
 }
 
+function runEditorInput(
+  fx: ExtensionFixture<UnistLike>,
+  before: ProseMirrorNode,
+  selection: TesterSelection,
+  editorInput: string,
+  after: ProseMirrorNode,
+  markdownOutput: string,
+  ctx: MatcherState,
+): SyncMatcherResult {
+  const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+  const editor = renderProseMirror(before, {
+    editorProps: {
+      plugins: [fx.pmu.inputRulesPlugin(), fx.pmu.keymapPlugin()],
+    },
+  });
+  editor.setSelection(selection);
+  editor.type(editorInput);
+
+  const nodes = nodesEqual(editor.doc, after);
+  if (!nodes.pass) {
+    return nodes;
+  }
+  const serialized = fx.pmu.serialize(editor.doc).replace(/\n$/gu, "");
+  if (serialized !== markdownOutput) {
+    return {
+      message: () =>
+        `expected serialisation\n${ctx.utils.printReceived(
+          serialized,
+        )}\nto equal\n${ctx.utils.printExpected(markdownOutput)}`,
+      pass: false,
+    };
+  }
+  return noWarningsLogged(warn, ctx);
+}
+
 expect.extend({
   toConvertProseMirrorNode(
     this: MatcherState,
@@ -266,6 +301,79 @@ expect.extend({
     return nodesEqual(editor.doc, doc);
   },
 
+  toTransformInlineInput(
+    this: MatcherState,
+    fx: ExtensionFixture<UnistLike>,
+    editorInput: string,
+    contents: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): SyncMatcherResult {
+    const inline = fx.resolveNodes(contents(fx.b));
+    const splits = editorInput.endsWith("{Enter}");
+    const begin = fx.schema.text("BEGIN");
+    const end = fx.schema.text("END");
+    const paragraph = (nodes: Array<ProseMirrorNode>): ProseMirrorNode =>
+      fx.schema.nodes["paragraph"].create({}, nodes);
+    const doc = (nodes: Array<ProseMirrorNode>): ProseMirrorNode =>
+      fx.schema.nodes["doc"].create(
+        {},
+        splits
+          ? [paragraph(nodes), paragraph([end])]
+          : [paragraph([...nodes, end])],
+      );
+    const endMarkdown = splits ? "\n\nEND" : "END";
+    const spacedBegin = fx.schema.text("BEGIN ");
+    const spacedEnd = fx.schema.text(" END");
+    const spacedDoc = (nodes: Array<ProseMirrorNode>): ProseMirrorNode =>
+      fx.schema.nodes["doc"].create(
+        {},
+        splits
+          ? [paragraph(nodes), paragraph([end])]
+          : [paragraph([...nodes, spacedEnd])],
+      );
+    const variants = [
+      {
+        after: doc(inline),
+        before: paragraph([]),
+        editorInput: `${editorInput}END`,
+        markdown: `${markdownOutput}${endMarkdown}`,
+        name: "at paragraph start",
+      },
+      {
+        after: doc([begin, ...inline]),
+        before: paragraph([begin]),
+        editorInput: `${editorInput}END`,
+        markdown: `BEGIN${markdownOutput}${endMarkdown}`,
+        name: "after text",
+      },
+      {
+        after: spacedDoc([spacedBegin, ...inline]),
+        before: paragraph([spacedBegin]),
+        editorInput: `${editorInput}${splits ? "END" : " END"}`,
+        markdown: `BEGIN ${markdownOutput}${splits ? "\n\nEND" : " END"}`,
+        name: "between spaces",
+      },
+    ];
+    for (const variant of variants) {
+      const result = runEditorInput(
+        fx,
+        fx.schema.nodes["doc"].create({}, [variant.before]),
+        "end",
+        variant.editorInput,
+        variant.after,
+        variant.markdown,
+        this,
+      );
+      if (!result.pass) {
+        return {
+          message: () => `${variant.name}: ${result.message()}`,
+          pass: false,
+        };
+      }
+    }
+    return { message: () => "expected inline input not to match", pass: true };
+  },
+
   toTransformInput(
     this: MatcherState,
     fx: ExtensionFixture<UnistLike>,
@@ -275,38 +383,15 @@ expect.extend({
     after: Build<Array<BuiltNode>>,
     markdownOutput: string,
   ): SyncMatcherResult {
-    const docAfter = fx.schema.nodes["doc"].create(
-      {},
-      fx.resolveNodes(after(fx.b)),
-    );
-
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    const editor = renderProseMirror(
+    return runEditorInput(
+      fx,
       fx.b.doc(...before(fx.b)) as unknown as ProseMirrorNode,
-      {
-        editorProps: {
-          plugins: [fx.pmu.inputRulesPlugin(), fx.pmu.keymapPlugin()],
-        },
-      },
+      selection,
+      editorInput,
+      fx.schema.nodes["doc"].create({}, fx.resolveNodes(after(fx.b))),
+      markdownOutput,
+      this,
     );
-    editor.setSelection(selection);
-    editor.type(editorInput);
-
-    const nodes = nodesEqual(editor.doc, docAfter);
-    if (!nodes.pass) {
-      return nodes;
-    }
-    const serialized = fx.pmu.serialize(editor.doc).replace(/\n$/gu, "");
-    if (serialized !== markdownOutput) {
-      return {
-        message: () =>
-          `expected serialisation\n${this.utils.printReceived(
-            serialized,
-          )}\nto equal\n${this.utils.printExpected(markdownOutput)}`,
-        pass: false,
-      };
-    }
-    return noWarningsLogged(warn, this);
   },
 });
 
@@ -333,6 +418,11 @@ interface ExtensionMatchers<R> {
     selection: TesterSelection,
     key: string,
     applicable: boolean,
+  ): R;
+  toTransformInlineInput(
+    editorInput: string,
+    contents: Build<Array<BuiltNode>>,
+    markdownOutput: string,
   ): R;
   toTransformInput(
     before: Build<Array<BuiltNode>>,
