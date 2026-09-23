@@ -3,6 +3,7 @@ import type { Node as ProseMirrorNode, Schema } from "prosemirror-model";
 
 import { type Extension, NodeExtension } from "prosemirror-unified";
 
+import { resolveReferences } from "../utils/resolveReferences";
 import {
   DefinitionExtension,
   type DefinitionExtensionContext,
@@ -30,22 +31,11 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
     ) {
       return;
     }
-    for (const id in context.ImageReferenceExtension.proseMirrorNodes) {
-      if (!(id in context.DefinitionExtension.definitions)) {
-        continue;
-      }
-      const definition = context.DefinitionExtension.definitions[id];
-      const attrs = context.ImageReferenceExtension.proseMirrorNodes[id]
-        .attrs as Record<
-        string,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Attrs can be any
-        any
-      >;
-      attrs["src"] = definition.url;
-      if (definition.title !== undefined) {
-        attrs["title"] = definition.title;
-      }
-    }
+    resolveReferences(
+      context.ImageReferenceExtension.proseMirrorNodes,
+      context.DefinitionExtension.definitions,
+      "src",
+    );
   }
 
   public override proseMirrorNodeName(): null {

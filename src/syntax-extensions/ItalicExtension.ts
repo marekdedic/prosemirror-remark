@@ -11,6 +11,8 @@ import type { Command } from "prosemirror-state";
 import { toggleMark } from "prosemirror-commands";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
+import { addMarkToNodes } from "../utils/addMarkToNodes";
+
 export class ItalicExtension extends MarkExtension<Emphasis> {
   public override processConvertedUnistNode(
     convertedNode: Strong | Text,
@@ -70,12 +72,9 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
-    return convertedChildren.map((child) =>
-      child.mark(
-        child.marks.concat([
-          proseMirrorSchema.marks[this.proseMirrorMarkName()].create(),
-        ]),
-      ),
+    return addMarkToNodes(
+      convertedChildren,
+      proseMirrorSchema.marks[this.proseMirrorMarkName()].create(),
     );
   }
 }

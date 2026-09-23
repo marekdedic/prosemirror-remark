@@ -35,6 +35,38 @@ describe("BoldExtension", () => {
     );
   });
 
+  describe("converts nested marks unist -> ProseMirror", () => {
+    test("strong wrapping emphasis", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              children: [{ type: "text", value: "Hello World!" }],
+              type: "emphasis",
+            },
+          ],
+          type: "strong",
+        },
+        (b) => [b.strong(b.em("Hello World!"))],
+      );
+    });
+
+    test("emphasis wrapping strong", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              children: [{ type: "text", value: "Hello World!" }],
+              type: "strong",
+            },
+          ],
+          type: "emphasis",
+        },
+        (b) => [b.em(b.strong("Hello World!"))],
+      );
+    });
+  });
+
   test("matches the `strong` mark", () => {
     expect(fx).toMatchProseMirrorMark((b) => b.schema.mark("strong"));
   });
