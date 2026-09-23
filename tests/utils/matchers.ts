@@ -4,7 +4,6 @@ import {
   type Mark,
   type Node as ProseMirrorNode,
 } from "prosemirror-model";
-import { EditorState, TextSelection } from "prosemirror-state";
 import {
   MarkExtension,
   NodeExtension,
@@ -402,25 +401,17 @@ expect.extend({
     this: MatcherState,
     fx: ExtensionFixture<UnistLike>,
     nodes: Build<Array<BuiltNode>>,
-    selection: { from: number; to: number } | number,
+    selection: TesterSelection,
     key: string,
     applicable: boolean,
   ): SyncMatcherResult {
-    const doc = fx.schema.nodes["doc"].create({}, fx.resolveNodes(nodes(fx.b)));
-    const state = EditorState.create({ doc }).apply(
-      EditorState.create({ doc }).tr.setSelection(
-        typeof selection === "number"
-          ? TextSelection.near(doc.resolve(selection))
-          : TextSelection.between(
-              doc.resolve(selection.from),
-              doc.resolve(selection.to),
-            ),
-      ),
-    );
+    const doc = fx.b.doc(...nodes(fx.b)) as unknown as ProseMirrorNode;
+    const editor = renderProseMirror(doc);
+    editor.setSelection(selection);
 
     const command = fx.extension.proseMirrorKeymap(fx.schema)[key];
     // Invoked without dispatch, the command must only report applicability.
-    if (command(state) !== applicable) {
+    if (command(editor.state) !== applicable) {
       return {
         actual: !applicable,
         expected: applicable,
@@ -429,7 +420,7 @@ expect.extend({
         pass: false,
       };
     }
-    return nodesEqual(state.doc, doc);
+    return nodesEqual(editor.doc, doc);
   },
 
   toSupportKeymap(
@@ -448,7 +439,7 @@ expect.extend({
 
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const editor = renderProseMirror(
-      fx.schema.nodes["doc"].create({}, fx.resolveNodes(before(fx.b))),
+      fx.b.doc(...before(fx.b)) as unknown as ProseMirrorNode,
       { editorProps: { plugins: [fx.pmu.keymapPlugin()] } },
     );
     editor.setSelection(selection);
@@ -512,7 +503,7 @@ interface ExtensionMatchers<R> {
   toRenderDOM(source: Build<Array<BuiltNode>>, html: string): R;
   toReportKeymapApplicability(
     nodes: Build<Array<BuiltNode>>,
-    selection: { from: number; to: number } | number,
+    selection: TesterSelection,
     key: string,
     applicable: boolean,
   ): R;
