@@ -431,6 +431,26 @@ describe("TaskListExtension", () => {
         "* Hello\n* [ ] World",
       );
     });
+
+    test("`Backspace` in the middle of a task item deletes a character", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [b.ul(b.taskListItem(b.p("Hello")))],
+        5,
+        "{Backspace}",
+        (b) => [b.ul(b.taskListItem(b.p("Hllo")))],
+        "* [ ] Hllo",
+      );
+    });
+
+    test("`Backspace` at the start of a regular item is left to other bindings", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("World")))],
+        10,
+        "{Backspace}",
+        (b) => [b.ul(b.li(b.p("Hello"), b.p("World")))],
+        "* Hello\n\n  World",
+      );
+    });
   });
 });
 
