@@ -113,6 +113,15 @@ describe("BreakExtension", () => {
     );
   });
 
+  test("keymap `Mod-Enter` reports applicability", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.p("Hello")],
+      3,
+      "Mod-Enter",
+      true,
+    );
+  });
+
   test("parses DOM", () => {
     expect(fx).toParseDOM("<p>Hello<br>World</p>", (b) => [
       b.p("Hello", b.br(), "World"),

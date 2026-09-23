@@ -433,3 +433,19 @@ describe("TaskListExtension", () => {
     });
   });
 });
+
+describe("TaskListItemExtension keymap applicability", () => {
+  const fx = createExtensionFixture(new TaskListItemExtension(), [
+    new UnorderedListExtension(),
+    new ListItemExtension(),
+  ]);
+
+  test("`Backspace` does not apply across a selection", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.ul(b.taskListItem(b.p("Hello")))],
+      { from: 3, to: 5 },
+      "Backspace",
+      false,
+    );
+  });
+});

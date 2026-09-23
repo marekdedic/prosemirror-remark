@@ -184,6 +184,26 @@ describe("CodeBlockExtension", () => {
     });
   });
 
+  describe("reports keymap applicability", () => {
+    test("`Enter` applies after two trailing newlines", () => {
+      expect(fx).toReportKeymapApplicability(
+        (b) => [b.code_block("Hello\n\n")],
+        8,
+        "Enter",
+        true,
+      );
+    });
+
+    test("`Enter` does not apply without two trailing newlines", () => {
+      expect(fx).toReportKeymapApplicability(
+        (b) => [b.code_block("Hello\n")],
+        7,
+        "Enter",
+        false,
+      );
+    });
+  });
+
   test("parses DOM", () => {
     expect(fx).toParseDOM("<pre><code>Hello</code></pre>", (b) => [
       b.code_block("Hello"),
