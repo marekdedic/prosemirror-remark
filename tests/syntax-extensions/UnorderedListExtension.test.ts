@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 
+import { OrderedListExtension } from "../../src/syntax-extensions/OrderedListExtension";
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
@@ -312,6 +313,22 @@ describe("UnorderedListExtension", () => {
         (b) => [b.ul(b.li(b.p("Hello World!")), b.li(b.p("Second item")))],
       );
     });
+
+    test("a bullet joins the preceding list", () => {
+      expect(fx).toApplyBlockInputRule(
+        "* a{Enter}{Enter}* b",
+        "* a\n* b",
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
+      );
+    });
+
+    test("a different bullet joins the preceding list", () => {
+      expect(fx).toApplyBlockInputRule(
+        "* a{Enter}{Enter}- b",
+        "* a\n* b",
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
+      );
+    });
   });
 
   describe("keymap", () => {
@@ -354,6 +371,36 @@ describe("UnorderedListExtension", () => {
         "* Hello\n* World",
       );
     });
+
+    test("`Backspace` joins a list with the preceding list", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [b.ul(b.li(b.p("a"))), b.ul(b.li(b.p("<cursor>b")))],
+        "cursor",
+        "{Backspace}",
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
+        "* a\n* b",
+      );
+    });
+
+    test("`Delete` joins a list with the following list", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [b.ul(b.li(b.p("a<cursor>"))), b.ul(b.li(b.p("b")))],
+        "cursor",
+        "{Delete}",
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
+        "* a\n* b",
+      );
+    });
+
+    test("`Backspace` in an empty paragraph between lists joins them into one", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [b.ul(b.li(b.p("a"))), b.p("<cursor>"), b.ul(b.li(b.p("b")))],
+        "cursor",
+        "{Backspace}",
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.p()), b.li(b.p("b")))],
+        "* a\n*\n* b",
+      );
+    });
   });
 
   describe("DOM", () => {
@@ -376,5 +423,29 @@ describe("UnorderedListExtension", () => {
         '<ul data-spread="false"><li><p>Hello</p></li></ul>',
       );
     });
+  });
+});
+
+describe("UnorderedListExtension next to an ordered list", () => {
+  const fx = createExtensionFixture(new UnorderedListExtension(), [
+    new OrderedListExtension(),
+  ]);
+
+  test("a bullet after an ordered list starts a new list", () => {
+    expect(fx).toApplyBlockInputRule(
+      "1. a{Enter}{Enter}* b",
+      "1. a\n\n* b",
+      (b) => [b.ol(b.li(b.p("a"))), b.ul(b.li(b.p("b")))],
+    );
+  });
+
+  test("`Backspace` moves the items into a preceding ordered list", () => {
+    expect(fx).toSupportKeymap(
+      (b) => [b.ol(b.li(b.p("a"))), b.ul(b.li(b.p("<cursor>b")))],
+      "cursor",
+      "{Backspace}",
+      (b) => [b.ol(b.li(b.p("a")), b.li(b.p("b")))],
+      "1. a\n2. b",
+    );
   });
 });
