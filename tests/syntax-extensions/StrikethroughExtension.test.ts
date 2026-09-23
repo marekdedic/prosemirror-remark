@@ -1,182 +1,292 @@
-import type { Node as UnistNode } from "unist";
+import { describe, expect, test } from "vitest";
 
 import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
 import { ItalicExtension } from "../../src/syntax-extensions/ItalicExtension";
 import { StrikethroughExtension } from "../../src/syntax-extensions/StrikethroughExtension";
-import { MarkExtensionTester } from "../utils/MarkExtensionTester";
+import { createExtensionFixture } from "../utils/fixture";
+import "../utils/matchers";
 
-new MarkExtensionTester(new StrikethroughExtension(), {
-  otherExtensionsInTest: [new BoldExtension(), new ItalicExtension()],
-  proseMirrorMarkName: "strikethrough",
-  unistNodeName: "delete",
-})
-  .shouldMatchUnistNode({ children: [], type: "delete" })
-  .shouldNotMatchUnistNode({ type: "other" })
-  .shouldConvertUnistNode(
-    {
-      children: [{ type: "text", value: "Hello World!" }],
-      type: "delete",
-    },
-    (b) => [b.strikethrough("Hello World!")],
-  )
-  .shouldConvertUnistNode(
-    {
-      children: [
+describe("StrikethroughExtension", () => {
+  const fx = createExtensionFixture(new StrikethroughExtension(), [
+    new BoldExtension(),
+    new ItalicExtension(),
+  ]);
+
+  test("handles the `delete` unist node", () => {
+    expect(fx).toHandleUnistNode("delete");
+  });
+
+  test("provides the `strikethrough` ProseMirror mark", () => {
+    expect(fx).toProvideMark("strikethrough");
+  });
+
+  describe("matches unist nodes", () => {
+    test("matches `delete`", () => {
+      expect(fx).toMatchUnistNode({ children: [], type: "delete" });
+    });
+
+    test("does not match other nodes", () => {
+      expect(fx).not.toMatchUnistNode({ type: "other" });
+    });
+  });
+
+  describe("converts unist -> ProseMirror", () => {
+    test("plain", () => {
+      expect(fx).toConvertUnistNode(
         {
           children: [{ type: "text", value: "Hello World!" }],
+          type: "delete",
+        },
+        (b) => [b.strikethrough("Hello World!")],
+      );
+    });
+
+    test("delete wrapping emphasis", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              children: [{ type: "text", value: "Hello World!" }],
+              type: "emphasis",
+            },
+          ],
+          type: "delete",
+        },
+        (b) => [b.strikethrough(b.em("Hello World!"))],
+      );
+    });
+
+    test("emphasis wrapping delete", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              children: [{ type: "text", value: "Hello World!" }],
+              type: "delete",
+            },
+          ],
           type: "emphasis",
         },
-      ],
-      type: "delete",
-    },
-    (b) => [b.strikethrough(b.em("Hello World!"))],
-  )
-  .shouldConvertUnistNode(
-    {
-      children: [
+        (b) => [
+          b.schema
+            .text("Hello World!")
+            .mark([b.schema.mark("strikethrough"), b.schema.mark("em")]),
+        ],
+      );
+    });
+
+    test("delete wrapping strong", () => {
+      expect(fx).toConvertUnistNode(
         {
-          children: [{ type: "text", value: "Hello World!" }],
+          children: [
+            {
+              children: [{ type: "text", value: "Hello World!" }],
+              type: "strong",
+            },
+          ],
           type: "delete",
         },
-      ],
-      type: "emphasis",
-    },
-    (b) => [
-      b.schema
-        .text("Hello World!")
-        .mark([b.schema.mark("strikethrough"), b.schema.mark("em")]),
-    ],
-  )
-  .shouldConvertUnistNode(
-    {
-      children: [
+        (b) => [b.strikethrough(b.strong("Hello World!"))],
+      );
+    });
+
+    test("strong wrapping delete", () => {
+      expect(fx).toConvertUnistNode(
         {
-          children: [{ type: "text", value: "Hello World!" }],
+          children: [
+            {
+              children: [{ type: "text", value: "Hello World!" }],
+              type: "delete",
+            },
+          ],
           type: "strong",
         },
-      ],
-      type: "delete",
-    },
-    (b) => [b.strikethrough(b.strong("Hello World!"))],
-  )
-  .shouldConvertUnistNode(
-    {
-      children: [
-        {
-          children: [{ type: "text", value: "Hello World!" }],
-          type: "delete",
-        },
-      ],
-      type: "strong",
-    } as UnistNode,
-    (b) => [
-      b.schema
-        .text("Hello World!")
-        .mark([b.schema.mark("strikethrough"), b.schema.mark("strong")]),
-    ],
-  )
-  .shouldMatchProseMirrorMark((b) => b.schema.mark("strikethrough"))
-  .shouldConvertProseMirrorNode(
-    (b) => b.strikethrough("Hello World!"),
-    [{ children: [{ type: "text", value: "Hello World!" }], type: "delete" }],
-  )
-  .shouldConvertProseMirrorNode(
-    (b) => b.strikethrough(b.em("Hello World!")),
-    [
-      {
-        children: [
+        (b) => [
+          b.schema
+            .text("Hello World!")
+            .mark([b.schema.mark("strikethrough"), b.schema.mark("strong")]),
+        ],
+      );
+    });
+  });
+
+  test("matches the `strikethrough` mark", () => {
+    expect(fx).toMatchProseMirrorMark((b) => b.schema.mark("strikethrough"));
+  });
+
+  describe("converts ProseMirror -> unist", () => {
+    test("plain", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.strikethrough("Hello World!"),
+        [
           {
             children: [{ type: "text", value: "Hello World!" }],
+            type: "delete",
+          },
+        ],
+      );
+    });
+
+    test("strikethrough wrapping emphasis", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.strikethrough(b.em("Hello World!")),
+        [
+          {
+            children: [
+              {
+                children: [{ type: "text", value: "Hello World!" }],
+                type: "emphasis",
+              },
+            ],
+            type: "delete",
+          },
+        ],
+      );
+    });
+
+    test("nested strikethrough and emphasis", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) =>
+          b.schema
+            .text("Hello World!")
+            .mark([b.schema.mark("strikethrough"), b.schema.mark("em")]),
+        [
+          {
+            children: [
+              {
+                children: [{ type: "text", value: "Hello World!" }],
+                type: "delete",
+              },
+            ],
             type: "emphasis",
           },
         ],
-        type: "delete",
-      },
-    ],
-  )
-  .shouldConvertProseMirrorNode(
-    (b) =>
-      b.schema
-        .text("Hello World!")
-        .mark([b.schema.mark("strikethrough"), b.schema.mark("em")]),
-    [
-      {
-        children: [
+      );
+    });
+
+    test("strikethrough wrapping strong", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.strikethrough(b.strong("Hello World!")),
+        [
           {
-            children: [{ type: "text", value: "Hello World!" }],
+            children: [
+              {
+                children: [{ type: "text", value: "Hello World!" }],
+                type: "strong",
+              },
+            ],
             type: "delete",
           },
         ],
-        type: "emphasis",
-      } as UnistNode,
-    ],
-  )
-  .shouldConvertProseMirrorNode(
-    (b) => b.strikethrough(b.strong("Hello World!")),
-    [
-      {
-        children: [
+      );
+    });
+
+    test("nested strikethrough and strong", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) =>
+          b.schema
+            .text("Hello World!")
+            .mark([b.schema.mark("strikethrough"), b.schema.mark("strong")]),
+        [
           {
-            children: [{ type: "text", value: "Hello World!" }],
+            children: [
+              {
+                children: [{ type: "text", value: "Hello World!" }],
+                type: "delete",
+              },
+            ],
             type: "strong",
           },
         ],
-        type: "delete",
-      },
-    ],
-  )
-  .shouldConvertProseMirrorNode(
-    (b) =>
-      b.schema
-        .text("Hello World!")
-        .mark([b.schema.mark("strikethrough"), b.schema.mark("strong")]),
-    [
-      {
-        children: [
-          {
-            children: [{ type: "text", value: "Hello World!" }],
-            type: "delete",
-          },
-        ],
-        type: "strong",
-      } as UnistNode,
-    ],
-  )
-  .shouldMatchInputRule("~Test~", "~~Test~~", "Test")
-  .shouldMatchInputRule("~~Test~~", "~~Test~~", "Test")
-  .shouldMatchInputRule("~Hello World~", "~~Hello World~~", "Hello World")
-  .shouldMatchInputRule("~Test~{Enter}", "~~Test~~\n\n", (b) => [
-    b.p(b.strikethrough("Test")),
-    b.p(),
-  ])
-  .shouldMatchInputRule("~~Test~~{Enter}", "~~Test~~\n\n", (b) => [
-    b.p(b.strikethrough("Test")),
-    b.p(),
-  ])
-  .shouldMatchInputRule("~ ~Test~", "\\~ ~~Test~~", (b) => [
-    b.p("~ ", b.strikethrough("Test")),
-  ])
-  .shouldMatchInputRule("~Test~ ~", "~~Test~~ \\~", (b) => [
-    b.p(b.strikethrough("Test"), " ~"),
-  ])
-  .shouldParseDOM("<p><s>Hello</s></p>", (b) => [b.p(b.strikethrough("Hello"))])
-  .shouldParseDOM("<p><del>Hello</del></p>", (b) => [
-    b.p(b.strikethrough("Hello")),
-  ])
-  .shouldParseDOM(
-    '<p><span style="text-decoration: line-through">Hello</span></p>',
-    (b) => [b.p(b.strikethrough("Hello"))],
-  )
-  .shouldParseDOM(
-    '<p><span style="text-decoration: underline line-through">Hello</span></p>',
-    (b) => [b.p(b.strikethrough("Hello"))],
-  )
-  .shouldParseDOM(
-    '<p><span style="text-decoration: underline">Hello</span></p>',
-    (b) => [b.p("Hello")],
-  )
-  .shouldRenderDOM(
-    (b) => [b.p(b.strikethrough("Hello"))],
-    "<p><s>Hello</s></p>",
-  )
-  .test();
+      );
+    });
+  });
+
+  describe("input rules", () => {
+    test("matches ~Test~", () => {
+      expect(fx).toApplyInlineInputRule("~Test~", "~~Test~~", "Test");
+    });
+
+    test("matches ~~Test~~", () => {
+      expect(fx).toApplyInlineInputRule("~~Test~~", "~~Test~~", "Test");
+    });
+
+    test("matches ~Hello World~", () => {
+      expect(fx).toApplyInlineInputRule(
+        "~Hello World~",
+        "~~Hello World~~",
+        "Hello World",
+      );
+    });
+
+    test("matches ~ across a paragraph break", () => {
+      expect(fx).toApplyInlineInputRule(
+        "~Test~{Enter}",
+        "~~Test~~\n\n",
+        (b) => [b.p(b.strikethrough("Test")), b.p()],
+      );
+    });
+
+    test("matches ~~ across a paragraph break", () => {
+      expect(fx).toApplyInlineInputRule(
+        "~~Test~~{Enter}",
+        "~~Test~~\n\n",
+        (b) => [b.p(b.strikethrough("Test")), b.p()],
+      );
+    });
+
+    test("does not match a leading `~ `", () => {
+      expect(fx).toApplyInlineInputRule("~ ~Test~", "\\~ ~~Test~~", (b) => [
+        b.p("~ ", b.strikethrough("Test")),
+      ]);
+    });
+
+    test("does not match a trailing ` ~`", () => {
+      expect(fx).toApplyInlineInputRule("~Test~ ~", "~~Test~~ \\~", (b) => [
+        b.p(b.strikethrough("Test"), " ~"),
+      ]);
+    });
+  });
+
+  describe("parses DOM", () => {
+    test("<s>", () => {
+      expect(fx).toParseDOM("<p><s>Hello</s></p>", (b) => [
+        b.p(b.strikethrough("Hello")),
+      ]);
+    });
+
+    test("<del>", () => {
+      expect(fx).toParseDOM("<p><del>Hello</del></p>", (b) => [
+        b.p(b.strikethrough("Hello")),
+      ]);
+    });
+
+    test("text-decoration: line-through", () => {
+      expect(fx).toParseDOM(
+        '<p><span style="text-decoration: line-through">Hello</span></p>',
+        (b) => [b.p(b.strikethrough("Hello"))],
+      );
+    });
+
+    test("text-decoration: underline line-through", () => {
+      expect(fx).toParseDOM(
+        '<p><span style="text-decoration: underline line-through">Hello</span></p>',
+        (b) => [b.p(b.strikethrough("Hello"))],
+      );
+    });
+
+    test("text-decoration: underline", () => {
+      expect(fx).toParseDOM(
+        '<p><span style="text-decoration: underline">Hello</span></p>',
+        (b) => [b.p("Hello")],
+      );
+    });
+  });
+
+  test("renders DOM", () => {
+    expect(fx).toRenderDOM(
+      (b) => [b.p(b.strikethrough("Hello"))],
+      "<p><s>Hello</s></p>",
+    );
+  });
+});

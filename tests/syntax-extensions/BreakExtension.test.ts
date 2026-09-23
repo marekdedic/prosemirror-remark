@@ -5,8 +5,9 @@ import { BreakExtension } from "../../src/syntax-extensions/BreakExtension";
 import { ParagraphExtension } from "../../src/syntax-extensions/ParagraphExtension";
 import { RootExtension } from "../../src/syntax-extensions/RootExtension";
 import { TextExtension } from "../../src/syntax-extensions/TextExtension";
-import { NodeExtensionTester } from "../utils/NodeExtensionTester";
+import { createExtensionFixture } from "../utils/fixture";
 import { ParserProviderExtension } from "../utils/ParserProviderExtension";
+import "../utils/matchers";
 
 /*
  * The Ctrl-Enter binding depends on a global, so it can't be expressed through
@@ -65,28 +66,63 @@ describe("BreakExtension keymap", () => {
   });
 });
 
-new NodeExtensionTester(new BreakExtension(), {
-  proseMirrorNodeName: "hard_break",
-  unistNodeName: "break",
-})
-  .shouldMatchUnistNode({ type: "break" })
-  .shouldNotMatchUnistNode({ type: "hard_break" })
-  .shouldNotMatchUnistNode({ type: "other" })
-  .shouldConvertUnistNode({ type: "break" }, (b) => [b.br()])
-  .shouldMatchProseMirrorNode((b) => b.br())
-  .shouldConvertProseMirrorNode((b) => b.br(), [{ type: "break" }])
-  .shouldSupportKeymap(
-    (b) => [b.p("Hello")],
-    3,
-    "{Mod-Enter}",
-    (b) => [b.p("He", b.br(), "llo")],
-    "He\\\nllo",
-  )
-  .shouldParseDOM("<p>Hello<br>World</p>", (b) => [
-    b.p("Hello", b.br(), "World"),
-  ])
-  .shouldRenderDOM(
-    (b) => [b.p("Hello", b.br(), "World")],
-    "<p>Hello<br>World</p>",
-  )
-  .test();
+describe("BreakExtension", () => {
+  const fx = createExtensionFixture(new BreakExtension());
+
+  test("handles the `break` unist node", () => {
+    expect(fx).toHandleUnistNode("break");
+  });
+
+  test("provides the `hard_break` ProseMirror node", () => {
+    expect(fx).toProvideNode("hard_break");
+  });
+
+  describe("matches unist nodes", () => {
+    test("matches `break`", () => {
+      expect(fx).toMatchUnistNode({ type: "break" });
+    });
+
+    test("does not match `hard_break`", () => {
+      expect(fx).not.toMatchUnistNode({ type: "hard_break" });
+    });
+
+    test("does not match other nodes", () => {
+      expect(fx).not.toMatchUnistNode({ type: "other" });
+    });
+  });
+
+  test("converts unist -> ProseMirror", () => {
+    expect(fx).toConvertUnistNode({ type: "break" }, (b) => [b.br()]);
+  });
+
+  test("matches a `hard_break` ProseMirror node", () => {
+    expect(fx).toMatchProseMirrorNode((b) => b.br());
+  });
+
+  test("converts ProseMirror -> unist", () => {
+    expect(fx).toConvertProseMirrorNode((b) => b.br(), [{ type: "break" }]);
+  });
+
+  test("keymap `Mod-Enter` inserts a hard break", () => {
+    expect(fx).toSupportKeymap(
+      (b) => [b.p("Hello")],
+      3,
+      "{Mod-Enter}",
+      (b) => [b.p("He", b.br(), "llo")],
+      "He\\\nllo",
+    );
+  });
+
+  test("parses DOM", () => {
+    expect(fx).toParseDOM("<p>Hello<br>World</p>", (b) => [
+      b.p("Hello", b.br(), "World"),
+    ]);
+  });
+
+  test("renders DOM", () => {
+    expect(fx).toRenderDOM(
+      (b) => [b.p("Hello", b.br(), "World")],
+      "<p>Hello<br>World</p>",
+    );
+  });
+});
