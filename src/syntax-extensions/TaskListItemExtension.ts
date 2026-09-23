@@ -5,7 +5,7 @@ import type {
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
-import type { Command, EditorState } from "prosemirror-state";
+import type { Command } from "prosemirror-state";
 import type {
   EditorView,
   NodeView,
@@ -23,6 +23,7 @@ import { InputRule } from "prosemirror-inputrules";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
+import { isAtStart } from "../utils/isAtStart";
 
 class TaskListItemView implements NodeView {
   public readonly contentDOM: HTMLElement;
@@ -78,19 +79,6 @@ class TaskListItemView implements NodeView {
 }
 
 export class TaskListItemExtension extends NodeExtension<ListItem> {
-  private static isAtStart(
-    state: EditorState,
-    view: EditorView | undefined,
-  ): boolean {
-    if (!state.selection.empty) {
-      return false;
-    }
-    if (view !== undefined) {
-      return view.endOfTextblock("backward", state);
-    }
-    return state.selection.$anchor.parentOffset > 0;
-  }
-
   public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
@@ -117,7 +105,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   ): Record<string, Command> {
     return {
       Backspace: (state, dispatch, view): boolean => {
-        if (!TaskListItemExtension.isAtStart(state, view)) {
+        if (!isAtStart(state, view)) {
           return false;
         }
         const taskListItemNode = state.selection.$anchor.node(-1);

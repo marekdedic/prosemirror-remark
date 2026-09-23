@@ -140,6 +140,42 @@ describe("HeadingExtension", () => {
       );
     });
 
+    test("# applies at the start of a heading", () => {
+      expect(fx).toReportKeymapApplicability(
+        (b) => [b.heading({ level: 2 }, "<cursor>Hello")],
+        "cursor",
+        "#",
+        true,
+      );
+    });
+
+    test("# does not apply in the middle of a heading", () => {
+      expect(fx).toReportKeymapApplicability(
+        (b) => [b.heading({ level: 2 }, "He<cursor>llo")],
+        "cursor",
+        "#",
+        false,
+      );
+    });
+
+    test("Backspace applies at the start of a heading", () => {
+      expect(fx).toReportKeymapApplicability(
+        (b) => [b.heading({ level: 2 }, "<cursor>Hello")],
+        "cursor",
+        "Backspace",
+        true,
+      );
+    });
+
+    test("Backspace does not apply in the middle of a heading", () => {
+      expect(fx).toReportKeymapApplicability(
+        (b) => [b.heading({ level: 2 }, "He<cursor>llo")],
+        "cursor",
+        "Backspace",
+        false,
+      );
+    });
+
     test("# does not apply across a selection", () => {
       expect(fx).toReportKeymapApplicability(
         (b) => [b.heading({ level: 2 }, "H<from>el<to>lo")],

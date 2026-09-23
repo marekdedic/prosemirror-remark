@@ -5,8 +5,7 @@ import type {
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
-import type { Command, EditorState } from "prosemirror-state";
-import type { EditorView } from "prosemirror-view";
+import type { Command } from "prosemirror-state";
 
 import { setBlockType } from "prosemirror-commands";
 import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
@@ -16,6 +15,7 @@ import {
   NodeExtension,
 } from "prosemirror-unified";
 
+import { isAtStart } from "../utils/isAtStart";
 import { ParagraphExtension } from "./ParagraphExtension";
 import { TextExtension } from "./TextExtension";
 
@@ -26,7 +26,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
     onlyAtStart: boolean,
   ): Command {
     return (state, dispatch, view) => {
-      if (onlyAtStart && !HeadingExtension.isAtStart(state, view)) {
+      if (onlyAtStart && !isAtStart(state, view)) {
         return false;
       }
 
@@ -64,19 +64,6 @@ export class HeadingExtension extends NodeExtension<Heading> {
       }
       return true;
     };
-  }
-
-  private static isAtStart(
-    state: EditorState,
-    view: EditorView | undefined,
-  ): boolean {
-    if (!state.selection.empty) {
-      return false;
-    }
-    if (view !== undefined) {
-      return view.endOfTextblock("backward", state);
-    }
-    return state.selection.$anchor.parentOffset > 0;
   }
 
   public override dependencies(): Array<Extension> {
