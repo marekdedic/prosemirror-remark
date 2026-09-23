@@ -51,7 +51,7 @@ describe("HorizontalRuleExtension", () => {
 
   describe("keymap `Mod-_` inserts a horizontal rule", () => {
     test("empty document", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         () => [],
         "start",
         "{Mod-_}",
@@ -61,7 +61,7 @@ describe("HorizontalRuleExtension", () => {
     });
 
     test("cursor selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("abc<cursor>def")],
         "cursor",
         "{Mod-_}",
@@ -71,7 +71,7 @@ describe("HorizontalRuleExtension", () => {
     });
 
     test("range selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("ab<from>cd<to>ef")],
         { anchor: "from", head: "to" },
         "{Mod-_}",
@@ -99,53 +99,72 @@ describe("HorizontalRuleExtension", () => {
       ["  ***{Enter}"],
       ["   ***{Enter}"],
     ])("matches %j", (input) => {
-      expect(fx).toApplyBlockInputRule(input, "\n\n---\n", (b) => [
-        b.p(),
-        b.hr(),
-        b.p(),
-      ]);
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "end",
+        input,
+        (b) => [b.p(), b.hr(), b.p()],
+        "\n\n---\n",
+      );
     });
 
     test("does not match `*-*`", () => {
-      expect(fx).toIgnoreBlockInputRule("*-*{Enter}", "*-*\n", (b) => [
-        b.p(b.em("-")),
-        b.p(),
-      ]);
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "end",
+        "*-*{Enter}",
+        (b) => [b.p(b.em("-")), b.p()],
+        "*-*\n",
+      );
     });
 
     test("does not match `*_*`", () => {
-      expect(fx).toIgnoreBlockInputRule("*_*{Enter}", "*\\_*\n", (b) => [
-        b.p(b.em("_")),
-        b.p(),
-      ]);
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "end",
+        "*_*{Enter}",
+        (b) => [b.p(b.em("_")), b.p()],
+        "*\\_*\n",
+      );
     });
 
     test("does not match `* **`", () => {
-      expect(fx).toIgnoreBlockInputRule("* **{Enter}", "\\* \\*\\*\n", (b) => [
-        b.p("* **"),
-        b.p(),
-      ]);
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "end",
+        "* **{Enter}",
+        (b) => [b.p("* **"), b.p()],
+        "\\* \\*\\*\n",
+      );
     });
 
     test("does not match `** *`", () => {
-      expect(fx).toIgnoreBlockInputRule("** *{Enter}", "\\*\\* \\*\n", (b) => [
-        b.p("** *"),
-        b.p(),
-      ]);
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "end",
+        "** *{Enter}",
+        (b) => [b.p("** *"), b.p()],
+        "\\*\\* \\*\n",
+      );
     });
 
     test("does not match `a***`", () => {
-      expect(fx).toIgnoreBlockInputRule("a***{Enter}", "a\\*\\*\\*\n", (b) => [
-        b.p("a***"),
-        b.p(),
-      ]);
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "end",
+        "a***{Enter}",
+        (b) => [b.p("a***"), b.p()],
+        "a\\*\\*\\*\n",
+      );
     });
 
     test("does not match `***bold italic***`", () => {
-      expect(fx).toIgnoreBlockInputRule(
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "end",
         "***bold italic***",
-        "**\\*bold italic**\\*",
         (b) => [b.p(b.strong("*bold italic"), "*")],
+        "**\\*bold italic**\\*",
       );
     });
   });

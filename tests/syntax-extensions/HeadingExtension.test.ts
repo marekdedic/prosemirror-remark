@@ -88,7 +88,7 @@ describe("HeadingExtension", () => {
       [4, 5],
       [5, 6],
     ])("level %i -> %i", (from, to) => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.heading({ level: from }, "Hello")],
         "start",
         "#",
@@ -98,7 +98,7 @@ describe("HeadingExtension", () => {
     });
 
     test("level 6 is capped and inserts a literal `#`", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.heading({ level: 6 }, "Hello")],
         "start",
         "#",
@@ -110,7 +110,7 @@ describe("HeadingExtension", () => {
 
   describe("keymap `Shift-Tab` decreases the level", () => {
     test("level 2 -> 1", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.heading({ level: 2 }, "Hello")],
         "start",
         "{Shift-Tab}",
@@ -120,7 +120,7 @@ describe("HeadingExtension", () => {
     });
 
     test("level 1 -> paragraph", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.heading({ level: 1 }, "Hello")],
         "start",
         "{Shift-Tab}",
@@ -190,27 +190,34 @@ describe("HeadingExtension", () => {
     test.each([[1], [2], [3], [4], [5], [6]])("level %i from `#`", (level) => {
       const hashes = "#".repeat(level);
 
-      expect(fx).toApplyBlockInputRule(
-        `${hashes} Hello World!`,
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "end",
         `${hashes} Hello World!`,
         (b) => [b.heading({ level }, "Hello World!")],
+        `${hashes} Hello World!`,
       );
     });
 
     test.each([[" "], ["  "], ["   "]])(
       "level 1 tolerating %j leading spaces",
       (prefix) => {
-        expect(fx).toApplyBlockInputRule(
+        expect(fx).toTransformInput(
+          (b) => [b.p()],
+          "end",
           `${prefix}# Hello World!`,
-          "# Hello World!",
           (b) => [b.heading({ level: 1 }, "Hello World!")],
+          "# Hello World!",
         );
       },
     );
 
     test("rejects seven `#`", () => {
-      expect(fx).toIgnoreBlockInputRule(
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "end",
         "####### Hello World!",
+        (b) => [b.p("####### Hello World!")],
         "\\####### Hello World!",
       );
     });

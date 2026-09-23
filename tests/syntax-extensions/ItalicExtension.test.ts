@@ -110,7 +110,7 @@ describe("ItalicExtension", () => {
 
   describe("keymap {Mod-i}", () => {
     test("no-op on empty selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p()],
         "start",
         "{Mod-i}",
@@ -120,7 +120,7 @@ describe("ItalicExtension", () => {
     });
 
     test("wraps the selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("ab<from>cd<to>ef")],
         { anchor: "from", head: "to" },
         "{Mod-i}",
@@ -132,7 +132,7 @@ describe("ItalicExtension", () => {
 
   describe("keymap {Mod-I}", () => {
     test("no-op on empty selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p()],
         "start",
         "{Mod-I}",
@@ -142,7 +142,7 @@ describe("ItalicExtension", () => {
     });
 
     test("wraps the selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("ab<from>cd<to>ef")],
         { anchor: "from", head: "to" },
         "{Mod-I}",
@@ -154,37 +154,63 @@ describe("ItalicExtension", () => {
 
   describe("input rules", () => {
     test("matches *Test*", () => {
-      expect(fx).toApplyInlineInputRule("*Test*", "*Test*", "Test");
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "*Test*END",
+        (b) => [b.p("BEGIN", b.em("Test"), "END")],
+        "BEGIN*Test*END",
+      );
     });
 
     test("matches _Test_", () => {
-      expect(fx).toApplyInlineInputRule("_Test_", "*Test*", "Test");
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "_Test_END",
+        (b) => [b.p("BEGIN", b.em("Test"), "END")],
+        "BEGIN*Test*END",
+      );
     });
 
     test("matches *Hello World*", () => {
-      expect(fx).toApplyInlineInputRule(
-        "*Hello World*",
-        "*Hello World*",
-        "Hello World",
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "*Hello World*END",
+        (b) => [b.p("BEGIN", b.em("Hello World"), "END")],
+        "BEGIN*Hello World*END",
       );
     });
 
     test("matches * across a paragraph break", () => {
-      expect(fx).toApplyInlineInputRule("*Test*{Enter}", "*Test*\n\n", (b) => [
-        b.p(b.em("Test")),
-        b.p(),
-      ]);
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "*Test*{Enter}END",
+        (b) => [b.p("BEGIN", b.em("Test")), b.p("END")],
+        "BEGIN*Test*\n\nEND",
+      );
     });
 
     test("matches _ across a paragraph break", () => {
-      expect(fx).toApplyInlineInputRule("_Test_{Enter}", "*Test*\n\n", (b) => [
-        b.p(b.em("Test")),
-        b.p(),
-      ]);
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "_Test_{Enter}END",
+        (b) => [b.p("BEGIN", b.em("Test")), b.p("END")],
+        "BEGIN*Test*\n\nEND",
+      );
     });
 
     test("does not match *Test_", () => {
-      expect(fx).toIgnoreInlineInputRule("*Test_", "\\*Test\\_");
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "*Test_END",
+        (b) => [b.p("BEGIN*Test_END")],
+        "BEGIN\\*Test\\_END",
+      );
     });
   });
 

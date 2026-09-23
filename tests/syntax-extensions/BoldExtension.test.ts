@@ -104,7 +104,7 @@ describe("BoldExtension", () => {
 
   describe.each([["{Mod-b}"], ["{Mod-B}"]])("keymap %s", (key) => {
     test("no-op on empty selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p()],
         "start",
         key,
@@ -114,7 +114,7 @@ describe("BoldExtension", () => {
     });
 
     test("wraps the selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("ab<from>cd<to>ef")],
         { anchor: "from", head: "to" },
         key,
@@ -130,22 +130,32 @@ describe("BoldExtension", () => {
       ["__Test__", "**Test**", "Test"],
       ["**Hello World**", "**Hello World**", "Hello World"],
     ] as const)("matches %s", (input, md, contents) => {
-      expect(fx).toApplyInlineInputRule(input, md, contents);
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        `${input}END`,
+        (b) => [b.p("BEGIN", b.strong(contents), "END")],
+        `BEGIN${md}END`,
+      );
     });
 
     test("matches ** across a paragraph break", () => {
-      expect(fx).toApplyInlineInputRule(
-        "**Test**{Enter}",
-        "**Test**\n\n",
-        (b) => [b.p(b.strong("Test")), b.p()],
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "**Test**{Enter}END",
+        (b) => [b.p("BEGIN", b.strong("Test")), b.p("END")],
+        "BEGIN**Test**\n\nEND",
       );
     });
 
     test("matches __ across a paragraph break", () => {
-      expect(fx).toApplyInlineInputRule(
-        "__Test__{Enter}",
-        "**Test**\n\n",
-        (b) => [b.p(b.strong("Test")), b.p()],
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "__Test__{Enter}END",
+        (b) => [b.p("BEGIN", b.strong("Test")), b.p("END")],
+        "BEGIN**Test**\n\nEND",
       );
     });
 
@@ -155,24 +165,36 @@ describe("BoldExtension", () => {
       ["**Test*_", "\\*\\*Test\\*\\_"],
       ["**Test* *", "\\*\\*Test\\* \\*"],
     ] as const)("does not match %s", (input, md) => {
-      expect(fx).toIgnoreInlineInputRule(input, md);
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        `${input}END`,
+        (b) => [b.p(`BEGIN${input}END`)],
+        `BEGIN${md}END`,
+      );
     });
 
     test("does not match mismatched *_ pairs", () => {
-      expect(fx).toIgnoreInlineInputRule(
-        "X*_Test**X",
-        "&#x58;*\\_Test\\**&#x58;",
-        (b) => [b.p("X", b.em("_Test*"), "X")],
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "X*_Test**XEND",
+        (b) => [b.p("BEGINX", b.em("_Test*"), "XEND")],
+        "BEGIN&#x58;*\\_Test\\**&#x58;END",
       );
-      expect(fx).toIgnoreInlineInputRule(
-        "X_*Test**X",
-        "X\\_*Test\\**&#x58;",
-        (b) => [b.p("X_", b.em("Test*"), "X")],
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "X_*Test**XEND",
+        (b) => [b.p("BEGINX_", b.em("Test*"), "XEND")],
+        "BEGINX\\_*Test\\**&#x58;END",
       );
-      expect(fx).toIgnoreInlineInputRule(
-        "X* *Test**X",
-        "X\\* *Test\\**&#x58;",
-        (b) => [b.p("X* ", b.em("Test*"), "X")],
+      expect(fx).toTransformInput(
+        (b) => [b.p("BEGIN")],
+        "end",
+        "X* *Test**XEND",
+        (b) => [b.p("BEGINX* ", b.em("Test*"), "XEND")],
+        "BEGINX\\* *Test\\**&#x58;END",
       );
     });
   });
