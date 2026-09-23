@@ -451,6 +451,42 @@ describe("TaskListExtension", () => {
         "* Hello\n\n  World",
       );
     });
+
+    test("`Backspace` joins a regular item's list with a preceding task list", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [b.ul(b.taskListItem(b.p("a"))), b.ul(b.li(b.p("<cursor>b")))],
+        "cursor",
+        "{Backspace}",
+        (b) => [b.ul(b.taskListItem(b.p("a")), b.li(b.p("b")))],
+        "* [ ] a\n* b",
+      );
+    });
+
+    test("`Backspace` on a task item after a list does not join it", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [
+          b.ul(b.taskListItem(b.p("a"))),
+          b.ul(b.taskListItem(b.p("<cursor>b"))),
+        ],
+        "cursor",
+        "{Backspace}",
+        (b) => [b.ul(b.taskListItem(b.p("a"))), b.ul(b.li(b.p("b")))],
+        "* [ ] a\n\n- b",
+      );
+    });
+
+    test("`Delete` joins a task list with the following list", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [
+          b.ul(b.taskListItem(b.p("a<cursor>"))),
+          b.ul(b.taskListItem(b.p("b"))),
+        ],
+        "cursor",
+        "{Delete}",
+        (b) => [b.ul(b.taskListItem(b.p("a")), b.taskListItem(b.p("b")))],
+        "* [ ] a\n* [ ] b",
+      );
+    });
   });
 });
 

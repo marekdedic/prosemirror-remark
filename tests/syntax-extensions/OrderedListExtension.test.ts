@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { OrderedListExtension } from "../../src/syntax-extensions/OrderedListExtension";
+import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
@@ -436,6 +437,39 @@ describe("OrderedListExtension", () => {
         "1. Hello\n2. World",
       );
     });
+
+    test("`Backspace` joins a list with the preceding list", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [b.ol(b.li(b.p("a"))), b.ol(b.li(b.p("<cursor>b")))],
+        "cursor",
+        "{Backspace}",
+        (b) => [b.ol(b.li(b.p("a")), b.li(b.p("b")))],
+        "1. a\n2. b",
+      );
+    });
+
+    test("`Backspace` keeps the start of the preceding list", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [
+          b.ol({ start: 5 }, b.li(b.p("a"))),
+          b.ol({ start: 9 }, b.li(b.p("<cursor>b"))),
+        ],
+        "cursor",
+        "{Backspace}",
+        (b) => [b.ol({ start: 5 }, b.li(b.p("a")), b.li(b.p("b")))],
+        "5. a\n6. b",
+      );
+    });
+
+    test("`Delete` joins a list with the following list", () => {
+      expect(fx).toSupportKeymap(
+        (b) => [b.ol(b.li(b.p("a<cursor>"))), b.ol(b.li(b.p("b")))],
+        "cursor",
+        "{Delete}",
+        (b) => [b.ol(b.li(b.p("a")), b.li(b.p("b")))],
+        "1. a\n2. b",
+      );
+    });
   });
 
   describe("DOM", () => {
@@ -464,5 +498,29 @@ describe("OrderedListExtension", () => {
         '<ol data-spread="false" start="5"><li><p>Hello</p></li></ol>',
       );
     });
+  });
+});
+
+describe("OrderedListExtension next to an unordered list", () => {
+  const fx = createExtensionFixture(new OrderedListExtension(), [
+    new UnorderedListExtension(),
+  ]);
+
+  test("a number after an unordered list starts a new list", () => {
+    expect(fx).toApplyBlockInputRule(
+      "* a{Enter}{Enter}1. b",
+      "* a\n\n1. b",
+      (b) => [b.ul(b.li(b.p("a"))), b.ol(b.li(b.p("b")))],
+    );
+  });
+
+  test("`Backspace` moves the items into a preceding unordered list", () => {
+    expect(fx).toSupportKeymap(
+      (b) => [b.ul(b.li(b.p("a"))), b.ol(b.li(b.p("<cursor>b")))],
+      "cursor",
+      "{Backspace}",
+      (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
+      "* a\n* b",
+    );
   });
 });
