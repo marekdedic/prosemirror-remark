@@ -496,6 +496,24 @@ describe("TaskListItemExtension keymap applicability", () => {
     new ListItemExtension(),
   ]);
 
+  test("`Backspace` applies at the start of a task list item", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.ul(b.taskListItem(b.p("<cursor>Hello")))],
+      "cursor",
+      "Backspace",
+      true,
+    );
+  });
+
+  test("`Backspace` does not apply in the middle of a task list item", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.ul(b.taskListItem(b.p("He<cursor>llo")))],
+      "cursor",
+      "Backspace",
+      false,
+    );
+  });
+
   test("`Backspace` does not apply across a selection", () => {
     expect(fx).toReportKeymapApplicability(
       (b) => [b.ul(b.taskListItem(b.p("<from>He<to>llo")))],
