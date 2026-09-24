@@ -99,9 +99,7 @@ describe("HorizontalRuleExtension", () => {
       ["  ***{Enter}"],
       ["   ***{Enter}"],
     ])("matches %j", (input) => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         input,
         (b) => [b.p(), b.hr(), b.p()],
         "\n\n---\n",
@@ -109,9 +107,7 @@ describe("HorizontalRuleExtension", () => {
     });
 
     test("does not match `*-*`", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "*-*{Enter}",
         (b) => [b.p(b.em("-")), b.p()],
         "*-*\n",
@@ -119,9 +115,7 @@ describe("HorizontalRuleExtension", () => {
     });
 
     test("does not match `*_*`", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "*_*{Enter}",
         (b) => [b.p(b.em("_")), b.p()],
         "*\\_*\n",
@@ -129,9 +123,7 @@ describe("HorizontalRuleExtension", () => {
     });
 
     test("does not match `* **`", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "* **{Enter}",
         (b) => [b.p("* **"), b.p()],
         "\\* \\*\\*\n",
@@ -139,9 +131,7 @@ describe("HorizontalRuleExtension", () => {
     });
 
     test("does not match `** *`", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "** *{Enter}",
         (b) => [b.p("** *"), b.p()],
         "\\*\\* \\*\n",
@@ -149,9 +139,7 @@ describe("HorizontalRuleExtension", () => {
     });
 
     test("does not match `a***`", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "a***{Enter}",
         (b) => [b.p("a***"), b.p()],
         "a\\*\\*\\*\n",
@@ -159,9 +147,7 @@ describe("HorizontalRuleExtension", () => {
     });
 
     test("does not match `***bold italic***`", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "***bold italic***",
         (b) => [b.p(b.strong("*bold italic"), "*")],
         "**\\*bold italic**\\*",

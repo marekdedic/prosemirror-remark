@@ -115,9 +115,7 @@ describe("CodeBlockExtension", () => {
   });
 
   test("input rule from four spaces", () => {
-    expect(fx).toTransformInput(
-      (b) => [b.p()],
-      "end",
+    expect(fx).toTransformBlockInput(
       "    Hello World!",
       (b) => [b.code_block("Hello World!")],
       "```\nHello World!\n```",

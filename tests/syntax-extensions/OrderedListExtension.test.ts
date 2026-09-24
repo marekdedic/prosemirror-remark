@@ -311,19 +311,11 @@ describe("OrderedListExtension", () => {
 
   describe("input rules", () => {
     test("`1. ` starts an empty ordered list", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
-        "1. ",
-        (b) => [b.ol(b.li(b.p()))],
-        "1.",
-      );
+      expect(fx).toTransformBlockInput("1. ", (b) => [b.ol(b.li(b.p()))], "1.");
     });
 
     test("`1. ` with content", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "1. Hello World!",
         (b) => [b.ol(b.li(b.p("Hello World!")))],
         "1. Hello World!",
@@ -331,9 +323,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("tolerates one leading space", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         " 1. Hello World!",
         (b) => [b.ol(b.li(b.p("Hello World!")))],
         "1. Hello World!",
@@ -341,9 +331,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("tolerates two leading spaces", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "  1. Hello World!",
         (b) => [b.ol(b.li(b.p("Hello World!")))],
         "1. Hello World!",
@@ -351,9 +339,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("tolerates three leading spaces", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "   1. Hello World!",
         (b) => [b.ol(b.li(b.p("Hello World!")))],
         "1. Hello World!",
@@ -361,9 +347,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("starts at 42", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "42. Hello World!",
         (b) => [b.ol({ start: 42 }, b.li(b.p("Hello World!")))],
         "42. Hello World!",
@@ -371,9 +355,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("continues onto a second item", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "1. Hello World!{Enter}Second item",
         (b) => [b.ol(b.li(b.p("Hello World!")), b.li(b.p("Second item")))],
         "1. Hello World!\n2. Second item",
@@ -383,9 +365,7 @@ describe("OrderedListExtension", () => {
     // A number continuing the preceding list joins it; any other number starts a
     // New list.
     test("a continuing number joins the list", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "1. a{Enter}{Enter}2. b",
         (b) => [b.ol(b.li(b.p("a")), b.li(b.p("b")))],
         "1. a\n2. b",
@@ -393,9 +373,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("a non-continuing number starts a new list", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "1. a{Enter}{Enter}7. b",
         (b) => [b.ol(b.li(b.p("a"))), b.ol({ start: 7 }, b.li(b.p("b")))],
         "1. a\n\n7) b",
@@ -403,9 +381,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("a continuing number joins a list started at 5", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "5. a{Enter}{Enter}6. b",
         (b) => [b.ol({ start: 5 }, b.li(b.p("a")), b.li(b.p("b")))],
         "5. a\n6. b",
@@ -413,9 +389,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("renumbers when continuing across items", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "1. a{Enter}b{Enter}{Enter}3. c",
         (b) => [b.ol(b.li(b.p("a")), b.li(b.p("b")), b.li(b.p("c")))],
         "1. a\n2. b\n3. c",
@@ -533,9 +507,7 @@ describe("OrderedListExtension next to an unordered list", () => {
   ]);
 
   test("a number after an unordered list starts a new list", () => {
-    expect(fx).toTransformInput(
-      (b) => [b.p()],
-      "end",
+    expect(fx).toTransformBlockInput(
       "* a{Enter}{Enter}1. b",
       (b) => [b.ul(b.li(b.p("a"))), b.ol(b.li(b.p("b")))],
       "* a\n\n1. b",

@@ -255,19 +255,11 @@ describe("UnorderedListExtension", () => {
 
   describe("input rules", () => {
     test("`* ` starts an empty unordered list", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
-        "* ",
-        (b) => [b.ul(b.li(b.p()))],
-        "*",
-      );
+      expect(fx).toTransformBlockInput("* ", (b) => [b.ul(b.li(b.p()))], "*");
     });
 
     test("`* ` with content", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "* Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
         "* Hello World!",
@@ -275,9 +267,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("`- ` with content", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "- Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
         "* Hello World!",
@@ -285,9 +275,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("`+ ` with content", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "+ Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
         "* Hello World!",
@@ -295,9 +283,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("tolerates one leading space", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         " * Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
         "* Hello World!",
@@ -305,9 +291,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("tolerates two leading spaces", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "  * Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
         "* Hello World!",
@@ -315,9 +299,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("tolerates one leading space (again)", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         " * Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
         "* Hello World!",
@@ -325,9 +307,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("continues onto a second item", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "* Hello World!{Enter}Second item",
         (b) => [b.ul(b.li(b.p("Hello World!")), b.li(b.p("Second item")))],
         "* Hello World!\n* Second item",
@@ -335,9 +315,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("a bullet joins the preceding list", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "* a{Enter}{Enter}* b",
         (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
         "* a\n* b",
@@ -345,9 +323,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("a different bullet joins the preceding list", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "* a{Enter}{Enter}- b",
         (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
         "* a\n* b",
@@ -456,9 +432,7 @@ describe("UnorderedListExtension next to an ordered list", () => {
   ]);
 
   test("a bullet after an ordered list starts a new list", () => {
-    expect(fx).toTransformInput(
-      (b) => [b.p()],
-      "end",
+    expect(fx).toTransformBlockInput(
       "1. a{Enter}{Enter}* b",
       (b) => [b.ol(b.li(b.p("a"))), b.ul(b.li(b.p("b")))],
       "1. a\n\n* b",

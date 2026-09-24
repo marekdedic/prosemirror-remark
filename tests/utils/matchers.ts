@@ -31,6 +31,14 @@ import type {
 
 type Build<T> = (b: TestBuilders) => T;
 
+interface InputVariant {
+  after: ProseMirrorNode;
+  before: ProseMirrorNode;
+  editorInput: string;
+  markdown: string;
+  name: string;
+}
+
 function assertMarkExtension(
   extension: SyntaxExtension<UnistLike>,
 ): asserts extension is MarkExtension<UnistLike> {
@@ -113,6 +121,31 @@ function runEditorInput(
     };
   }
   return noWarningsLogged(warn, ctx);
+}
+
+function runInputVariants(
+  fx: ExtensionFixture<UnistLike>,
+  variants: Array<InputVariant>,
+  ctx: MatcherState,
+): SyncMatcherResult {
+  for (const variant of variants) {
+    const result = runEditorInput(
+      fx,
+      variant.before,
+      "end",
+      variant.editorInput,
+      variant.after,
+      variant.markdown,
+      ctx,
+    );
+    if (!result.pass) {
+      return {
+        message: () => `${variant.name}: ${result.message()}`,
+        pass: false,
+      };
+    }
+  }
+  return { message: () => "expected input not to match", pass: true };
 }
 
 expect.extend({
@@ -301,6 +334,38 @@ expect.extend({
     return nodesEqual(editor.doc, doc);
   },
 
+  toTransformBlockInput(
+    this: MatcherState,
+    fx: ExtensionFixture<UnistLike>,
+    editorInput: string,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): SyncMatcherResult {
+    const blocks = fx.resolveNodes(after(fx.b));
+    const { doc, paragraph } = fx.schema.nodes;
+    const begin = paragraph.create({}, [fx.schema.text("BEGIN")]);
+    return runInputVariants(
+      fx,
+      [
+        {
+          after: doc.create({}, blocks),
+          before: doc.create({}, [paragraph.create()]),
+          editorInput,
+          markdown: markdownOutput,
+          name: "in an empty document",
+        },
+        {
+          after: doc.create({}, [begin, ...blocks]),
+          before: doc.create({}, [begin, paragraph.create()]),
+          editorInput,
+          markdown: `BEGIN\n\n${markdownOutput}`,
+          name: "after a paragraph",
+        },
+      ],
+      this,
+    );
+  },
+
   toTransformInlineInput(
     this: MatcherState,
     fx: ExtensionFixture<UnistLike>,
@@ -331,47 +396,33 @@ expect.extend({
           ? [paragraph(nodes), paragraph([end])]
           : [paragraph([...nodes, spacedEnd])],
       );
-    const variants = [
-      {
-        after: doc(inline),
-        before: paragraph([]),
-        editorInput: `${editorInput}END`,
-        markdown: `${markdownOutput}${endMarkdown}`,
-        name: "at paragraph start",
-      },
-      {
-        after: doc([begin, ...inline]),
-        before: paragraph([begin]),
-        editorInput: `${editorInput}END`,
-        markdown: `BEGIN${markdownOutput}${endMarkdown}`,
-        name: "after text",
-      },
-      {
-        after: spacedDoc([spacedBegin, ...inline]),
-        before: paragraph([spacedBegin]),
-        editorInput: `${editorInput}${splits ? "END" : " END"}`,
-        markdown: `BEGIN ${markdownOutput}${splits ? "\n\nEND" : " END"}`,
-        name: "between spaces",
-      },
-    ];
-    for (const variant of variants) {
-      const result = runEditorInput(
-        fx,
-        fx.schema.nodes["doc"].create({}, [variant.before]),
-        "end",
-        variant.editorInput,
-        variant.after,
-        variant.markdown,
-        this,
-      );
-      if (!result.pass) {
-        return {
-          message: () => `${variant.name}: ${result.message()}`,
-          pass: false,
-        };
-      }
-    }
-    return { message: () => "expected inline input not to match", pass: true };
+    return runInputVariants(
+      fx,
+      [
+        {
+          after: doc(inline),
+          before: fx.schema.nodes["doc"].create({}, [paragraph([])]),
+          editorInput: `${editorInput}END`,
+          markdown: `${markdownOutput}${endMarkdown}`,
+          name: "at paragraph start",
+        },
+        {
+          after: doc([begin, ...inline]),
+          before: fx.schema.nodes["doc"].create({}, [paragraph([begin])]),
+          editorInput: `${editorInput}END`,
+          markdown: `BEGIN${markdownOutput}${endMarkdown}`,
+          name: "after text",
+        },
+        {
+          after: spacedDoc([spacedBegin, ...inline]),
+          before: fx.schema.nodes["doc"].create({}, [paragraph([spacedBegin])]),
+          editorInput: `${editorInput}${splits ? "END" : " END"}`,
+          markdown: `BEGIN ${markdownOutput}${splits ? "\n\nEND" : " END"}`,
+          name: "between spaces",
+        },
+      ],
+      this,
+    );
   },
 
   toTransformInput(
@@ -418,6 +469,11 @@ interface ExtensionMatchers<R> {
     selection: TesterSelection,
     key: string,
     applicable: boolean,
+  ): R;
+  toTransformBlockInput(
+    editorInput: string,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
   ): R;
   toTransformInlineInput(
     editorInput: string,

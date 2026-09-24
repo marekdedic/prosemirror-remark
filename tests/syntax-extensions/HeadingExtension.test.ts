@@ -190,9 +190,7 @@ describe("HeadingExtension", () => {
     test.each([[1], [2], [3], [4], [5], [6]])("level %i from `#`", (level) => {
       const hashes = "#".repeat(level);
 
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         `${hashes} Hello World!`,
         (b) => [b.heading({ level }, "Hello World!")],
         `${hashes} Hello World!`,
@@ -202,9 +200,7 @@ describe("HeadingExtension", () => {
     test.each([[" "], ["  "], ["   "]])(
       "level 1 tolerating %j leading spaces",
       (prefix) => {
-        expect(fx).toTransformInput(
-          (b) => [b.p()],
-          "end",
+        expect(fx).toTransformBlockInput(
           `${prefix}# Hello World!`,
           (b) => [b.heading({ level: 1 }, "Hello World!")],
           "# Hello World!",
@@ -213,9 +209,7 @@ describe("HeadingExtension", () => {
     );
 
     test("rejects seven `#`", () => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         "####### Hello World!",
         (b) => [b.p("####### Hello World!")],
         "\\####### Hello World!",

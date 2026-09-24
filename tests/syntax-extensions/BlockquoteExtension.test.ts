@@ -156,9 +156,7 @@ describe("BlockquoteExtension", () => {
       ["  > Hello World!"],
       ["   > Hello World!"],
     ])("matches %j", (input) => {
-      expect(fx).toTransformInput(
-        (b) => [b.p()],
-        "end",
+      expect(fx).toTransformBlockInput(
         input,
         (b) => [b.blockquote(b.p("Hello World!"))],
         "> Hello World!",
