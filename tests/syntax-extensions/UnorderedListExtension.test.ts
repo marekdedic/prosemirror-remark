@@ -298,9 +298,9 @@ describe("UnorderedListExtension", () => {
       );
     });
 
-    test("tolerates one leading space (again)", () => {
+    test("tolerates three leading spaces", () => {
       expect(fx).toTransformBlockInput(
-        " * Hello World!",
+        "   * Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
         "* Hello World!",
       );
