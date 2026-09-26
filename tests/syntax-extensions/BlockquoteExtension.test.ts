@@ -119,7 +119,7 @@ describe("BlockquoteExtension", () => {
 
   describe("keymap `Mod->` wraps in a blockquote", () => {
     test("empty paragraph", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p()],
         "start",
         "{Mod->}",
@@ -129,7 +129,7 @@ describe("BlockquoteExtension", () => {
     });
 
     test("cursor selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("ab<cursor>cd")],
         "cursor",
         "{Mod->}",
@@ -139,7 +139,7 @@ describe("BlockquoteExtension", () => {
     });
 
     test("range selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("<from>ab<to>cd")],
         { anchor: "from", head: "to" },
         "{Mod->}",
@@ -156,9 +156,11 @@ describe("BlockquoteExtension", () => {
       ["  > Hello World!"],
       ["   > Hello World!"],
     ])("matches %j", (input) => {
-      expect(fx).toApplyBlockInputRule(input, "> Hello World!", (b) => [
-        b.blockquote(b.p("Hello World!")),
-      ]);
+      expect(fx).toTransformBlockInput(
+        input,
+        (b) => [b.blockquote(b.p("Hello World!"))],
+        "> Hello World!",
+      );
     });
   });
 

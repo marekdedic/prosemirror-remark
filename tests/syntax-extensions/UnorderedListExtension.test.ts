@@ -255,85 +255,85 @@ describe("UnorderedListExtension", () => {
 
   describe("input rules", () => {
     test("`* ` starts an empty unordered list", () => {
-      expect(fx).toApplyBlockInputRule("* ", "*", (b) => [b.ul(b.li(b.p()))]);
+      expect(fx).toTransformBlockInput("* ", (b) => [b.ul(b.li(b.p()))], "*");
     });
 
     test("`* ` with content", () => {
-      expect(fx).toApplyBlockInputRule(
-        "* Hello World!",
+      expect(fx).toTransformBlockInput(
         "* Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
+        "* Hello World!",
       );
     });
 
     test("`- ` with content", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "- Hello World!",
-        "* Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
+        "* Hello World!",
       );
     });
 
     test("`+ ` with content", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "+ Hello World!",
-        "* Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
+        "* Hello World!",
       );
     });
 
     test("tolerates one leading space", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         " * Hello World!",
-        "* Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
+        "* Hello World!",
       );
     });
 
     test("tolerates two leading spaces", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "  * Hello World!",
-        "* Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
+        "* Hello World!",
       );
     });
 
-    test("tolerates one leading space (again)", () => {
-      expect(fx).toApplyBlockInputRule(
-        " * Hello World!",
-        "* Hello World!",
+    test("tolerates three leading spaces", () => {
+      expect(fx).toTransformBlockInput(
+        "   * Hello World!",
         (b) => [b.ul(b.li(b.p("Hello World!")))],
+        "* Hello World!",
       );
     });
 
     test("continues onto a second item", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "* Hello World!{Enter}Second item",
-        "* Hello World!\n* Second item",
         (b) => [b.ul(b.li(b.p("Hello World!")), b.li(b.p("Second item")))],
+        "* Hello World!\n* Second item",
       );
     });
 
     test("a bullet joins the preceding list", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "* a{Enter}{Enter}* b",
-        "* a\n* b",
         (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
+        "* a\n* b",
       );
     });
 
     test("a different bullet joins the preceding list", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "* a{Enter}{Enter}- b",
-        "* a\n* b",
         (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
+        "* a\n* b",
       );
     });
   });
 
   describe("keymap", () => {
     test("`Mod-Shift-8` wraps in an unordered list", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("He<cursor>llo")],
         "cursor",
         "{Mod-Shift-8}",
@@ -343,7 +343,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("`Enter` splits a list item", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("Hel<cursor>lo")))],
         "cursor",
         "{Enter}",
@@ -353,7 +353,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("`Tab` sinks a list item", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("<cursor>World")))],
         "cursor",
         "{Tab}",
@@ -363,7 +363,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("`Shift-Tab` lifts a list item", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("Hello"), b.ul(b.li(b.p("<cursor>World")))))],
         "cursor",
         "{Shift-Tab}",
@@ -373,7 +373,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("`Backspace` joins a list with the preceding list", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("a"))), b.ul(b.li(b.p("<cursor>b")))],
         "cursor",
         "{Backspace}",
@@ -383,7 +383,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("`Delete` joins a list with the following list", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("a<cursor>"))), b.ul(b.li(b.p("b")))],
         "cursor",
         "{Delete}",
@@ -393,7 +393,7 @@ describe("UnorderedListExtension", () => {
     });
 
     test("`Backspace` in an empty paragraph between lists joins them into one", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("a"))), b.p("<cursor>"), b.ul(b.li(b.p("b")))],
         "cursor",
         "{Backspace}",
@@ -432,15 +432,15 @@ describe("UnorderedListExtension next to an ordered list", () => {
   ]);
 
   test("a bullet after an ordered list starts a new list", () => {
-    expect(fx).toApplyBlockInputRule(
+    expect(fx).toTransformBlockInput(
       "1. a{Enter}{Enter}* b",
-      "1. a\n\n* b",
       (b) => [b.ol(b.li(b.p("a"))), b.ul(b.li(b.p("b")))],
+      "1. a\n\n* b",
     );
   });
 
   test("`Backspace` moves the items into a preceding ordered list", () => {
-    expect(fx).toSupportKeymap(
+    expect(fx).toTransformInput(
       (b) => [b.ol(b.li(b.p("a"))), b.ul(b.li(b.p("<cursor>b")))],
       "cursor",
       "{Backspace}",

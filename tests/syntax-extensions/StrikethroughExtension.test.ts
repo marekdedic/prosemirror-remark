@@ -196,47 +196,59 @@ describe("StrikethroughExtension", () => {
 
   describe("input rules", () => {
     test("matches ~Test~", () => {
-      expect(fx).toApplyInlineInputRule("~Test~", "~~Test~~", "Test");
+      expect(fx).toTransformInlineInput(
+        "~Test~",
+        (b) => [b.strikethrough("Test")],
+        "~~Test~~",
+      );
     });
 
     test("matches ~~Test~~", () => {
-      expect(fx).toApplyInlineInputRule("~~Test~~", "~~Test~~", "Test");
+      expect(fx).toTransformInlineInput(
+        "~~Test~~",
+        (b) => [b.strikethrough("Test")],
+        "~~Test~~",
+      );
     });
 
     test("matches ~Hello World~", () => {
-      expect(fx).toApplyInlineInputRule(
+      expect(fx).toTransformInlineInput(
         "~Hello World~",
+        (b) => [b.strikethrough("Hello World")],
         "~~Hello World~~",
-        "Hello World",
       );
     });
 
     test("matches ~ across a paragraph break", () => {
-      expect(fx).toApplyInlineInputRule(
+      expect(fx).toTransformInlineInput(
         "~Test~{Enter}",
-        "~~Test~~\n\n",
-        (b) => [b.p(b.strikethrough("Test")), b.p()],
+        (b) => [b.strikethrough("Test")],
+        "~~Test~~",
       );
     });
 
     test("matches ~~ across a paragraph break", () => {
-      expect(fx).toApplyInlineInputRule(
+      expect(fx).toTransformInlineInput(
         "~~Test~~{Enter}",
-        "~~Test~~\n\n",
-        (b) => [b.p(b.strikethrough("Test")), b.p()],
+        (b) => [b.strikethrough("Test")],
+        "~~Test~~",
       );
     });
 
     test("does not match a leading `~ `", () => {
-      expect(fx).toApplyInlineInputRule("~ ~Test~", "\\~ ~~Test~~", (b) => [
-        b.p("~ ", b.strikethrough("Test")),
-      ]);
+      expect(fx).toTransformInlineInput(
+        "~ ~Test~",
+        (b) => ["~ ", b.strikethrough("Test")],
+        "\\~ ~~Test~~",
+      );
     });
 
     test("does not match a trailing ` ~`", () => {
-      expect(fx).toApplyInlineInputRule("~Test~ ~", "~~Test~~ \\~", (b) => [
-        b.p(b.strikethrough("Test"), " ~"),
-      ]);
+      expect(fx).toTransformInlineInput(
+        "~Test~ ~",
+        (b) => [b.strikethrough("Test"), " ~"],
+        "~~Test~~ \\~",
+      );
     });
   });
 

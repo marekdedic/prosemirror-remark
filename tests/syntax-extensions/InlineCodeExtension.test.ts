@@ -52,7 +52,7 @@ describe("InlineCodeExtension", () => {
 
   describe("keymap {Mod-`}", () => {
     test("no-op on empty selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p()],
         "start",
         "{Mod-`}",
@@ -62,7 +62,7 @@ describe("InlineCodeExtension", () => {
     });
 
     test("wraps the selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("ab<from>cd<to>ef")],
         { anchor: "from", head: "to" },
         "{Mod-`}",
@@ -74,22 +74,27 @@ describe("InlineCodeExtension", () => {
 
   describe("input rules", () => {
     test("matches `Test`", () => {
-      expect(fx).toApplyInlineInputRule("`Test`", "`Test`", "Test");
+      expect(fx).toTransformInlineInput(
+        "`Test`",
+        (b) => [b.code("Test")],
+        "`Test`",
+      );
     });
 
     test("matches `Hello World`", () => {
-      expect(fx).toApplyInlineInputRule(
+      expect(fx).toTransformInlineInput(
         "`Hello World`",
+        (b) => [b.code("Hello World")],
         "`Hello World`",
-        "Hello World",
       );
     });
 
     test("matches ` across a paragraph break", () => {
-      expect(fx).toApplyInlineInputRule("`Test`{Enter}", "`Test`\n\n", (b) => [
-        b.p(b.code("Test")),
-        b.p(),
-      ]);
+      expect(fx).toTransformInlineInput(
+        "`Test`{Enter}",
+        (b) => [b.code("Test")],
+        "`Test`",
+      );
     });
   });
 

@@ -104,7 +104,7 @@ describe("BoldExtension", () => {
 
   describe.each([["{Mod-b}"], ["{Mod-B}"]])("keymap %s", (key) => {
     test("no-op on empty selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p()],
         "start",
         key,
@@ -114,7 +114,7 @@ describe("BoldExtension", () => {
     });
 
     test("wraps the selection", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("ab<from>cd<to>ef")],
         { anchor: "from", head: "to" },
         key,
@@ -130,22 +130,22 @@ describe("BoldExtension", () => {
       ["__Test__", "**Test**", "Test"],
       ["**Hello World**", "**Hello World**", "Hello World"],
     ] as const)("matches %s", (input, md, contents) => {
-      expect(fx).toApplyInlineInputRule(input, md, contents);
+      expect(fx).toTransformInlineInput(input, (b) => [b.strong(contents)], md);
     });
 
     test("matches ** across a paragraph break", () => {
-      expect(fx).toApplyInlineInputRule(
+      expect(fx).toTransformInlineInput(
         "**Test**{Enter}",
-        "**Test**\n\n",
-        (b) => [b.p(b.strong("Test")), b.p()],
+        (b) => [b.strong("Test")],
+        "**Test**",
       );
     });
 
     test("matches __ across a paragraph break", () => {
-      expect(fx).toApplyInlineInputRule(
+      expect(fx).toTransformInlineInput(
         "__Test__{Enter}",
-        "**Test**\n\n",
-        (b) => [b.p(b.strong("Test")), b.p()],
+        (b) => [b.strong("Test")],
+        "**Test**",
       );
     });
 
@@ -155,24 +155,24 @@ describe("BoldExtension", () => {
       ["**Test*_", "\\*\\*Test\\*\\_"],
       ["**Test* *", "\\*\\*Test\\* \\*"],
     ] as const)("does not match %s", (input, md) => {
-      expect(fx).toIgnoreInlineInputRule(input, md);
+      expect(fx).toTransformInlineInput(input, () => [input], md);
     });
 
     test("does not match mismatched *_ pairs", () => {
-      expect(fx).toIgnoreInlineInputRule(
+      expect(fx).toTransformInlineInput(
         "X*_Test**X",
+        (b) => ["X", b.em("_Test*"), "X"],
         "&#x58;*\\_Test\\**&#x58;",
-        (b) => [b.p("X", b.em("_Test*"), "X")],
       );
-      expect(fx).toIgnoreInlineInputRule(
+      expect(fx).toTransformInlineInput(
         "X_*Test**X",
+        (b) => ["X_", b.em("Test*"), "X"],
         "X\\_*Test\\**&#x58;",
-        (b) => [b.p("X_", b.em("Test*"), "X")],
       );
-      expect(fx).toIgnoreInlineInputRule(
+      expect(fx).toTransformInlineInput(
         "X* *Test**X",
+        (b) => ["X* ", b.em("Test*"), "X"],
         "X\\* *Test\\**&#x58;",
-        (b) => [b.p("X* ", b.em("Test*"), "X")],
       );
     });
   });

@@ -421,7 +421,7 @@ describe("TaskListExtension", () => {
 
   describe("keymap", () => {
     test("`Backspace` turns a task item into a regular item", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [
           b.ul(b.taskListItem(b.p("Hello")), b.taskListItem(b.p("World"))),
         ],
@@ -433,7 +433,7 @@ describe("TaskListExtension", () => {
     });
 
     test("`Backspace` in the middle of a task item deletes a character", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ul(b.taskListItem(b.p("He<cursor>llo")))],
         "cursor",
         "{Backspace}",
@@ -443,7 +443,7 @@ describe("TaskListExtension", () => {
     });
 
     test("`Backspace` at the start of a regular item is left to other bindings", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("<cursor>World")))],
         "cursor",
         "{Backspace}",
@@ -453,7 +453,7 @@ describe("TaskListExtension", () => {
     });
 
     test("`Backspace` joins a regular item's list with a preceding task list", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ul(b.taskListItem(b.p("a"))), b.ul(b.li(b.p("<cursor>b")))],
         "cursor",
         "{Backspace}",
@@ -463,7 +463,7 @@ describe("TaskListExtension", () => {
     });
 
     test("`Backspace` on a task item after a list does not join it", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [
           b.ul(b.taskListItem(b.p("a"))),
           b.ul(b.taskListItem(b.p("<cursor>b"))),
@@ -476,7 +476,7 @@ describe("TaskListExtension", () => {
     });
 
     test("`Delete` joins a task list with the following list", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [
           b.ul(b.taskListItem(b.p("a<cursor>"))),
           b.ul(b.taskListItem(b.p("b"))),

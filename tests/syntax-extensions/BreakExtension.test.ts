@@ -104,7 +104,7 @@ describe("BreakExtension", () => {
   });
 
   test("keymap `Mod-Enter` inserts a hard break", () => {
-    expect(fx).toSupportKeymap(
+    expect(fx).toTransformInput(
       (b) => [b.p("He<cursor>llo")],
       "cursor",
       "{Mod-Enter}",

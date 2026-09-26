@@ -311,95 +311,95 @@ describe("OrderedListExtension", () => {
 
   describe("input rules", () => {
     test("`1. ` starts an empty ordered list", () => {
-      expect(fx).toApplyBlockInputRule("1. ", "1.", (b) => [b.ol(b.li(b.p()))]);
+      expect(fx).toTransformBlockInput("1. ", (b) => [b.ol(b.li(b.p()))], "1.");
     });
 
     test("`1. ` with content", () => {
-      expect(fx).toApplyBlockInputRule(
-        "1. Hello World!",
+      expect(fx).toTransformBlockInput(
         "1. Hello World!",
         (b) => [b.ol(b.li(b.p("Hello World!")))],
+        "1. Hello World!",
       );
     });
 
     test("tolerates one leading space", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         " 1. Hello World!",
-        "1. Hello World!",
         (b) => [b.ol(b.li(b.p("Hello World!")))],
+        "1. Hello World!",
       );
     });
 
     test("tolerates two leading spaces", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "  1. Hello World!",
-        "1. Hello World!",
         (b) => [b.ol(b.li(b.p("Hello World!")))],
+        "1. Hello World!",
       );
     });
 
     test("tolerates three leading spaces", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "   1. Hello World!",
-        "1. Hello World!",
         (b) => [b.ol(b.li(b.p("Hello World!")))],
+        "1. Hello World!",
       );
     });
 
     test("starts at 42", () => {
-      expect(fx).toApplyBlockInputRule(
-        "42. Hello World!",
+      expect(fx).toTransformBlockInput(
         "42. Hello World!",
         (b) => [b.ol({ start: 42 }, b.li(b.p("Hello World!")))],
+        "42. Hello World!",
       );
     });
 
     test("continues onto a second item", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "1. Hello World!{Enter}Second item",
-        "1. Hello World!\n2. Second item",
         (b) => [b.ol(b.li(b.p("Hello World!")), b.li(b.p("Second item")))],
+        "1. Hello World!\n2. Second item",
       );
     });
 
     // A number continuing the preceding list joins it; any other number starts a
     // New list.
     test("a continuing number joins the list", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "1. a{Enter}{Enter}2. b",
-        "1. a\n2. b",
         (b) => [b.ol(b.li(b.p("a")), b.li(b.p("b")))],
+        "1. a\n2. b",
       );
     });
 
     test("a non-continuing number starts a new list", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "1. a{Enter}{Enter}7. b",
-        "1. a\n\n7) b",
         (b) => [b.ol(b.li(b.p("a"))), b.ol({ start: 7 }, b.li(b.p("b")))],
+        "1. a\n\n7) b",
       );
     });
 
     test("a continuing number joins a list started at 5", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "5. a{Enter}{Enter}6. b",
-        "5. a\n6. b",
         (b) => [b.ol({ start: 5 }, b.li(b.p("a")), b.li(b.p("b")))],
+        "5. a\n6. b",
       );
     });
 
     test("renumbers when continuing across items", () => {
-      expect(fx).toApplyBlockInputRule(
+      expect(fx).toTransformBlockInput(
         "1. a{Enter}b{Enter}{Enter}3. c",
-        "1. a\n2. b\n3. c",
         (b) => [b.ol(b.li(b.p("a")), b.li(b.p("b")), b.li(b.p("c")))],
+        "1. a\n2. b\n3. c",
       );
     });
   });
 
   describe("keymap", () => {
     test("`Mod-Shift-9` wraps in an ordered list", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("He<cursor>llo")],
         "cursor",
         "{Mod-Shift-9}",
@@ -409,7 +409,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("`Enter` splits a list item", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ol(b.li(b.p("Hel<cursor>lo")))],
         "cursor",
         "{Enter}",
@@ -419,7 +419,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("`Tab` sinks a list item", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ol(b.li(b.p("Hello")), b.li(b.p("<cursor>World")))],
         "cursor",
         "{Tab}",
@@ -429,7 +429,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("`Shift-Tab` lifts a list item", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ol(b.li(b.p("Hello"), b.ol(b.li(b.p("<cursor>World")))))],
         "cursor",
         "{Shift-Tab}",
@@ -439,7 +439,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("`Backspace` joins a list with the preceding list", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ol(b.li(b.p("a"))), b.ol(b.li(b.p("<cursor>b")))],
         "cursor",
         "{Backspace}",
@@ -449,7 +449,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("`Backspace` keeps the start of the preceding list", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [
           b.ol({ start: 5 }, b.li(b.p("a"))),
           b.ol({ start: 9 }, b.li(b.p("<cursor>b"))),
@@ -462,7 +462,7 @@ describe("OrderedListExtension", () => {
     });
 
     test("`Delete` joins a list with the following list", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.ol(b.li(b.p("a<cursor>"))), b.ol(b.li(b.p("b")))],
         "cursor",
         "{Delete}",
@@ -507,15 +507,15 @@ describe("OrderedListExtension next to an unordered list", () => {
   ]);
 
   test("a number after an unordered list starts a new list", () => {
-    expect(fx).toApplyBlockInputRule(
+    expect(fx).toTransformBlockInput(
       "* a{Enter}{Enter}1. b",
-      "* a\n\n1. b",
       (b) => [b.ul(b.li(b.p("a"))), b.ol(b.li(b.p("b")))],
+      "* a\n\n1. b",
     );
   });
 
   test("`Backspace` moves the items into a preceding unordered list", () => {
-    expect(fx).toSupportKeymap(
+    expect(fx).toTransformInput(
       (b) => [b.ul(b.li(b.p("a"))), b.ol(b.li(b.p("<cursor>b")))],
       "cursor",
       "{Backspace}",

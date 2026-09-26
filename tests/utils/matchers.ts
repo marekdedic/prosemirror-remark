@@ -31,6 +31,14 @@ import type {
 
 type Build<T> = (b: TestBuilders) => T;
 
+interface InputVariant {
+  after: ProseMirrorNode;
+  before: ProseMirrorNode;
+  editorInput: string;
+  markdown: string;
+  name: string;
+}
+
 function assertMarkExtension(
   extension: SyntaxExtension<UnistLike>,
 ): asserts extension is MarkExtension<UnistLike> {
@@ -80,130 +88,67 @@ function noWarningsLogged(
   };
 }
 
-/**
- * Node/block input rules fire at the start of a fresh textblock, so — unlike
- * the mark harness — they run against an empty paragraph and compare the whole
- * document, with no surrounding sentinel text.
- */
-function runBlockInputRule(
+function runEditorInput(
   fx: ExtensionFixture<UnistLike>,
+  before: ProseMirrorNode,
+  selection: TesterSelection,
   editorInput: string,
+  after: ProseMirrorNode,
   markdownOutput: string,
-  proseMirrorNodes: Array<ProseMirrorNode>,
   ctx: MatcherState,
 ): SyncMatcherResult {
-  const after = fx.schema.nodes["doc"].create({}, proseMirrorNodes);
-
-  const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-  const editor = renderProseMirror(
-    fx.schema.nodes["doc"].create({}, [fx.schema.nodes["paragraph"].create()]),
-    {
-      editorProps: {
-        plugins: [fx.pmu.inputRulesPlugin(), fx.pmu.keymapPlugin()],
-      },
-    },
-  );
-  editor.setSelection("end");
-  editor.type(editorInput);
-
-  const nodes = nodesEqual(editor.doc, after);
-  if (!nodes.pass) {
-    return nodes;
-  }
-  const serialized = fx.pmu.serialize(editor.doc);
-  if (serialized !== `${markdownOutput}\n`) {
-    return {
-      message: () =>
-        `expected serialisation\n${ctx.utils.printReceived(
-          serialized,
-        )}\nto equal\n${ctx.utils.printExpected(`${markdownOutput}\n`)}`,
-      pass: false,
-    };
-  }
-  return noWarningsLogged(warn, ctx);
-}
-
-function runInlineInputRule(
-  fx: ExtensionFixture<UnistLike>,
-  editorInput: string,
-  markdownOutput: string,
-  proseMirrorNodes: Array<ProseMirrorNode>,
-  ctx: MatcherState,
-): SyncMatcherResult {
-  const before = fx.schema.nodes["doc"].create({}, [
-    fx.schema.nodes["paragraph"].create({}, [fx.schema.text("BEGIN")]),
-  ]);
-  const after = fx.schema.nodes["doc"].create({}, proseMirrorNodes);
-
   const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
   const editor = renderProseMirror(before, {
     editorProps: {
       plugins: [fx.pmu.inputRulesPlugin(), fx.pmu.keymapPlugin()],
     },
   });
-  editor.setSelection("end");
+  editor.setSelection(selection);
   editor.type(editorInput);
-  editor.type("END");
 
-  const actual = editor.doc.cut(6, editor.doc.content.size - 4);
-  const nodes = nodesEqual(actual, after);
+  const nodes = nodesEqual(editor.doc, after);
   if (!nodes.pass) {
     return nodes;
   }
-  const serialized = fx.pmu.serialize(editor.doc);
-  if (serialized !== `BEGIN${markdownOutput}END\n`) {
+  const serialized = fx.pmu.serialize(editor.doc).replace(/\n$/gu, "");
+  if (serialized !== markdownOutput) {
     return {
       message: () =>
         `expected serialisation\n${ctx.utils.printReceived(
           serialized,
-        )}\nto equal\n${ctx.utils.printExpected(`BEGIN${markdownOutput}END\n`)}`,
+        )}\nto equal\n${ctx.utils.printExpected(markdownOutput)}`,
       pass: false,
     };
   }
   return noWarningsLogged(warn, ctx);
 }
 
-expect.extend({
-  toApplyBlockInputRule(
-    this: MatcherState,
-    fx: ExtensionFixture<UnistLike>,
-    editorInput: string,
-    markdownOutput: string,
-    contents: Build<Array<BuiltNode>>,
-  ): SyncMatcherResult {
-    return runBlockInputRule(
+function runInputVariants(
+  fx: ExtensionFixture<UnistLike>,
+  variants: Array<InputVariant>,
+  ctx: MatcherState,
+): SyncMatcherResult {
+  for (const variant of variants) {
+    const result = runEditorInput(
       fx,
-      editorInput,
-      markdownOutput,
-      fx.resolveNodes(contents(fx.b)),
-      this,
+      variant.before,
+      "end",
+      variant.editorInput,
+      variant.after,
+      variant.markdown,
+      ctx,
     );
-  },
-
-  toApplyInlineInputRule(
-    this: MatcherState,
-    fx: ExtensionFixture<UnistLike>,
-    editorInput: string,
-    markdownOutput: string,
-    contents: Build<Array<BuiltNode>> | string,
-  ): SyncMatcherResult {
-    const { extension } = fx;
-    assertMarkExtension(extension);
-    const markName = extension.proseMirrorMarkName();
-    if (markName === null) {
-      throw new Error("Testing input rules for extension without a name");
+    if (!result.pass) {
+      return {
+        message: () => `${variant.name}: ${result.message()}`,
+        pass: false,
+      };
     }
-    const nodes =
-      typeof contents === "string"
-        ? [
-            fx.schema.nodes["paragraph"].create({}, [
-              fx.schema.text(contents).mark([fx.schema.mark(markName)]),
-            ]),
-          ]
-        : fx.resolveNodes(contents(fx.b));
-    return runInlineInputRule(fx, editorInput, markdownOutput, nodes, this);
-  },
+  }
+  return { message: () => "expected input not to match", pass: true };
+}
 
+expect.extend({
   toConvertProseMirrorNode(
     this: MatcherState,
     fx: ExtensionFixture<UnistLike>,
@@ -253,40 +198,6 @@ expect.extend({
       message: () => `expected handled unist node to be "${name}"`,
       pass: actual === name,
     };
-  },
-
-  toIgnoreBlockInputRule(
-    this: MatcherState,
-    fx: ExtensionFixture<UnistLike>,
-    editorInput: string,
-    markdownOutput: string,
-    contents?: Build<Array<BuiltNode>>,
-  ): SyncMatcherResult {
-    const nodes = contents
-      ? fx.resolveNodes(contents(fx.b))
-      : [
-          fx.schema.nodes["paragraph"].create({}, [
-            fx.schema.text(editorInput),
-          ]),
-        ];
-    return runBlockInputRule(fx, editorInput, markdownOutput, nodes, this);
-  },
-
-  toIgnoreInlineInputRule(
-    this: MatcherState,
-    fx: ExtensionFixture<UnistLike>,
-    editorInput: string,
-    markdownOutput: string,
-    contents?: Build<Array<BuiltNode>>,
-  ): SyncMatcherResult {
-    const nodes = contents
-      ? fx.resolveNodes(contents(fx.b))
-      : [
-          fx.schema.nodes["paragraph"].create({}, [
-            fx.schema.text(editorInput),
-          ]),
-        ];
-    return runInlineInputRule(fx, editorInput, markdownOutput, nodes, this);
   },
 
   toMatchProseMirrorMark(
@@ -423,57 +334,119 @@ expect.extend({
     return nodesEqual(editor.doc, doc);
   },
 
-  toSupportKeymap(
+  toTransformBlockInput(
+    this: MatcherState,
+    fx: ExtensionFixture<UnistLike>,
+    editorInput: string,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): SyncMatcherResult {
+    const blocks = fx.resolveNodes(after(fx.b));
+    const { doc, paragraph } = fx.schema.nodes;
+    const begin = paragraph.create({}, [fx.schema.text("BEGIN")]);
+    return runInputVariants(
+      fx,
+      [
+        {
+          after: doc.create({}, blocks),
+          before: doc.create({}, [paragraph.create()]),
+          editorInput,
+          markdown: markdownOutput,
+          name: "in an empty document",
+        },
+        {
+          after: doc.create({}, [begin, ...blocks]),
+          before: doc.create({}, [begin, paragraph.create()]),
+          editorInput,
+          markdown: `BEGIN\n\n${markdownOutput}`,
+          name: "after a paragraph",
+        },
+      ],
+      this,
+    );
+  },
+
+  toTransformInlineInput(
+    this: MatcherState,
+    fx: ExtensionFixture<UnistLike>,
+    editorInput: string,
+    contents: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): SyncMatcherResult {
+    const inline = fx.resolveNodes(contents(fx.b));
+    const splits = editorInput.endsWith("{Enter}");
+    const begin = fx.schema.text("BEGIN");
+    const end = fx.schema.text("END");
+    const paragraph = (nodes: Array<ProseMirrorNode>): ProseMirrorNode =>
+      fx.schema.nodes["paragraph"].create({}, nodes);
+    const doc = (nodes: Array<ProseMirrorNode>): ProseMirrorNode =>
+      fx.schema.nodes["doc"].create(
+        {},
+        splits
+          ? [paragraph(nodes), paragraph([end])]
+          : [paragraph([...nodes, end])],
+      );
+    const endMarkdown = splits ? "\n\nEND" : "END";
+    const spacedBegin = fx.schema.text("BEGIN ");
+    const spacedEnd = fx.schema.text(" END");
+    const spacedDoc = (nodes: Array<ProseMirrorNode>): ProseMirrorNode =>
+      fx.schema.nodes["doc"].create(
+        {},
+        splits
+          ? [paragraph(nodes), paragraph([end])]
+          : [paragraph([...nodes, spacedEnd])],
+      );
+    return runInputVariants(
+      fx,
+      [
+        {
+          after: doc(inline),
+          before: fx.schema.nodes["doc"].create({}, [paragraph([])]),
+          editorInput: `${editorInput}END`,
+          markdown: `${markdownOutput}${endMarkdown}`,
+          name: "at paragraph start",
+        },
+        {
+          after: doc([begin, ...inline]),
+          before: fx.schema.nodes["doc"].create({}, [paragraph([begin])]),
+          editorInput: `${editorInput}END`,
+          markdown: `BEGIN${markdownOutput}${endMarkdown}`,
+          name: "after text",
+        },
+        {
+          after: spacedDoc([spacedBegin, ...inline]),
+          before: fx.schema.nodes["doc"].create({}, [paragraph([spacedBegin])]),
+          editorInput: `${editorInput}${splits ? "END" : " END"}`,
+          markdown: `BEGIN ${markdownOutput}${splits ? "\n\nEND" : " END"}`,
+          name: "between spaces",
+        },
+      ],
+      this,
+    );
+  },
+
+  toTransformInput(
     this: MatcherState,
     fx: ExtensionFixture<UnistLike>,
     before: Build<Array<BuiltNode>>,
     selection: TesterSelection,
-    key: string,
+    editorInput: string,
     after: Build<Array<BuiltNode>>,
     markdownOutput: string,
   ): SyncMatcherResult {
-    const docAfter = fx.schema.nodes["doc"].create(
-      {},
-      fx.resolveNodes(after(fx.b)),
-    );
-
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    const editor = renderProseMirror(
+    return runEditorInput(
+      fx,
       fx.b.doc(...before(fx.b)) as unknown as ProseMirrorNode,
-      { editorProps: { plugins: [fx.pmu.keymapPlugin()] } },
+      selection,
+      editorInput,
+      fx.schema.nodes["doc"].create({}, fx.resolveNodes(after(fx.b))),
+      markdownOutput,
+      this,
     );
-    editor.setSelection(selection);
-    editor.type(key);
-
-    const nodes = nodesEqual(editor.doc, docAfter);
-    if (!nodes.pass) {
-      return nodes;
-    }
-    const serialized = fx.pmu.serialize(editor.doc).replace(/\n$/gu, "");
-    if (serialized !== markdownOutput) {
-      return {
-        message: () =>
-          `expected serialisation\n${this.utils.printReceived(
-            serialized,
-          )}\nto equal\n${this.utils.printExpected(markdownOutput)}`,
-        pass: false,
-      };
-    }
-    return noWarningsLogged(warn, this);
   },
 });
 
 interface ExtensionMatchers<R> {
-  toApplyBlockInputRule(
-    editorInput: string,
-    markdownOutput: string,
-    contents: Build<Array<BuiltNode>>,
-  ): R;
-  toApplyInlineInputRule(
-    editorInput: string,
-    markdownOutput: string,
-    contents: Build<Array<BuiltNode>> | string,
-  ): R;
   toConvertProseMirrorNode(
     source: Build<BuiltNode>,
     target: Array<UnistLike>,
@@ -484,16 +457,6 @@ interface ExtensionMatchers<R> {
     injectNodes?: Array<UnistLike>,
   ): R;
   toHandleUnistNode(name: string): R;
-  toIgnoreBlockInputRule(
-    editorInput: string,
-    markdownOutput: string,
-    contents?: Build<Array<BuiltNode>>,
-  ): R;
-  toIgnoreInlineInputRule(
-    editorInput: string,
-    markdownOutput: string,
-    contents?: Build<Array<BuiltNode>>,
-  ): R;
   toMatchProseMirrorMark(mark: Build<Mark>): R;
   toMatchProseMirrorNode(node: Build<BuiltNode>): R;
   toMatchUnistNode(node: UnistLike): R;
@@ -507,10 +470,20 @@ interface ExtensionMatchers<R> {
     key: string,
     applicable: boolean,
   ): R;
-  toSupportKeymap(
+  toTransformBlockInput(
+    editorInput: string,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): R;
+  toTransformInlineInput(
+    editorInput: string,
+    contents: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): R;
+  toTransformInput(
     before: Build<Array<BuiltNode>>,
     selection: TesterSelection,
-    key: string,
+    editorInput: string,
     after: Build<Array<BuiltNode>>,
     markdownOutput: string,
   ): R;

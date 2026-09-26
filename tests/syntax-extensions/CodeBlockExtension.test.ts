@@ -115,16 +115,16 @@ describe("CodeBlockExtension", () => {
   });
 
   test("input rule from four spaces", () => {
-    expect(fx).toApplyBlockInputRule(
+    expect(fx).toTransformBlockInput(
       "    Hello World!",
-      "```\nHello World!\n```",
       (b) => [b.code_block("Hello World!")],
+      "```\nHello World!\n```",
     );
   });
 
   describe("keymap", () => {
     test("`Mod-Shift-\\` wraps a paragraph", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("He<cursor>llo")],
         "cursor",
         "{Mod-Shift-\\\\}",
@@ -134,7 +134,7 @@ describe("CodeBlockExtension", () => {
     });
 
     test("`Mod-Shift-\\` wraps only the current paragraph", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.p("He<cursor>llo"), b.p("World")],
         "cursor",
         "{Mod-Shift-\\\\}",
@@ -144,7 +144,7 @@ describe("CodeBlockExtension", () => {
     });
 
     test("`Enter` inserts a newline", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.code_block("Hel<cursor>lo")],
         "cursor",
         "{Enter}",
@@ -154,7 +154,7 @@ describe("CodeBlockExtension", () => {
     });
 
     test("`Enter` at the end inserts a newline", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.code_block("Hello<cursor>")],
         "cursor",
         "{Enter}",
@@ -164,7 +164,7 @@ describe("CodeBlockExtension", () => {
     });
 
     test("`Enter` after one trailing newline inserts another", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.code_block("Hello<cursor>\n")],
         "cursor",
         "{Enter}",
@@ -174,7 +174,7 @@ describe("CodeBlockExtension", () => {
     });
 
     test("`Enter` after two trailing newlines exits the code block", () => {
-      expect(fx).toSupportKeymap(
+      expect(fx).toTransformInput(
         (b) => [b.code_block("Hello\n\n<cursor>")],
         "cursor",
         "{Enter}",
