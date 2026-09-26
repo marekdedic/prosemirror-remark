@@ -83,19 +83,21 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
-      new InputRule(/^\[([x\s]?)\][\s\S]$/u, (state, match, start) => {
-        const wrappingNode = state.doc.resolve(start).node(-1);
-        if (wrappingNode.type.name !== "regular_list_item") {
+      new InputRule(/^\[([x\s]?)\][\s\S]$/u, (state, match, start, end) => {
+        const $start = state.doc.resolve(start);
+        if (
+          $start.node(-1).type.name !== "regular_list_item" ||
+          $start.index(-1) !== 0
+        ) {
           return null;
         }
-        return state.tr.replaceRangeWith(
-          start - 2,
-          start + wrappingNode.nodeSize,
-          proseMirrorSchema.nodes[this.proseMirrorNodeName()].create(
+        return state.tr
+          .delete(start, end)
+          .setNodeMarkup(
+            $start.before(-1),
+            proseMirrorSchema.nodes[this.proseMirrorNodeName()],
             { checked: match[1] === "x" },
-            wrappingNode.content.cut(3 + match[1].length),
-          ),
-        );
+          );
       }),
     ];
   }
@@ -108,21 +110,17 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
         if (!isAtStart(state, view)) {
           return false;
         }
-        const taskListItemNode = state.selection.$anchor.node(-1);
-        if (taskListItemNode.type.name !== "task_list_item") {
+        const { $anchor } = state.selection;
+        if ($anchor.node(-1).type.name !== "task_list_item") {
           return false;
         }
         if (dispatch === undefined) {
           return true;
         }
         dispatch(
-          state.tr.replaceRangeWith(
-            state.selection.$from.before() - 2,
-            state.selection.$from.before() + taskListItemNode.nodeSize,
-            proseMirrorSchema.nodes["regular_list_item"].create(
-              {},
-              taskListItemNode.content,
-            ),
+          state.tr.setNodeMarkup(
+            $anchor.before(-1),
+            proseMirrorSchema.nodes["regular_list_item"],
           ),
         );
         return true;
