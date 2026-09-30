@@ -1,15 +1,22 @@
-import { describe, expect, test } from "vitest";
+import type { EditorView } from "prosemirror-view";
+
+import { describe, expect, test, vi } from "vitest";
 
 import { ListItemExtension } from "../../src/syntax-extensions/ListItemExtension";
 import { TaskListItemExtension } from "../../src/syntax-extensions/TaskListItemExtension";
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { type NodeViewFixture, renderNodeView } from "../utils/node-view";
 
-function render(markdown: string): NodeViewFixture {
-  return renderNodeView(new TaskListItemExtension(), markdown, [
-    new UnorderedListExtension(),
-    new ListItemExtension(),
-  ]);
+function render(
+  markdown: string,
+  mousedown?: (view: EditorView, event: MouseEvent) => boolean,
+): NodeViewFixture {
+  return renderNodeView(
+    new TaskListItemExtension(),
+    markdown,
+    [new UnorderedListExtension(), new ListItemExtension()],
+    mousedown === undefined ? {} : { handleDOMEvents: { mousedown } },
+  );
 }
 
 describe("TaskListItemView", () => {
@@ -81,5 +88,30 @@ describe("TaskListItemView", () => {
 
     expect(editor.click(checkbox)).toBe(false);
     expect(editor.doc.eq(docAfterDelete)).toBe(true);
+  });
+
+  test("lets ProseMirror handle events inside the item content", () => {
+    const mousedown = vi.fn(() => true);
+    const { editor } = render("* [ ] Hello\n", mousedown);
+
+    editor
+      .element('li > span:not([contenteditable="false"]) p')
+      .dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+
+    expect(mousedown).toHaveBeenCalledExactlyOnceWith(
+      expect.anything(),
+      expect.any(MouseEvent),
+    );
+  });
+
+  test("stops ProseMirror from handling events on the checkbox", () => {
+    const mousedown = vi.fn(() => true);
+    const { editor } = render("* [ ] Hello\n", mousedown);
+
+    editor
+      .element("input")
+      .dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+
+    expect(mousedown).not.toHaveBeenCalled();
   });
 });
