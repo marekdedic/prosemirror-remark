@@ -141,12 +141,15 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       parseDOM: [
         {
           getAttrs: (dom: Node | string): false | { checked: boolean } => {
-            const checkbox = (dom as HTMLElement).firstChild;
+            const checkbox = (dom as HTMLElement).querySelector(
+              ":scope > input[type=checkbox], :scope > span > input[type=checkbox]",
+            );
             if (!(checkbox instanceof HTMLInputElement)) {
               return false;
             }
             return { checked: checkbox.checked };
           },
+          priority: 60,
           tag: "li",
         },
       ],

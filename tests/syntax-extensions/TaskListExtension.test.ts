@@ -662,6 +662,72 @@ describe("TaskListExtension", () => {
       );
     });
   });
+
+  describe("parses DOM", () => {
+    test("parses a checked task item", () => {
+      expect(fx).toParseDOM(
+        '<ul><li><span contenteditable="false"><input type="checkbox" checked></span><span><p>a</p></span></li></ul>',
+        (b) => [b.ul(b.taskListItem({ checked: true }, b.p("a")))],
+      );
+    });
+
+    test("parses an unchecked task item", () => {
+      expect(fx).toParseDOM(
+        '<ul><li><span contenteditable="false"><input type="checkbox"></span><span><p>a</p></span></li></ul>',
+        (b) => [b.ul(b.taskListItem({ checked: false }, b.p("a")))],
+      );
+    });
+
+    test("parses a task item with the checkbox as the first child", () => {
+      expect(fx).toParseDOM(
+        '<ul><li><input type="checkbox" checked><p>a</p></li></ul>',
+        (b) => [b.ul(b.taskListItem({ checked: true }, b.p("a")))],
+      );
+    });
+
+    test("parses a GitHub task list item", () => {
+      expect(fx).toParseDOM(
+        '<ul class="contains-task-list">\n<li class="task-list-item">\n<input type="checkbox" class="task-list-item-checkbox" checked disabled> a</li>\n</ul>',
+        (b) => [b.ul(b.taskListItem({ checked: true }, b.p("a")))],
+      );
+    });
+
+    test("parses a regular list item", () => {
+      expect(fx).toParseDOM("<ul><li><p>a</p></li></ul>", (b) => [
+        b.ul(b.li(b.p("a"))),
+      ]);
+    });
+
+    test("parses a regular list item containing a nested task list", () => {
+      expect(fx).toParseDOM(
+        '<ul><li><p>a</p><ul><li><input type="checkbox" checked><p>b</p></li></ul></li></ul>',
+        (b) => [
+          b.ul(
+            b.li(b.p("a"), b.ul(b.taskListItem({ checked: true }, b.p("b")))),
+          ),
+        ],
+      );
+    });
+
+    test("parses a list with mixed task and regular items", () => {
+      expect(fx).toParseDOM(
+        '<ul><li><span contenteditable="false"><input type="checkbox" checked></span><span><p>a</p></span></li><li><p>b</p></li></ul>',
+        (b) => [
+          b.ul(b.taskListItem({ checked: true }, b.p("a")), b.li(b.p("b"))),
+        ],
+      );
+    });
+
+    test.each([true, false])(
+      "parses its own rendered DOM with checked: %j",
+      (checked) => {
+        expect(fx).toParseDOM(
+          `<ul data-spread="false"><li style="list-style-type: none;, margin-left: -30px;"><span contenteditable="false" style="position: absolute; left: 5px;"><input ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><span style="position: relative; left: 30px"><p>a</p></span></li></ul>`,
+          (b) => [b.ul(b.taskListItem({ checked }, b.p("a")))],
+        );
+      },
+    );
+  });
 });
 
 describe("TaskListItemExtension input rules in other contexts", () => {
