@@ -8,6 +8,10 @@ import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedLis
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
+function renderedTaskList(checked: boolean): string {
+  return `<ul data-spread="false"><li style="list-style-type: none; margin-left: -30px;"><span contenteditable="false" style="position: absolute; left: 5px;"><input ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><span style="position: relative; left: 30px;"><p>a</p></span></li></ul>`;
+}
+
 describe("TaskListExtension", () => {
   const fx = createExtensionFixture(new UnorderedListExtension(), [
     new ListItemExtension(),
@@ -721,12 +725,18 @@ describe("TaskListExtension", () => {
     test.each([true, false])(
       "parses its own rendered DOM with checked: %j",
       (checked) => {
-        expect(fx).toParseDOM(
-          `<ul data-spread="false"><li style="list-style-type: none;, margin-left: -30px;"><span contenteditable="false" style="position: absolute; left: 5px;"><input ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><span style="position: relative; left: 30px"><p>a</p></span></li></ul>`,
-          (b) => [b.ul(b.taskListItem({ checked }, b.p("a")))],
-        );
+        expect(fx).toParseDOM(renderedTaskList(checked), (b) => [
+          b.ul(b.taskListItem({ checked }, b.p("a"))),
+        ]);
       },
     );
+
+    test.each([true, false])("renders DOM with checked: %j", (checked) => {
+      expect(fx).toRenderDOM(
+        (b) => [b.ul(b.taskListItem({ checked }, b.p("a")))],
+        renderedTaskList(checked),
+      );
+    });
   });
 });
 

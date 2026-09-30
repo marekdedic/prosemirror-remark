@@ -25,6 +25,10 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 import { isAtStart } from "../utils/isAtStart";
 
+const itemStyle = "list-style-type: none; margin-left: -30px;";
+const checkboxContainerStyle = "position: absolute; left: 5px;";
+const contentStyle = "position: relative; left: 30px;";
+
 class TaskListItemView implements NodeView {
   public readonly contentDOM: HTMLElement;
   public readonly dom: HTMLElement;
@@ -57,17 +61,14 @@ class TaskListItemView implements NodeView {
 
     const checkboxContainer = document.createElement("span");
     checkboxContainer.setAttribute("contenteditable", "false");
-    checkboxContainer.setAttribute("style", "position: absolute; left: 5px;");
+    checkboxContainer.setAttribute("style", checkboxContainerStyle);
     checkboxContainer.appendChild(checkbox);
 
     this.contentDOM = document.createElement("span");
-    this.contentDOM.setAttribute("style", "position: relative; left: 30px;");
+    this.contentDOM.setAttribute("style", contentStyle);
 
     this.dom = document.createElement("li");
-    this.dom.setAttribute(
-      "style",
-      "list-style-type: none; margin-left: -30px;",
-    );
+    this.dom.setAttribute("style", itemStyle);
     this.dom.appendChild(checkboxContainer);
     this.dom.appendChild(this.contentDOM);
   }
@@ -155,12 +156,12 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       ],
       toDOM: (node: ProseMirrorNode): DOMOutputSpec => [
         "li",
-        { style: "list-style-type: none;, margin-left: -30px;" },
+        { style: itemStyle },
         [
           "span",
           {
             contenteditable: "false",
-            style: "position: absolute; left: 5px;",
+            style: checkboxContainerStyle,
           },
           [
             "input",
@@ -173,7 +174,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
             },
           ],
         ],
-        ["span", { style: "position: relative; left: 30px" }, 0],
+        ["span", { style: contentStyle }, 0],
       ],
     };
   }
