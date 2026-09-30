@@ -32,6 +32,7 @@ const contentStyle = "position: relative; left: 30px;";
 class TaskListItemView implements NodeView {
   public readonly contentDOM: HTMLElement;
   public readonly dom: HTMLElement;
+  private readonly checkboxContainer: HTMLElement;
 
   public constructor(
     node: ProseMirrorNode,
@@ -59,23 +60,25 @@ class TaskListItemView implements NodeView {
       );
     });
 
-    const checkboxContainer = document.createElement("span");
-    checkboxContainer.setAttribute("contenteditable", "false");
-    checkboxContainer.setAttribute("style", checkboxContainerStyle);
-    checkboxContainer.appendChild(checkbox);
+    this.checkboxContainer = document.createElement("span");
+    this.checkboxContainer.setAttribute("contenteditable", "false");
+    this.checkboxContainer.setAttribute("style", checkboxContainerStyle);
+    this.checkboxContainer.appendChild(checkbox);
 
     this.contentDOM = document.createElement("span");
     this.contentDOM.setAttribute("style", contentStyle);
 
     this.dom = document.createElement("li");
     this.dom.setAttribute("style", itemStyle);
-    this.dom.appendChild(checkboxContainer);
+    this.dom.appendChild(this.checkboxContainer);
     this.dom.appendChild(this.contentDOM);
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this -- Inherited from the NodeView interface
-  public stopEvent(): boolean {
-    return true;
+  public stopEvent(event: Event): boolean {
+    return (
+      event.target instanceof Node &&
+      this.checkboxContainer.contains(event.target)
+    );
   }
 }
 
