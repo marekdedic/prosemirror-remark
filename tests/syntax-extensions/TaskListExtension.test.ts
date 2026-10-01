@@ -746,6 +746,16 @@ describe("TaskListExtension", () => {
       );
     });
 
+    test("`Backspace` at the start of a non-first paragraph of a task item joins the paragraphs", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem(b.p("Hello"), b.p("<cursor>World")))],
+        "cursor",
+        "{Backspace}",
+        (b) => [b.ul(b.taskListItem(b.p("HelloWorld")))],
+        "* [ ] HelloWorld",
+      );
+    });
+
     test("`Backspace` in the middle of a task item deletes a character", () => {
       expect(fx).toTransformInput(
         (b) => [b.ul(b.taskListItem(b.p("He<cursor>llo")))],
@@ -1368,6 +1378,15 @@ describe("TaskListItemExtension keymap applicability", () => {
   test("`Backspace` does not apply in the middle of a task list item", () => {
     expect(fx).toReportKeymapApplicability(
       (b) => [b.ul(b.taskListItem(b.p("He<cursor>llo")))],
+      "cursor",
+      "Backspace",
+      false,
+    );
+  });
+
+  test("`Backspace` does not apply at the start of a non-first paragraph of a task list item", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.ul(b.taskListItem(b.p("Hello"), b.p("<cursor>World")))],
       "cursor",
       "Backspace",
       false,
