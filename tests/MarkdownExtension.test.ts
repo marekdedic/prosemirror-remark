@@ -131,6 +131,102 @@ test.each([
   },
 );
 
+test.each([
+  [
+    "[a **bold** part](https://example.test)",
+    b.p(
+      b.link({ href: "https://example.test" }, "a ", b.strong("bold"), " part"),
+    ),
+  ],
+  [
+    "[an *italic* part](https://example.test)",
+    b.p(
+      b.link({ href: "https://example.test" }, "an ", b.em("italic"), " part"),
+    ),
+  ],
+  [
+    "[some `code` here](https://example.test)",
+    b.p(
+      b.link(
+        { href: "https://example.test" },
+        "some ",
+        b.code("code"),
+        " here",
+      ),
+    ),
+  ],
+  [
+    "[**bold** and *italic*](https://example.test)",
+    b.p(
+      b.link(
+        { href: "https://example.test" },
+        b.strong("bold"),
+        " and ",
+        b.em("italic"),
+      ),
+    ),
+  ],
+  [
+    '[a **bold** part](https://example.test "Title")',
+    b.p(
+      b.link(
+        { href: "https://example.test", title: "Title" },
+        "a ",
+        b.strong("bold"),
+        " part",
+      ),
+    ),
+  ],
+  [
+    "[an ![image](https://img.test)](https://example.test)",
+    b.p(
+      b.link(
+        { href: "https://example.test" },
+        "an ",
+        b.img({ alt: "image", src: "https://img.test" }),
+      ),
+    ),
+  ],
+  [
+    "[a\\\nbreak](https://example.test)",
+    b.p(b.link({ href: "https://example.test" }, "a", b.br(), "break")),
+  ],
+  ["**a *nested* part**", b.p(b.strong("a ", b.em("nested"), " part"))],
+  ["*a **nested** part*", b.p(b.em("a ", b.strong("nested"), " part"))],
+  [
+    "**a [link](https://example.test) part**",
+    b.p(
+      b.strong("a ", b.link({ href: "https://example.test" }, "link"), " part"),
+    ),
+  ],
+  ["**a\\\nbreak**", b.p(b.strong("a", b.br(), "break"))],
+  [
+    "# [a **bold** part](https://example.test)",
+    b.heading(
+      b.link({ href: "https://example.test" }, "a ", b.strong("bold"), " part"),
+    ),
+  ],
+  [
+    "[one](https://one.test)[two](https://two.test)",
+    b.p(
+      b.link({ href: "https://one.test" }, "one"),
+      b.link({ href: "https://two.test" }, "two"),
+    ),
+  ],
+  [
+    '[one](https://example.test "Title")[two](https://example.test)',
+    b.p(
+      b.link({ href: "https://example.test", title: "Title" }, "one"),
+      b.link({ href: "https://example.test" }, "two"),
+    ),
+  ],
+])("mark spanning several nodes %s", (markdown, block) => {
+  const node = b.doc(block) as unknown as ProseMirrorNode;
+
+  expect(pmu.parse(markdown)).toEqualProseMirrorNode(node);
+  expect(pmu.serialize(node)).toBe(`${markdown}\n`);
+});
+
 test("ProseMirror -> unist conversion", () => {
   expect(pmu.serialize(serializedDoc)).toBe(
     "> Inside a blockquote\n" +
