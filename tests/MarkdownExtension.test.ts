@@ -227,6 +227,26 @@ test.each([
   expect(pmu.serialize(node)).toBe(`${markdown}\n`);
 });
 
+test.each([
+  ["**`code`**", b.strong(b.code("code"))],
+  ["*`code`*", b.em(b.code("code"))],
+  [
+    "[`code`](https://example.test)",
+    b.link({ href: "https://example.test" }, b.code("code")),
+  ],
+  ["***`code`***", b.strong(b.em(b.code("code")))],
+  [
+    "[**`code`**](https://example.test)",
+    b.link({ href: "https://example.test" }, b.strong(b.code("code"))),
+  ],
+  ["**a `code` part**", b.strong("a ", b.code("code"), " part")],
+])("inline code with other marks %s", (markdown, marked) => {
+  const node = b.doc(b.p(marked)) as unknown as ProseMirrorNode;
+
+  expect(pmu.parse(markdown)).toEqualProseMirrorNode(node);
+  expect(pmu.serialize(node)).toBe(`${markdown}\n`);
+});
+
 test("ProseMirror -> unist conversion", () => {
   expect(pmu.serialize(serializedDoc)).toBe(
     "> Inside a blockquote\n" +

@@ -117,3 +117,13 @@ test.each([
   expect(pmu.parse(markdown)).toEqualProseMirrorNode(node);
   expect(pmu.serialize(node)).toBe(`${markdown}\n`);
 });
+
+test.each([
+  ["~~`code`~~", b.strikethrough(b.code("code"))],
+  ["**~~`code`~~**", b.strong(b.strikethrough(b.code("code")))],
+])("inline code with other marks %s", (markdown, marked) => {
+  const node = b.doc(b.p(marked)) as unknown as ProseMirrorNode;
+
+  expect(pmu.parse(markdown)).toEqualProseMirrorNode(node);
+  expect(pmu.serialize(node)).toBe(`${markdown}\n`);
+});
