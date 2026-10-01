@@ -8,23 +8,15 @@ import type {
 import type { Command } from "prosemirror-state";
 import type { Node as UnistNode } from "unist";
 
-import {
-  liftListItem,
-  sinkListItem,
-  splitListItem,
-} from "prosemirror-schema-list";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
+
+import { listItemKeymap } from "../utils/listItemKeymap";
 
 export class ListItemExtension extends NodeExtension<ListItem> {
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
-    const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
-    return {
-      Enter: splitListItem(nodeType),
-      "Shift-Tab": liftListItem(nodeType),
-      Tab: sinkListItem(nodeType),
-    };
+    return listItemKeymap(proseMirrorSchema.nodes[this.proseMirrorNodeName()]);
   }
 
   public override proseMirrorNodeName(): string {

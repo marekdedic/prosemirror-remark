@@ -24,6 +24,7 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 import { isAtStart } from "../utils/isAtStart";
+import { listItemKeymap } from "../utils/listItemKeymap";
 
 const itemStyle = "list-style-type: none; margin-left: -30px;";
 const checkboxContainerStyle = "position: absolute; left: 5px;";
@@ -110,6 +111,9 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     return {
+      ...listItemKeymap(proseMirrorSchema.nodes[this.proseMirrorNodeName()], {
+        checked: false,
+      }),
       Backspace: (state, dispatch, view): boolean => {
         if (!isAtStart(state, view)) {
           return false;
