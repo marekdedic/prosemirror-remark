@@ -372,6 +372,26 @@ describe("UnorderedListExtension", () => {
       );
     });
 
+    test("`Tab` sinks a list item from the middle of its text", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("Wo<cursor>rld")))],
+        "cursor",
+        "{Tab}",
+        (b) => [b.ul(b.li(b.p("Hello"), b.ul(b.li(b.p("World")))))],
+        "* Hello\n  * World",
+      );
+    });
+
+    test("`Shift-Tab` lifts a list item from the middle of its text", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("Hello"), b.ul(b.li(b.p("Wo<cursor>rld")))))],
+        "cursor",
+        "{Shift-Tab}",
+        (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("World")))],
+        "* Hello\n* World",
+      );
+    });
+
     test("`Backspace` joins a list with the preceding list", () => {
       expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("a"))), b.ul(b.li(b.p("<cursor>b")))],
