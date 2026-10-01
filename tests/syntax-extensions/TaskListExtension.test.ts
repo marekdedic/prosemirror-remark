@@ -549,6 +549,21 @@ describe("TaskListExtension", () => {
       );
     });
 
+    test("`[X] ` turns a regular item into a checked task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("<cursor>Hello")), b.li(b.p("World")))],
+        "cursor",
+        "[[X] ",
+        (b) => [
+          b.ul(
+            b.taskListItem({ checked: true }, b.p("Hello")),
+            b.li(b.p("World")),
+          ),
+        ],
+        "* [x] Hello\n* World",
+      );
+    });
+
     test("`[] ` turns a regular item into an unchecked task item", () => {
       expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("<cursor>Hello")), b.li(b.p("World")))],
@@ -575,6 +590,14 @@ describe("TaskListExtension", () => {
     test("creates a checked task item in an empty document", () => {
       expect(fx).toTransformBlockInput(
         "- [[x] Hello",
+        (b) => [b.ul(b.taskListItem({ checked: true }, b.p("Hello")))],
+        "* [x] Hello",
+      );
+    });
+
+    test("creates a checked task item from an uppercase `X` in an empty document", () => {
+      expect(fx).toTransformBlockInput(
+        "- [[X] Hello",
         (b) => [b.ul(b.taskListItem({ checked: true }, b.p("Hello")))],
         "* [x] Hello",
       );
