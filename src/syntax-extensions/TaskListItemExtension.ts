@@ -20,15 +20,11 @@ import {
 } from "mdast-util-gfm-task-list-item";
 import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
 import { InputRule } from "prosemirror-inputrules";
-import {
-  liftListItem,
-  sinkListItem,
-  splitListItem,
-} from "prosemirror-schema-list";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 import { isAtStart } from "../utils/isAtStart";
+import { listItemKeymap } from "../utils/listItemKeymap";
 
 const itemStyle = "list-style-type: none; margin-left: -30px;";
 const checkboxContainerStyle = "position: absolute; left: 5px;";
@@ -114,8 +110,10 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
-    const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
     return {
+      ...listItemKeymap(proseMirrorSchema.nodes[this.proseMirrorNodeName()], {
+        checked: false,
+      }),
       Backspace: (state, dispatch, view): boolean => {
         if (!isAtStart(state, view)) {
           return false;
@@ -135,26 +133,6 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
         );
         return true;
       },
-      Enter: (state, dispatch): boolean =>
-        splitListItem(nodeType)(
-          state,
-          dispatch === undefined
-            ? undefined
-            : (tr): void => {
-                const { $from } = tr.selection;
-                for (let depth = $from.depth; depth > 0; depth--) {
-                  if ($from.node(depth).type === nodeType) {
-                    tr.setNodeMarkup($from.before(depth), undefined, {
-                      checked: false,
-                    });
-                    break;
-                  }
-                }
-                dispatch(tr);
-              },
-        ),
-      "Shift-Tab": liftListItem(nodeType),
-      Tab: sinkListItem(nodeType),
     };
   }
 
