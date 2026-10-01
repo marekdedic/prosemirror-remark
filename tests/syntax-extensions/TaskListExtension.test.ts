@@ -665,6 +665,69 @@ describe("TaskListExtension", () => {
         "* [ ] a\n* [ ] b",
       );
     });
+
+    test("`Enter` splits a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem(b.p("Hel<cursor>lo")))],
+        "cursor",
+        "{Enter}",
+        (b) => [b.ul(b.taskListItem(b.p("Hel")), b.taskListItem(b.p("lo")))],
+        "* [ ] Hel\n* [ ] lo",
+      );
+    });
+
+    test("`Enter` in a checked task item creates an unchecked one", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem({ checked: true }, b.p("Hel<cursor>lo")))],
+        "cursor",
+        "{Enter}",
+        (b) => [
+          b.ul(
+            b.taskListItem({ checked: true }, b.p("Hel")),
+            b.taskListItem(b.p("lo")),
+          ),
+        ],
+        "* [x] Hel\n* [ ] lo",
+      );
+    });
+
+    test("`Tab` nests a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("Hello")),
+            b.taskListItem(b.p("Wo<cursor>rld")),
+          ),
+        ],
+        "cursor",
+        "{Tab}",
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("Hello"), b.ul(b.taskListItem(b.p("World")))),
+          ),
+        ],
+        "* [ ] Hello\n  * [ ] World",
+      );
+    });
+
+    test("`Shift-Tab` lifts a nested task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(
+              b.p("Hello"),
+              b.ul(b.taskListItem(b.p("Wo<cursor>rld"))),
+            ),
+          ),
+        ],
+        "cursor",
+        "{Shift-Tab}",
+        (b) => [
+          b.ul(b.taskListItem(b.p("Hello")), b.taskListItem(b.p("World"))),
+        ],
+        "* [ ] Hello\n* [ ] World",
+      );
+    });
   });
 
   describe("parses DOM", () => {
