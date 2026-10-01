@@ -119,7 +119,10 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
           return false;
         }
         const { $anchor } = state.selection;
-        if ($anchor.node(-1).type.name !== "task_list_item") {
+        if (
+          $anchor.node(-1).type.name !== "task_list_item" ||
+          $anchor.index(-1) !== 0
+        ) {
           return false;
         }
         if (dispatch === undefined) {
