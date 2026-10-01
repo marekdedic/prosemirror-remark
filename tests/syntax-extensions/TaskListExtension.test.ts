@@ -218,6 +218,50 @@ describe("TaskListExtension", () => {
         (b) => [b.ul(b.taskListItem({ checked: true }, b.p("Hello World!")))],
       );
     });
+
+    test("regular list item with a nested task list", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              children: [
+                {
+                  children: [{ type: "text", value: "Hello" }],
+                  type: "paragraph",
+                },
+                {
+                  children: [
+                    {
+                      checked: true,
+                      children: [
+                        {
+                          children: [{ type: "text", value: "World" }],
+                          type: "paragraph",
+                        },
+                      ],
+                      type: "listItem",
+                    },
+                  ],
+                  ordered: false,
+                  type: "list",
+                },
+              ],
+              type: "listItem",
+            },
+          ],
+          ordered: false,
+          type: "list",
+        },
+        (b) => [
+          b.ul(
+            b.li(
+              b.p("Hello"),
+              b.ul(b.taskListItem({ checked: true }, b.p("World"))),
+            ),
+          ),
+        ],
+      );
+    });
   });
 
   describe("matches ProseMirror nodes", () => {
@@ -422,6 +466,56 @@ describe("TaskListExtension", () => {
         ],
       );
     });
+
+    test("task item with a nested regular list", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) =>
+          b.ul(
+            b.taskListItem(
+              { checked: true },
+              b.p("Hello"),
+              b.ul(b.li(b.p("World"))),
+            ),
+          ),
+        [
+          {
+            children: [
+              {
+                checked: true,
+                children: [
+                  {
+                    children: [{ type: "text", value: "Hello" }],
+                    type: "paragraph",
+                  },
+                  {
+                    children: [
+                      {
+                        children: [
+                          {
+                            children: [{ type: "text", value: "World" }],
+                            type: "paragraph",
+                          },
+                        ],
+                        spread: false,
+                        type: "listItem",
+                      },
+                    ],
+                    ordered: false,
+                    spread: false,
+                    type: "list",
+                  },
+                ],
+                spread: false,
+                type: "listItem",
+              },
+            ],
+            ordered: false,
+            spread: false,
+            type: "list",
+          },
+        ],
+      );
+    });
   });
 
   describe("input rules", () => {
@@ -513,6 +607,25 @@ describe("TaskListExtension", () => {
         "[[ ] ",
         (b) => [b.ul(b.taskListItem(b.p("[ ] Hello")))],
         "* [ ] \\[ ] Hello",
+      );
+    });
+
+    test("converts a regular item nested in a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(b.taskListItem(b.p("Hello"), b.ul(b.li(b.p("<cursor>World"))))),
+        ],
+        "cursor",
+        "[[x] ",
+        (b) => [
+          b.ul(
+            b.taskListItem(
+              b.p("Hello"),
+              b.ul(b.taskListItem({ checked: true }, b.p("World"))),
+            ),
+          ),
+        ],
+        "* [ ] Hello\n  * [x] World",
       );
     });
 
@@ -728,6 +841,364 @@ describe("TaskListExtension", () => {
         "* [ ] Hello\n* [ ] World",
       );
     });
+
+    test("`Shift-Tab` lifts a regular item nested in a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(b.taskListItem(b.p("Hello"), b.ul(b.li(b.p("<cursor>World"))))),
+        ],
+        "cursor",
+        "{Shift-Tab}",
+        (b) => [b.ul(b.taskListItem(b.p("Hello")), b.li(b.p("World")))],
+        "* [ ] Hello\n* World",
+      );
+    });
+
+    test("`Shift-Tab` lifts a task item nested in a regular item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(b.li(b.p("Hello"), b.ul(b.taskListItem(b.p("<cursor>World"))))),
+        ],
+        "cursor",
+        "{Shift-Tab}",
+        (b) => [b.ul(b.li(b.p("Hello")), b.taskListItem(b.p("World")))],
+        "* Hello\n* [ ] World",
+      );
+    });
+
+    test("`Shift-Tab` lifts a regular item following a task item in a nested list", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.li(
+              b.p("Hello"),
+              b.ul(b.taskListItem(b.p("A")), b.li(b.p("<cursor>B"))),
+            ),
+          ),
+        ],
+        "cursor",
+        "{Shift-Tab}",
+        (b) => [
+          b.ul(
+            b.li(b.p("Hello"), b.ul(b.taskListItem(b.p("A")))),
+            b.li(b.p("B")),
+          ),
+        ],
+        "* Hello\n  * [ ] A\n* B",
+      );
+    });
+
+    test("`Shift-Tab` lifts a task item following a regular item in a nested list", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(
+              b.p("Hello"),
+              b.ul(b.li(b.p("A")), b.taskListItem(b.p("<cursor>B"))),
+            ),
+          ),
+        ],
+        "cursor",
+        "{Shift-Tab}",
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("Hello"), b.ul(b.li(b.p("A")))),
+            b.taskListItem(b.p("B")),
+          ),
+        ],
+        "* [ ] Hello\n  * A\n* [ ] B",
+      );
+    });
+
+    test("`Shift-Tab` keeps the following item of the other type nested", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(
+              b.p("Hello"),
+              b.ul(b.taskListItem(b.p("<cursor>A")), b.li(b.p("B"))),
+            ),
+          ),
+        ],
+        "cursor",
+        "{Shift-Tab}",
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("Hello")),
+            b.taskListItem(b.p("A"), b.ul(b.li(b.p("B")))),
+          ),
+        ],
+        "* [ ] Hello\n* [ ] A\n  * B",
+      );
+    });
+
+    test("`Tab` nests a regular item under a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem(b.p("Hello")), b.li(b.p("<cursor>World")))],
+        "cursor",
+        "{Tab}",
+        (b) => [b.ul(b.taskListItem(b.p("Hello"), b.ul(b.li(b.p("World")))))],
+        "* [ ] Hello\n  * World",
+      );
+    });
+
+    test("`Tab` nests a task item under a regular item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("Hello")), b.taskListItem(b.p("<cursor>World")))],
+        "cursor",
+        "{Tab}",
+        (b) => [b.ul(b.li(b.p("Hello"), b.ul(b.taskListItem(b.p("World")))))],
+        "* Hello\n  * [ ] World",
+      );
+    });
+
+    test("`Tab` appends a regular item to a nested task list", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("Hello"), b.ul(b.taskListItem(b.p("A")))),
+            b.li(b.p("<cursor>World")),
+          ),
+        ],
+        "cursor",
+        "{Tab}",
+        (b) => [
+          b.ul(
+            b.taskListItem(
+              b.p("Hello"),
+              b.ul(b.taskListItem(b.p("A")), b.li(b.p("World"))),
+            ),
+          ),
+        ],
+        "* [ ] Hello\n  * [ ] A\n  * World",
+      );
+    });
+
+    test("`Tab` nests a regular item under a task item in a list starting with a regular item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.li(b.p("X")),
+            b.taskListItem(b.p("Y")),
+            b.li(b.p("<cursor>Z")),
+          ),
+        ],
+        "cursor",
+        "{Tab}",
+        (b) => [
+          b.ul(b.li(b.p("X")), b.taskListItem(b.p("Y"), b.ul(b.li(b.p("Z"))))),
+        ],
+        "* X\n* [ ] Y\n  * Z",
+      );
+    });
+
+    test("`Tab` nests a task item under a regular item in a list starting with a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("X")),
+            b.li(b.p("Y")),
+            b.taskListItem(b.p("<cursor>Z")),
+          ),
+        ],
+        "cursor",
+        "{Tab}",
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("X")),
+            b.li(b.p("Y"), b.ul(b.taskListItem(b.p("Z")))),
+          ),
+        ],
+        "* [ ] X\n* Y\n  * [ ] Z",
+      );
+    });
+
+    test("`Tab` nests a regular item in a list starting with a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("X")),
+            b.li(b.p("Y")),
+            b.li(b.p("<cursor>Z")),
+          ),
+        ],
+        "cursor",
+        "{Tab}",
+        (b) => [
+          b.ul(b.taskListItem(b.p("X")), b.li(b.p("Y"), b.ul(b.li(b.p("Z"))))),
+        ],
+        "* [ ] X\n* Y\n  * Z",
+      );
+    });
+
+    test("`Tab` nests a task item in a list starting with a regular item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.li(b.p("X")),
+            b.taskListItem(b.p("Y")),
+            b.taskListItem(b.p("<cursor>Z")),
+          ),
+        ],
+        "cursor",
+        "{Tab}",
+        (b) => [
+          b.ul(
+            b.li(b.p("X")),
+            b.taskListItem(b.p("Y"), b.ul(b.taskListItem(b.p("Z")))),
+          ),
+        ],
+        "* X\n* [ ] Y\n  * [ ] Z",
+      );
+    });
+
+    test("`Enter` splits a regular item nested in a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(b.taskListItem(b.p("Hello"), b.ul(b.li(b.p("Wo<cursor>rld"))))),
+        ],
+        "cursor",
+        "{Enter}",
+        (b) => [
+          b.ul(
+            b.taskListItem(
+              b.p("Hello"),
+              b.ul(b.li(b.p("Wo")), b.li(b.p("rld"))),
+            ),
+          ),
+        ],
+        "* [ ] Hello\n  * Wo\n  * rld",
+      );
+    });
+
+    test("`Enter` splits a checked task item nested in a regular item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.li(
+              b.p("Hello"),
+              b.ul(b.taskListItem({ checked: true }, b.p("Wo<cursor>rld"))),
+            ),
+          ),
+        ],
+        "cursor",
+        "{Enter}",
+        (b) => [
+          b.ul(
+            b.li(
+              b.p("Hello"),
+              b.ul(
+                b.taskListItem({ checked: true }, b.p("Wo")),
+                b.taskListItem(b.p("rld")),
+              ),
+            ),
+          ),
+        ],
+        "* Hello\n  * [x] Wo\n  * [ ] rld",
+      );
+    });
+
+    test("`Enter` lifts an empty task item nested in a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("Hello"), b.ul(b.taskListItem(b.p("<cursor>")))),
+          ),
+        ],
+        "cursor",
+        "{Enter}",
+        (b) => [b.ul(b.taskListItem(b.p("Hello")), b.taskListItem(b.p()))],
+        "* [ ] Hello\n*",
+      );
+    });
+
+    test("`Enter` lifts an empty regular item nested in a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(b.taskListItem(b.p("Hello"), b.ul(b.li(b.p("<cursor>"))))),
+        ],
+        "cursor",
+        "{Enter}",
+        (b) => [b.ul(b.taskListItem(b.p("Hello")), b.li(b.p()))],
+        "* [ ] Hello\n*",
+      );
+    });
+
+    test("`Enter` lifts an empty task item nested in a regular item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(b.li(b.p("Hello"), b.ul(b.taskListItem(b.p("<cursor>"))))),
+        ],
+        "cursor",
+        "{Enter}",
+        (b) => [b.ul(b.li(b.p("Hello")), b.taskListItem(b.p()))],
+        "* Hello\n*",
+      );
+    });
+
+    test("`Enter` in an empty task item exits the list", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(b.taskListItem(b.p("Hello")), b.taskListItem(b.p("<cursor>"))),
+        ],
+        "cursor",
+        "{Enter}",
+        (b) => [b.ul(b.taskListItem(b.p("Hello"))), b.p()],
+        "* [ ] Hello\n",
+      );
+    });
+
+    test("`Backspace` turns a task item nested in a regular item into a regular item", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(b.li(b.p("Hello"), b.ul(b.taskListItem(b.p("<cursor>World"))))),
+        ],
+        "cursor",
+        "{Backspace}",
+        (b) => [b.ul(b.li(b.p("Hello"), b.ul(b.li(b.p("World")))))],
+        "* Hello\n  * World",
+      );
+    });
+
+    test("`Backspace` at the start of a regular item joins it with a preceding task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem(b.p("Hello")), b.li(b.p("<cursor>World")))],
+        "cursor",
+        "{Backspace}",
+        (b) => [b.ul(b.taskListItem(b.p("Hello"), b.p("World")))],
+        "* [ ] Hello\n\n  World",
+      );
+    });
+
+    test("`Delete` joins a regular list with a following task list", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("a<cursor>"))), b.ul(b.taskListItem(b.p("b")))],
+        "cursor",
+        "{Delete}",
+        (b) => [b.ul(b.li(b.p("a")), b.taskListItem(b.p("b")))],
+        "* a\n* [ ] b",
+      );
+    });
+
+    test("`Shift-Tab` lifts a top-level task item out of the list", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem(b.p("<cursor>Hello")))],
+        "cursor",
+        "{Shift-Tab}",
+        (b) => [b.p("Hello")],
+        "Hello",
+      );
+    });
+
+    test("`Tab` does nothing on the first task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem(b.p("<cursor>Hello")), b.li(b.p("World")))],
+        "cursor",
+        "{Tab}",
+        (b) => [b.ul(b.taskListItem(b.p("Hello")), b.li(b.p("World")))],
+        "* [ ] Hello\n* World",
+      );
+    });
   });
 
   describe("parses DOM", () => {
@@ -885,6 +1356,44 @@ describe("TaskListItemExtension keymap applicability", () => {
       (b) => [b.ul(b.taskListItem(b.p("<from>He<to>llo")))],
       { anchor: "from", head: "to" },
       "Backspace",
+      false,
+    );
+  });
+
+  test("`Tab` applies to a regular item after a task item", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.ul(b.taskListItem(b.p("Hello")), b.li(b.p("<cursor>World")))],
+      "cursor",
+      "Tab",
+      true,
+    );
+  });
+
+  test("`Tab` does not apply outside a list", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.p("<cursor>Hello")],
+      "cursor",
+      "Tab",
+      false,
+    );
+  });
+
+  test("`Shift-Tab` applies to a regular item nested in a task item", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [
+        b.ul(b.taskListItem(b.p("Hello"), b.ul(b.li(b.p("<cursor>World"))))),
+      ],
+      "cursor",
+      "Shift-Tab",
+      true,
+    );
+  });
+
+  test("`Shift-Tab` does not apply outside a list", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.p("<cursor>Hello")],
+      "cursor",
+      "Shift-Tab",
       false,
     );
   });
