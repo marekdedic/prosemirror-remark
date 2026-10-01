@@ -1179,6 +1179,26 @@ describe("TaskListExtension", () => {
         "* a\n* [ ] b",
       );
     });
+
+    test("`Shift-Tab` lifts a top-level task item out of the list", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem(b.p("<cursor>Hello")))],
+        "cursor",
+        "{Shift-Tab}",
+        (b) => [b.p("Hello")],
+        "Hello",
+      );
+    });
+
+    test("`Tab` does nothing on the first task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem(b.p("<cursor>Hello")), b.li(b.p("World")))],
+        "cursor",
+        "{Tab}",
+        (b) => [b.ul(b.taskListItem(b.p("Hello")), b.li(b.p("World")))],
+        "* [ ] Hello\n* World",
+      );
+    });
   });
 
   describe("parses DOM", () => {
@@ -1336,6 +1356,44 @@ describe("TaskListItemExtension keymap applicability", () => {
       (b) => [b.ul(b.taskListItem(b.p("<from>He<to>llo")))],
       { anchor: "from", head: "to" },
       "Backspace",
+      false,
+    );
+  });
+
+  test("`Tab` applies to a regular item after a task item", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.ul(b.taskListItem(b.p("Hello")), b.li(b.p("<cursor>World")))],
+      "cursor",
+      "Tab",
+      true,
+    );
+  });
+
+  test("`Tab` does not apply outside a list", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.p("<cursor>Hello")],
+      "cursor",
+      "Tab",
+      false,
+    );
+  });
+
+  test("`Shift-Tab` applies to a regular item nested in a task item", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [
+        b.ul(b.taskListItem(b.p("Hello"), b.ul(b.li(b.p("<cursor>World"))))),
+      ],
+      "cursor",
+      "Shift-Tab",
+      true,
+    );
+  });
+
+  test("`Shift-Tab` does not apply outside a list", () => {
+    expect(fx).toReportKeymapApplicability(
+      (b) => [b.p("<cursor>Hello")],
+      "cursor",
+      "Shift-Tab",
       false,
     );
   });
