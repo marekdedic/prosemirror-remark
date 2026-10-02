@@ -106,6 +106,31 @@ test.each([
   );
 });
 
+test.each([
+  ["a hard break", b.p(b.code("a", b.br(), "b")), "`a`\\\n`b`\n"],
+  ["only a hard break", b.p("a", b.code(b.br()), "b"), "a\\\nb\n"],
+  [
+    "an image",
+    b.p(b.code("a", b.img({ alt: "x", src: "https://i.test" }))),
+    "`a`![x](https://i.test)\n",
+  ],
+  [
+    "only an image",
+    b.p(b.code(b.img({ alt: "x", src: "https://i.test" }))),
+    "![x](https://i.test)\n",
+  ],
+])(
+  "ProseMirror -> unist conversion of inline code on %s",
+  (_, paragraph, markdown) => {
+    const node = b.doc(paragraph) as unknown as ProseMirrorNode;
+
+    expect(() => {
+      node.check();
+    }).not.toThrow();
+    expect(pmu.serialize(node)).toBe(markdown);
+  },
+);
+
 test("ProseMirror -> unist conversion", () => {
   expect(pmu.serialize(serializedDoc)).toBe(
     "> Inside a blockquote\n" +
