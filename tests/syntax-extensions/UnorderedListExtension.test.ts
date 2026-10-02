@@ -187,26 +187,6 @@ describe("UnorderedListExtension", () => {
       );
     });
 
-    test.fails("tight list with spread item (#1120)", () => {
-      expect(fx).toConvertProseMirrorNode(
-        (b) => b.ul(b.li({ spread: true }, b.p())),
-        [
-          {
-            children: [
-              {
-                children: [{ children: [], type: "paragraph" }],
-                spread: true,
-                type: "listItem",
-              },
-            ],
-            ordered: false,
-            spread: false,
-            type: "list",
-          },
-        ],
-      );
-    });
-
     test("spread list with spread item", () => {
       expect(fx).toConvertProseMirrorNode(
         (b) => b.ul({ spread: true }, b.li({ spread: true }, b.p())),

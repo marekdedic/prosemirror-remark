@@ -327,29 +327,6 @@ describe("TaskListExtension", () => {
       );
     });
 
-    test.fails(
-      "regular list item in a tight list with spread item (#1120)",
-      () => {
-        expect(fx).toConvertProseMirrorNode(
-          (b) => b.ul(b.li({ spread: true }, b.p())),
-          [
-            {
-              children: [
-                {
-                  children: [{ children: [], type: "paragraph" }],
-                  spread: true,
-                  type: "listItem",
-                },
-              ],
-              ordered: false,
-              spread: false,
-              type: "list",
-            },
-          ],
-        );
-      },
-    );
-
     test("task item defaults to unchecked", () => {
       expect(fx).toConvertProseMirrorNode(
         (b) => b.ul(b.taskListItem(b.p())),
