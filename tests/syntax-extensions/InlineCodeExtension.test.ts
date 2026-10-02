@@ -1,11 +1,16 @@
 import { describe, expect, test } from "vitest";
 
+import { BreakExtension } from "../../src/syntax-extensions/BreakExtension";
+import { ImageExtension } from "../../src/syntax-extensions/ImageExtension";
 import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
 describe("InlineCodeExtension", () => {
-  const fx = createExtensionFixture(new InlineCodeExtension(), []);
+  const fx = createExtensionFixture(new InlineCodeExtension(), [
+    new BreakExtension(),
+    new ImageExtension(),
+  ]);
 
   test("handles the `inlineCode` unist node", () => {
     expect(fx).toHandleUnistNode("inlineCode");
@@ -68,6 +73,36 @@ describe("InlineCodeExtension", () => {
         "{Mod-`}",
         (b) => [b.p("ab", b.code("cd"), "ef")],
         "ab`cd`ef",
+      );
+    });
+
+    test("does not mark a hard break in the selection", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("a<from>b", b.br(), "c<to>d")],
+        { anchor: "from", head: "to" },
+        "{Mod-`}",
+        (b) => [b.p("a", b.code("b"), b.br(), b.code("c"), "d")],
+        "a`b`\\\n`c`d",
+      );
+    });
+
+    test("does not mark an image in the selection", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.p("a<from>b", b.img({ alt: "x", src: "https://i.test" }), "c<to>d"),
+        ],
+        { anchor: "from", head: "to" },
+        "{Mod-`}",
+        (b) => [
+          b.p(
+            "a",
+            b.code("b"),
+            b.img({ alt: "x", src: "https://i.test" }),
+            b.code("c"),
+            "d",
+          ),
+        ],
+        "a`b`![x](https://i.test)`c`d",
       );
     });
   });

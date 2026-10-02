@@ -1,18 +1,26 @@
-import type { InlineCode, Text } from "mdast";
+import type { Break, Image, InlineCode, Text } from "mdast";
 import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   MarkSpec,
+  MarkType,
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
-import type { Command } from "prosemirror-state";
+import type { Command, Transaction } from "prosemirror-state";
 
 import { toggleMark } from "prosemirror-commands";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
-export class InlineCodeExtension extends MarkExtension<InlineCode> {
-  public override processConvertedUnistNode(convertedNode: Text): InlineCode {
+export class InlineCodeExtension extends MarkExtension<
+  Break | Image | InlineCode
+> {
+  public override processConvertedUnistNode(
+    convertedNode: Break | Image | Text,
+  ): Break | Image | InlineCode {
+    if (convertedNode.type !== "text") {
+      return convertedNode;
+    }
     return { type: this.unistNodeName(), value: convertedNode.value };
   }
 
@@ -31,8 +39,18 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
     proseMirrorSchema: Schema<string, string>,
   ): Record<string, Command> {
     const markType = proseMirrorSchema.marks[this.proseMirrorMarkName()];
+    const toggle = toggleMark(markType);
     return {
-      "Ctrl-`": toggleMark(markType),
+      "Ctrl-`": (state, dispatch, view) =>
+        toggle(
+          state,
+          dispatch === undefined
+            ? undefined
+            : (tr): void => {
+                dispatch(removeMarkFromNonTextNodes(tr, markType));
+              },
+          view,
+        ),
     };
   }
 
@@ -62,4 +80,18 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
         .mark([proseMirrorSchema.marks[this.proseMirrorMarkName()].create()]),
     ];
   }
+}
+
+function removeMarkFromNonTextNodes(
+  tr: Transaction,
+  markType: MarkType,
+): Transaction {
+  for (const range of tr.selection.ranges) {
+    tr.doc.nodesBetween(range.$from.pos, range.$to.pos, (node, pos) => {
+      if (node.isInline && !node.isText && markType.isInSet(node.marks)) {
+        tr.removeNodeMark(pos, markType);
+      }
+    });
+  }
+  return tr;
 }
