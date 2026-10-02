@@ -34,11 +34,11 @@ describe("UnorderedListExtension", () => {
       });
     });
 
-    test("matches a spread unordered `list` (again)", () => {
+    test("matches a tight unordered `list` with a spread item", () => {
       expect(fx).toMatchUnistNode({
-        children: [],
+        children: [{ children: [], spread: true, type: "listItem" }],
         ordered: false,
-        spread: true,
+        spread: false,
         type: "list",
       });
     });
@@ -181,26 +181,6 @@ describe("UnorderedListExtension", () => {
             ],
             ordered: false,
             spread: true,
-            type: "list",
-          },
-        ],
-      );
-    });
-
-    test("empty unordered list (again)", () => {
-      expect(fx).toConvertProseMirrorNode(
-        (b) => b.ul(b.li(b.p())),
-        [
-          {
-            children: [
-              {
-                children: [{ children: [], type: "paragraph" }],
-                spread: false,
-                type: "listItem",
-              },
-            ],
-            ordered: false,
-            spread: false,
             type: "list",
           },
         ],

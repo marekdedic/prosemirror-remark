@@ -327,26 +327,6 @@ describe("TaskListExtension", () => {
       );
     });
 
-    test("regular list item (again)", () => {
-      expect(fx).toConvertProseMirrorNode(
-        (b) => b.ul(b.li(b.p())),
-        [
-          {
-            children: [
-              {
-                children: [{ children: [], type: "paragraph" }],
-                spread: false,
-                type: "listItem",
-              },
-            ],
-            ordered: false,
-            spread: false,
-            type: "list",
-          },
-        ],
-      );
-    });
-
     test("task item defaults to unchecked", () => {
       expect(fx).toConvertProseMirrorNode(
         (b) => b.ul(b.taskListItem(b.p())),
