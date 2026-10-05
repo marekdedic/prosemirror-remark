@@ -31,6 +31,8 @@ import type {
 
 type Build<T> = (b: TestBuilders) => T;
 
+type InlineMarkdownOutput = { intraword: string; spaced: string } | string;
+
 interface InputVariant {
   after: ProseMirrorNode;
   before: ProseMirrorNode;
@@ -371,8 +373,12 @@ expect.extend({
     fx: ExtensionFixture<UnistLike>,
     editorInput: string,
     contents: Build<Array<BuiltNode>>,
-    markdownOutput: string,
+    markdownOutput: InlineMarkdownOutput,
   ): SyncMatcherResult {
+    const { intraword, spaced } =
+      typeof markdownOutput === "string"
+        ? { intraword: markdownOutput, spaced: markdownOutput }
+        : markdownOutput;
     const inline = fx.resolveNodes(contents(fx.b));
     const splits = editorInput.endsWith("{Enter}");
     const begin = fx.schema.text("BEGIN");
@@ -403,21 +409,21 @@ expect.extend({
           after: doc(inline),
           before: fx.schema.nodes["doc"].create({}, [paragraph([])]),
           editorInput: `${editorInput}END`,
-          markdown: `${markdownOutput}${endMarkdown}`,
+          markdown: `${intraword}${endMarkdown}`,
           name: "at paragraph start",
         },
         {
           after: doc([begin, ...inline]),
           before: fx.schema.nodes["doc"].create({}, [paragraph([begin])]),
           editorInput: `${editorInput}END`,
-          markdown: `BEGIN${markdownOutput}${endMarkdown}`,
+          markdown: `BEGIN${intraword}${endMarkdown}`,
           name: "after text",
         },
         {
           after: spacedDoc([spacedBegin, ...inline]),
           before: fx.schema.nodes["doc"].create({}, [paragraph([spacedBegin])]),
           editorInput: `${editorInput}${splits ? "END" : " END"}`,
-          markdown: `BEGIN ${markdownOutput}${splits ? "\n\nEND" : " END"}`,
+          markdown: `BEGIN ${spaced}${splits ? "\n\nEND" : " END"}`,
           name: "between spaces",
         },
       ],
@@ -478,7 +484,7 @@ interface ExtensionMatchers<R> {
   toTransformInlineInput(
     editorInput: string,
     contents: Build<Array<BuiltNode>>,
-    markdownOutput: string,
+    markdownOutput: InlineMarkdownOutput,
   ): R;
   toTransformInput(
     before: Build<Array<BuiltNode>>,

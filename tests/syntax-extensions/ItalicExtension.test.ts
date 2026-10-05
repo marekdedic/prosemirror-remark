@@ -194,11 +194,10 @@ describe("ItalicExtension", () => {
     });
 
     test("does not match *Test_", () => {
-      expect(fx).toTransformInlineInput(
-        "*Test_",
-        () => ["*Test_"],
-        "\\*Test\\_",
-      );
+      expect(fx).toTransformInlineInput("*Test_", () => ["*Test_"], {
+        intraword: "\\*Test_",
+        spaced: "\\*Test\\_",
+      });
     });
   });
 

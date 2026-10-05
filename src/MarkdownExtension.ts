@@ -33,7 +33,6 @@ export class MarkdownExtension extends Extension {
       // LinkExtension needs to come before other marks so that links wrap them.
       new LinkExtension(),
       new BlockquoteExtension(),
-      new BoldExtension(),
       new BreakExtension(),
       new CodeBlockExtension(),
       new DefinitionExtension(),
@@ -42,7 +41,9 @@ export class MarkdownExtension extends Extension {
       new ImageExtension(),
       new ImageReferenceExtension(),
       new InlineCodeExtension(),
+      // ItalicExtension needs to come before BoldExtension so that bold italic text serializes as ***text***.
       new ItalicExtension(),
+      new BoldExtension(),
       new LinkReferenceExtension(),
       new ListItemExtension(),
       new OrderedListExtension(),
