@@ -206,7 +206,7 @@ describe("OrderedListExtension", () => {
             children: [
               {
                 children: [{ children: [], type: "paragraph" }],
-                spread: true,
+                spread: false,
                 type: "listItem",
               },
             ],
@@ -227,7 +227,7 @@ describe("OrderedListExtension", () => {
             children: [
               {
                 children: [{ children: [], type: "paragraph" }],
-                spread: true,
+                spread: false,
                 type: "listItem",
               },
             ],
@@ -249,6 +249,48 @@ describe("OrderedListExtension", () => {
               {
                 children: [{ children: [], type: "paragraph" }],
                 spread: true,
+                type: "listItem",
+              },
+            ],
+            ordered: true,
+            spread: true,
+            start: 1,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("tight list with spread item", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.ol(b.li({ spread: true }, b.p())),
+        [
+          {
+            children: [
+              {
+                children: [{ children: [], type: "paragraph" }],
+                spread: true,
+                type: "listItem",
+              },
+            ],
+            ordered: true,
+            spread: false,
+            start: 1,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("spread list with tight item", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.ol({ spread: true }, b.li({ spread: false }, b.p())),
+        [
+          {
+            children: [
+              {
+                children: [{ children: [], type: "paragraph" }],
+                spread: false,
                 type: "listItem",
               },
             ],
@@ -471,10 +513,24 @@ describe("OrderedListExtension", () => {
       );
     });
 
+    test("parses a spread `<li>`", () => {
+      expect(fx).toParseDOM(
+        '<ol><li data-spread="true"><p>Hello</p></li></ol>',
+        (b) => [b.ol({ start: 1 }, b.li({ spread: true }, b.p("Hello")))],
+      );
+    });
+
     test("renders an `<ol>`", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ol({ start: 5 }, b.li(b.p("Hello")))],
-        '<ol data-spread="false" start="5"><li><p>Hello</p></li></ol>',
+        '<ol data-spread="false" start="5"><li data-spread="false"><p>Hello</p></li></ol>',
+      );
+    });
+
+    test("renders a spread `<li>`", () => {
+      expect(fx).toRenderDOM(
+        (b) => [b.ol({ start: 5 }, b.li({ spread: true }, b.p("Hello")))],
+        '<ol data-spread="false" start="5"><li data-spread="true"><p>Hello</p></li></ol>',
       );
     });
   });

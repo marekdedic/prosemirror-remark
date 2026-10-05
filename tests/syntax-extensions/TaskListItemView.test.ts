@@ -33,6 +33,20 @@ describe("TaskListItemView", () => {
     ).toBe("checked");
   });
 
+  test("renders the spread of a tight item", () => {
+    expect(
+      render("* [ ] Hello\n").editor.element("li").getAttribute("data-spread"),
+    ).toBe("false");
+  });
+
+  test("renders the spread of a spread item", () => {
+    expect(
+      render("* [ ] Hello\n\n  World\n")
+        .editor.element("li")
+        .getAttribute("data-spread"),
+    ).toBe("true");
+  });
+
   test("renders the checkbox outside of the editable content", () => {
     const { editor } = render("* [ ] Hello\n");
     const checkbox = editor.element("input");

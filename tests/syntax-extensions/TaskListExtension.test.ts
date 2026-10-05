@@ -9,7 +9,7 @@ import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
 function renderedTaskList(checked: boolean): string {
-  return `<ul data-spread="false"><li style="list-style-type: none; margin-left: -30px;"><span contenteditable="false" style="position: absolute; left: 5px;"><input ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><span style="position: relative; left: 30px;"><p>a</p></span></li></ul>`;
+  return `<ul data-spread="false"><li data-spread="false" style="list-style-type: none; margin-left: -30px;"><span contenteditable="false" style="position: absolute; left: 5px;"><input ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><span style="position: relative; left: 30px;"><p>a</p></span></li></ul>`;
 }
 
 describe("TaskListExtension", () => {
@@ -415,6 +415,73 @@ describe("TaskListExtension", () => {
             ],
             ordered: false,
             spread: true,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("tight list with a spread regular item next to task items", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) =>
+          b.ul(
+            b.taskListItem({ checked: false }, b.p()),
+            b.li({ spread: true }, b.p()),
+            b.taskListItem({ checked: true }, b.p()),
+          ),
+        [
+          {
+            children: [
+              {
+                checked: false,
+                children: [{ children: [], type: "paragraph" }],
+                spread: false,
+                type: "listItem",
+              },
+              {
+                children: [{ children: [], type: "paragraph" }],
+                spread: true,
+                type: "listItem",
+              },
+              {
+                checked: true,
+                children: [{ children: [], type: "paragraph" }],
+                spread: false,
+                type: "listItem",
+              },
+            ],
+            ordered: false,
+            spread: false,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("tight list with a spread task item", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) =>
+          b.ul(
+            b.li(b.p()),
+            b.taskListItem({ checked: true, spread: true }, b.p()),
+          ),
+        [
+          {
+            children: [
+              {
+                children: [{ children: [], type: "paragraph" }],
+                spread: false,
+                type: "listItem",
+              },
+              {
+                checked: true,
+                children: [{ children: [], type: "paragraph" }],
+                spread: true,
+                type: "listItem",
+              },
+            ],
+            ordered: false,
+            spread: false,
             type: "list",
           },
         ],
@@ -1243,6 +1310,15 @@ describe("TaskListExtension", () => {
       );
     });
 
+    test("parses a spread task item", () => {
+      expect(fx).toParseDOM(
+        '<ul><li data-spread="true"><input type="checkbox" checked><p>a</p></li></ul>',
+        (b) => [
+          b.ul(b.taskListItem({ checked: true, spread: true }, b.p("a"))),
+        ],
+      );
+    });
+
     test("parses a regular list item", () => {
       expect(fx).toParseDOM("<ul><li><p>a</p></li></ul>", (b) => [
         b.ul(b.li(b.p("a"))),
@@ -1282,6 +1358,16 @@ describe("TaskListExtension", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ul(b.taskListItem({ checked }, b.p("a")))],
         renderedTaskList(checked),
+      );
+    });
+
+    test("renders a spread task item", () => {
+      expect(fx).toRenderDOM(
+        (b) => [b.ul(b.taskListItem({ spread: true }, b.p("a")))],
+        renderedTaskList(false).replace(
+          '<li data-spread="false"',
+          '<li data-spread="true"',
+        ),
       );
     });
   });

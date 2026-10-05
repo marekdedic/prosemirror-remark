@@ -76,10 +76,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
     const spread = node.attrs["spread"] as boolean;
     return [
       {
-        children: convertedChildren.map((child) => {
-          child.spread = spread;
-          return child;
-        }),
+        children: convertedChildren,
         ordered: false,
         spread,
         type: this.unistNodeName(),
