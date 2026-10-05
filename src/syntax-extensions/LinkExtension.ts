@@ -1,4 +1,4 @@
-import type { Link, Text } from "mdast";
+import type { Link, PhrasingContent } from "mdast";
 import type {
   DOMOutputSpec,
   Mark,
@@ -12,8 +12,8 @@ import { MarkExtension } from "prosemirror-unified";
 import { addMarkToNodes } from "../utils/addMarkToNodes";
 
 export class LinkExtension extends MarkExtension<Link> {
-  public override processConvertedUnistNode(
-    convertedNode: Text,
+  public override processConvertedUnistNodes(
+    convertedNodes: Array<PhrasingContent>,
     originalMark: Mark,
   ): Link {
     return {
@@ -22,7 +22,7 @@ export class LinkExtension extends MarkExtension<Link> {
       ...(originalMark.attrs["title"] !== null && {
         title: originalMark.attrs["title"] as string,
       }),
-      children: [convertedNode],
+      children: convertedNodes,
     };
   }
 

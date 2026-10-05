@@ -49,19 +49,10 @@ const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
     ],
   },
   {
-    cause:
-      "mark spanning several nodes serializes as separate marks (marekdedic/prosemirror-unified#1058)",
-    examples: [
-      393, 394, 395, 399, 404, 406, 410, 411, 413, 414, 415, 418, 419, 422, 424,
-      428, 429, 430, 431, 432, 433, 470, 478, 479, 516, 519, 530, 554, 558, 559,
-      638, 639,
-    ],
-  },
-  {
     cause: "nested emphasis of the same type collapses",
     examples: [
-      369, 373, 389, 407, 408, 409, 417, 425, 426, 427, 461, 463, 464, 465, 466,
-      468,
+      369, 373, 389, 407, 408, 409, 417, 418, 419, 425, 426, 427, 432, 461, 463,
+      464, 465, 466, 468,
     ],
   },
   {

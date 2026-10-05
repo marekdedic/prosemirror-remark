@@ -30,6 +30,8 @@ export class MarkdownExtension extends Extension {
     return [
       // ParagraphExtension needs to be first so that it is the default block.
       new ParagraphExtension(),
+      // LinkExtension needs to come before other marks so that links wrap them.
+      new LinkExtension(),
       new BlockquoteExtension(),
       new BoldExtension(),
       new BreakExtension(),
@@ -41,7 +43,6 @@ export class MarkdownExtension extends Extension {
       new ImageReferenceExtension(),
       new InlineCodeExtension(),
       new ItalicExtension(),
-      new LinkExtension(),
       new LinkReferenceExtension(),
       new ListItemExtension(),
       new OrderedListExtension(),

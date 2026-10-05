@@ -1,4 +1,4 @@
-import type { Node as UnistNode } from "unist";
+import type { Parent, Node as UnistNode } from "unist";
 
 import {
   type Attrs,
@@ -120,8 +120,15 @@ export function createExtensionFixture<UNode extends UnistNode>(
 
   return {
     b,
-    convertProseMirrorNode: (node) =>
-      internals.proseMirrorToUnistConverter.convertNode(node),
+    convertProseMirrorNode: (node): Array<UnistNode> => {
+      if (!node.isInline) {
+        return internals.proseMirrorToUnistConverter.convertNode(node);
+      }
+      const [paragraph] = internals.proseMirrorToUnistConverter.convertNode(
+        schema.nodes["paragraph"].create(null, node),
+      ) as [Parent];
+      return paragraph.children;
+    },
     convertUnistNode: (node, context) =>
       internals.unistToProseMirrorConverter.convertNode(node, context),
     extension,

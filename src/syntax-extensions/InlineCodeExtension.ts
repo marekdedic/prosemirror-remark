@@ -12,12 +12,10 @@ import type { Command, Transaction } from "prosemirror-state";
 import { toggleMark } from "prosemirror-commands";
 import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 
-export class InlineCodeExtension extends MarkExtension<
-  Break | Image | InlineCode
-> {
-  public override processConvertedUnistNode(
-    convertedNode: Break | Image | Text,
-  ): Break | Image | InlineCode {
+export class InlineCodeExtension extends MarkExtension<InlineCode> {
+  public override processConvertedUnistNodes([convertedNode]: [
+    Break | Image | Text,
+  ]): Break | Image | InlineCode {
     if (convertedNode.type !== "text") {
       return convertedNode;
     }
@@ -64,6 +62,10 @@ export class InlineCodeExtension extends MarkExtension<
       parseDOM: [{ tag: "code" }],
       toDOM: (): DOMOutputSpec => ["code", 0],
     };
+  }
+
+  public override unistNodeIsLeaf(): boolean {
+    return true;
   }
 
   public override unistNodeName(): "inlineCode" {
