@@ -47,6 +47,19 @@ describe("CodeBlockExtension", () => {
   });
 
   describe("converts unist -> ProseMirror", () => {
+    test("empty", () => {
+      expect(fx).toConvertUnistNode({ type: "code", value: "" }, (b) => [
+        b.code_block(),
+      ]);
+    });
+
+    test("empty with a language", () => {
+      expect(fx).toConvertUnistNode(
+        { lang: "ts", type: "code", value: "" },
+        (b) => [b.code_block({ lang: "ts" })],
+      );
+    });
+
     test("plain", () => {
       expect(fx).toConvertUnistNode(
         { type: "code", value: "Hello World!" },

@@ -130,7 +130,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
       proseMirrorSchema,
-      [proseMirrorSchema.text(node.value)],
+      node.value === "" ? [] : [proseMirrorSchema.text(node.value)],
     );
   }
 }

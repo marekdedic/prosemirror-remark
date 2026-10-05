@@ -34,12 +34,8 @@ const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
     ],
   },
   {
-    cause: "empty fenced code block throws (#1118)",
-    examples: [126, 130, 144, 237],
-  },
-  {
     cause: "code block info string is lost (#1119)",
-    examples: [24, 34, 142, 143, 146],
+    examples: [24, 34, 142, 143, 144, 146],
   },
   {
     cause: "loose list serializes as tight (#1120)",
