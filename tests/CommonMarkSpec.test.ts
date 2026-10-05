@@ -49,10 +49,6 @@ const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
     ],
   },
   {
-    cause: "emphasis wraps a link instead of the other way around",
-    examples: [433],
-  },
-  {
     cause: "nested emphasis of the same type collapses",
     examples: [
       369, 373, 389, 407, 408, 409, 417, 418, 419, 425, 426, 427, 432, 461, 463,
