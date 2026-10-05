@@ -4,7 +4,6 @@
     "moduleResolution": "bundler",
     "target": "es2018",
     "types": ["vitest-prosemirror/setup"],
-    "skipLibCheck": true,
 
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
@@ -15,5 +14,6 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
-  }
+  },
+  "exclude": ["dist"]
 }
