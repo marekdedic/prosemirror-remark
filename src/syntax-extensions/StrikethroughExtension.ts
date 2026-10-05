@@ -1,4 +1,4 @@
-import type { Delete, Emphasis, Text } from "mdast";
+import type { Delete, PhrasingContent } from "mdast";
 import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
@@ -20,10 +20,10 @@ import { addMarkToNodes } from "../utils/addMarkToNodes";
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 
 export class StrikethroughExtension extends MarkExtension<Delete> {
-  public override processConvertedUnistNode(
-    convertedNode: Emphasis | Text,
+  public override processConvertedUnistNodes(
+    convertedNodes: Array<PhrasingContent>,
   ): Delete {
-    return { children: [convertedNode], type: this.unistNodeName() };
+    return { children: convertedNodes, type: this.unistNodeName() };
   }
 
   public override proseMirrorInputRules(

@@ -39,10 +39,10 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
     );
   }
 
-  public override processConvertedUnistNode(
-    convertedNode: LinkReference,
-  ): LinkReference {
-    return convertedNode;
+  public override processConvertedUnistNodes(): never {
+    throw new Error(
+      "LinkReferenceExtension has no ProseMirror mark, so it never converts ProseMirror nodes to unist nodes.",
+    );
   }
 
   public override proseMirrorMarkName(): null {

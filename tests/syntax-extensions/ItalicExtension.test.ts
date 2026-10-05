@@ -86,10 +86,10 @@ describe("ItalicExtension", () => {
             children: [
               {
                 children: [{ type: "text", value: "Hello World!" }],
-                type: "emphasis",
+                type: "strong",
               },
             ],
-            type: "strong",
+            type: "emphasis",
           },
         ],
       );

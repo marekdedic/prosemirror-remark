@@ -1,4 +1,4 @@
-import type { Emphasis, Strong, Text } from "mdast";
+import type { Emphasis, PhrasingContent } from "mdast";
 import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
@@ -14,10 +14,10 @@ import { MarkExtension, MarkInputRule } from "prosemirror-unified";
 import { addMarkToNodes } from "../utils/addMarkToNodes";
 
 export class ItalicExtension extends MarkExtension<Emphasis> {
-  public override processConvertedUnistNode(
-    convertedNode: Strong | Text,
+  public override processConvertedUnistNodes(
+    convertedNodes: Array<PhrasingContent>,
   ): Emphasis {
-    return { children: [convertedNode], type: this.unistNodeName() };
+    return { children: convertedNodes, type: this.unistNodeName() };
   }
 
   public override proseMirrorInputRules(

@@ -127,10 +127,10 @@ describe("StrikethroughExtension", () => {
             children: [
               {
                 children: [{ type: "text", value: "Hello World!" }],
-                type: "emphasis",
+                type: "delete",
               },
             ],
-            type: "delete",
+            type: "emphasis",
           },
         ],
       );
@@ -147,10 +147,10 @@ describe("StrikethroughExtension", () => {
             children: [
               {
                 children: [{ type: "text", value: "Hello World!" }],
-                type: "delete",
+                type: "emphasis",
               },
             ],
-            type: "emphasis",
+            type: "delete",
           },
         ],
       );
@@ -164,10 +164,10 @@ describe("StrikethroughExtension", () => {
             children: [
               {
                 children: [{ type: "text", value: "Hello World!" }],
-                type: "strong",
+                type: "delete",
               },
             ],
-            type: "delete",
+            type: "strong",
           },
         ],
       );
@@ -184,10 +184,10 @@ describe("StrikethroughExtension", () => {
             children: [
               {
                 children: [{ type: "text", value: "Hello World!" }],
-                type: "delete",
+                type: "strong",
               },
             ],
-            type: "strong",
+            type: "delete",
           },
         ],
       );
