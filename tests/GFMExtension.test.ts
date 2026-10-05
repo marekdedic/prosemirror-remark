@@ -91,3 +91,29 @@ test("ProseMirror -> unist conversion", () => {
       "A text with a **bold part**, some `inline code`, a bit *that is italic*, one that is ~~striked through~~, one [link](https://example.test), one simple link to [www.github.com](http://www.github.com) and another [type of link](https://link2.test).\n",
   );
 });
+
+test.each([
+  [
+    "[a ~~striked~~ part](https://example.test)",
+    b.link(
+      { href: "https://example.test" },
+      "a ",
+      b.strikethrough("striked"),
+      " part",
+    ),
+  ],
+  [
+    "~~a [link](https://example.test) part~~",
+    b.strikethrough(
+      "a ",
+      b.link({ href: "https://example.test" }, "link"),
+      " part",
+    ),
+  ],
+  ["~~a *nested* part~~", b.strikethrough("a ", b.em("nested"), " part")],
+])("mark spanning several nodes %s", (markdown, marked) => {
+  const node = b.doc(b.p(marked)) as unknown as ProseMirrorNode;
+
+  expect(pmu.parse(markdown)).toEqualProseMirrorNode(node);
+  expect(pmu.serialize(node)).toBe(`${markdown}\n`);
+});
