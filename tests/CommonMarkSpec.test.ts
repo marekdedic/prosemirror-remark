@@ -68,11 +68,6 @@ const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
     cause: "empty link is dropped (#1123)",
     examples: [484, 487],
   },
-  {
-    cause:
-      "encoded line ending splits the paragraph (fixed in mdast-util-to-markdown 2.1.3)",
-    examples: [39],
-  },
 ];
 
 const failureCauses = new Map(

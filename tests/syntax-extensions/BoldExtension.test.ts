@@ -150,7 +150,7 @@ describe("BoldExtension", () => {
     });
 
     test.each([
-      ["**Test__", "\\*\\*Test\\_\\_"],
+      ["**Test__", { intraword: "\\*\\*Test__", spaced: "\\*\\*Test\\_\\_" }],
       ["**Test_*", "\\*\\*Test\\_\\*"],
       ["**Test*_", "\\*\\*Test\\*\\_"],
       ["**Test* *", "\\*\\*Test\\* \\*"],
