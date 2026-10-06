@@ -36,7 +36,7 @@ export class DefinitionExtension extends NodeExtension<Definition> {
     }>,
   ): Array<ProseMirrorNode> {
     context.DefinitionExtension ??= { definitions: {} };
-    context.DefinitionExtension.definitions[node.identifier] = {
+    context.DefinitionExtension.definitions[node.identifier] ??= {
       title: node.title,
       url: node.url,
     };

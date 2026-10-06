@@ -157,5 +157,29 @@ describe("ImageReferenceExtension", () => {
         ],
       );
     });
+
+    test("the first of duplicate definitions wins", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          alt: "Awesome image",
+          identifier: "imageId",
+          referenceType: "full",
+          type: "imageReference",
+        },
+        (b) => [b.img({ alt: "Awesome image", src: "https://first.test" })],
+        [
+          {
+            identifier: "imageId",
+            type: "definition",
+            url: "https://first.test",
+          },
+          {
+            identifier: "imageId",
+            type: "definition",
+            url: "https://second.test",
+          },
+        ],
+      );
+    });
   });
 });

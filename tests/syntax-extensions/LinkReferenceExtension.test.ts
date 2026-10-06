@@ -180,5 +180,36 @@ describe("LinkReferenceExtension", () => {
         ],
       );
     });
+
+    test("a `full` reference with duplicate definitions", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [{ type: "text", value: "Click me!" }],
+          identifier: "linkId",
+          referenceType: "full",
+          type: "linkReference",
+        },
+        (b) => [
+          b.link(
+            { href: "https://first.test", title: "First title" },
+            "Click me!",
+          ),
+        ],
+        [
+          {
+            identifier: "linkId",
+            title: "First title",
+            type: "definition",
+            url: "https://first.test",
+          },
+          {
+            identifier: "linkId",
+            title: "Second title",
+            type: "definition",
+            url: "https://second.test",
+          },
+        ],
+      );
+    });
   });
 });

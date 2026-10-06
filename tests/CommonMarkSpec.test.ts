@@ -54,10 +54,6 @@ const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
     ],
   },
   {
-    cause: "last duplicate link reference definition wins (#1121)",
-    examples: [204, 544],
-  },
-  {
     cause:
       "link references sharing an identifier or adjacent are resolved wrongly (#1122)",
     examples: [533, 570],
