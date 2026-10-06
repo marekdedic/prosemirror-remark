@@ -884,6 +884,28 @@ describe("TaskListExtension", () => {
       );
     });
 
+    test("`Enter` in a spread task item creates a spread one", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.ul(
+            b.taskListItem(
+              { checked: true, spread: true },
+              b.p("Hel<cursor>lo"),
+            ),
+          ),
+        ],
+        "cursor",
+        "{Enter}",
+        (b) => [
+          b.ul(
+            b.taskListItem({ checked: true, spread: true }, b.p("Hel")),
+            b.taskListItem({ spread: true }, b.p("lo")),
+          ),
+        ],
+        "* [x] Hel\n* [ ] lo",
+      );
+    });
+
     test("`Tab` nests a task item", () => {
       expect(fx).toTransformInput(
         (b) => [

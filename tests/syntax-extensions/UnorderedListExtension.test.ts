@@ -372,6 +372,21 @@ describe("UnorderedListExtension", () => {
       );
     });
 
+    test("`Enter` in a spread list item creates a spread one", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li({ spread: true }, b.p("Hel<cursor>lo")))],
+        "cursor",
+        "{Enter}",
+        (b) => [
+          b.ul(
+            b.li({ spread: true }, b.p("Hel")),
+            b.li({ spread: true }, b.p("lo")),
+          ),
+        ],
+        "* Hel\n* lo",
+      );
+    });
+
     test("`Tab` sinks a list item", () => {
       expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("<cursor>World")))],

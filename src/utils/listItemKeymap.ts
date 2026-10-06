@@ -185,8 +185,12 @@ function splitListItemWithAttrs(itemType: NodeType, attrs: Attrs): Command {
         : (tr): void => {
             const { $from } = tr.selection;
             for (let depth = $from.depth; depth > 0; depth--) {
-              if ($from.node(depth).type === itemType) {
-                tr.setNodeMarkup($from.before(depth), undefined, attrs);
+              const node = $from.node(depth);
+              if (node.type === itemType) {
+                tr.setNodeMarkup($from.before(depth), undefined, {
+                  ...node.attrs,
+                  ...attrs,
+                });
                 break;
               }
             }
