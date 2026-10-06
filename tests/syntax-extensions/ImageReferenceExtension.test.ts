@@ -181,5 +181,43 @@ describe("ImageReferenceExtension", () => {
         ],
       );
     });
+
+    test("several references sharing an identifier", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              alt: "a",
+              identifier: "imageId",
+              referenceType: "full",
+              type: "imageReference",
+            },
+            { type: "text", value: " " },
+            {
+              alt: "b",
+              identifier: "imageId",
+              referenceType: "full",
+              type: "imageReference",
+            },
+          ],
+          type: "paragraph",
+        },
+        (b) => [
+          b.p(
+            b.img({ alt: "a", src: "https://example.test", title: "Title" }),
+            " ",
+            b.img({ alt: "b", src: "https://example.test", title: "Title" }),
+          ),
+        ],
+        [
+          {
+            identifier: "imageId",
+            title: "Title",
+            type: "definition",
+            url: "https://example.test",
+          },
+        ],
+      );
+    });
   });
 });

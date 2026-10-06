@@ -211,5 +211,82 @@ describe("LinkReferenceExtension", () => {
         ],
       );
     });
+
+    test("several references sharing an identifier", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              children: [{ type: "text", value: "a" }],
+              identifier: "linkId",
+              referenceType: "full",
+              type: "linkReference",
+            },
+            { type: "text", value: " and " },
+            {
+              children: [{ type: "text", value: "b" }],
+              identifier: "linkId",
+              referenceType: "full",
+              type: "linkReference",
+            },
+          ],
+          type: "paragraph",
+        },
+        (b) => [
+          b.p(
+            b.link({ href: "https://example.test" }, "a"),
+            " and ",
+            b.link({ href: "https://example.test" }, "b"),
+          ),
+        ],
+        [
+          {
+            identifier: "linkId",
+            type: "definition",
+            url: "https://example.test",
+          },
+        ],
+      );
+    });
+
+    test("adjacent references with different identifiers", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              children: [{ type: "text", value: "a" }],
+              identifier: "firstId",
+              referenceType: "full",
+              type: "linkReference",
+            },
+            {
+              children: [{ type: "text", value: "b" }],
+              identifier: "secondId",
+              referenceType: "full",
+              type: "linkReference",
+            },
+          ],
+          type: "paragraph",
+        },
+        (b) => [
+          b.p(
+            b.link({ href: "https://first.test" }, "a"),
+            b.link({ href: "https://second.test" }, "b"),
+          ),
+        ],
+        [
+          {
+            identifier: "firstId",
+            type: "definition",
+            url: "https://first.test",
+          },
+          {
+            identifier: "secondId",
+            type: "definition",
+            url: "https://second.test",
+          },
+        ],
+      );
+    });
   });
 });
