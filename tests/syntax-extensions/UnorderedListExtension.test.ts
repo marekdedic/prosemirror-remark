@@ -175,7 +175,7 @@ describe("UnorderedListExtension", () => {
             children: [
               {
                 children: [{ children: [], type: "paragraph" }],
-                spread: true,
+                spread: false,
                 type: "listItem",
               },
             ],
@@ -196,6 +196,46 @@ describe("UnorderedListExtension", () => {
               {
                 children: [{ children: [], type: "paragraph" }],
                 spread: true,
+                type: "listItem",
+              },
+            ],
+            ordered: false,
+            spread: true,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("tight list with spread item", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.ul(b.li({ spread: true }, b.p())),
+        [
+          {
+            children: [
+              {
+                children: [{ children: [], type: "paragraph" }],
+                spread: true,
+                type: "listItem",
+              },
+            ],
+            ordered: false,
+            spread: false,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("spread list with tight item", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.ul({ spread: true }, b.li({ spread: false }, b.p())),
+        [
+          {
+            children: [
+              {
+                children: [{ children: [], type: "paragraph" }],
+                spread: false,
                 type: "listItem",
               },
             ],
@@ -332,6 +372,21 @@ describe("UnorderedListExtension", () => {
       );
     });
 
+    test("`Enter` in a spread list item creates a spread one", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li({ spread: true }, b.p("Hel<cursor>lo")))],
+        "cursor",
+        "{Enter}",
+        (b) => [
+          b.ul(
+            b.li({ spread: true }, b.p("Hel")),
+            b.li({ spread: true }, b.p("lo")),
+          ),
+        ],
+        "* Hel\n* lo",
+      );
+    });
+
     test("`Tab` sinks a list item", () => {
       expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("<cursor>World")))],
@@ -417,10 +472,24 @@ describe("UnorderedListExtension", () => {
       );
     });
 
+    test("parses a spread `<li>`", () => {
+      expect(fx).toParseDOM(
+        '<ul><li data-spread="true"><p>Hello</p></li></ul>',
+        (b) => [b.ul(b.li({ spread: true }, b.p("Hello")))],
+      );
+    });
+
     test("renders a `<ul>`", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ul(b.li(b.p("Hello")))],
-        '<ul data-spread="false"><li><p>Hello</p></li></ul>',
+        '<ul data-spread="false"><li data-spread="false"><p>Hello</p></li></ul>',
+      );
+    });
+
+    test("renders a spread `<li>`", () => {
+      expect(fx).toRenderDOM(
+        (b) => [b.ul(b.li({ spread: true }, b.p("Hello")))],
+        '<ul data-spread="false"><li data-spread="true"><p>Hello</p></li></ul>',
       );
     });
   });

@@ -89,10 +89,7 @@ export class OrderedListExtension extends NodeExtension<List> {
     const spread = node.attrs["spread"] as boolean;
     return [
       {
-        children: convertedChildren.map((child) => {
-          child.spread = spread;
-          return child;
-        }),
+        children: convertedChildren,
         ordered: true,
         spread,
         start: node.attrs["start"] as number,

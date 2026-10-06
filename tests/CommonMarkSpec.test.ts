@@ -38,11 +38,13 @@ const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
     examples: [24, 34, 142, 143, 144, 146],
   },
   {
-    cause: "loose list serializes as tight (#1120)",
-    examples: [
-      5, 109, 254, 263, 264, 270, 271, 273, 274, 286, 287, 288, 290, 317, 324,
-      325,
-    ],
+    cause: "list item not starting with a paragraph gains an empty one (#1139)",
+    examples: [273, 274, 324],
+  },
+  {
+    cause:
+      "definition in a list item is dropped, making the item tight (#1140)",
+    examples: [317],
   },
   {
     cause: "nested emphasis of the same type collapses",
