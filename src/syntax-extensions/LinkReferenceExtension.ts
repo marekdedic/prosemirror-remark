@@ -12,7 +12,7 @@ import {
 import { LinkExtension } from "./LinkExtension";
 
 export interface LinkReferenceExtensionContext {
-  marks: Record<string, Mark>;
+  marks: Record<string, Array<Mark>>;
 }
 
 export class LinkReferenceExtension extends MarkExtension<LinkReference> {
@@ -26,10 +26,15 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
       LinkReferenceExtension: LinkReferenceExtensionContext;
     }>,
   ): void {
-    if (
-      context.LinkReferenceExtension === undefined ||
-      context.DefinitionExtension === undefined
-    ) {
+    if (context.LinkReferenceExtension === undefined) {
+      return;
+    }
+    for (const marks of Object.values(context.LinkReferenceExtension.marks)) {
+      for (const mark of marks) {
+        (mark.attrs as Record<string, unknown>)["title"] = null;
+      }
+    }
+    if (context.DefinitionExtension === undefined) {
       return;
     }
     resolveReferences(
@@ -65,12 +70,14 @@ export class LinkReferenceExtension extends MarkExtension<LinkReference> {
       LinkReferenceExtension: LinkReferenceExtensionContext;
     }>,
   ): Array<ProseMirrorNode> {
+    // Until resolved, the identifier stands in for the title, so that adjacent
+    // references to different definitions don't merge into a single link.
     const mark = proseMirrorSchema.marks["link"].create({
       href: null,
-      title: null,
+      title: node.identifier,
     });
     context.LinkReferenceExtension ??= { marks: {} };
-    context.LinkReferenceExtension.marks[node.identifier] = mark;
+    (context.LinkReferenceExtension.marks[node.identifier] ??= []).push(mark);
     return addMarkToNodes(convertedChildren, mark);
   }
 }

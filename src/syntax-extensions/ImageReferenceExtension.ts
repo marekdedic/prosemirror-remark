@@ -11,7 +11,7 @@ import {
 import { ImageExtension } from "./ImageExtension";
 
 export interface ImageReferenceExtensionContext {
-  proseMirrorNodes: Record<string, ProseMirrorNode>;
+  proseMirrorNodes: Record<string, Array<ProseMirrorNode>>;
 }
 
 export class ImageReferenceExtension extends NodeExtension<ImageReference> {
@@ -70,8 +70,8 @@ export class ImageReferenceExtension extends NodeExtension<ImageReference> {
       return [];
     }
     context.ImageReferenceExtension ??= { proseMirrorNodes: {} };
-    context.ImageReferenceExtension.proseMirrorNodes[node.identifier] =
-      proseMirrorNode;
+    (context.ImageReferenceExtension.proseMirrorNodes[node.identifier] ??=
+      []).push(proseMirrorNode);
     return [proseMirrorNode];
   }
 }
