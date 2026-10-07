@@ -27,6 +27,8 @@ Cross-node state (reference-style links/images needing `definition` nodes) flows
 
 Everything public must be re-exported from `src/index.ts` — `unplugin-dts` rolls up the declarations reachable from that entry point. `vite.config.ts` externalizes all prosemirror/remark/unified deps; add new peer-style deps to that `external` list.
 
+How extensions render to the DOM and how users customise it (classes, `data-*` state, the opt-in default stylesheet, node views, DOM attribute hooks) is specified in `docs/custom-ui.md`. Follow it when changing `toDOM` or a node view.
+
 ## Tests
 
 Tests are declarative, built from the fluent testers in `tests/utils/`: `NodeExtensionTester` and `MarkExtensionTester` (both extending `SyntaxExtensionTester`). A test file constructs a tester with the extension under test, chains `shouldMatchUnistNode` / `shouldConvertUnistNode` / `shouldConvertProseMirrorNode` / `shouldMatchInputRule` / `shouldNotMatchInputRule` / `shouldSupportKeymap` assertions, and ends with `.test()`, which registers the actual Vitest cases. Prefer extending a tester over hand-writing `test()` blocks.
