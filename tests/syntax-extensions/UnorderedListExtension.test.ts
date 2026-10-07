@@ -239,7 +239,30 @@ describe("UnorderedListExtension", () => {
       );
     });
 
-    test("tight list with spread item", () => {
+    test("tight list with spread item with several children", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.ul(b.li({ spread: true }, b.p(), b.p())),
+        [
+          {
+            children: [
+              {
+                children: [
+                  { children: [], type: "paragraph" },
+                  { children: [], type: "paragraph" },
+                ],
+                spread: true,
+                type: "listItem",
+              },
+            ],
+            ordered: false,
+            spread: false,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("tight list with spread item with a single child", () => {
       expect(fx).toConvertProseMirrorNode(
         (b) => b.ul(b.li({ spread: true }, b.p())),
         [
@@ -252,7 +275,7 @@ describe("UnorderedListExtension", () => {
               },
             ],
             ordered: false,
-            spread: false,
+            spread: true,
             type: "list",
           },
         ],
@@ -453,7 +476,7 @@ describe("UnorderedListExtension", () => {
             b.li({ spread: true }, b.p("lo")),
           ),
         ],
-        "* Hel\n* lo",
+        "* Hel\n\n* lo",
       );
     });
 

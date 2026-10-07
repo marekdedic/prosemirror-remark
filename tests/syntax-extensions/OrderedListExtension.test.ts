@@ -261,7 +261,31 @@ describe("OrderedListExtension", () => {
       );
     });
 
-    test("tight list with spread item", () => {
+    test("tight list with spread item with several children", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.ol(b.li({ spread: true }, b.p(), b.p())),
+        [
+          {
+            children: [
+              {
+                children: [
+                  { children: [], type: "paragraph" },
+                  { children: [], type: "paragraph" },
+                ],
+                spread: true,
+                type: "listItem",
+              },
+            ],
+            ordered: true,
+            spread: false,
+            start: 1,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("tight list with spread item with a single child", () => {
       expect(fx).toConvertProseMirrorNode(
         (b) => b.ol(b.li({ spread: true }, b.p())),
         [
@@ -274,7 +298,7 @@ describe("OrderedListExtension", () => {
               },
             ],
             ordered: true,
-            spread: false,
+            spread: true,
             start: 1,
             type: "list",
           },

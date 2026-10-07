@@ -427,7 +427,7 @@ describe("TaskListExtension", () => {
         (b) =>
           b.ul(
             b.taskListItem({ checked: false }, b.p()),
-            b.li({ spread: true }, b.p()),
+            b.li({ spread: true }, b.p(), b.p()),
             b.taskListItem({ checked: true }, b.p()),
           ),
         [
@@ -440,7 +440,10 @@ describe("TaskListExtension", () => {
                 type: "listItem",
               },
               {
-                children: [{ children: [], type: "paragraph" }],
+                children: [
+                  { children: [], type: "paragraph" },
+                  { children: [], type: "paragraph" },
+                ],
                 spread: true,
                 type: "listItem",
               },
@@ -464,7 +467,7 @@ describe("TaskListExtension", () => {
         (b) =>
           b.ul(
             b.li(b.p()),
-            b.taskListItem({ checked: true, spread: true }, b.p()),
+            b.taskListItem({ checked: true, spread: true }, b.p(), b.p()),
           ),
         [
           {
@@ -476,7 +479,10 @@ describe("TaskListExtension", () => {
               },
               {
                 checked: true,
-                children: [{ children: [], type: "paragraph" }],
+                children: [
+                  { children: [], type: "paragraph" },
+                  { children: [], type: "paragraph" },
+                ],
                 spread: true,
                 type: "listItem",
               },
@@ -903,7 +909,7 @@ describe("TaskListExtension", () => {
             b.taskListItem({ spread: true }, b.p("lo")),
           ),
         ],
-        "* [x] Hel\n* [ ] lo",
+        "* [x] Hel\n\n* [ ] lo",
       );
     });
 

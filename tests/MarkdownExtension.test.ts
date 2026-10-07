@@ -283,6 +283,40 @@ test.each([
   expect(pmu.serialize(parsed)).toBe(serialized);
 });
 
+test.each([
+  ["an unordered", "- a\n- b\n\n  [ref]: /url\n- d\n", "* a\n\n* b\n\n* d\n"],
+  ["a last item in a", "- a\n- b\n\n  [ref]: /url\n", "* a\n\n* b\n"],
+  [
+    "an ordered",
+    "1. a\n2. b\n\n   [ref]: /url\n3. d\n",
+    "1. a\n\n2. b\n\n3. d\n",
+  ],
+  [
+    "a nested",
+    "- a\n  - b\n  - c\n\n    [ref]: /url\n- d\n",
+    "* a\n  * b\n\n  * c\n* d\n",
+  ],
+])("%s list made loose only by a definition", (_, markdown, serialized) => {
+  expect(pmu.serialize(pmu.parse(markdown))).toBe(serialized);
+});
+
+test.each([
+  [
+    "unordered",
+    b.ul(b.li(b.p("a")), b.li({ spread: true }, b.p("b")), b.li(b.p("c"))),
+    "* a\n\n* b\n\n* c\n",
+  ],
+  [
+    "ordered",
+    b.ol(b.li(b.p("a")), b.li({ spread: true }, b.p("b")), b.li(b.p("c"))),
+    "1. a\n\n2. b\n\n3. c\n",
+  ],
+])("tight %s list with a spread single-paragraph item", (_, list, markdown) => {
+  expect(pmu.serialize(b.doc(list) as unknown as ProseMirrorNode)).toBe(
+    markdown,
+  );
+});
+
 test("ProseMirror -> unist conversion", () => {
   expect(pmu.serialize(serializedDoc)).toBe(
     "> Inside a blockquote\n" +
