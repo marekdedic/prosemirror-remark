@@ -96,6 +96,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
         const $start = state.doc.resolve(start);
         if (
           $start.node(-1).type.name !== "regular_list_item" ||
+          $start.parent.type.name !== "paragraph" ||
           $start.index(-1) !== 0
         ) {
           return null;

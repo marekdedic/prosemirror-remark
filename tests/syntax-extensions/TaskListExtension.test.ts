@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { BlockquoteExtension } from "../../src/syntax-extensions/BlockquoteExtension";
+import { HeadingExtension } from "../../src/syntax-extensions/HeadingExtension";
 import { ListItemExtension } from "../../src/syntax-extensions/ListItemExtension";
 import { OrderedListExtension } from "../../src/syntax-extensions/OrderedListExtension";
 import { TaskListItemExtension } from "../../src/syntax-extensions/TaskListItemExtension";
@@ -1398,6 +1399,7 @@ describe("TaskListExtension", () => {
 describe("TaskListItemExtension input rules in other contexts", () => {
   const fx = createExtensionFixture(new TaskListItemExtension(), [
     new BlockquoteExtension(),
+    new HeadingExtension(),
     new ListItemExtension(),
     new OrderedListExtension(),
     new UnorderedListExtension(),
@@ -1444,6 +1446,16 @@ describe("TaskListItemExtension input rules in other contexts", () => {
         ),
       ],
       "* Hello\n  * [ ] XWorld\n* Foo",
+    );
+  });
+
+  test("does not apply in a list item starting with a heading", () => {
+    expect(fx).toTransformInput(
+      (b) => [b.ul(b.li(b.heading("<cursor>Hello")))],
+      "cursor",
+      "[[ ] ",
+      (b) => [b.ul(b.li(b.heading("[ ] Hello")))],
+      "* # \\[ ] Hello",
     );
   });
 });
