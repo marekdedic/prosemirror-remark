@@ -16,6 +16,7 @@ import {
   NodeExtension,
 } from "prosemirror-unified";
 
+import { isListSpread } from "../utils/isListSpread";
 import { ListItemExtension } from "./ListItemExtension";
 
 export class OrderedListExtension extends NodeExtension<List> {
@@ -86,7 +87,10 @@ export class OrderedListExtension extends NodeExtension<List> {
     node: ProseMirrorNode,
     convertedChildren: Array<ListContent>,
   ): Array<List> {
-    const spread = node.attrs["spread"] as boolean;
+    const spread = isListSpread(
+      node.attrs["spread"] as boolean,
+      convertedChildren,
+    );
     return [
       {
         children: convertedChildren,
