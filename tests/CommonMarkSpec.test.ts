@@ -38,14 +38,14 @@ const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
     examples: [24, 34, 142, 143, 144, 146],
   },
   {
-    cause: "nested emphasis of the same type collapses",
+    cause: "nested emphasis of the same type collapses (accepted limitation)",
     examples: [
       369, 373, 389, 407, 408, 409, 417, 418, 419, 425, 426, 427, 432, 461, 463,
       464, 465, 466, 468,
     ],
   },
   {
-    cause: "empty link is dropped (#1123)",
+    cause: "empty link is dropped (accepted limitation)",
     examples: [484, 487],
   },
 ];
