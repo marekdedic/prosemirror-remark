@@ -26,7 +26,7 @@ export class ListItemExtension extends NodeExtension<ListItem> {
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
       attrs: { spread: { default: false } },
-      content: "paragraph block*",
+      content: "block+",
       defining: true,
       group: "list_item",
       parseDOM: [
