@@ -122,6 +122,38 @@ describe("UnorderedListExtension", () => {
         (b) => [b.ul(b.li(b.p("Hello World!")))],
       );
     });
+
+    test("with a list item starting with a nested list", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              children: [
+                {
+                  children: [
+                    {
+                      children: [
+                        {
+                          children: [{ type: "text", value: "Hello World!" }],
+                          type: "paragraph",
+                        },
+                      ],
+                      type: "listItem",
+                    },
+                  ],
+                  ordered: false,
+                  type: "list",
+                },
+              ],
+              type: "listItem",
+            },
+          ],
+          ordered: false,
+          type: "list",
+        },
+        (b) => [b.ul(b.li(b.ul(b.li(b.p("Hello World!")))))],
+      );
+    });
   });
 
   describe("matches ProseMirror nodes", () => {
@@ -258,6 +290,44 @@ describe("UnorderedListExtension", () => {
                   {
                     children: [{ type: "text", value: "Hello World!" }],
                     type: "paragraph",
+                  },
+                ],
+                spread: false,
+                type: "listItem",
+              },
+            ],
+            ordered: false,
+            spread: false,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("with a list item starting with a nested list", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.ul(b.li(b.ul(b.li(b.p("Hello World!"))))),
+        [
+          {
+            children: [
+              {
+                children: [
+                  {
+                    children: [
+                      {
+                        children: [
+                          {
+                            children: [{ type: "text", value: "Hello World!" }],
+                            type: "paragraph",
+                          },
+                        ],
+                        spread: false,
+                        type: "listItem",
+                      },
+                    ],
+                    ordered: false,
+                    spread: false,
+                    type: "list",
                   },
                 ],
                 spread: false,
@@ -476,6 +546,13 @@ describe("UnorderedListExtension", () => {
       expect(fx).toParseDOM(
         '<ul><li data-spread="true"><p>Hello</p></li></ul>',
         (b) => [b.ul(b.li({ spread: true }, b.p("Hello")))],
+      );
+    });
+
+    test("parses an `<li>` starting with a nested list", () => {
+      expect(fx).toParseDOM(
+        "<ul><li><ul><li><p>Hello</p></li></ul></li></ul>",
+        (b) => [b.ul(b.li(b.ul(b.li(b.p("Hello")))))],
       );
     });
 

@@ -38,10 +38,6 @@ const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
     examples: [24, 34, 142, 143, 144, 146],
   },
   {
-    cause: "list item not starting with a paragraph gains an empty one (#1139)",
-    examples: [273, 274, 324],
-  },
-  {
     cause:
       "definition in a list item is dropped, making the item tight (#1140)",
     examples: [317],
