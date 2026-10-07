@@ -317,6 +317,29 @@ test.each([
   );
 });
 
+test.each([
+  [
+    "a nested list followed by a paragraph",
+    [b.p("foo"), b.ul(b.li(b.p("bar"))), b.p("baz")],
+  ],
+  [
+    "a blockquote followed by a paragraph",
+    [b.p("foo"), b.blockquote(b.p("q")), b.p("bar")],
+  ],
+  [
+    "two blockquotes",
+    [b.p("foo"), b.blockquote(b.p("q")), b.blockquote(b.p("r"))],
+  ],
+  ["a thematic break", [b.p("foo"), b.hr()]],
+])("tight list item with %s", (_, content) => {
+  const tight = b.doc(b.ul(b.li(...content))) as unknown as ProseMirrorNode;
+  const spread = b.doc(
+    b.ul(b.li({ spread: true }, ...content)),
+  ) as unknown as ProseMirrorNode;
+
+  expect(pmu.parse(pmu.serialize(tight))).toEqualProseMirrorNode(spread);
+});
+
 test("ProseMirror -> unist conversion", () => {
   expect(pmu.serialize(serializedDoc)).toBe(
     "> Inside a blockquote\n" +
