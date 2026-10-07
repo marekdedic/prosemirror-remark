@@ -85,3 +85,4 @@ Note that tables are currently not supported.
 ## Limitations
 
 - Links without any text, such as `[](https://example.test)`, are dropped when parsing, because a ProseMirror mark needs content to attach to. As they are invisible in the editor anyway, this is an accepted limitation.
+- Emphasis nested inside emphasis of the same type, such as `*(*foo*)*` or `__foo __bar__ baz__`, collapses into a single level when parsing, because a ProseMirror text node can carry each mark only once. As the nested and collapsed forms render identically, this is an accepted limitation.
