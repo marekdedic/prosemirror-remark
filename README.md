@@ -81,3 +81,7 @@ On top of the standard CommonMark version of markdown, prosemirror-remark can al
 - `TaskListItemExtension` provides support for `- [ ] Task list items`
 
 Note that tables are currently not supported.
+
+## Limitations
+
+- Links without any text, such as `[](https://example.test)`, are dropped when parsing, because a ProseMirror mark needs content to attach to. As they are invisible in the editor anyway, this is an accepted limitation.
