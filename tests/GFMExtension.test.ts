@@ -127,3 +127,21 @@ test.each([
   expect(pmu.parse(markdown)).toEqualProseMirrorNode(node);
   expect(pmu.serialize(node)).toBe(`${markdown}\n`);
 });
+
+test.each([
+  [
+    "only task items",
+    "- [ ] a\n- [x] b\n\n  [ref]: /url\n- [ ] d\n",
+    "* [ ] a\n\n* [x] b\n\n* [ ] d\n",
+  ],
+  [
+    "a task item among regular items",
+    "- a\n- [x] b\n\n  [ref]: /url\n- d\n",
+    "* a\n\n* [x] b\n\n* d\n",
+  ],
+])(
+  "task list with %s made loose only by a definition",
+  (_, markdown, serialized) => {
+    expect(pmu.serialize(pmu.parse(markdown))).toBe(serialized);
+  },
+);

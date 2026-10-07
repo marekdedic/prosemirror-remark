@@ -38,11 +38,6 @@ const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
     examples: [24, 34, 142, 143, 144, 146],
   },
   {
-    cause:
-      "definition in a list item is dropped, making the item tight (#1140)",
-    examples: [317],
-  },
-  {
     cause: "nested emphasis of the same type collapses",
     examples: [
       369, 373, 389, 407, 408, 409, 417, 418, 419, 425, 426, 427, 432, 461, 463,
