@@ -12,7 +12,14 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import tseslint from "typescript-eslint";
 
 export default defineConfig(
-  globalIgnores(["coverage/", "dist/", "package-lock.json"]),
+  globalIgnores([
+    "coverage/",
+    "dist/",
+    "docs/.vitepress/cache/",
+    "docs/.vitepress/dist/",
+    "docs/.vitepress/**/*.ts",
+    "package-lock.json",
+  ]),
   packageJson.configs.recommended,
   {
     linterOptions: {
@@ -30,6 +37,9 @@ export default defineConfig(
     extends: [markdown.configs.recommended],
     files: ["**/*.md"],
     language: "markdown/commonmark",
+    languageOptions: {
+      frontmatter: "yaml",
+    },
   },
   {
     extends: [

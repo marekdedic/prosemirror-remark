@@ -5,6 +5,7 @@
 [![Codecov (with branch)](https://img.shields.io/codecov/c/github/marekdedic/prosemirror-remark/master?logo=codecov)](https://app.codecov.io/gh/marekdedic/prosemirror-remark)
 [![NPM Downloads](https://img.shields.io/npm/dm/prosemirror-remark?logo=npm)](https://www.npmjs.com/package/prosemirror-remark)
 [![NPM License](https://img.shields.io/npm/l/prosemirror-remark)](https://github.com/marekdedic/prosemirror-remark/blob/master/LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-vitepress-blue?logo=vite)](https://marekdedic.github.io/prosemirror-remark/)
 
 This package provides support for using the [remark](https://github.com/remarkjs/remark) Markdown parser with the [ProseMirror](https://prosemirror.net/) editor. prosemirror-remark builds on the [prosemirror-unified](https://github.com/marekdedic/prosemirror-unified) package and offers a configurable and extensible way of adding Markdown support to ProseMirror.
 
