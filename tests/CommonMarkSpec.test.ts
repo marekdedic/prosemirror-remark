@@ -1,14 +1,14 @@
 import { tests } from "commonmark-spec";
 import { micromark } from "micromark";
 import { ProseMirrorUnified } from "prosemirror-unified";
-import { expect, test } from "vitest";
 
 import { MarkdownExtension } from "../src/MarkdownExtension";
+import { type KnownFailure, testSpecExamples } from "./utils/spec";
 
 const range = (from: number, to: number): Array<number> =>
   Array.from({ length: to - from + 1 }, (_, i) => from + i);
 
-const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
+const knownFailures: Array<KnownFailure> = [
   {
     cause: "raw HTML is dropped (#1117)",
     examples: [
@@ -50,12 +50,6 @@ const knownFailures: Array<{ cause: string; examples: Array<number> }> = [
   },
 ];
 
-const failureCauses = new Map(
-  knownFailures.flatMap(({ cause, examples }) =>
-    examples.map((example) => [example, cause] as const),
-  ),
-);
-
 const pmu = new ProseMirrorUnified([new MarkdownExtension()]);
 
 const render = (markdown: string): string =>
@@ -64,37 +58,4 @@ const render = (markdown: string): string =>
     allowDangerousProtocol: true,
   });
 
-const withTabs = (value: string): string => value.replace(/→/gu, "\t");
-
-const examples = tests.map(({ html, markdown, number, section }) => ({
-  cause: failureCauses.get(number),
-  html: withTabs(html),
-  markdown: withTabs(markdown),
-  number,
-  section,
-}));
-
-const roundTrip = (markdown: string): string =>
-  render(pmu.serialize(pmu.parse(markdown)));
-
-test("known failures reference existing examples", () => {
-  const exampleNumbers = new Set(tests.map(({ number }) => number));
-
-  expect(
-    [...failureCauses.keys()].filter((example) => !exampleNumbers.has(example)),
-  ).toStrictEqual([]);
-});
-
-test.each(examples.filter(({ cause }) => cause === undefined))(
-  "example $number ($section)",
-  ({ html, markdown }) => {
-    expect(roundTrip(markdown)).toBe(html);
-  },
-);
-
-test.fails.each(examples.filter(({ cause }) => cause !== undefined))(
-  "example $number ($section): $cause",
-  ({ html, markdown }) => {
-    expect(roundTrip(markdown)).toBe(html);
-  },
-);
+testSpecExamples(pmu, render, tests, knownFailures);
