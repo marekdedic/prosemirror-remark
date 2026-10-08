@@ -7,6 +7,7 @@ This file provides guidance to coding agents when working with code in this repo
 - `npm run build` — Vite library build (ESM + CJS) plus bundled `.d.ts` via `unplugin-dts`; the `.d.cts` is a copy of the `.d.ts`. `npm start` is the same in watch mode.
 - `npm run lint` — runs `lint:eslint` and the `lint:ts` group in parallel: `lint:ts:typecheck` (`tsc --noEmit`) and `lint:ts:attw` (`attw --pack`, validates the published type entry points). Run individually when debugging one of them.
 - `npm test` — single Vitest run with v8 coverage (what CI runs). `npm run test-watch` — Vitest in watch mode for the dev loop.
+- `npm run docs:dev` — VitePress dev server for the docs site in `docs/` (`docs:build` / `docs:preview` for the production build). The site is deployed to GitHub Pages on release.
 - Single test file: `npx vitest run tests/syntax-extensions/BoldExtension.test.ts`. Filter by test name with `-t "<pattern>"`.
 
 ## Architecture
