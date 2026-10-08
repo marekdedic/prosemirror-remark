@@ -9,7 +9,11 @@
 
 This package provides support for using the [remark](https://github.com/remarkjs/remark) Markdown parser with the [ProseMirror](https://prosemirror.net/) editor. prosemirror-remark builds on the [prosemirror-unified](https://github.com/marekdedic/prosemirror-unified) package and offers a configurable and extensible way of adding Markdown support to ProseMirror.
 
-## Quickstart
+## Documentation
+
+Full documentation, with a guide to using prosemirror-remark, a reference of all the extensions and their keyboard shortcuts, and a guide to extending it, is available at **[marekdedic.github.io/prosemirror-remark](https://marekdedic.github.io/prosemirror-remark/)**.
+
+## Example
 
 ```ts
 import { MarkdownExtension } from "prosemirror-remark";
@@ -30,6 +34,8 @@ const view = new EditorView(
       plugins: [pmu.inputRulesPlugin(), pmu.keymapPlugin()],
       schema: pmu.schema(),
     }),
+    // Add interactive elements (task lists etc.)
+    nodeViews: pmu.nodeViews(),
     // Log (in the browser console) the current content in markdown on every update
     dispatchTransaction: (tr): void => {
       view.updateState(view.state.apply(tr));
@@ -38,52 +44,3 @@ const view = new EditorView(
   }
 );
 ```
-
-The example above shows how to use the `MarkdownExtension` provided by prosemirror-remark to add support for CommonMark markdown.
-
-## Manual configuration
-
-If you want finer-grained control over how Markdown is processed and viewed, instead of using `MarkdownExtension`, you can add individual syntax extensions that support particular parts of the Markdown spec:
-
-- `BlockquoteExtension` provides support for `> Block quotes`
-- `BoldExtension` provides support for `**bold text**`
-- `BreakExtension` provides support for `hard breaks at the end of a line\`
-- `CodeBlockExtension` provides support for code blocks like
-<!-- eslint-disable-next-line markdown/fenced-code-language -- Markdown example -->
-  ````
-  ```
-  this
-  ```
-  ````
-- `DefinitionExtension` provides support for definitions for reference-style images and links. It is auto-included with `ImageReferenceExtension` and `LinkReferenceExtension`.
-- `HeadingExtension` provides support for `## Headings`
-- `HorizontalRuleExtension` provides support for horizontal dividers like this: `---`
-- `ImageExtension` provides support for images `![Awesome image](https://example.test)`
-- `ImageReferenceExtension` provides support for reference style images with the address later in the document like `![Awesome image][imageId]`
-- `InlineCodeExtension` provides support for `` `inline code snippets` ``
-- `ItalicExtension` provides support for `*italic text*`
-- `LinkExtension` provides support for `[links](https://example.test)`
-- `LinkReferenceExtension` provides support for reference style links with the address later in the document like `[Click me!](linkId)`
-- `ListItemExtension` provides support for individual items in both ordered and unordered lists. It is auto-included with `OrderedListExtension` and `UnorderedListExtension`.
-- `OrderedListExtension` provides support for `1. ordered lists`
-- `ParagraphExtension` provides support for basic paragraphs in text
-- `RootExtension` provides support for the root node of the document. You **need** to include this.
-- `TextExtension` provides support for text. You **need** to include this.
-- `UnorderedListExtension` provides support for `- unordered lists`
-
-Additionally, you can also augment prosemirror-remark by creating your own extensions - see the [prosemirror-unified documentation](https://github.com/marekdedic/prosemirror-unified/#creating-your-own-extensions) for more details
-
-## GitHub flavored markdown
-
-On top of the standard CommonMark version of markdown, prosemirror-remark can also be used to add support for GitHub flavored markdown (GFM). In order to do this, simply replace `MarkdownExtension` with `GFMExtension`. `GFMExtension` automatically includes standard markdown, as well as the following extensions (which can also be added manually one-by-one):
-
-- `ExtendedLinkExtension` provides support for automatic conversions of addresses starting with `www.` to links.
-- `StrikethroughExtension` provides support for `~~text with strikethrough~~`
-- `TaskListItemExtension` provides support for `- [ ] Task list items`
-
-Note that tables are currently not supported.
-
-## Limitations
-
-- Links without any text, such as `[](https://example.test)`, are dropped when parsing, because a ProseMirror mark needs content to attach to. As they are invisible in the editor anyway, this is an accepted limitation.
-- Emphasis nested inside emphasis of the same type, such as `*(*foo*)*` or `__foo __bar__ baz__`, collapses into a single level when parsing, because a ProseMirror text node can carry each mark only once. As the nested and collapsed forms render identically, this is an accepted limitation.
