@@ -163,3 +163,7 @@ tags
 [._]*.un~
 
 # End of https://www.toptal.com/developers/gitignore/api/node,vim
+
+# VitePress
+docs/.vitepress/cache
+docs/.vitepress/dist
