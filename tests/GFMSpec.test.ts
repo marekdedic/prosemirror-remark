@@ -17,7 +17,7 @@ const knownFailures: Array<KnownFailure> = [
     examples: [200],
   },
   {
-    cause: "micromark doesn't autolink ftp: URLs",
+    cause: "micromark follows github.com, which doesn't autolink ftp: URLs",
     examples: [628],
   },
   {
