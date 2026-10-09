@@ -284,6 +284,87 @@ test.each([
 });
 
 test.each([
+  [
+    "<https://example.test>",
+    b.p(b.link({ href: "https://example.test" }, "https://example.test")),
+    "<https://example.test>\n",
+  ],
+  [
+    "<foo@bar.example.com>",
+    b.p(b.link({ href: "mailto:foo@bar.example.com" }, "foo@bar.example.com")),
+    "<foo@bar.example.com>\n",
+  ],
+  [
+    "<mailto:foo@bar.example.com>",
+    b.p(
+      b.link(
+        { href: "mailto:foo@bar.example.com" },
+        "mailto:foo@bar.example.com",
+      ),
+    ),
+    "<mailto:foo@bar.example.com>\n",
+  ],
+  [
+    "Visit <https://example.test/a?b=c> or <foo@bar.example.com>.",
+    b.p(
+      "Visit ",
+      b.link(
+        { href: "https://example.test/a?b=c" },
+        "https://example.test/a?b=c",
+      ),
+      " or ",
+      b.link({ href: "mailto:foo@bar.example.com" }, "foo@bar.example.com"),
+      ".",
+    ),
+    "Visit <https://example.test/a?b=c> or <foo@bar.example.com>.\n",
+  ],
+  [
+    "[https://example.test](https://example.test)",
+    b.p(b.link({ href: "https://example.test" }, "https://example.test")),
+    "<https://example.test>\n",
+  ],
+  [
+    '[https://example.test](https://example.test "Title")',
+    b.p(
+      b.link(
+        { href: "https://example.test", title: "Title" },
+        "https://example.test",
+      ),
+    ),
+    '[https://example.test](https://example.test "Title")\n',
+  ],
+  [
+    "[example.test](https://example.test)",
+    b.p(b.link({ href: "https://example.test" }, "example.test")),
+    "[example.test](https://example.test)\n",
+  ],
+  [
+    "**<https://example.test>**",
+    b.p(
+      b.link(
+        { href: "https://example.test" },
+        b.strong("https://example.test"),
+      ),
+    ),
+    "[**https://example.test**](https://example.test)\n",
+  ],
+  [
+    "https://example.test",
+    b.p("https://example.test"),
+    "https://example.test\n",
+  ],
+  ["foo@bar.example.com", b.p("foo@bar.example.com"), "foo@bar.example.com\n"],
+])("autolink %s", (markdown, block, serialized) => {
+  const parsed = pmu.parse(markdown);
+
+  expect(parsed).toEqualProseMirrorNode(
+    b.doc(block) as unknown as ProseMirrorNode,
+  );
+  expect(pmu.serialize(parsed)).toBe(serialized);
+  expect(pmu.parse(serialized)).toEqualProseMirrorNode(parsed);
+});
+
+test.each([
   ["an unordered", "- a\n- b\n\n  [ref]: /url\n- d\n", "* a\n\n* b\n\n* d\n"],
   ["a last item in a", "- a\n- b\n\n  [ref]: /url\n", "* a\n\n* b\n"],
   [
