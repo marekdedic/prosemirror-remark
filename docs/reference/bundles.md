@@ -12,7 +12,6 @@ Supports [CommonMark](https://commonmark.org/). It includes every extension on t
 | ---------------- | -------------------- | -------------------------------------------------------------------------- |
 | `fences`         | `true`               | Code blocks are always fenced, never indented.                             |
 | `listItemIndent` | `"one"`              | List item content is indented by one space after the marker.               |
-| `resourceLink`   | `true`               | Autolinks are written as inline links, `[url](url)`.                       |
 | `rule`           | `"-"`                | Horizontal rules are written as `---`.                                     |
 | `join`           | (internal function)  | Keeps a blank line between list item children where Markdown needs one to preserve the structure. |
 

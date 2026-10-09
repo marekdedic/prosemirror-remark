@@ -16,7 +16,7 @@
 | Code block                  | fenced with ```` ``` ```` or `~~~`, indented | fenced with ```` ``` ````     |
 | Horizontal rule             | `---`, `***`, `___`                         | `---`                          |
 | Hard line break             | two trailing spaces, trailing `\`           | trailing `\`                   |
-| Autolink                    | `<https://example.com>`                     | `[https://example.com](https://example.com)` |
+| Link whose text is its URL  | `<https://example.com>`, `[https://example.com](https://example.com)` | `<https://example.com>` |
 | Extended autolink (GFM)     | `www.example.com`                           | `[www.example.com](http://www.example.com)` |
 | Reference link              | `[text][id]` with `[id]: https://example.com` | `[text](https://example.com)` |
 | Reference image             | `![alt][id]` with `[id]: image.png`         | `![alt](image.png)`            |

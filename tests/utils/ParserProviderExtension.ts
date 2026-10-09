@@ -12,7 +12,6 @@ export class ParserProviderExtension extends Extension {
     return processor.use(remarkParse).use(remarkStringify, {
       fences: true,
       listItemIndent: "one",
-      resourceLink: true,
       rule: "-",
     }) as unknown as Processor<
       UnistNode,

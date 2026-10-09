@@ -61,7 +61,6 @@ export class MarkdownExtension extends Extension {
       fences: true,
       join: [joinListItemChildren],
       listItemIndent: "one",
-      resourceLink: true,
       rule: "-",
     }) as unknown as Processor<
       UnistNode,
