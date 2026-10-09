@@ -26,10 +26,6 @@ import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 import { isAtStart } from "../utils/isAtStart";
 import { listItemKeymap } from "../utils/listItemKeymap";
 
-const itemStyle = "list-style-type: none; margin-left: -30px;";
-const checkboxContainerStyle = "position: absolute; left: 5px;";
-const contentStyle = "position: relative; left: 30px;";
-
 class TaskListItemView implements NodeView {
   public readonly contentDOM: HTMLElement;
   public readonly dom: HTMLElement;
@@ -42,7 +38,6 @@ class TaskListItemView implements NodeView {
   ) {
     const checkbox = document.createElement("input");
     checkbox.setAttribute("type", "checkbox");
-    checkbox.setAttribute("style", "cursor: pointer;");
     if (node.attrs["checked"] === true) {
       checkbox.setAttribute("checked", "checked");
     }
@@ -63,18 +58,28 @@ class TaskListItemView implements NodeView {
 
     this.checkboxContainer = document.createElement("span");
     this.checkboxContainer.setAttribute("contenteditable", "false");
-    this.checkboxContainer.setAttribute("style", checkboxContainerStyle);
+    this.checkboxContainer.setAttribute(
+      "class",
+      "prosemirror-remark-task-list-item-checkbox",
+    );
     this.checkboxContainer.appendChild(checkbox);
 
-    this.contentDOM = document.createElement("span");
-    this.contentDOM.setAttribute("style", contentStyle);
+    this.contentDOM = document.createElement("div");
+    this.contentDOM.setAttribute(
+      "class",
+      "prosemirror-remark-task-list-item-content",
+    );
 
     this.dom = document.createElement("li");
+    this.dom.setAttribute("class", "prosemirror-remark-task-list-item");
+    this.dom.setAttribute(
+      "data-checked",
+      String(node.attrs["checked"] as boolean),
+    );
     this.dom.setAttribute(
       "data-spread",
       String(node.attrs["spread"] as boolean),
     );
-    this.dom.setAttribute("style", itemStyle);
     this.dom.appendChild(this.checkboxContainer);
     this.dom.appendChild(this.contentDOM);
   }
@@ -181,12 +186,16 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       ],
       toDOM: (node: ProseMirrorNode): DOMOutputSpec => [
         "li",
-        { "data-spread": node.attrs["spread"] as boolean, style: itemStyle },
+        {
+          class: "prosemirror-remark-task-list-item",
+          "data-checked": node.attrs["checked"] as boolean,
+          "data-spread": node.attrs["spread"] as boolean,
+        },
         [
           "span",
           {
+            class: "prosemirror-remark-task-list-item-checkbox",
             contenteditable: "false",
-            style: checkboxContainerStyle,
           },
           [
             "input",
@@ -199,7 +208,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
             },
           ],
         ],
-        ["span", { style: contentStyle }, 0],
+        ["div", { class: "prosemirror-remark-task-list-item-content" }, 0],
       ],
     };
   }

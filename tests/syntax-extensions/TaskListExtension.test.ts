@@ -10,7 +10,7 @@ import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
 function renderedTaskList(checked: boolean): string {
-  return `<ul data-spread="false"><li data-spread="false" style="list-style-type: none; margin-left: -30px;"><span contenteditable="false" style="position: absolute; left: 5px;"><input ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><span style="position: relative; left: 30px;"><p>a</p></span></li></ul>`;
+  return `<ul data-spread="false"><li class="prosemirror-remark-task-list-item" data-checked="${String(checked)}" data-spread="false"><span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false"><input ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><div class="prosemirror-remark-task-list-item-content"><p>a</p></div></li></ul>`;
 }
 
 describe("TaskListExtension", () => {
@@ -1313,14 +1313,14 @@ describe("TaskListExtension", () => {
   describe("parses DOM", () => {
     test("parses a checked task item", () => {
       expect(fx).toParseDOM(
-        '<ul><li><span contenteditable="false"><input type="checkbox" checked></span><span><p>a</p></span></li></ul>',
+        '<ul><li class="prosemirror-remark-task-list-item"><span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false"><input type="checkbox" checked></span><div class="prosemirror-remark-task-list-item-content"><p>a</p></div></li></ul>',
         (b) => [b.ul(b.taskListItem({ checked: true }, b.p("a")))],
       );
     });
 
     test("parses an unchecked task item", () => {
       expect(fx).toParseDOM(
-        '<ul><li><span contenteditable="false"><input type="checkbox"></span><span><p>a</p></span></li></ul>',
+        '<ul><li class="prosemirror-remark-task-list-item"><span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false"><input type="checkbox"></span><div class="prosemirror-remark-task-list-item-content"><p>a</p></div></li></ul>',
         (b) => [b.ul(b.taskListItem({ checked: false }, b.p("a")))],
       );
     });
@@ -1367,7 +1367,7 @@ describe("TaskListExtension", () => {
 
     test("parses a list with mixed task and regular items", () => {
       expect(fx).toParseDOM(
-        '<ul><li><span contenteditable="false"><input type="checkbox" checked></span><span><p>a</p></span></li><li><p>b</p></li></ul>',
+        '<ul><li class="prosemirror-remark-task-list-item"><span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false"><input type="checkbox" checked></span><div class="prosemirror-remark-task-list-item-content"><p>a</p></div></li><li><p>b</p></li></ul>',
         (b) => [
           b.ul(b.taskListItem({ checked: true }, b.p("a")), b.li(b.p("b"))),
         ],
@@ -1394,8 +1394,8 @@ describe("TaskListExtension", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ul(b.taskListItem({ spread: true }, b.p("a")))],
         renderedTaskList(false).replace(
-          '<li data-spread="false"',
-          '<li data-spread="true"',
+          'data-checked="false" data-spread="false"',
+          'data-checked="false" data-spread="true"',
         ),
       );
     });

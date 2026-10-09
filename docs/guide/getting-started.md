@@ -62,6 +62,14 @@ See the [prosemirror-unified API reference](https://marekdedic.github.io/prosemi
 
 The editor renders plain HTML elements (`p`, `h1`–`h6`, `strong`, `ul`, …), so it looks like whatever your page's CSS makes those elements look like. You should also load ProseMirror's own stylesheet, `prosemirror-view/style/prosemirror.css`, as with any ProseMirror editor.
 
+Elements that need more than a plain tag, such as [task list items](/guide/gfm#task-list-checkboxes), carry classes starting with `prosemirror-remark-` and `data-*` attributes for their state, but no inline styles. prosemirror-remark ships an optional stylesheet with sensible defaults for them:
+
+```ts
+import "prosemirror-remark/style.css";
+```
+
+Its rules use only these classes and are easy to override with your own CSS. You can also skip it and style the elements yourself.
+
 ## Next steps
 
 - [GitHub Flavored Markdown](/guide/gfm): add strikethrough, task lists and extended autolinks.

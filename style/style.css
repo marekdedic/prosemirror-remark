@@ -1,0 +1,14 @@
+.prosemirror-remark-task-list-item {
+  list-style: none;
+  position: relative;
+}
+
+.prosemirror-remark-task-list-item-checkbox {
+  margin-right: 0.25em;
+  position: absolute;
+  right: 100%;
+}
+
+.prosemirror-remark-task-list-item-checkbox > input:not(:disabled) {
+  cursor: pointer;
+}

@@ -20,6 +20,8 @@ import { MarkdownExtension } from "prosemirror-remark";
 import { EditorState } from "prosemirror-state";
 import { ProseMirrorUnified } from "prosemirror-unified";
 import { EditorView } from "prosemirror-view";
+// Optional default styles (task list checkboxes etc.)
+import "prosemirror-remark/style.css";
 
 const sourceMarkdown = "**Bold text**";
 const pmu = new ProseMirrorUnified([new MarkdownExtension()]);
