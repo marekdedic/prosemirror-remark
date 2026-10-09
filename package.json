@@ -17,7 +17,9 @@
   },
   "license": "MIT",
   "author": "Marek Dědič",
-  "sideEffects": false,
+  "sideEffects": [
+    "./style/style.css"
+  ],
   "type": "module",
   "exports": {
     ".": {
@@ -29,13 +31,15 @@
         "types": "./dist/prosemirror-remark.d.cts",
         "default": "./dist/prosemirror-remark.cjs"
       }
-    }
+    },
+    "./style.css": "./style/style.css"
   },
   "main": "dist/prosemirror-remark.cjs",
   "module": "dist/prosemirror-remark.js",
   "types": "dist/prosemirror-remark.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "style"
   ],
   "scripts": {
     "prebuild": "npm run clean",
@@ -51,7 +55,7 @@
     "lint": "FORCE_COLOR=1 run-p -c --aggregate-output lint:*",
     "lint:eslint": "eslint",
     "lint:ts": "FORCE_COLOR=1 run-p -c --aggregate-output lint:ts:*",
-    "lint:ts:attw": "attw --pack",
+    "lint:ts:attw": "attw --pack --exclude-entrypoints style.css",
     "lint:ts:typecheck": "tsc --noEmit",
     "prepack": "npm run build",
     "start": "vite build --watch",

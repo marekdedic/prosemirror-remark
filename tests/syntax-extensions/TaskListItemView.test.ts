@@ -47,6 +47,30 @@ describe("TaskListItemView", () => {
     ).toBe("true");
   });
 
+  test.each([
+    ["* [ ] Hello\n", "false"],
+    ["* [x] Hello\n", "true"],
+  ])("renders the checked state of %j", (markdown, checked) => {
+    expect(
+      render(markdown).editor.element("li").getAttribute("data-checked"),
+    ).toBe(checked);
+  });
+
+  test("renders the item with classes and without inline styles", () => {
+    const { editor } = render("* [ ] Hello\n");
+    const item = editor.element("li");
+
+    expect(item.className).toBe("prosemirror-remark-task-list-item");
+    expect(editor.element("input").parentElement?.className).toBe(
+      "prosemirror-remark-task-list-item-checkbox",
+    );
+    expect(
+      editor.element(".prosemirror-remark-task-list-item-content").tagName,
+    ).toBe("DIV");
+    expect(item.querySelectorAll("[style]")).toHaveLength(0);
+    expect(item.hasAttribute("style")).toBe(false);
+  });
+
   test("renders the checkbox outside of the editable content", () => {
     const { editor } = render("* [ ] Hello\n");
     const checkbox = editor.element("input");
@@ -59,7 +83,7 @@ describe("TaskListItemView", () => {
     );
     expect(
       editor
-        .element('li > span:not([contenteditable="false"])')
+        .element(".prosemirror-remark-task-list-item-content")
         .contains(checkbox),
     ).toBe(false);
   });
@@ -72,6 +96,7 @@ describe("TaskListItemView", () => {
     fx.editor.click("input");
 
     expect(fx.markdown()).toBe("* [x] Hello");
+    expect(fx.editor.element("li").getAttribute("data-checked")).toBe("true");
   });
 
   test("unchecking the checkbox unchecks the item", () => {
@@ -109,7 +134,7 @@ describe("TaskListItemView", () => {
     const { editor } = render("* [ ] Hello\n", mousedown);
 
     editor
-      .element('li > span:not([contenteditable="false"]) p')
+      .element(".prosemirror-remark-task-list-item-content p")
       .dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
 
     expect(mousedown).toHaveBeenCalledExactlyOnceWith(

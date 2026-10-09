@@ -23,6 +23,8 @@ See [Extensions](/reference/extensions#gfm-extensions) for their input rules and
 
 Task list items render a checkbox that users can click to check or uncheck the item. This is done by a node view, so pass `pmu.nodeViews()` to your `EditorView` as shown in [Getting started](/guide/getting-started). Without it, the checkboxes are shown but can't be clicked.
 
+To place the checkbox where the list bullet would be, load the default stylesheet, `prosemirror-remark/style.css`, or write your own rules for the `prosemirror-remark-task-list-item` classes (see [Styling](/guide/getting-started#styling)).
+
 ## Not supported
 
 Tables aren't supported yet. Table syntax is kept as plain paragraph text, so it survives a round trip but isn't editable as a table. See [Markdown output and limitations](/guide/markdown-output) for other differences.
