@@ -3,7 +3,10 @@ export { MarkdownExtension } from "./MarkdownExtension";
 export { BlockquoteExtension } from "./syntax-extensions/BlockquoteExtension";
 export { BoldExtension } from "./syntax-extensions/BoldExtension";
 export { BreakExtension } from "./syntax-extensions/BreakExtension";
-export { CodeBlockExtension } from "./syntax-extensions/CodeBlockExtension";
+export {
+  CodeBlockExtension,
+  setCodeBlockLanguage,
+} from "./syntax-extensions/CodeBlockExtension";
 export {
   DefinitionExtension,
   type DefinitionExtensionContext,

@@ -34,10 +34,6 @@ const knownFailures: Array<KnownFailure> = [
     ],
   },
   {
-    cause: "code block info string is lost (#1119)",
-    examples: [24, 34, 142, 143, 144, 146],
-  },
-  {
     cause: "nested emphasis of the same type collapses (accepted limitation)",
     examples: [
       369, 373, 389, 407, 408, 409, 417, 418, 419, 425, 426, 427, 432, 461, 463,

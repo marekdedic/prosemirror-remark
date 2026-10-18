@@ -12,3 +12,43 @@
 .prosemirror-remark-task-list-item-checkbox > input:not(:disabled) {
   cursor: pointer;
 }
+
+.prosemirror-remark-code-block > code {
+  background: rgb(127 127 127 / 12%);
+  border-radius: 0.375em;
+  display: block;
+  overflow-x: auto;
+  padding: 0.75em 1em;
+}
+
+.prosemirror-remark-code-block-language + code {
+  border-start-start-radius: 0;
+}
+
+.prosemirror-remark-code-block-language {
+  background: rgb(127 127 127 / 12%);
+  border-radius: 0.375em 0.375em 0 0;
+  display: table;
+  font-size: 0.8em;
+  line-height: 1;
+  padding: 0.5em 1.25em 0.4em;
+}
+
+.prosemirror-remark-code-block-language-label {
+  margin-inline-end: 0.5em;
+  opacity: 0.55;
+}
+
+.prosemirror-remark-code-block-language > input {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  outline: none;
+  padding: 0;
+  text-align: match-parent;
+}
+
+.prosemirror-remark-code-block-language:focus-within {
+  box-shadow: inset 0 -2px rgb(127 127 127 / 50%);
+}
