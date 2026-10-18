@@ -32,7 +32,6 @@ The test suite checks every example from the [CommonMark spec](https://spec.comm
 ### Not supported yet
 
 - **Raw HTML** is dropped when parsing, both HTML blocks and inline HTML such as `<br>` ([#1117](https://github.com/marekdedic/prosemirror-remark/issues/1117)).
-- **Code block info strings** are lost, so ```` ```js ```` comes back out as ```` ``` ```` ([#1119](https://github.com/marekdedic/prosemirror-remark/issues/1119)).
 - **GFM tables** are kept as plain paragraph text ([#275](https://github.com/marekdedic/prosemirror-remark/issues/275)).
 
 When parsing drops something, it logs a warning to the console.
