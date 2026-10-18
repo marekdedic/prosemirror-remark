@@ -28,7 +28,7 @@ Cross-node state (reference-style links/images needing `definition` nodes) flows
 
 Everything public must be re-exported from `src/index.ts` — `unplugin-dts` rolls up the declarations reachable from that entry point. `vite.config.ts` externalizes all prosemirror/remark/unified deps; add new peer-style deps to that `external` list.
 
-How extensions render to the DOM and how users customise it (classes, `data-*` state, the opt-in default stylesheet, node views, DOM attribute hooks) is specified in `docs/custom-ui.md`. Follow it when changing `toDOM` or a node view.
+How extensions render to the DOM and how users customise it (classes, `data-*` state, the opt-in default stylesheet, node views, DOM attribute hooks) is specified in `design/custom-ui.md`. Follow it when changing `toDOM` or a node view.
 
 ## Tests
 

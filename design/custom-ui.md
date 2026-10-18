@@ -1,10 +1,10 @@
 # Design: customisable editor UI
 
-Status: draft
+Status: accepted; implemented for task list items
 
 ## Problem
 
-Some extensions render more than a bare HTML tag, and they hard-code how it looks. `TaskListItemExtension` puts inline styles on the `li`, the checkbox wrapper and the content wrapper, both in `toDOM` and in its node view. Inline styles beat any stylesheet rule unless it uses `!important`, so users can't make the editor match their design.
+Some extensions render more than a bare HTML tag. `TaskListItemExtension` used to hard-code how it looked, with inline styles on the `li`, the checkbox wrapper and the content wrapper, both in `toDOM` and in its node view. Inline styles beat any stylesheet rule unless it uses `!important`, so users couldn't make the editor match their design.
 
 The same question will come up for every construct that needs more than a plain tag: links, tables, code block info strings, tight/loose lists, and so on. We want one approach that all of them follow.
 
@@ -42,9 +42,9 @@ Every extension renders a fixed, documented DOM structure:
 - **Classes prefixed with `prosemirror-remark-`** on every element that the default stylesheet needs to select. Elements it doesn't style (`p`, `strong`, `blockquote`, …) get no class. Names are the ProseMirror node or mark name in kebab case, plus a suffix for each part, e.g. `prosemirror-remark-task-list-item` and `prosemirror-remark-task-list-item-checkbox`.
 - **`data-*` attributes for state,** with values `"true"`/`"false"` for booleans: `data-checked`, `data-spread`, `data-language`.
 
-`toDOM` and the node view (if any) must produce the same classes and attributes; the node view may differ only in behaviour, such as making the checkbox clickable. `toDOM` output is what ends up on the clipboard and is read back by `parseDOM`, so it must round-trip.
+`toDOM` and the node view (if any) must produce the same elements, classes and `data-*` attributes; the node view may differ only in behaviour. For example, the task list checkbox is `disabled` in `toDOM` output and clickable in the node view. `toDOM` output is what ends up on the clipboard and is read back by `parseDOM`, so it must round-trip.
 
-The DOM contract is public API. Changing it is a breaking change.
+The DOM contract is public API, documented per extension in the docs site's extension reference (`docs/reference/extensions.md`). Changing it is a breaking change.
 
 ### 2. Default stylesheet
 
@@ -63,8 +63,8 @@ import "prosemirror-remark/style.css";
     list-style: none;
   }
 
-  .prosemirror-remark-bullet-list[data-spread="false"] > li > p {
-    margin: 0;
+  .prosemirror-remark-task-list-item-checkbox > input:not(:disabled) {
+    cursor: pointer;
   }
   ```
 
@@ -103,7 +103,7 @@ Visual options (colours, spacing, icons) are never added as constructor options;
 
 ## Applying the design
 
-### Task list items (first implementation)
+### Task list items (implemented)
 
 ```html
 <li class="prosemirror-remark-task-list-item" data-checked="true" data-spread="false">
@@ -114,10 +114,10 @@ Visual options (colours, spacing, icons) are never added as constructor options;
 </li>
 ```
 
-The inline styles in `TaskListItemExtension.ts` (`itemStyle`, `checkboxContainerStyle`, `contentStyle`, and the node view checkbox's `cursor: pointer`) move into the stylesheet.
+The default stylesheet hides the list marker and positions the checkbox where the marker would be (`position: absolute; right: 100%` against the `li`). It also gives the node view's enabled checkbox a pointer cursor.
 
 ### Future cases
 
-- **Tight/loose lists.** Lists get the classes `prosemirror-remark-bullet-list` and `prosemirror-remark-ordered-list`. The default stylesheet uses them with the existing `data-spread` attribute to remove paragraph margins in tight lists, so they look like rendered Markdown. A toggle is a command, not a rendering concern.
+- **Tight/loose lists.** Lists get the classes `prosemirror-remark-bullet-list` and `prosemirror-remark-ordered-list`. The default stylesheet uses them with the existing `data-spread` attribute to remove paragraph margins in tight lists, so they look like rendered Markdown. The rule must also reach task list items, whose paragraphs sit inside the content `div` rather than directly in the `li`. A toggle is a command, not a rendering concern.
 - **Code block info.** The info string's language goes into `data-language` on the `pre`. Syntax highlighting or a language picker is a user node view.
 - **Links.** Extra attributes come from a DOM attribute hook if anyone asks for one. Showing or editing the `href` is a user mark view or editor plugin.
