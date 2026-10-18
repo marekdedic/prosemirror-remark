@@ -4,7 +4,6 @@ export default defineConfig({
   base: "/prosemirror-remark/",
   description: "Markdown support for ProseMirror, powered by remark",
   lastUpdated: true,
-  srcExclude: ["custom-ui.md"],
   themeConfig: {
     editLink: {
       pattern:
