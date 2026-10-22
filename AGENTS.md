@@ -32,6 +32,12 @@ How extensions render to the DOM and how users customise it (classes, `data-*` s
 
 ## Tests
 
-Tests are declarative, built from the fluent testers in `tests/utils/`: `NodeExtensionTester` and `MarkExtensionTester` (both extending `SyntaxExtensionTester`). A test file constructs a tester with the extension under test, chains `shouldMatchUnistNode` / `shouldConvertUnistNode` / `shouldConvertProseMirrorNode` / `shouldMatchInputRule` / `shouldNotMatchInputRule` / `shouldSupportKeymap` assertions, and ends with `.test()`, which registers the actual Vitest cases. Prefer extending a tester over hand-writing `test()` blocks.
+Tests are Vitest `test()` blocks that assert through custom matchers rather than by hand. `createExtensionFixture(extension, otherExtensions)` in `tests/utils/fixture.ts` builds a minimal `ProseMirrorUnified` for the extension under test, with `ParserProviderExtension` (a test-only stand-in supplying remark parse/stringify without the full `MarkdownExtension`), local `Root`/`Paragraph`/`Text` extensions and `otherExtensions`, which come before the extension under test. It also exposes `prosemirror-test-builder` helpers as `fx.b`. Assert with `expect(fx)` and the matchers registered in `tests/utils/matchers.ts`:
 
-Testers instantiate a minimal `ProseMirrorUnified` containing `ParserProviderExtension` (a test-only stand-in supplying remark parse/stringify without the full `MarkdownExtension`) plus local `Root`/`Paragraph`/`Text` extensions; pass anything else the extension needs via `otherExtensionsInTest`. Keymap and input-rule tests assert that nothing was logged to `console.warn`, so a warning during conversion fails the test.
+- conversion: `toHandleUnistNode`, `toMatchUnistNode`, `toConvertUnistNode`, `toProvideNode`/`toProvideMark`, `toMatchProseMirrorNode`/`toMatchProseMirrorMark`, `toConvertProseMirrorNode`;
+- editing: `toTransformInput` (input typed at a given selection, often a `<cursor>` tag in the builder content), `toTransformBlockInput` and `toTransformInlineInput` (input typed in several surrounding contexts), `toTransformCommand`, `toReportKeymapApplicability`;
+- DOM: `toParseDOM`, `toRenderDOM`.
+
+The `toTransform…` matchers also check the serialized Markdown and that nothing was logged to `console.warn`, so a warning during conversion fails the test. Prefer adding a matcher over repeating assertion logic in tests.
+
+Node views are tested with `renderNodeView` from `tests/utils/node-view.ts`, which mounts the editor with the extension's node views, input rules and keymap, and drives its DOM directly. The bundles have their own tests (`tests/MarkdownExtension.test.ts`, `tests/GFMExtension.test.ts`), and `tests/CommonMarkSpec.test.ts`/`tests/GFMSpec.test.ts` round-trip every spec example, listing the known failures with their cause.
