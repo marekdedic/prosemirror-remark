@@ -195,6 +195,29 @@ describe("StrikethroughExtension", () => {
   });
 
   describe("input rules", () => {
+    test.each([
+      ["~~~js", "\\~\\~\\~js"],
+      ["~~~~js", "\\~\\~\\~\\~js"],
+    ])("does not match the code fence %j", (input, markdown) => {
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "start",
+        input,
+        (b) => [b.p(input)],
+        markdown,
+      );
+    });
+
+    test("does not match the code fence ~~~ followed by Enter", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p()],
+        "start",
+        "~~~{Enter}",
+        (b) => [b.p("~~~"), b.p()],
+        "\\~\\~\\~\n",
+      );
+    });
+
     test("matches ~Test~", () => {
       expect(fx).toTransformInlineInput(
         "~Test~",

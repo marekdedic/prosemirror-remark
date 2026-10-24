@@ -1,3 +1,5 @@
+import type { Command } from "prosemirror-state";
+
 import {
   DOMSerializer,
   Fragment,
@@ -18,6 +20,7 @@ import {
 } from "vitest";
 import {
   parseHTML,
+  type ProseMirrorEditor,
   renderProseMirror,
   type TesterSelection,
 } from "vitest-prosemirror";
@@ -94,7 +97,7 @@ function runEditorInput(
   fx: ExtensionFixture<UnistLike>,
   before: ProseMirrorNode,
   selection: TesterSelection,
-  editorInput: string,
+  editorInput: ((editor: ProseMirrorEditor) => SyncMatcherResult) | string,
   after: ProseMirrorNode,
   markdownOutput: string,
   ctx: MatcherState,
@@ -106,7 +109,14 @@ function runEditorInput(
     },
   });
   editor.setSelection(selection);
-  editor.type(editorInput);
+  if (typeof editorInput === "string") {
+    editor.type(editorInput);
+  } else {
+    const input = editorInput(editor);
+    if (!input.pass) {
+      return input;
+    }
+  }
 
   const nodes = nodesEqual(editor.doc, after);
   if (!nodes.pass) {
@@ -368,6 +378,29 @@ expect.extend({
     );
   },
 
+  toTransformCommand(
+    this: MatcherState,
+    fx: ExtensionFixture<UnistLike>,
+    before: Build<Array<BuiltNode>>,
+    selection: TesterSelection,
+    command: Command,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): SyncMatcherResult {
+    return runEditorInput(
+      fx,
+      fx.b.doc(...before(fx.b)) as unknown as ProseMirrorNode,
+      selection,
+      (editor) => ({
+        message: () => "expected the command to apply",
+        pass: editor.command(command),
+      }),
+      fx.schema.nodes["doc"].create({}, fx.resolveNodes(after(fx.b))),
+      markdownOutput,
+      this,
+    );
+  },
+
   toTransformInlineInput(
     this: MatcherState,
     fx: ExtensionFixture<UnistLike>,
@@ -478,6 +511,13 @@ interface ExtensionMatchers<R> {
   ): R;
   toTransformBlockInput(
     editorInput: string,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): R;
+  toTransformCommand(
+    before: Build<Array<BuiltNode>>,
+    selection: TesterSelection,
+    command: Command,
     after: Build<Array<BuiltNode>>,
     markdownOutput: string,
   ): R;

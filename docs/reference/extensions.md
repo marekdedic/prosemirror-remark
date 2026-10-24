@@ -57,14 +57,17 @@ Block quotes (`> quote`).
 
 Fenced (```` ``` ````, `~~~`) and indented code blocks. Includes `TextExtension`.
 
-- **ProseMirror node:** `code_block`. Code blocks contain text only, without formatting.
-- **HTML:** `<pre><code>`
-- **Input rules:** ```` ``` ```` or four spaces turns the paragraph into a code block.
+- **ProseMirror node:** `code_block`, with the attributes `lang` and `meta` (the language and the rest of a fenced code block's info string, ```` ```js title="a.js" ````, both `null` when absent). Code blocks contain text only, without formatting. The language never contains whitespace, and a code block without a language has no `meta`, because Markdown can't express one.
+- **HTML:** `<pre class="prosemirror-remark-code-block" data-language="…" data-meta="…">` containing `<code class="language-…">`. The `data-*` attributes and the `language-*` class are left out when there's no language. Pasted HTML also takes the language from `data-lang` or a `language-*` or `lang-*` class on the `pre` or `code`, as other Markdown renderers and syntax highlighters write it, but never from the `lang` attribute, which is the text's natural language. Styled by the default stylesheet, `prosemirror-remark/style.css`.
+- **Node view:** adds a non-editable `<label class="prosemirror-remark-code-block-language">` before the code, containing the text "Language:" (in a `<span class="prosemirror-remark-code-block-language-label">`) and an `<input>` for the language. Typing in it changes the language, and clearing it removes the language. `Enter`, `Escape`, `ArrowDown` and `ArrowRight` at the end of the field go back to the start of the code, and `ArrowUp`, or `ArrowLeft` at the start of the field, to the block above, if there is one. In a read-only editor, the field is read-only. Pass `pmu.nodeViews()` to your `EditorView` to enable it. In a right-to-left editor, set the direction of code blocks on the `pre`, not the `code`: the tab follows the `pre`'s direction and the block's square corner the `code`'s.
+- **Input rules:** ```` ``` ```` or `~~~`, optionally followed by a language, then a space turns the paragraph into a code block. Four spaces turn it into a code block without a language.
 - **Keyboard shortcuts:**
+  - `Enter` at the end of a paragraph containing only ```` ``` ```` or `~~~`, optionally followed by a language, turns it into a code block. Text after a space, such as a `meta`, makes the paragraph ordinary text, so pressing `Enter` after it just starts a new paragraph. The line is read as CommonMark reads an opening fence, including backslash escapes and character references (```` ```c\# ```` is the language `c#`).
+  - While a paragraph is an opening fence, the inline formatting input rules don't apply in it, so a language like `foo_bar_baz` can be typed.
   - `Shift-Mod-\` turns the current block into a code block.
   - Pressing `Enter` three times at the end of a code block leaves it: the two empty lines are removed and a new paragraph starts below.
-
-The language in a fenced code block's info string (```` ```js ````) isn't kept yet ([#1119](https://github.com/marekdedic/prosemirror-remark/issues/1119)).
+  - `ArrowUp` on the first line of a code block, or `ArrowLeft` at its very start (`ArrowRight` in right-to-left code), moves to its language field, when the node view is enabled.
+- **Commands:** `setCodeBlockLanguage(lang)` sets the language of the code block containing the selection, for example from a toolbar. `null` or an empty string removes the language and the `meta`. The `meta` itself can be changed with `setNodeAttribute`.
 
 ### `HorizontalRuleExtension`
 

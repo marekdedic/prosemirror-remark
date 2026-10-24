@@ -10,6 +10,8 @@ import type { Command } from "prosemirror-state";
 import { chainCommands, exitCode } from "prosemirror-commands";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
+import { isMac } from "../utils/isMac";
+
 export class BreakExtension extends NodeExtension<Break> {
   public override proseMirrorKeymap(
     proseMirrorSchema: Schema<string, string>,
@@ -27,15 +29,10 @@ export class BreakExtension extends NodeExtension<Break> {
       return true;
     });
 
-    const isMac =
-      typeof navigator === "undefined"
-        ? false
-        : /Mac|iP(hone|[oa]d)/u.test(navigator.platform);
-
     return {
       "Mod-Enter": command,
       "Shift-Enter": command,
-      ...(isMac && { "Ctrl-Enter": command }),
+      ...(isMac() && { "Ctrl-Enter": command }),
     };
   }
 
