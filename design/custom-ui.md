@@ -1,6 +1,6 @@
 # Design: customisable editor UI
 
-Status: accepted; implemented for task list items
+Status: accepted; implemented for task list items and code blocks
 
 ## Problem
 
@@ -42,7 +42,7 @@ Every extension renders a fixed, documented DOM structure:
 - **Classes prefixed with `prosemirror-remark-`** on every element that the default stylesheet needs to select. Elements it doesn't style (`p`, `strong`, `blockquote`, …) get no class. Names are the ProseMirror node or mark name in kebab case, plus a suffix for each part, e.g. `prosemirror-remark-task-list-item` and `prosemirror-remark-task-list-item-checkbox`.
 - **`data-*` attributes for state,** with values `"true"`/`"false"` for booleans: `data-checked`, `data-spread`, `data-language`.
 
-`toDOM` and the node view (if any) must produce the same elements, classes and `data-*` attributes; the node view may differ only in behaviour. For example, the task list checkbox is `disabled` in `toDOM` output and clickable in the node view. `toDOM` output is what ends up on the clipboard and is read back by `parseDOM`, so it must round-trip.
+`toDOM` mirrors the construct's rendered HTML. The node view (if any) must produce the same elements, classes and `data-*` attributes and may otherwise differ only in behaviour, with one exception: it may add **controls** that carry no document content, wrapped in a `contenteditable="false"` element with a `prosemirror-remark-` class. For example, the task list checkbox is part of GFM's rendered HTML, so it's in both, `disabled` in `toDOM` output and clickable in the node view. The code block's language field isn't part of any rendered Markdown, so only the node view has it. `toDOM` output is what ends up on the clipboard and is read back by `parseDOM`, so it must round-trip.
 
 The DOM contract is public API, documented per extension in the docs site's extension reference (`docs/reference/extensions.md`). Changing it is a breaking change.
 
@@ -101,6 +101,20 @@ Configuring an extension that a bundle (`MarkdownExtension`, `GFMExtension`) dep
 
 Visual options (colours, spacing, icons) are never added as constructor options; CSS covers them.
 
+### Controls in node views
+
+A control that a node view adds (see the DOM contract) is part of the editor, so it has to fit how ProseMirror works:
+
+- **Ignored when parsing.** The control is in the editor's DOM, so `parseDOM` has an `ignore` rule for its wrapper's class. Otherwise its text (such as a label) ends up in the content when the editor's own HTML is pasted back.
+- **Edits are transactions.** The control changes the document only by dispatching transactions and keeps no state of its own, so undo, collaborative editing and `filterTransaction` work as for any other edit. A text field's native undo and redo are cancelled (`beforeinput` with `historyUndo`/`historyRedo`) and the undo keys left to ProseMirror, so there's a single history. `update()` redraws the control from the node, so changes made elsewhere, such as an undo, show up in it.
+- **Read-only editors.** The control respects `view.editable`. A node view isn't updated when only the `editable` prop changes, so it's checked again on focus and before every edit, not only when drawing.
+- **Form field pitfalls.** `Enter` in the control doesn't submit an enclosing form. Key handling skips keys that belong to an input method composition (`isComposing`, or the key code 229 Safari reports after it), and a composition is committed on `blur`, since some input methods end one without `compositionend`. `stopEvent` and `ignoreMutation` cover the whole control.
+- **Keyboard access.** The arrow keys move between the content and the control in both directions, using `endOfTextblock` to find the content's edges, so the control can be reached without a mouse.
+- **Right-to-left text.** Arrow key handling follows the computed direction, not the key name: which edge of a field the caret leaves at follows the field's own direction, and where it goes follows the surrounding text's. The default stylesheet uses logical properties (`margin-inline-end`, `border-start-start-radius`, …) rather than `left`/`right`.
+- **Any document.** Elements are created with `view.dom.ownerDocument` and checked without `instanceof`, so the control works in iframes and shadow roots.
+- **Styling without the node view.** The default stylesheet makes `toDOM` output look complete on its own, and node-view-only controls attach to it (e.g. with a sibling selector such as `label + code`), not the other way round. The clipboard HTML and editors without the node views then still look right.
+- **Text and accessibility.** The control has an accessible name, for example by being wrapped in a `<label>`. Its visible text is currently hard-coded English; how to make it translatable is open ([#1180](https://github.com/marekdedic/prosemirror-remark/issues/1180)).
+
 ## Applying the design
 
 ### Task list items (implemented)
@@ -116,8 +130,11 @@ Visual options (colours, spacing, icons) are never added as constructor options;
 
 The default stylesheet hides the list marker and positions the checkbox where the marker would be (`position: absolute; right: 100%` against the `li`). It also gives the node view's enabled checkbox a pointer cursor.
 
+### Code blocks (implemented)
+
+See `design/code-block-language.md`.
+
 ### Future cases
 
 - **Tight/loose lists.** Lists get the classes `prosemirror-remark-bullet-list` and `prosemirror-remark-ordered-list`. The default stylesheet uses them with the existing `data-spread` attribute to remove paragraph margins in tight lists, so they look like rendered Markdown. The rule must also reach task list items, whose paragraphs sit inside the content `div` rather than directly in the `li`. A toggle is a command, not a rendering concern.
-- **Code block info.** The info string's language goes into `data-language` on the `pre`. Syntax highlighting or a language picker is a user node view.
 - **Links.** Extra attributes come from a DOM attribute hook if anyone asks for one. Showing or editing the `href` is a user mark view or editor plugin.

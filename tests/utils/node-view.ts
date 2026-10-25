@@ -22,7 +22,15 @@ export function renderNodeView(
 ): NodeViewFixture {
   const pmu = createTestProseMirrorUnified(extension, otherExtensions);
   const editor = renderProseMirror(pmu.parse(markdown), {
-    editorProps: { ...editorProps, nodeViews: pmu.nodeViews() },
+    editorProps: {
+      ...editorProps,
+      nodeViews: pmu.nodeViews(),
+      plugins: [
+        pmu.inputRulesPlugin(),
+        pmu.keymapPlugin(),
+        ...(editorProps.plugins ?? []),
+      ],
+    },
   });
   return {
     editor,

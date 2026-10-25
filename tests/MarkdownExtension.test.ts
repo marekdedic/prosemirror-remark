@@ -2,6 +2,7 @@ import type { Node as ProseMirrorNode } from "prosemirror-model";
 
 import { ProseMirrorUnified } from "prosemirror-unified";
 import { expect, test } from "vitest";
+import { renderProseMirror } from "vitest-prosemirror";
 
 import { MarkdownExtension } from "../src/MarkdownExtension";
 import { createBuilders } from "./utils/fixture";
@@ -442,4 +443,24 @@ test("ProseMirror -> unist conversion", () => {
       "\n" +
       "A text with a **bold part**, some `inline code`, a bit *that is italic*, one [link](https://example.test).\n",
   );
+});
+
+test.each([
+  ["```js{Enter}Hello", "```js\nHello\n```\n"],
+  ["``` Hello", "```\nHello\n```\n"],
+  ["```a*b*c Hello", "```a*b*c\nHello\n```\n"],
+  ["```a**b**c Hello", "```a**b**c\nHello\n```\n"],
+  ["```foo_bar_baz Hello", "```foo_bar_baz\nHello\n```\n"],
+  ["```a*b*{Enter}Hello", "```a*b*\nHello\n```\n"],
+  ["```a**b**{Enter}Hello", "```a**b**\nHello\n```\n"],
+  ["```a_b_{Enter}Hello", "```a_b_\nHello\n```\n"],
+  ["~~~a`b`{Enter}Hello", "```a&#x60;b&#x60;\nHello\n```\n"],
+])("typing %j creates a code block", (input, markdown) => {
+  const editor = renderProseMirror(pmu.parse(""), {
+    editorProps: { plugins: [pmu.inputRulesPlugin(), pmu.keymapPlugin()] },
+  });
+
+  editor.type(input);
+
+  expect(pmu.serialize(editor.doc)).toBe(markdown);
 });

@@ -54,7 +54,7 @@ The adapter gives you everything the editor needs:
 - `parse(markdown)`: turns a Markdown string into a ProseMirror document, here used for the initial content.
 - `serialize(doc)`: turns the editor's document back into Markdown, here logged on every change.
 - `inputRulesPlugin()` and `keymapPlugin()`: plugins with the extensions' [input rules and keyboard shortcuts](/reference/extensions), such as typing `## ` to start a heading or pressing `Mod-b` for bold.
-- `nodeViews()`: the extensions' node views. `MarkdownExtension` has none, but [GFM task lists](/guide/gfm) need one for their clickable checkboxes, so it's worth passing them from the start.
+- `nodeViews()`: the extensions' node views, such as the field for editing a [code block's language](/reference/extensions#codeblockextension) or the clickable checkboxes of [GFM task lists](/guide/gfm).
 
 See the [prosemirror-unified API reference](https://marekdedic.github.io/prosemirror-unified/guide/api) for details on each method.
 
@@ -62,7 +62,7 @@ See the [prosemirror-unified API reference](https://marekdedic.github.io/prosemi
 
 The editor renders plain HTML elements (`p`, `h1`–`h6`, `strong`, `ul`, …), so it looks like whatever your page's CSS makes those elements look like. You should also load ProseMirror's own stylesheet, `prosemirror-view/style/prosemirror.css`, as with any ProseMirror editor.
 
-Elements that need more than a plain tag, such as [task list items](/guide/gfm#task-list-checkboxes), carry classes starting with `prosemirror-remark-` and `data-*` attributes for their state, but no inline styles. prosemirror-remark ships an optional stylesheet with sensible defaults for them:
+Elements that need more than a plain tag, such as [code blocks](/reference/extensions#codeblockextension) and [task list items](/guide/gfm#task-list-checkboxes), carry classes starting with `prosemirror-remark-` and `data-*` attributes for their state, but no inline styles. prosemirror-remark ships an optional stylesheet with sensible defaults for them:
 
 ```ts
 import "prosemirror-remark/style.css";
