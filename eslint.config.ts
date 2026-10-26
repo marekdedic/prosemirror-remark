@@ -1,5 +1,6 @@
 import eslintComments from "@eslint-community/eslint-plugin-eslint-comments";
 import commentsConfig from "@eslint-community/eslint-plugin-eslint-comments/configs";
+import css from "@eslint/css";
 import js from "@eslint/js";
 import json from "@eslint/json";
 import markdown from "@eslint/markdown";
@@ -33,6 +34,14 @@ export default defineConfig(
     files: ["**/*.json"],
     ignores: ["package.json"],
     language: "json/json",
+  },
+  {
+    extends: [css.configs.recommended],
+    files: ["**/*.css"],
+    language: "css/css",
+    rules: {
+      "css/use-baseline": ["error", { available: 2019 }],
+    },
   },
   {
     extends: [markdown.configs.recommended],

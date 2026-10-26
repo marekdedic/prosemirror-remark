@@ -53,6 +53,8 @@
     "docs:dev": "vitepress dev docs",
     "docs:preview": "vitepress preview docs",
     "lint": "FORCE_COLOR=1 run-p -c --aggregate-output lint:*",
+    "lint:css": "FORCE_COLOR=1 run-p -c --aggregate-output lint:css:*",
+    "lint:css:stylelint": "stylelint --report-needless-disables 'style/**/*.css'",
     "lint:eslint": "eslint",
     "lint:ts": "FORCE_COLOR=1 run-p -c --aggregate-output lint:ts:*",
     "lint:ts:attw": "attw --pack --exclude-entrypoints style.css",
@@ -85,6 +87,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.4.0",
+    "@eslint/css": "^2.0.1",
     "@eslint/js": "^10.0.1",
     "@eslint/json": "^2.0.0",
     "@eslint/markdown": "^8.0.0",
@@ -116,6 +119,9 @@
     "prosemirror-unified": "^0.10.0",
     "prosemirror-view": "^1.30.2",
     "rimraf": "^6.0.1",
+    "stylelint": "^17.16.0",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-no-unsupported-browser-features": "^8.1.2",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.0",
     "unplugin-dts": "^1.0.1",
@@ -128,5 +134,9 @@
     "prosemirror-model": "^1.19.3",
     "prosemirror-state": "^1.4.3",
     "prosemirror-unified": "^0.10.0"
-  }
+  },
+  "browserslist": [
+    "baseline 2019",
+    "not edge 18"
+  ]
 }
