@@ -11,7 +11,7 @@ export default defineConfig({
       formats: ["es", "cjs"],
     },
     minify: false,
-    rollupOptions: {
+    rolldownOptions: {
       external: [
         "prosemirror-commands",
         "prosemirror-inputrules",
