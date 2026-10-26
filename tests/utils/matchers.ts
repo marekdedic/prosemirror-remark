@@ -1,6 +1,7 @@
 import type { Command } from "prosemirror-state";
 
 import {
+  DOMParser,
   DOMSerializer,
   Fragment,
   type Mark,
@@ -266,6 +267,29 @@ expect.extend({
     return nodesEqual(actual, expected);
   },
 
+  toParseDOMInIframe(
+    this: MatcherState,
+    fx: ExtensionFixture<UnistLike>,
+    html: string,
+    target: Build<Array<BuiltNode>>,
+  ): SyncMatcherResult {
+    const iframe = document.createElement("iframe");
+    document.body.appendChild(iframe);
+    try {
+      const { body } = (iframe.contentWindow as unknown as typeof window)
+        .document;
+      body.innerHTML = html;
+      const actual = DOMParser.fromSchema(fx.schema).parse(body);
+      const expected = fx.schema.nodes["doc"].create(
+        {},
+        fx.resolveNodes(target(fx.b)),
+      );
+      return nodesEqual(actual, expected);
+    } finally {
+      iframe.remove();
+    }
+  },
+
   toProvideMark(
     this: MatcherState,
     fx: ExtensionFixture<UnistLike>,
@@ -498,6 +522,7 @@ interface ExtensionMatchers<R> {
   toMatchProseMirrorNode(node: Build<BuiltNode>): R;
   toMatchUnistNode(node: UnistLike): R;
   toParseDOM(html: string, target: Build<Array<BuiltNode>>): R;
+  toParseDOMInIframe(html: string, target: Build<Array<BuiltNode>>): R;
   toProvideMark(name: string | null): R;
   toProvideNode(name: string | null): R;
   toRenderDOM(source: Build<Array<BuiltNode>>, html: string): R;
