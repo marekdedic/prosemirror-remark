@@ -1,6 +1,6 @@
 export function isMac(): boolean {
   return (
     typeof navigator !== "undefined" &&
-    /Mac|iP(hone|[oa]d)/u.test(navigator.platform)
+    /Mac|iP(?:[ao]d|hone)/u.test(navigator.platform)
   );
 }

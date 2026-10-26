@@ -52,7 +52,7 @@ export class StrikethroughExtension extends MarkExtension<Delete> {
         { tag: "del" },
         {
           getAttrs: (value) =>
-            /(^|[\s])line-through([\s]|$)/u.test(value) && null,
+            /(?:^|\s)line-through(?:\s|$)/u.test(value) && null,
           style: "text-decoration",
         },
       ],

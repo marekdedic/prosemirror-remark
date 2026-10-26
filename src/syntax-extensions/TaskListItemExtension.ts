@@ -97,26 +97,29 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
-      new InputRule(/^\[([xX\s]?)\][\s\S]$/u, (state, match, start, end) => {
-        const $start = state.doc.resolve(start);
-        if (
-          $start.node(-1).type.name !== "regular_list_item" ||
-          $start.parent.type.name !== "paragraph" ||
-          $start.index(-1) !== 0
-        ) {
-          return null;
-        }
-        return state.tr
-          .delete(start, end)
-          .setNodeMarkup(
-            $start.before(-1),
-            proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-            {
-              checked: match[1].toLowerCase() === "x",
-              spread: $start.node(-1).attrs["spread"] as boolean,
-            },
-          );
-      }),
+      new InputRule(
+        /^\[(?<checked>[\sx]?)\][\s\S]$/iu,
+        (state, match, start, end) => {
+          const $start = state.doc.resolve(start);
+          if (
+            $start.node(-1).type.name !== "regular_list_item" ||
+            $start.parent.type.name !== "paragraph" ||
+            $start.index(-1) !== 0
+          ) {
+            return null;
+          }
+          return state.tr
+            .delete(start, end)
+            .setNodeMarkup(
+              $start.before(-1),
+              proseMirrorSchema.nodes[this.proseMirrorNodeName()],
+              {
+                checked: match.groups?.["checked"].toLowerCase() === "x",
+                spread: $start.node(-1).attrs["spread"] as boolean,
+              },
+            );
+        },
+      ),
     ];
   }
 

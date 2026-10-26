@@ -29,7 +29,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
   ): Array<InputRule> {
     return [
       wrappingInputRule(
-        /^\s{0,3}([-+*])\s$/u,
+        /^\s{0,3}[*+-]\s$/u,
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
     ];

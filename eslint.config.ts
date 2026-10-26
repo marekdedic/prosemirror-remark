@@ -8,6 +8,7 @@ import packageJson from "eslint-plugin-package-json";
 import perfectionist from "eslint-plugin-perfectionist";
 import preferArrowFunctions from "eslint-plugin-prefer-arrow-functions";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
+import regexp from "eslint-plugin-regexp";
 import { defineConfig, globalIgnores } from "eslint/config";
 import tseslint from "typescript-eslint";
 
@@ -49,6 +50,7 @@ export default defineConfig(
       tseslint.configs.strict,
       tseslint.configs.stylistic,
       perfectionist.configs["recommended-natural"],
+      regexp.configs.recommended,
     ],
     files: ["**/*.js", "**/*.ts"],
     plugins: {
@@ -151,6 +153,21 @@ export default defineConfig(
       "prefer-regex-literals": "error",
       "prefer-template": "error",
       radix: "error",
+      "regexp/grapheme-string-literal": "error",
+      "regexp/letter-case": "error",
+      "regexp/no-control-character": "error",
+      "regexp/no-octal": "error",
+      "regexp/no-standalone-backslash": "error",
+      "regexp/no-super-linear-move": "error",
+      "regexp/prefer-escape-replacement-dollar-char": "error",
+      "regexp/prefer-lookaround": "error",
+      "regexp/prefer-named-backreference": "error",
+      "regexp/prefer-named-capture-group": "error",
+      "regexp/prefer-named-replacement": "error",
+      "regexp/prefer-quantifier": "error",
+      "regexp/prefer-result-array-groups": "error",
+      "regexp/sort-alternatives": "error",
+      "regexp/sort-character-class-elements": "error",
       "require-atomic-updates": "error",
       "require-unicode-regexp": "error",
       strict: ["error", "never"],

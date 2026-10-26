@@ -10,14 +10,14 @@ import { type CodeBlockAttrs, codeBlockAttrs } from "./codeBlockAttrs";
 
 // A line that starts like an opening fence. Whether it is one is up to the
 // parser, see parseFenceLine.
-const fenceStart = /^ {0,3}(?:`{3,}|~{3,})/u;
+const fenceStart = /^ {0,3}(?:`{3}|~{3})/u;
 
 // A fence followed by at most one word, which is all that can be typed: the
 // first space already converts the paragraph. Text with a space or tab after
 // the fence is prose, even if CommonMark would read it as a fence with a meta.
 // A line break, image or hard break (see paragraphText) ends the line early.
 const typeableFenceLine = new RegExp(
-  `${fenceStart.source}[^ \\t\\n\\r\\ufffc]*$`,
+  `${fenceStart.source}[^\\t\\n\\r \\ufffc]*$`,
   "u",
 );
 
@@ -28,7 +28,7 @@ const typedSpace = "[ \\u00a0]";
 
 // A fence followed by a language and a space, which converts the paragraph
 const fenceOnSpace = new RegExp(
-  `${fenceStart.source}[^ \\t\\u00a0]*${typedSpace}$`,
+  `${fenceStart.source}[^\\t \\u00a0]*${typedSpace}$`,
   "u",
 );
 

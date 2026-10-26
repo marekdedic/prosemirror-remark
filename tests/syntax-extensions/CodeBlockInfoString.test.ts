@@ -85,7 +85,7 @@ const lines = [
   "\t```js",
   " ```js",
 ];
-const typeable = /^ {0,3}(?:`{3,}|~{3,})[^ \t]*$/u;
+const typeable = /^ {0,3}(?:`{3}|~{3})[^\t ]*$/u;
 const isTypeableFence = (line: string): boolean =>
   typeable.test(line) && commonMarkFence(line) !== null;
 const fenceLines = lines.filter((line) => isTypeableFence(line));
