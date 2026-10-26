@@ -7,6 +7,21 @@ import { TaskListItemExtension } from "../../src/syntax-extensions/TaskListItemE
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { type NodeViewFixture, renderNodeView } from "../utils/node-view";
 
+function press(
+  fx: NodeViewFixture,
+  key: string,
+  modifiers: KeyboardEventInit = {},
+): boolean {
+  return fx.editor.element("input").dispatchEvent(
+    new KeyboardEvent("keydown", {
+      bubbles: true,
+      cancelable: true,
+      key,
+      ...modifiers,
+    }),
+  );
+}
+
 function render(
   markdown: string,
   mousedown?: (view: EditorView, event: MouseEvent) => boolean,
@@ -153,4 +168,21 @@ describe("TaskListItemView", () => {
 
     expect(mousedown).not.toHaveBeenCalled();
   });
+
+  test.each([{ ctrlKey: true }, { shiftKey: true }, {}])(
+    "`Enter` (%o) on the checkbox doesn't submit an enclosing form",
+    (modifiers) => {
+      const fx = render("* [ ] Hello\n");
+
+      expect(press(fx, "Enter", modifiers)).toBe(false);
+      expect(fx.markdown()).toBe("* [ ] Hello");
+    },
+  );
+
+  test.each([" ", "Tab", "a"])(
+    "lets the browser handle `%j` on the checkbox",
+    (key) => {
+      expect(press(render("* [ ] Hello\n"), key)).toBe(true);
+    },
+  );
 });
