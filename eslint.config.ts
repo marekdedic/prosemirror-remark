@@ -8,6 +8,7 @@ import packageJson from "eslint-plugin-package-json";
 import perfectionist from "eslint-plugin-perfectionist";
 import preferArrowFunctions from "eslint-plugin-prefer-arrow-functions";
 import prettierRecommended from "eslint-plugin-prettier/recommended";
+import regexp from "eslint-plugin-regexp";
 import { defineConfig, globalIgnores } from "eslint/config";
 import tseslint from "typescript-eslint";
 
@@ -49,6 +50,7 @@ export default defineConfig(
       tseslint.configs.strict,
       tseslint.configs.stylistic,
       perfectionist.configs["recommended-natural"],
+      regexp.configs.recommended,
     ],
     files: ["**/*.js", "**/*.ts"],
     plugins: {
