@@ -1,11 +1,40 @@
-import type { EditorView } from "prosemirror-view";
-
-import { describe, expect, test, vi } from "vitest";
+import {
+  DecorationSet,
+  type EditorView,
+  type NodeView,
+} from "prosemirror-view";
+import { describe, expect, onTestFinished, test, vi } from "vitest";
 
 import { ListItemExtension } from "../../src/syntax-extensions/ListItemExtension";
 import { TaskListItemExtension } from "../../src/syntax-extensions/TaskListItemExtension";
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { type NodeViewFixture, renderNodeView } from "../utils/node-view";
+
+function inIframe(markdown: string): {
+  iframeDocument: Document;
+  nodeView: NodeView;
+} {
+  const iframe = document.createElement("iframe");
+  document.body.appendChild(iframe);
+  onTestFinished(() => {
+    iframe.remove();
+  });
+  const iframeDocument = (iframe.contentWindow as unknown as typeof window)
+    .document;
+  const view = { dom: iframeDocument.body } as unknown as EditorView;
+  const createNodeView = new TaskListItemExtension().proseMirrorNodeView();
+  if (createNodeView === null) {
+    throw new Error("TaskListItemExtension provides no node view");
+  }
+  const nodeView = createNodeView(
+    render(markdown).editor.doc.child(0).child(0),
+    view,
+    () => 1,
+    [],
+    DecorationSet.empty,
+  );
+  return { iframeDocument, nodeView };
+}
 
 function press(
   fx: NodeViewFixture,
@@ -185,4 +214,25 @@ describe("TaskListItemView", () => {
       expect(press(render("* [ ] Hello\n"), key)).toBe(true);
     },
   );
+
+  test("creates its elements in the editor's document, e.g. an iframe", () => {
+    const { iframeDocument, nodeView } = inIframe("* [ ] Hello\n");
+
+    expect(nodeView.dom.ownerDocument).toBe(iframeDocument);
+    expect(nodeView.contentDOM?.ownerDocument).toBe(iframeDocument);
+    expect(nodeView.dom.querySelector("input")?.ownerDocument).toBe(
+      iframeDocument,
+    );
+  });
+
+  test("stops ProseMirror from handling events on the checkbox in another window, e.g. an iframe", () => {
+    const { iframeDocument, nodeView } = inIframe("* [ ] Hello\n");
+    const checkbox = nodeView.dom.querySelector("input");
+    const event = new (
+      iframeDocument.defaultView as unknown as typeof window
+    ).MouseEvent("mousedown", { bubbles: true });
+    checkbox?.dispatchEvent(event);
+
+    expect(nodeView.stopEvent?.(event)).toBe(true);
+  });
 });

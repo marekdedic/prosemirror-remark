@@ -1383,6 +1383,15 @@ describe("TaskListExtension", () => {
       },
     );
 
+    test.each([true, false])(
+      "parses its own rendered DOM from another window, e.g. an iframe, with checked: %j",
+      (checked) => {
+        expect(fx).toParseDOMInIframe(renderedTaskList(checked), (b) => [
+          b.ul(b.taskListItem({ checked }, b.p("a"))),
+        ]);
+      },
+    );
+
     test.each([true, false])("renders DOM with checked: %j", (checked) => {
       expect(fx).toRenderDOM(
         (b) => [b.ul(b.taskListItem({ checked }, b.p("a")))],

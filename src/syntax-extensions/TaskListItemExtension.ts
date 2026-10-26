@@ -36,7 +36,9 @@ class TaskListItemView implements NodeView {
     view: EditorView,
     getPos: () => number | undefined,
   ) {
-    const checkbox = document.createElement("input");
+    // The editor may be in another window, e.g. an iframe
+    const doc = view.dom.ownerDocument;
+    const checkbox = doc.createElement("input");
     checkbox.setAttribute("type", "checkbox");
     if (node.attrs["checked"] === true) {
       checkbox.setAttribute("checked", "checked");
@@ -62,7 +64,7 @@ class TaskListItemView implements NodeView {
       }
     });
 
-    this.checkboxContainer = document.createElement("span");
+    this.checkboxContainer = doc.createElement("span");
     this.checkboxContainer.setAttribute("contenteditable", "false");
     this.checkboxContainer.setAttribute(
       "class",
@@ -70,13 +72,13 @@ class TaskListItemView implements NodeView {
     );
     this.checkboxContainer.appendChild(checkbox);
 
-    this.contentDOM = document.createElement("div");
+    this.contentDOM = doc.createElement("div");
     this.contentDOM.setAttribute(
       "class",
       "prosemirror-remark-task-list-item-content",
     );
 
-    this.dom = document.createElement("li");
+    this.dom = doc.createElement("li");
     this.dom.setAttribute("class", "prosemirror-remark-task-list-item");
     this.dom.setAttribute(
       "data-checked",
@@ -90,11 +92,10 @@ class TaskListItemView implements NodeView {
     this.dom.appendChild(this.contentDOM);
   }
 
+  // No instanceof checks: in an iframe, events and nodes come from another
+  // window than the global classes
   public stopEvent(event: Event): boolean {
-    return (
-      event.target instanceof Node &&
-      this.checkboxContainer.contains(event.target)
-    );
+    return this.checkboxContainer.contains(event.target as Node | null);
   }
 }
 
@@ -177,10 +178,14 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
           getAttrs: (
             dom: Node | string,
           ): false | { checked: boolean; spread: boolean } => {
-            const checkbox = (dom as HTMLElement).querySelector(
+            // No instanceof check: the DOM may come from another window, e.g.
+            // an iframe
+            const checkbox = (
+              dom as HTMLElement
+            ).querySelector<HTMLInputElement>(
               ":scope > input[type=checkbox], :scope > span > input[type=checkbox]",
             );
-            if (!(checkbox instanceof HTMLInputElement)) {
+            if (checkbox === null) {
               return false;
             }
             return {
