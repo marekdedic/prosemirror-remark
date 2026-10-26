@@ -55,6 +55,12 @@ class TaskListItemView implements NodeView {
         ),
       );
     });
+    checkbox.addEventListener("keydown", (e) => {
+      // Enter in a lone input would submit an enclosing form
+      if (e.key === "Enter") {
+        e.preventDefault();
+      }
+    });
 
     this.checkboxContainer = document.createElement("span");
     this.checkboxContainer.setAttribute("contenteditable", "false");
