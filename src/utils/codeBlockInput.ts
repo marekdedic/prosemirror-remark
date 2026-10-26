@@ -10,7 +10,7 @@ import { type CodeBlockAttrs, codeBlockAttrs } from "./codeBlockAttrs";
 
 // A line that starts like an opening fence. Whether it is one is up to the
 // parser, see parseFenceLine.
-const fenceStart = /^ {0,3}(?:`{3,}|~{3,})/u;
+const fenceStart = /^ {0,3}(?:`{3}|~{3})/u;
 
 // A fence followed by at most one word, which is all that can be typed: the
 // first space already converts the paragraph. Text with a space or tab after

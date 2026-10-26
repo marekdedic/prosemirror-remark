@@ -34,7 +34,7 @@ const extractExamples = (spec: string): Array<SpecExample> => {
     .replace(/\r\n?/gu, "\n")
     .replace(/^<!-- END TESTS -->[\s\S]*/mu, "")
     .replace(
-      /^`{32} example(?: (\w+))?\n([\s\S]*?)^\.\n([\s\S]*?)^`{32}$|^#{1,6} *(.*)$/gmu,
+      /^`{32} example(?: (\w+))?\n([\s\S]*?)^\.\n([\s\S]*?)^`{32}$|^#{1,6} (.*)$/gmu,
       (
         _,
         extension: string | undefined,
