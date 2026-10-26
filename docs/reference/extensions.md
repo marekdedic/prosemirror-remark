@@ -201,7 +201,7 @@ Strikethrough text (`~~text~~`, `~text~`).
 Task list items (`- [ ] task`, `- [x] done`). Use it together with `UnorderedListExtension` or `OrderedListExtension`.
 
 - **ProseMirror node:** `task_list_item`, with the attributes `checked` and `spread`, containing a paragraph followed by any blocks. It's in the `list_item` group, so it can be mixed with regular items in one list.
-- **HTML:** `<li class="prosemirror-remark-task-list-item" data-checked="…" data-spread="…">` containing a non-editable `<span class="prosemirror-remark-task-list-item-checkbox">` with an `<input type="checkbox">`, followed by a `<div class="prosemirror-remark-task-list-item-content">` with the content. Styled by the default stylesheet, `prosemirror-remark/style.css`.
+- **HTML:** `<li class="prosemirror-remark-task-list-item" data-checked="…" data-spread="…">` containing a non-editable `<span class="prosemirror-remark-task-list-item-checkbox">` with an `<input type="checkbox" aria-labelledby="…">`, followed by a `<div class="prosemirror-remark-task-list-item-content" id="…">` with the content. The checkbox is labelled by the content, so screen readers announce the item's text with it; the `id` is generated and unique within the page. Styled by the default stylesheet, `prosemirror-remark/style.css`.
 - **Node view:** makes the checkbox clickable. Pass `pmu.nodeViews()` to your `EditorView` to enable it.
 - **Input rules:** `[ ] ` or `[] ` at the start of a list item turns it into an unchecked task item, and `[x] ` or `[X] ` into a checked one.
 - **Keyboard shortcuts:**

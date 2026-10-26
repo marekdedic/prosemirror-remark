@@ -113,7 +113,7 @@ A control that a node view adds (see the DOM contract) is part of the editor, so
 - **Right-to-left text.** Arrow key handling follows the computed direction, not the key name: which edge of a field the caret leaves at follows the field's own direction, and where it goes follows the surrounding text's. The default stylesheet uses logical properties (`margin-inline-end`, `border-start-start-radius`, …) rather than `left`/`right`.
 - **Any document.** Elements are created with `view.dom.ownerDocument` and checked without `instanceof`, so the control works in iframes and shadow roots.
 - **Styling without the node view.** The default stylesheet makes `toDOM` output look complete on its own, and node-view-only controls attach to it (e.g. with a sibling selector such as `label + code`), not the other way round. The clipboard HTML and editors without the node views then still look right.
-- **Text and accessibility.** The control has an accessible name, for example by being wrapped in a `<label>`. Its visible text is currently hard-coded English; how to make it translatable is open ([#1180](https://github.com/marekdedic/prosemirror-remark/issues/1180)).
+- **Text and accessibility.** The control has an accessible name, for example by being wrapped in a `<label>`, or with `aria-labelledby` pointing at document content, which needs no text of its own. Its visible text is currently hard-coded English; how to make it translatable is open ([#1180](https://github.com/marekdedic/prosemirror-remark/issues/1180)).
 
 ## Applying the design
 
@@ -122,11 +122,13 @@ A control that a node view adds (see the DOM contract) is part of the editor, so
 ```html
 <li class="prosemirror-remark-task-list-item" data-checked="true" data-spread="false">
   <span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false">
-    <input type="checkbox" checked>
+    <input type="checkbox" aria-labelledby="prosemirror-remark-task-list-item-content-1" checked>
   </span>
-  <div class="prosemirror-remark-task-list-item-content">…</div>
+  <div class="prosemirror-remark-task-list-item-content" id="prosemirror-remark-task-list-item-content-1">…</div>
 </li>
 ```
+
+The checkbox takes its accessible name from the content with `aria-labelledby`, so it needs no visible or translatable text. Both `toDOM` and the node view give the content `div` an `id` from a counter, unique within the page; `parseDOM` ignores it.
 
 The default stylesheet hides the list marker and positions the checkbox where the marker would be. The checkbox wrapper is absolutely positioned against the `li` without any offsets, so it stays at the `li`'s start edge in either direction. It's a zero-width flex container with `justify-content: flex-end`, so its content overflows outwards, past that edge. A zero-width space in `::after` is a second flex item: with `align-items: baseline` it lines the checkbox up with the first line of text, and its `flex-basis` is the gap between the checkbox and the text. This needs no logical properties, which older browsers lack (`inset-inline-end` needs Chrome and Edge 87). The stylesheet also gives the node view's enabled checkbox a pointer cursor.
 
