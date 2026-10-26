@@ -1,18 +1,3 @@
-.prosemirror-remark-task-list-item {
-  list-style: none;
-  position: relative;
-}
-
-.prosemirror-remark-task-list-item-checkbox {
-  inset-inline-end: 100%;
-  margin-inline-end: 0.25em;
-  position: absolute;
-}
-
-.prosemirror-remark-task-list-item-checkbox > input:not(:disabled) {
-  cursor: pointer;
-}
-
 .prosemirror-remark-code-block > code {
   background: rgb(127 127 127 / 12%);
   border-radius: 0.375em;
@@ -51,4 +36,19 @@
 
 .prosemirror-remark-code-block-language:focus-within {
   box-shadow: inset 0 -2px rgb(127 127 127 / 50%);
+}
+
+.prosemirror-remark-task-list-item {
+  list-style: none;
+  position: relative;
+}
+
+.prosemirror-remark-task-list-item-checkbox {
+  inset-inline-end: 100%;
+  margin-inline-end: 0.25em;
+  position: absolute;
+}
+
+.prosemirror-remark-task-list-item-checkbox > input:not(:disabled) {
+  cursor: pointer;
 }
