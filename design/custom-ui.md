@@ -128,7 +128,7 @@ A control that a node view adds (see the DOM contract) is part of the editor, so
 </li>
 ```
 
-The default stylesheet hides the list marker and positions the checkbox where the marker would be (`position: absolute; inset-inline-end: 100%` against the `li`). It also gives the node view's enabled checkbox a pointer cursor.
+The default stylesheet hides the list marker and positions the checkbox where the marker would be. The checkbox wrapper is absolutely positioned against the `li` without any offsets, so it stays at the `li`'s start edge in either direction. It's a zero-width flex container with `justify-content: flex-end`, so its content overflows outwards, past that edge. A zero-width space in `::after` is a second flex item: with `align-items: baseline` it lines the checkbox up with the first line of text, and its `flex-basis` is the gap between the checkbox and the text. This needs no logical properties, which older browsers lack (`inset-inline-end` needs Chrome 87 and Safari 14.1). The stylesheet also gives the node view's enabled checkbox a pointer cursor.
 
 ### Code blocks (implemented)
 

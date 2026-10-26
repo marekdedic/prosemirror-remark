@@ -44,9 +44,16 @@
 }
 
 .prosemirror-remark-task-list-item-checkbox {
-  inset-inline-end: 100%;
-  margin-inline-end: 0.25em;
+  align-items: baseline;
+  display: flex;
+  justify-content: flex-end;
   position: absolute;
+  width: 0;
+}
+
+.prosemirror-remark-task-list-item-checkbox::after {
+  content: "\200b";
+  flex: 0 0 0.25em;
 }
 
 .prosemirror-remark-task-list-item-checkbox > input:not(:disabled) {
