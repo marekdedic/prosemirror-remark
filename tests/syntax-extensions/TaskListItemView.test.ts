@@ -132,6 +132,28 @@ describe("TaskListItemView", () => {
     ).toBe(false);
   });
 
+  test("labels each checkbox by its own item's content", () => {
+    const { editor } = render("* [ ] Hello\n* [x] World\n");
+
+    expect(
+      editor.elements("input").map((checkbox) => {
+        const labels = editor.elements(
+          `[id="${checkbox.getAttribute("aria-labelledby") ?? ""}"]`,
+        );
+        return labels.length === 1
+          ? [
+              labels[0].className,
+              labels[0].textContent,
+              checkbox.closest("li")?.contains(labels[0]),
+            ]
+          : null;
+      }),
+    ).toStrictEqual([
+      ["prosemirror-remark-task-list-item-content", "Hello", true],
+      ["prosemirror-remark-task-list-item-content", "World", true],
+    ]);
+  });
+
   test("checking the checkbox checks the item", () => {
     const fx = render("* [ ] Hello\n");
 

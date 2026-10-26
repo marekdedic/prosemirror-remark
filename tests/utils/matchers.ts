@@ -88,6 +88,19 @@ function noWarningsLogged(
   };
 }
 
+function renderDOM(
+  fx: ExtensionFixture<UnistLike>,
+  source: Build<Array<BuiltNode>>,
+): HTMLElement {
+  const container = document.createElement("div");
+  container.appendChild(
+    DOMSerializer.fromSchema(fx.schema).serializeFragment(
+      Fragment.from(fx.resolveNodes(source(fx.b))),
+    ),
+  );
+  return container;
+}
+
 function runEditorInput(
   fx: ExtensionFixture<UnistLike>,
   before: ProseMirrorNode,
@@ -322,23 +335,44 @@ expect.extend({
     };
   },
 
+  toRenderAccessibleNames(
+    this: MatcherState,
+    fx: ExtensionFixture<UnistLike>,
+    source: Build<Array<BuiltNode>>,
+    selector: string,
+    names: Array<string>,
+  ): SyncMatcherResult {
+    const container = renderDOM(fx, source);
+    const actual = Array.from(container.querySelectorAll(selector), (element) =>
+      (element.getAttribute("aria-labelledby") ?? "")
+        .split(/\s+/u)
+        .filter((id) => id !== "")
+        .map((id) => {
+          const labels = container.querySelectorAll(`[id="${id}"]`);
+          return labels.length === 1 ? labels[0].textContent : null;
+        })
+        .join(" "),
+    );
+    return {
+      actual,
+      expected: names,
+      message: () => "expected rendered accessible names to match",
+      pass: this.equals(actual, names),
+    };
+  },
+
   toRenderDOM(
     this: MatcherState,
     fx: ExtensionFixture<UnistLike>,
     source: Build<Array<BuiltNode>>,
-    html: string,
+    html: RegExp | string,
   ): SyncMatcherResult {
-    const container = document.createElement("div");
-    container.appendChild(
-      DOMSerializer.fromSchema(fx.schema).serializeFragment(
-        Fragment.from(fx.resolveNodes(source(fx.b))),
-      ),
-    );
+    const actual = renderDOM(fx, source).innerHTML;
     return {
-      actual: container.innerHTML,
+      actual,
       expected: html,
       message: () => "expected DOM rendering to match",
-      pass: container.innerHTML === html,
+      pass: typeof html === "string" ? actual === html : html.test(actual),
     };
   },
 
@@ -525,7 +559,12 @@ interface ExtensionMatchers<R> {
   toParseDOMInIframe(html: string, target: Build<Array<BuiltNode>>): R;
   toProvideMark(name: string | null): R;
   toProvideNode(name: string | null): R;
-  toRenderDOM(source: Build<Array<BuiltNode>>, html: string): R;
+  toRenderAccessibleNames(
+    source: Build<Array<BuiltNode>>,
+    selector: string,
+    names: Array<string>,
+  ): R;
+  toRenderDOM(source: Build<Array<BuiltNode>>, html: RegExp | string): R;
   toReportKeymapApplicability(
     nodes: Build<Array<BuiltNode>>,
     selection: TesterSelection,
