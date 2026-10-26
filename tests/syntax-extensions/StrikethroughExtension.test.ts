@@ -258,6 +258,15 @@ describe("StrikethroughExtension", () => {
       );
     });
 
+    test.each([
+      ["~~a~", "\\~\\~a\\~"],
+      ["~a~~", "\\~a\\~\\~"],
+      ["~~~a~~", "\\~\\~\\~a\\~\\~"],
+      ["~~a~~~", "\\~\\~a\\~\\~\\~"],
+    ])("does not match the unbalanced strikethrough %j", (input, markdown) => {
+      expect(fx).toTransformInlineInput(input, () => [input], markdown);
+    });
+
     test("does not match a leading `~ `", () => {
       expect(fx).toTransformInlineInput(
         "~ ~Test~",
