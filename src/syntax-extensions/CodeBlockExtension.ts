@@ -297,7 +297,9 @@ function findCodeBlock(
 
 function languageFromClass(element: Element | null | undefined): string | null {
   for (const className of Array.from(element?.classList ?? [])) {
-    const lang = /^(?:lang|language)-(.+)$/u.exec(className)?.[1];
+    const lang = /^(?:lang|language)-(?<lang>.+)$/u.exec(className)?.groups?.[
+      "lang"
+    ];
     // Prism marks a block without a language with language-none
     if (lang !== undefined && lang !== "none") {
       return lang;

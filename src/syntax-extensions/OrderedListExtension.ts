@@ -29,11 +29,12 @@ export class OrderedListExtension extends NodeExtension<List> {
   ): Array<InputRule> {
     return [
       wrappingInputRule(
-        /^\s{0,3}(\d+)\.\s$/u,
+        /^\s{0,3}(?<start>\d+)\.\s$/u,
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-        (match) => ({ start: +match[1] }),
+        (match) => ({ start: Number(match.groups?.["start"]) }),
         (match, node) =>
-          node.childCount + (node.attrs["start"] as number) === +match[1],
+          node.childCount + (node.attrs["start"] as number) ===
+          Number(match.groups?.["start"]),
       ),
     ];
   }

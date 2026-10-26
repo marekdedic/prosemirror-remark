@@ -34,7 +34,7 @@ const extractExamples = (spec: string): Array<SpecExample> => {
     .replace(/\r\n?/gu, "\n")
     .replace(/^<!-- END TESTS -->[\s\S]*/mu, "")
     .replace(
-      /^`{32} example(?: (\w+))?\n([\s\S]*?)^\.\n([\s\S]*?)^`{32}$|^#{1,6} (.*)$/gmu,
+      /^`{32} example(?: (?<extension>\w+))?\n(?<markdown>[\s\S]*?)^\.\n(?<html>[\s\S]*?)^`{32}$|^#{1,6} (?<heading>.*)$/gmu,
       (
         _,
         extension: string | undefined,
@@ -65,8 +65,8 @@ const render = (markdown: string): string =>
     extensions: [gfm()],
     htmlExtensions: [gfmHtml()],
   }).replace(
-    /<input type="checkbox" disabled=""( checked="")? \/>/gu,
-    '<input$1 disabled="" type="checkbox">',
+    /<input type="checkbox" disabled=""(?<checked> checked="")? \/>/gu,
+    '<input$<checked> disabled="" type="checkbox">',
   );
 
 const specExamples = extractExamples(

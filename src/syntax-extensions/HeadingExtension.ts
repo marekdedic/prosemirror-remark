@@ -75,9 +75,9 @@ export class HeadingExtension extends NodeExtension<Heading> {
   ): Array<InputRule> {
     return [
       textblockTypeInputRule(
-        /^\s{0,3}(#{1,6})\s$/u,
+        /^\s{0,3}(?<hashes>#{1,6})\s$/u,
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-        (match) => ({ level: match[1].length }),
+        (match) => ({ level: match.groups?.["hashes"].length }),
       ),
     ];
   }
