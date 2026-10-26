@@ -25,6 +25,7 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 import { isAtStart } from "../utils/isAtStart";
 import { listItemKeymap } from "../utils/listItemKeymap";
+import { uniqueId } from "../utils/uniqueId";
 
 class TaskListItemView implements NodeView {
   public readonly contentDOM: HTMLElement;
@@ -38,8 +39,11 @@ class TaskListItemView implements NodeView {
   ) {
     // The editor may be in another window, e.g. an iframe
     const doc = view.dom.ownerDocument;
+    // The checkbox takes its accessible name from the item's content
+    const id = contentId();
     const checkbox = doc.createElement("input");
     checkbox.setAttribute("type", "checkbox");
+    checkbox.setAttribute("aria-labelledby", id);
     if (node.attrs["checked"] === true) {
       checkbox.setAttribute("checked", "checked");
     }
@@ -77,6 +81,7 @@ class TaskListItemView implements NodeView {
       "class",
       "prosemirror-remark-task-list-item-content",
     );
+    this.contentDOM.setAttribute("id", id);
 
     this.dom = doc.createElement("li");
     this.dom.setAttribute("class", "prosemirror-remark-task-list-item");
@@ -198,32 +203,41 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
           tag: "li",
         },
       ],
-      toDOM: (node: ProseMirrorNode): DOMOutputSpec => [
-        "li",
-        {
-          class: "prosemirror-remark-task-list-item",
-          "data-checked": node.attrs["checked"] as boolean,
-          "data-spread": node.attrs["spread"] as boolean,
-        },
-        [
-          "span",
+      toDOM: (node: ProseMirrorNode): DOMOutputSpec => {
+        // The checkbox takes its accessible name from the item's content
+        const id = contentId();
+        return [
+          "li",
           {
-            class: "prosemirror-remark-task-list-item-checkbox",
-            contenteditable: "false",
+            class: "prosemirror-remark-task-list-item",
+            "data-checked": node.attrs["checked"] as boolean,
+            "data-spread": node.attrs["spread"] as boolean,
           },
           [
-            "input",
+            "span",
             {
-              checked: (node.attrs["checked"] as boolean)
-                ? "checked"
-                : undefined,
-              disabled: "disabled",
-              type: "checkbox",
+              class: "prosemirror-remark-task-list-item-checkbox",
+              contenteditable: "false",
             },
+            [
+              "input",
+              {
+                "aria-labelledby": id,
+                checked: (node.attrs["checked"] as boolean)
+                  ? "checked"
+                  : undefined,
+                disabled: "disabled",
+                type: "checkbox",
+              },
+            ],
           ],
-        ],
-        ["div", { class: "prosemirror-remark-task-list-item-content" }, 0],
-      ],
+          [
+            "div",
+            { class: "prosemirror-remark-task-list-item-content", id },
+            0,
+          ],
+        ];
+      },
     };
   }
 
@@ -281,4 +295,8 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       typeof node.checked === "boolean"
     );
   }
+}
+
+function contentId(): string {
+  return uniqueId("prosemirror-remark-task-list-item-content");
 }

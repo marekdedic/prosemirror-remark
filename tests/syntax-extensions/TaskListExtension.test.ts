@@ -9,8 +9,24 @@ import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedLis
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
-function renderedTaskList(checked: boolean): string {
-  return `<ul data-spread="false"><li class="prosemirror-remark-task-list-item" data-checked="${String(checked)}" data-spread="false"><span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false"><input ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><div class="prosemirror-remark-task-list-item-content"><p>a</p></div></li></ul>`;
+function renderedTaskList(
+  checked: boolean,
+  { id = "prosemirror-remark-task-list-item-content-1", spread = false } = {},
+): string {
+  return `<ul data-spread="false"><li class="prosemirror-remark-task-list-item" data-checked="${String(checked)}" data-spread="${String(spread)}"><span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false"><input aria-labelledby="${id}" ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><div class="prosemirror-remark-task-list-item-content" id="${id}"><p>a</p></div></li></ul>`;
+}
+
+function renderedTaskListPattern(checked: boolean, spread = false): RegExp {
+  const [before, between, after] = renderedTaskList(checked, {
+    id: "ID",
+    spread,
+  })
+    .split("ID")
+    .map((part) => part.replace(/[$()*+.?[\\\]^{|}]/gu, "\\$&"));
+  return new RegExp(
+    `^${before}(prosemirror-remark-task-list-item-content-\\d+)${between}\\1${after}$`,
+    "u",
+  );
 }
 
 describe("TaskListExtension", () => {
@@ -1395,17 +1411,27 @@ describe("TaskListExtension", () => {
     test.each([true, false])("renders DOM with checked: %j", (checked) => {
       expect(fx).toRenderDOM(
         (b) => [b.ul(b.taskListItem({ checked }, b.p("a")))],
-        renderedTaskList(checked),
+        renderedTaskListPattern(checked),
       );
     });
 
     test("renders a spread task item", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ul(b.taskListItem({ spread: true }, b.p("a")))],
-        renderedTaskList(false).replace(
-          'data-checked="false" data-spread="false"',
-          'data-checked="false" data-spread="true"',
-        ),
+        renderedTaskListPattern(false, true),
+      );
+    });
+
+    test("renders checkboxes labelled by their own item's content", () => {
+      expect(fx).toRenderAccessibleNames(
+        (b) => [
+          b.ul(
+            b.taskListItem(b.p("a")),
+            b.taskListItem({ checked: true }, b.p("b")),
+          ),
+        ],
+        "input",
+        ["a", "b"],
       );
     });
   });
