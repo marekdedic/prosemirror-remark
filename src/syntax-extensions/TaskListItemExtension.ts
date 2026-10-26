@@ -31,6 +31,7 @@ class TaskListItemView implements NodeView {
   public readonly contentDOM: HTMLElement;
   public readonly dom: HTMLElement;
   private readonly checkboxContainer: HTMLElement;
+  private readonly editableObserver: MutationObserver;
 
   public constructor(
     node: ProseMirrorNode,
@@ -47,12 +48,16 @@ class TaskListItemView implements NodeView {
     if (node.attrs["checked"] === true) {
       checkbox.setAttribute("checked", "checked");
     }
+    checkbox.disabled = !view.editable;
     checkbox.addEventListener("click", (e) => {
       const pos = getPos();
       if (pos === undefined) {
         return;
       }
       e.preventDefault();
+      if (!view.editable) {
+        return;
+      }
       view.dispatch(
         view.state.tr.setNodeAttribute(
           pos,
@@ -95,6 +100,22 @@ class TaskListItemView implements NodeView {
     );
     this.dom.appendChild(this.checkboxContainer);
     this.dom.appendChild(this.contentDOM);
+
+    // The node view isn't updated when only the editor's editable prop
+    // changes, and a disabled checkbox gets no events of its own to catch up
+    // on. ProseMirror mirrors the prop in the editor's contenteditable
+    // attribute, so the checkbox follows that
+    const Observer = doc.defaultView?.MutationObserver ?? MutationObserver;
+    this.editableObserver = new Observer(() => {
+      checkbox.disabled = !view.editable;
+    });
+    this.editableObserver.observe(view.dom, {
+      attributeFilter: ["contenteditable"],
+    });
+  }
+
+  public destroy(): void {
+    this.editableObserver.disconnect();
   }
 
   // No instanceof checks: in an iframe, events and nodes come from another

@@ -209,16 +209,33 @@ describe("TaskListItemView", () => {
     [false, true],
     [true, false],
   ])(
-    "catches up on pointer enter when the editor's editable prop changes to %s",
-    (editable, disabled) => {
+    "follows the editor's editable prop when it changes to %s",
+    async (editable, disabled) => {
+      expect.assertions(1);
+
       const fx = render("* [ ] Hello\n", { editable: () => !editable });
       setEditable(fx, editable);
-
-      fx.editor.element("li").dispatchEvent(new MouseEvent("pointerenter"));
+      await Promise.resolve();
 
       expect(input(fx).disabled).toBe(disabled);
     },
   );
+
+  test("stops following the editor's editable prop when destroyed", () => {
+    const observe = vi.spyOn(MutationObserver.prototype, "observe");
+    const disconnect = vi.spyOn(MutationObserver.prototype, "disconnect");
+    render("* [ ] Hello\n").editor.destroy();
+    const observer =
+      observe.mock.contexts[
+        observe.mock.calls.findIndex(
+          ([, options]) =>
+            options?.attributeFilter?.includes("contenteditable") === true,
+        )
+      ];
+
+    expect(observer).toBeDefined();
+    expect(disconnect.mock.contexts).toContain(observer);
+  });
 
   test("clicking the checkbox does nothing in a read-only editor", () => {
     const fx = render("* [ ] Hello\n");
