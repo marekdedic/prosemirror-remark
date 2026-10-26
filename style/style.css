@@ -36,10 +36,10 @@
   outline: none;
   padding: 0;
 
-  /* eslint-disable-next-line css/no-invalid-properties -- Safari only supports the prefixed value */
-  text-align: -webkit-match-parent; /* stylelint-disable-line declaration-property-value-no-unknown -- Safari only supports the prefixed value */
+  /* eslint-disable-next-line css/no-invalid-properties -- Chrome and Edge only support the prefixed value */
+  text-align: -webkit-match-parent; /* stylelint-disable-line declaration-property-value-no-unknown -- Chrome and Edge only support the prefixed value */
 
-  /* eslint-disable-next-line css/use-baseline -- Falls back to the prefixed value above in Safari */
+  /* eslint-disable-next-line css/use-baseline -- Falls back to the prefixed value above in Chrome and Edge */
   text-align: match-parent;
 }
 
