@@ -1,6 +1,6 @@
 import type { ProseMirrorUnified } from "prosemirror-unified";
 
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 
 export interface KnownFailure {
   cause: string;
@@ -59,6 +59,7 @@ export function testSpecExamples(
   test.fails.each(examples.filter(({ cause }) => cause !== undefined))(
     "example $number ($section): $cause",
     ({ html, markdown }) => {
+      vi.spyOn(console, "warn").mockImplementation(() => undefined);
       expect(roundTrip(markdown)).toBe(html);
     },
   );
