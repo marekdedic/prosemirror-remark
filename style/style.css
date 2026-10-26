@@ -2,12 +2,12 @@
   background: rgb(127 127 127 / 12%);
   border-radius: 0.375em;
   display: block;
-  overflow-x: auto;
+  overflow-x: auto; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Only overflow: clip and two-value overflow are partially supported */
   padding: 0.75em 1em;
 }
 
 .prosemirror-remark-code-block-language + code {
-  border-start-start-radius: 0;
+  border-start-start-radius: 0; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Older browsers keep a rounded corner under the tab, which is only cosmetic */
 }
 
 .prosemirror-remark-code-block-language {
@@ -20,7 +20,7 @@
 }
 
 .prosemirror-remark-code-block-language-label {
-  margin-inline-end: 0.5em;
+  margin-inline-end: 0.5em; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Only Chrome 66-68 lack it, and lose just the gap after the label */
   opacity: 0.55;
 }
 
