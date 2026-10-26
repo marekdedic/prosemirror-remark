@@ -17,7 +17,7 @@ const fenceStart = /^ {0,3}(?:`{3}|~{3})/u;
 // the fence is prose, even if CommonMark would read it as a fence with a meta.
 // A line break, image or hard break (see paragraphText) ends the line early.
 const typeableFenceLine = new RegExp(
-  `${fenceStart.source}[^ \\t\\n\\r\\ufffc]*$`,
+  `${fenceStart.source}[^\\t\\n\\r \\ufffc]*$`,
   "u",
 );
 
@@ -28,7 +28,7 @@ const typedSpace = "[ \\u00a0]";
 
 // A fence followed by a language and a space, which converts the paragraph
 const fenceOnSpace = new RegExp(
-  `${fenceStart.source}[^ \\t\\u00a0]*${typedSpace}$`,
+  `${fenceStart.source}[^\\t \\u00a0]*${typedSpace}$`,
   "u",
 );
 

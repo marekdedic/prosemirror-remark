@@ -1,7 +1,7 @@
 import type { Node as ProseMirrorNode } from "prosemirror-model";
 
 // The characters CommonMark splits an info string at
-const infoWhitespaceCharacter = "[ \\t\\n\\r]";
+const infoWhitespaceCharacter = "[\\t\\n\\r ]";
 
 export const infoWhitespace = new RegExp(infoWhitespaceCharacter, "u");
 
@@ -48,6 +48,6 @@ export function normaliseLanguage(
 
 function normaliseMeta(meta: string | null | undefined): string | null {
   // The parser drops leading spaces and tabs, but keeps trailing ones
-  const normalised = meta?.replace(/^[ \t]+/u, "") ?? "";
+  const normalised = meta?.replace(/^[\t ]+/u, "") ?? "";
   return normalised === "" ? null : normalised;
 }
