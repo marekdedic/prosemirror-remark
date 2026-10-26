@@ -11,13 +11,7 @@ import {
   NodeExtension,
   type SyntaxExtension,
 } from "prosemirror-unified";
-import {
-  expect,
-  type MatcherState,
-  type MockInstance,
-  type SyncMatcherResult,
-  vi,
-} from "vitest";
+import { expect, type MatcherState, type SyncMatcherResult, vi } from "vitest";
 import {
   parseHTML,
   type ProseMirrorEditor,
@@ -81,15 +75,15 @@ function nodesEqual(
 }
 
 function noWarningsLogged(
-  warn: MockInstance,
+  calls: Array<Array<unknown>>,
   ctx: MatcherState,
 ): SyncMatcherResult {
   return {
     message: () =>
       `expected console.warn not to have been called, but it was called with\n${ctx.utils.printReceived(
-        warn.mock.calls,
+        calls,
       )}`,
-    pass: warn.mock.calls.length === 0,
+    pass: calls.length === 0,
   };
 }
 
@@ -103,36 +97,40 @@ function runEditorInput(
   ctx: MatcherState,
 ): SyncMatcherResult {
   const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-  const editor = renderProseMirror(before, {
-    editorProps: {
-      plugins: [fx.pmu.inputRulesPlugin(), fx.pmu.keymapPlugin()],
-    },
-  });
-  editor.setSelection(selection);
-  if (typeof editorInput === "string") {
-    editor.type(editorInput);
-  } else {
-    const input = editorInput(editor);
-    if (!input.pass) {
-      return input;
+  try {
+    const editor = renderProseMirror(before, {
+      editorProps: {
+        plugins: [fx.pmu.inputRulesPlugin(), fx.pmu.keymapPlugin()],
+      },
+    });
+    editor.setSelection(selection);
+    if (typeof editorInput === "string") {
+      editor.type(editorInput);
+    } else {
+      const input = editorInput(editor);
+      if (!input.pass) {
+        return input;
+      }
     }
-  }
 
-  const nodes = nodesEqual(editor.doc, after);
-  if (!nodes.pass) {
-    return nodes;
+    const nodes = nodesEqual(editor.doc, after);
+    if (!nodes.pass) {
+      return nodes;
+    }
+    const serialized = fx.pmu.serialize(editor.doc).replace(/\n$/gu, "");
+    if (serialized !== markdownOutput) {
+      return {
+        message: () =>
+          `expected serialisation\n${ctx.utils.printReceived(
+            serialized,
+          )}\nto equal\n${ctx.utils.printExpected(markdownOutput)}`,
+        pass: false,
+      };
+    }
+    return noWarningsLogged([...warn.mock.calls], ctx);
+  } finally {
+    warn.mockRestore();
   }
-  const serialized = fx.pmu.serialize(editor.doc).replace(/\n$/gu, "");
-  if (serialized !== markdownOutput) {
-    return {
-      message: () =>
-        `expected serialisation\n${ctx.utils.printReceived(
-          serialized,
-        )}\nto equal\n${ctx.utils.printExpected(markdownOutput)}`,
-      pass: false,
-    };
-  }
-  return noWarningsLogged(warn, ctx);
 }
 
 function runInputVariants(

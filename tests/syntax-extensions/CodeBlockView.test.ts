@@ -2,7 +2,7 @@ import type { Schema } from "prosemirror-model";
 import type { Command } from "prosemirror-state";
 import type { EditorView } from "prosemirror-view";
 
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 import {
   CodeBlockExtension,
@@ -94,10 +94,6 @@ function typeText(fx: NodeViewFixture, data: string): boolean {
 }
 
 describe("CodeBlockView", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   test("renders the language", () => {
     const fx = render("```js\nHello\n```\n");
 
