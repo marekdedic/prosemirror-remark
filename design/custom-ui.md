@@ -128,7 +128,7 @@ A control that a node view adds (see the DOM contract) is part of the editor, so
 </li>
 ```
 
-The default stylesheet hides the list marker and positions the checkbox where the marker would be (`position: absolute; right: 100%` against the `li`). It also gives the node view's enabled checkbox a pointer cursor.
+The default stylesheet hides the list marker and positions the checkbox where the marker would be (`position: absolute; inset-inline-end: 100%` against the `li`). It also gives the node view's enabled checkbox a pointer cursor.
 
 ### Code blocks (implemented)
 
