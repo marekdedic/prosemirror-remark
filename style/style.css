@@ -7,6 +7,7 @@
 }
 
 .prosemirror-remark-code-block-language + code {
+  /* eslint-disable-next-line css/use-baseline -- Older browsers keep a rounded corner under the tab, which is only cosmetic */
   border-start-start-radius: 0; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Older browsers keep a rounded corner under the tab, which is only cosmetic */
 }
 
@@ -20,6 +21,7 @@
 }
 
 .prosemirror-remark-code-block-language-label {
+  /* eslint-disable-next-line css/use-baseline -- Only Chrome 66-68 lack it, and lose just the gap after the label */
   margin-inline-end: 0.5em; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Only Chrome 66-68 lack it, and lose just the gap after the label */
   opacity: 0.55;
 }
@@ -29,12 +31,19 @@
   border: none;
   color: inherit;
   font: inherit;
+
+  /* eslint-disable-next-line css/use-baseline -- Only outlines following border-radius are newer, and this draws none */
   outline: none;
   padding: 0;
+
+  /* eslint-disable-next-line css/no-invalid-properties -- Safari only supports the prefixed value */
   text-align: -webkit-match-parent; /* stylelint-disable-line declaration-property-value-no-unknown -- Safari only supports the prefixed value */
+
+  /* eslint-disable-next-line css/use-baseline -- Falls back to the prefixed value above in Safari */
   text-align: match-parent;
 }
 
+/* eslint-disable-next-line css/use-baseline -- Only Edge 18 lacks it, and the browserslist excludes it */
 .prosemirror-remark-code-block-language:focus-within {
   box-shadow: inset 0 -2px rgb(127 127 127 / 50%);
 }
@@ -45,6 +54,7 @@
 }
 
 .prosemirror-remark-task-list-item-checkbox {
+  /* eslint-disable-next-line css/use-baseline -- Only Edge 18 lacks it, and the browserslist excludes it */
   align-items: baseline;
   display: flex;
   justify-content: flex-end;
