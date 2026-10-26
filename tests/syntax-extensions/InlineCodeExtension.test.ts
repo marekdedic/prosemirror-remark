@@ -147,6 +147,14 @@ describe("InlineCodeExtension", () => {
       );
     });
 
+    test.each([
+      ["``a`", "\\`\\`a\\`"],
+      ["`a``", "\\`a\\`\\`"],
+      ["``a``", "\\`\\`a\\`\\`"],
+    ])("does not match the unbalanced code span %j", (input, markdown) => {
+      expect(fx).toTransformInlineInput(input, () => [input], markdown);
+    });
+
     test("matches ` across a paragraph break", () => {
       expect(fx).toTransformInlineInput(
         "`Test`{Enter}",
