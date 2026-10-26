@@ -137,6 +137,9 @@
   },
   "browserslist": [
     "baseline 2019",
-    "not edge 18"
+    "not edge 18",
+    "not firefox < 78",
+    "not safari < 16.4",
+    "not ios_saf < 16.4"
   ]
 }
