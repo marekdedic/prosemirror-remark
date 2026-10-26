@@ -36,6 +36,10 @@ function inIframe(markdown: string): {
   return { iframeDocument, nodeView };
 }
 
+function input(fx: NodeViewFixture): HTMLInputElement {
+  return fx.editor.element("input") as HTMLInputElement;
+}
+
 function press(
   fx: NodeViewFixture,
   key: string,
@@ -53,14 +57,26 @@ function press(
 
 function render(
   markdown: string,
-  mousedown?: (view: EditorView, event: MouseEvent) => boolean,
+  editorProps: {
+    editable?(): boolean;
+    handleDOMEvents?: {
+      mousedown(view: EditorView, event: MouseEvent): boolean;
+    };
+  } = {},
 ): NodeViewFixture {
   return renderNodeView(
     new TaskListItemExtension(),
     markdown,
     [new UnorderedListExtension(), new ListItemExtension()],
-    mousedown === undefined ? {} : { handleDOMEvents: { mousedown } },
+    editorProps,
   );
+}
+
+function setEditable(fx: NodeViewFixture, editable: boolean): void {
+  fx.editor.command((_state, _dispatch, view) => {
+    view?.setProps({ editable: () => editable });
+    return true;
+  });
 }
 
 describe("TaskListItemView", () => {
@@ -179,6 +195,40 @@ describe("TaskListItemView", () => {
     expect(render("* [ ] Hello\n").editor.click("input")).toBe(true);
   });
 
+  test("disables the checkbox in a read-only editor", () => {
+    expect(
+      input(render("* [ ] Hello\n", { editable: () => false })).disabled,
+    ).toBe(true);
+  });
+
+  test("enables the checkbox in an editable editor", () => {
+    expect(input(render("* [ ] Hello\n")).disabled).toBe(false);
+  });
+
+  test.each([
+    [false, true],
+    [true, false],
+  ])(
+    "catches up on pointer enter when the editor's editable prop changes to %s",
+    (editable, disabled) => {
+      const fx = render("* [ ] Hello\n", { editable: () => !editable });
+      setEditable(fx, editable);
+
+      fx.editor.element("li").dispatchEvent(new MouseEvent("pointerenter"));
+
+      expect(input(fx).disabled).toBe(disabled);
+    },
+  );
+
+  test("clicking the checkbox does nothing in a read-only editor", () => {
+    const fx = render("* [ ] Hello\n");
+    setEditable(fx, false);
+
+    expect(fx.editor.click("input")).toBe(true);
+    expect(fx.markdown()).toBe("* [ ] Hello");
+    expect(fx.editor.element("li").getAttribute("data-checked")).toBe("false");
+  });
+
   test("does nothing when the node has no position in the document", () => {
     const { editor } = render("* [ ] Hello\n");
     const checkbox = editor.element("input");
@@ -197,7 +247,9 @@ describe("TaskListItemView", () => {
 
   test("lets ProseMirror handle events inside the item content", () => {
     const mousedown = vi.fn(() => true);
-    const { editor } = render("* [ ] Hello\n", mousedown);
+    const { editor } = render("* [ ] Hello\n", {
+      handleDOMEvents: { mousedown },
+    });
 
     editor
       .element(".prosemirror-remark-task-list-item-content p")
@@ -211,7 +263,9 @@ describe("TaskListItemView", () => {
 
   test("stops ProseMirror from handling events on the checkbox", () => {
     const mousedown = vi.fn(() => true);
-    const { editor } = render("* [ ] Hello\n", mousedown);
+    const { editor } = render("* [ ] Hello\n", {
+      handleDOMEvents: { mousedown },
+    });
 
     editor
       .element("input")
