@@ -33,6 +33,7 @@ export default defineConfig({
     coverage: {
       exclude: ["tests/**"],
     },
+    css: { include: [/style\/style\.css/u] },
     environment: "jsdom",
     restoreMocks: true,
     setupFiles: ["vitest-prosemirror/setup", "./tests/utils/matchers.ts"],
