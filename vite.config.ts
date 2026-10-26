@@ -34,7 +34,7 @@ export default defineConfig({
       exclude: ["tests/**"],
     },
     environment: "jsdom",
-    mockReset: true,
+    restoreMocks: true,
     setupFiles: ["vitest-prosemirror/setup", "./tests/utils/matchers.ts"],
   },
 });
