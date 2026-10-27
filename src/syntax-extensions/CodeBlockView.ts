@@ -16,6 +16,7 @@ import {
 } from "../utils/codeBlockAttrs";
 import { isMac } from "../utils/isMac";
 import { isRightToLeft } from "../utils/isRightToLeft";
+import { isBackwardKey, moveFromControl } from "../utils/nodeViewControl";
 
 export class CodeBlockView implements NodeView {
   public readonly contentDOM: HTMLElement;
@@ -189,22 +190,24 @@ export class CodeBlockView implements NodeView {
       return;
     }
     const { doc } = this.view.state;
-    const { selectionEnd, selectionStart, value } = this.input;
-    const atStart = selectionStart === 0 && selectionEnd === 0;
-    const atEnd =
-      selectionStart === value.length && selectionEnd === value.length;
-    const toCode = TextSelection.create(doc, pos + 1);
+    // Built only for the keys that move, not for every key typed in the field
+    const toCode = (): Selection => TextSelection.create(doc, pos + 1);
     // With nothing above, the field keeps the focus
-    const above = Selection.findFrom(doc.resolve(pos), -1);
+    const above = (): Selection | null =>
+      Selection.findFrom(doc.resolve(pos), -1);
     let selection: Selection | null;
     switch (e.key) {
       case "ArrowDown":
       case "Enter":
       case "Escape":
-        selection = toCode;
+        selection = toCode();
         break;
       case "ArrowLeft":
       case "ArrowRight": {
+        const { selectionEnd, selectionStart, value } = this.input;
+        const atStart = selectionStart === 0 && selectionEnd === 0;
+        const atEnd =
+          selectionStart === value.length && selectionEnd === value.length;
         const left = e.key === "ArrowLeft";
         // Which edge of the field's text the key leaves at follows the field's
         // own direction (left-to-right for most language names), but where it
@@ -214,24 +217,18 @@ export class CodeBlockView implements NodeView {
         if (!atEdge) {
           return;
         }
-        const backward = left !== isRightToLeft(this.languageContainer);
-        selection = backward ? above : toCode;
+        selection = isBackwardKey(e.key, this.languageContainer)
+          ? above()
+          : toCode();
         break;
       }
       case "ArrowUp":
-        selection = above;
+        selection = above();
         break;
       default:
         return;
     }
-    if (selection === null) {
-      return;
-    }
-    e.preventDefault();
-    this.view.dispatch(
-      this.view.state.tr.setSelection(selection).scrollIntoView(),
-    );
-    this.view.focus();
+    moveFromControl(this.view, e, selection);
   }
 
   private insert(text: string): void {
