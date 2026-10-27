@@ -1,5 +1,4 @@
 import type { Code, Text } from "mdast";
-import type { Unsafe } from "mdast-util-to-markdown";
 import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
@@ -8,8 +7,6 @@ import type {
   Schema,
 } from "prosemirror-model";
 import type { NodeViewConstructor } from "prosemirror-view";
-import type { Processor } from "unified";
-import type { Node as UnistNode } from "unist";
 
 import { chainCommands, setBlockType } from "prosemirror-commands";
 import {
@@ -25,7 +22,6 @@ import {
   NodeExtension,
 } from "prosemirror-unified";
 
-import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 import {
   type CodeBlockAttrs,
   codeBlockAttrs,
@@ -37,18 +33,6 @@ import { codeBlockInputRules, fenceOnEnter } from "../utils/codeBlockInput";
 import { isRightToLeft } from "../utils/isRightToLeft";
 import { CodeBlockView } from "./CodeBlockView";
 import { TextExtension } from "./TextExtension";
-
-// The character references CommonMark decodes in an info string
-const unsafeInfoStringAmpersand: Unsafe = {
-  after: "#?[\\dA-Za-z]+;",
-  character: "&",
-  inConstruct: [
-    "codeFencedLangGraveAccent",
-    "codeFencedLangTilde",
-    "codeFencedMetaGraveAccent",
-    "codeFencedMetaTilde",
-  ],
-};
 
 export class CodeBlockExtension extends NodeExtension<Code> {
   private static focusLanguage(direction: "left" | "right" | "up"): Command {
@@ -229,14 +213,6 @@ export class CodeBlockExtension extends NodeExtension<Code> {
 
   public override proseMirrorNodeView(): NodeViewConstructor | null {
     return (node, view, getPos) => new CodeBlockView(node, view, getPos);
-  }
-
-  public override unifiedInitializationHook(
-    processor: Processor<UnistNode, UnistNode, UnistNode, UnistNode, string>,
-  ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
-    return processor.use(
-      buildUnifiedExtension([], [], [{ unsafe: [unsafeInfoStringAmpersand] }]),
-    );
   }
 
   public override unistNodeName(): "code" {
