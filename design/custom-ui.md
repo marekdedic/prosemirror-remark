@@ -132,6 +132,8 @@ The checkbox takes its accessible name from the content with `aria-labelledby`, 
 
 The default stylesheet hides the list marker and positions the checkbox where the marker would be. The checkbox wrapper is absolutely positioned against the `li` without any offsets, so it stays at the `li`'s start edge in either direction. It's a zero-width flex container with `justify-content: flex-end`, so its content overflows outwards, past that edge. A zero-width space in `::after` is a second flex item: with `align-items: baseline` it lines the checkbox up with the first line of text, and its `flex-basis` is the gap between the checkbox and the text. This needs no logical properties, which older browsers lack (`inset-inline-end` needs Chrome and Edge 87). The stylesheet also gives the node view's enabled checkbox a pointer cursor.
 
+In a read-only editor, the node view's checkbox is disabled and clicking it does nothing. A disabled checkbox gets no focus or clicks, and the node view isn't updated when only the `editable` prop changes, so the node view follows the prop through the `contenteditable` attribute ProseMirror keeps on the editor's DOM.
+
 ### Code blocks (implemented)
 
 See `design/code-block-language.md`.
