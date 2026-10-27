@@ -257,12 +257,12 @@ While a paragraph's text is a fence line, typing in it must not trigger the inli
 
 #### Serialization: escape `&`
 
-`mdast-util-to-markdown` writes `&` unescaped in an info string, so a value containing something that looks like a character reference is decoded when read back (`title="&lt;x"` becomes `title="<x"`). `CodeBlockExtension` registers a to-markdown `unsafe` pattern for the four info-string constructs (`codeFencedLangGraveAccent`, `codeFencedLangTilde`, `codeFencedMetaGraveAccent`, `codeFencedMetaTilde`). It escapes `&` only when a reference follows (`after: "#?[\\dA-Za-z]+;"`), so `a&b` stays `a&b` and `a&amp;b` becomes `a\&amp;b`. Checked against the parser:
+CommonMark decodes character references in an info string, so an unescaped `&` would turn a value containing something that looks like a reference into something else when read back (`title="&lt;x"` would become `title="<x"`). Since version 2.2.1, `mdast-util-to-markdown` escapes `&` in the four info-string constructs (`codeFencedLangGraveAccent`, `codeFencedLangTilde`, `codeFencedMetaGraveAccent`, `codeFencedMetaTilde`) whenever a `#` or a letter follows, so `a&amp;b` becomes `a\&amp;b`, and `a&b` becomes `a\&b` too. Checked against the parser:
 
 | Value | Written | Read back |
 |---|---|---|
 | `a&amp;b` | `a\&amp;b` | `a&amp;b` |
-| `a&b` | `a&b` | `a&b` |
+| `a&b` | `a\&b` | `a&b` |
 | `meta` `title="&lt;x"` | `title="\&lt;x"` | `title="&lt;x"` |
 | `a\_b` | `a\\_b` | `a\_b` (already handled) |
 | `a`b` | `a&#x60;b` | `a`b` (already handled) |

@@ -24,7 +24,6 @@ import { ParagraphExtension } from "./syntax-extensions/ParagraphExtension";
 import { RootExtension } from "./syntax-extensions/RootExtension";
 import { TextExtension } from "./syntax-extensions/TextExtension";
 import { UnorderedListExtension } from "./syntax-extensions/UnorderedListExtension";
-import { joinListItemChildren } from "./utils/joinListItemChildren";
 
 export class MarkdownExtension extends Extension {
   public override dependencies(): Array<Extension> {
@@ -59,7 +58,6 @@ export class MarkdownExtension extends Extension {
   ): Processor<UnistNode, UnistNode, UnistNode, UnistNode, string> {
     return processor.use(remarkParse).use(remarkStringify, {
       fences: true,
-      join: [joinListItemChildren],
       listItemIndent: "one",
       rule: "-",
     }) as unknown as Processor<
