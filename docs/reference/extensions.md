@@ -202,11 +202,12 @@ Task list items (`- [ ] task`, `- [x] done`). Use it together with `UnorderedLis
 
 - **ProseMirror node:** `task_list_item`, with the attributes `checked` and `spread`, containing a paragraph followed by any blocks. It's in the `list_item` group, so it can be mixed with regular items in one list.
 - **HTML:** `<li class="prosemirror-remark-task-list-item" data-checked="…" data-spread="…">` containing a non-editable `<span class="prosemirror-remark-task-list-item-checkbox">` with an `<input type="checkbox" aria-labelledby="…">`, followed by a `<div class="prosemirror-remark-task-list-item-content" id="…">` with the content. The checkbox is labelled by the content, so screen readers announce the item's text with it; the `id` is generated and unique within the page. Styled by the default stylesheet, `prosemirror-remark/style.css`.
-- **Node view:** makes the checkbox clickable. Pass `pmu.nodeViews()` to your `EditorView` to enable it.
+- **Node view:** makes the checkbox clickable. `ArrowDown` and `ArrowRight` on the checkbox go to the start of the item's text, and `ArrowUp` and `ArrowLeft` to the block above, if there is one (in right-to-left text, `ArrowLeft` goes to the text and `ArrowRight` to the block above). Pass `pmu.nodeViews()` to your `EditorView` to enable it.
 - **Input rules:** `[ ] ` or `[] ` at the start of a list item turns it into an unchecked task item, and `[x] ` or `[X] ` into a checked one.
 - **Keyboard shortcuts:**
   - The [list item shortcuts](#lists). `Enter` starts a new, unchecked task item.
   - `Backspace` at the start of a task item turns it back into a regular list item.
+  - `ArrowLeft` at the very start of a task item (`ArrowRight` in right-to-left text) moves to its checkbox, where `Space` checks or unchecks it, when the node view is enabled.
 
 ### `ExtendedAutolinkExtension`
 

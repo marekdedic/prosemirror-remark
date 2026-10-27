@@ -5,7 +5,6 @@ import type {
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
-import type { Command } from "prosemirror-state";
 import type {
   EditorView,
   NodeView,
@@ -20,11 +19,19 @@ import {
 } from "mdast-util-gfm-task-list-item";
 import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
 import { InputRule } from "prosemirror-inputrules";
+import { type Command, Selection, TextSelection } from "prosemirror-state";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 import { isAtStart } from "../utils/isAtStart";
 import { listItemKeymap } from "../utils/listItemKeymap";
+import {
+  findControlInput,
+  focusControlInput,
+  isBackwardKey,
+  leavesTextblockStart,
+  moveFromControl,
+} from "../utils/nodeViewControl";
 import { uniqueId } from "../utils/uniqueId";
 
 class TaskListItemView implements NodeView {
@@ -32,12 +39,16 @@ class TaskListItemView implements NodeView {
   public readonly dom: HTMLElement;
   private readonly checkboxContainer: HTMLElement;
   private readonly editableObserver: MutationObserver;
+  private readonly getPos: () => number | undefined;
+  private readonly view: EditorView;
 
   public constructor(
     node: ProseMirrorNode,
     view: EditorView,
     getPos: () => number | undefined,
   ) {
+    this.view = view;
+    this.getPos = getPos;
     // The editor may be in another window, e.g. an iframe
     const doc = view.dom.ownerDocument;
     // The checkbox takes its accessible name from the item's content
@@ -71,6 +82,7 @@ class TaskListItemView implements NodeView {
       if (e.key === "Enter") {
         e.preventDefault();
       }
+      this.handleArrowKey(e);
     });
 
     this.checkboxContainer = doc.createElement("span");
@@ -123,9 +135,81 @@ class TaskListItemView implements NodeView {
   public stopEvent(event: Event): boolean {
     return this.checkboxContainer.contains(event.target as Node | null);
   }
+
+  private handleArrowKey(e: KeyboardEvent): void {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
+      return;
+    }
+    const pos = this.getPos();
+    if (pos === undefined) {
+      return;
+    }
+    const { doc } = this.view.state;
+    // Built only for the keys that move, not for every key on the checkbox
+    const toText = (): Selection => TextSelection.create(doc, pos + 2);
+    // With nothing above, the checkbox keeps the focus
+    const above = (): Selection | null =>
+      Selection.findFrom(doc.resolve(pos), -1);
+    switch (e.key) {
+      case "ArrowDown":
+        moveFromControl(this.view, e, toText());
+        break;
+      case "ArrowLeft":
+      case "ArrowRight":
+        moveFromControl(
+          this.view,
+          e,
+          isBackwardKey(e.key, this.checkboxContainer) ? above() : toText(),
+        );
+        break;
+      case "ArrowUp":
+        moveFromControl(this.view, e, above());
+        break;
+      default:
+        break;
+    }
+  }
 }
 
 export class TaskListItemExtension extends NodeExtension<ListItem> {
+  private static focusCheckbox(direction: "left" | "right"): Command {
+    return (state, dispatch, view): boolean => {
+      const { $from, empty } = state.selection;
+      if (
+        view === undefined ||
+        !view.editable ||
+        !empty ||
+        !$from.parent.isTextblock ||
+        $from.node(-1).type.name !== "task_list_item" ||
+        $from.index(-1) !== 0
+      ) {
+        return false;
+      }
+      const checkbox = findControlInput(
+        view,
+        $from.before(-1),
+        "prosemirror-remark-task-list-item-checkbox",
+      );
+      if (
+        checkbox === null ||
+        // A disabled checkbox, e.g. from toDOM without the node view, can't
+        // take focus
+        checkbox.disabled ||
+        // At the start, the key that leaves the text on the checkbox's side.
+        // In an empty paragraph, the checkbox's own side decides.
+        !leavesTextblockStart(
+          view,
+          $from,
+          direction,
+          () => checkbox.parentElement ?? checkbox,
+        )
+      ) {
+        return false;
+      }
+      return !dispatch || focusControlInput(view, checkbox);
+    };
+  }
+
   public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
@@ -163,6 +247,8 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       ...listItemKeymap(proseMirrorSchema.nodes[this.proseMirrorNodeName()], {
         checked: false,
       }),
+      ArrowLeft: TaskListItemExtension.focusCheckbox("left"),
+      ArrowRight: TaskListItemExtension.focusCheckbox("right"),
       Backspace: (state, dispatch, view): boolean => {
         if (!isAtStart(state, view)) {
           return false;
