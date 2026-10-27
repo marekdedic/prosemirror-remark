@@ -37,9 +37,11 @@ import { uniqueId } from "../utils/uniqueId";
 class TaskListItemView implements NodeView {
   public readonly contentDOM: HTMLElement;
   public readonly dom: HTMLElement;
+  private readonly checkbox: HTMLInputElement;
   private readonly checkboxContainer: HTMLElement;
   private readonly editableObserver: MutationObserver;
   private readonly getPos: () => number | undefined;
+  private node: ProseMirrorNode;
   private readonly view: EditorView;
 
   public constructor(
@@ -47,6 +49,7 @@ class TaskListItemView implements NodeView {
     view: EditorView,
     getPos: () => number | undefined,
   ) {
+    this.node = node;
     this.view = view;
     this.getPos = getPos;
     // The editor may be in another window, e.g. an iframe
@@ -54,28 +57,27 @@ class TaskListItemView implements NodeView {
     // The checkbox takes its accessible name from the item's content
     const id = contentId();
     const checkbox = doc.createElement("input");
+    this.checkbox = checkbox;
     checkbox.setAttribute("type", "checkbox");
     checkbox.setAttribute("aria-labelledby", id);
-    if (node.attrs["checked"] === true) {
-      checkbox.setAttribute("checked", "checked");
-    }
     checkbox.disabled = !view.editable;
     checkbox.addEventListener("click", (e) => {
       const pos = getPos();
-      if (pos === undefined) {
-        return;
-      }
-      e.preventDefault();
-      if (!view.editable) {
+      if (pos === undefined || !view.editable) {
+        e.preventDefault();
         return;
       }
       view.dispatch(
         view.state.tr.setNodeAttribute(
           pos,
           "checked",
-          !(node.attrs["checked"] as boolean),
+          !(this.node.attrs["checked"] as boolean),
         ),
       );
+      // The browser toggles the checkbox itself, which must be undone when the
+      // transaction is filtered out. Preventing that instead would make the
+      // browser restore the checkbox after update() has set its new state.
+      checkbox.checked = this.node.attrs["checked"] as boolean;
     });
     checkbox.addEventListener("keydown", (e) => {
       // Enter in a lone input would submit an enclosing form
@@ -102,14 +104,6 @@ class TaskListItemView implements NodeView {
 
     this.dom = doc.createElement("li");
     this.dom.setAttribute("class", "prosemirror-remark-task-list-item");
-    this.dom.setAttribute(
-      "data-checked",
-      String(node.attrs["checked"] as boolean),
-    );
-    this.dom.setAttribute(
-      "data-spread",
-      String(node.attrs["spread"] as boolean),
-    );
     this.dom.appendChild(this.checkboxContainer);
     this.dom.appendChild(this.contentDOM);
 
@@ -124,6 +118,8 @@ class TaskListItemView implements NodeView {
     this.editableObserver.observe(view.dom, {
       attributeFilter: ["contenteditable"],
     });
+
+    this.render();
   }
 
   public destroy(): void {
@@ -134,6 +130,17 @@ class TaskListItemView implements NodeView {
   // window than the global classes
   public stopEvent(event: Event): boolean {
     return this.checkboxContainer.contains(event.target as Node | null);
+  }
+
+  // Updated in place rather than redrawn, so the checkbox keeps the focus
+  // when it's toggled from the keyboard
+  public update(node: ProseMirrorNode): boolean {
+    if (node.type !== this.node.type) {
+      return false;
+    }
+    this.node = node;
+    this.render();
+    return true;
   }
 
   private handleArrowKey(e: KeyboardEvent): void {
@@ -168,6 +175,21 @@ class TaskListItemView implements NodeView {
       default:
         break;
     }
+  }
+
+  private render(): void {
+    const checked = this.node.attrs["checked"] as boolean;
+    this.checkbox.checked = checked;
+    if (checked) {
+      this.checkbox.setAttribute("checked", "checked");
+    } else {
+      this.checkbox.removeAttribute("checked");
+    }
+    this.dom.setAttribute("data-checked", String(checked));
+    this.dom.setAttribute(
+      "data-spread",
+      String(this.node.attrs["spread"] as boolean),
+    );
   }
 }
 

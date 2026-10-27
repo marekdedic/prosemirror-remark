@@ -1,6 +1,6 @@
 import type { ResolvedPos, Schema } from "prosemirror-model";
 
-import { type Command, Selection } from "prosemirror-state";
+import { type Command, Plugin, Selection } from "prosemirror-state";
 import {
   DecorationSet,
   type EditorView,
@@ -99,6 +99,7 @@ function render(
     handleDOMEvents?: {
       mousedown(view: EditorView, event: MouseEvent): boolean;
     };
+    plugins?: Array<Plugin>;
   } = {},
 ): NodeViewFixture {
   return renderNodeView(
@@ -228,8 +229,80 @@ describe("TaskListItemView", () => {
     expect(fx.markdown()).toBe("* [ ] Hello");
   });
 
-  test("prevents the browser from toggling the checkbox itself", () => {
-    expect(render("* [ ] Hello\n").editor.click("input")).toBe(true);
+  test("keeps the focused checkbox when it's toggled", () => {
+    const fx = render("* [ ] Hello\n");
+    const checkbox = input(fx);
+    checkbox.focus();
+
+    fx.editor.click(checkbox);
+
+    expect(input(fx)).toBe(checkbox);
+    expect(document.activeElement).toBe(checkbox);
+    expect(checkbox.checked).toBe(true);
+
+    fx.editor.click(checkbox);
+
+    expect(fx.markdown()).toBe("* [ ] Hello");
+    expect(document.activeElement).toBe(checkbox);
+  });
+
+  test.each([
+    [true, "checked", "true"],
+    [false, null, "false"],
+  ])(
+    "follows the checked state set elsewhere to %s",
+    (checked, attribute, data) => {
+      const fx = render(checked ? "* [ ] Hello\n" : "* [x] Hello\n");
+      fx.editor.command((state, dispatch) => {
+        dispatch?.(state.tr.setNodeAttribute(1, "checked", checked));
+        return true;
+      });
+
+      expect(input(fx).checked).toBe(checked);
+      expect(input(fx).getAttribute("checked")).toBe(attribute);
+      expect(fx.editor.element("li").getAttribute("data-checked")).toBe(data);
+    },
+  );
+
+  test("follows the spread set elsewhere", () => {
+    const fx = render("* [ ] Hello\n");
+    fx.editor.command((state, dispatch) => {
+      dispatch?.(state.tr.setNodeAttribute(1, "spread", true));
+      return true;
+    });
+
+    expect(fx.editor.element("li").getAttribute("data-spread")).toBe("true");
+  });
+
+  test("is replaced when the item stops being a task item", () => {
+    const fx = render("* [ ] Hello\n");
+    fx.editor.command((state, dispatch) => {
+      dispatch?.(
+        state.tr.setNodeMarkup(1, state.schema.nodes["regular_list_item"]),
+      );
+      return true;
+    });
+
+    expect(fx.editor.elements("input")).toHaveLength(0);
+    expect(fx.editor.element("li").className).toBe("");
+  });
+
+  test("lets the browser toggle the checkbox to the item's new state", () => {
+    const fx = render("* [ ] Hello\n");
+
+    expect(fx.editor.click("input")).toBe(false);
+    expect(input(fx).checked).toBe(true);
+  });
+
+  test("keeps the checkbox's state when the transaction is filtered out", () => {
+    const fx = render("* [ ] Hello\n", {
+      plugins: [new Plugin({ filterTransaction: (): boolean => false })],
+    });
+
+    fx.editor.click("input");
+
+    expect(input(fx).checked).toBe(false);
+    expect(fx.markdown()).toBe("* [ ] Hello");
   });
 
   test("disables the checkbox in a read-only editor", () => {
@@ -295,7 +368,8 @@ describe("TaskListItemView", () => {
     });
     const docAfterDelete = editor.doc;
 
-    expect(editor.click(checkbox)).toBe(false);
+    expect(editor.click(checkbox)).toBe(true);
+    expect((checkbox as HTMLInputElement).checked).toBe(false);
     expect(editor.doc.eq(docAfterDelete)).toBe(true);
   });
 
