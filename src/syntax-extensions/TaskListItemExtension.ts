@@ -5,11 +5,11 @@ import type {
   Node as ProseMirrorNode,
   Schema,
 } from "prosemirror-model";
-import type { Command } from "prosemirror-state";
 import type {
   EditorView,
   NodeView,
   NodeViewConstructor,
+  ViewMutationRecord,
 } from "prosemirror-view";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
@@ -20,57 +20,72 @@ import {
 } from "mdast-util-gfm-task-list-item";
 import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
 import { InputRule } from "prosemirror-inputrules";
+import { type Command, Selection, TextSelection } from "prosemirror-state";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 import { isAtStart } from "../utils/isAtStart";
 import { listItemKeymap } from "../utils/listItemKeymap";
+import {
+  findControlInput,
+  focusControlInput,
+  isBackwardKey,
+  leavesTextblockStart,
+  moveFromControl,
+} from "../utils/nodeViewControl";
 import { uniqueId } from "../utils/uniqueId";
 
 class TaskListItemView implements NodeView {
   public readonly contentDOM: HTMLElement;
   public readonly dom: HTMLElement;
+  private readonly checkbox: HTMLInputElement;
   private readonly checkboxContainer: HTMLElement;
   private readonly editableObserver: MutationObserver;
+  private readonly getPos: () => number | undefined;
+  private node: ProseMirrorNode;
+  private readonly view: EditorView;
 
   public constructor(
     node: ProseMirrorNode,
     view: EditorView,
     getPos: () => number | undefined,
   ) {
+    this.node = node;
+    this.view = view;
+    this.getPos = getPos;
     // The editor may be in another window, e.g. an iframe
     const doc = view.dom.ownerDocument;
     // The checkbox takes its accessible name from the item's content
     const id = contentId();
     const checkbox = doc.createElement("input");
+    this.checkbox = checkbox;
     checkbox.setAttribute("type", "checkbox");
     checkbox.setAttribute("aria-labelledby", id);
-    if (node.attrs["checked"] === true) {
-      checkbox.setAttribute("checked", "checked");
-    }
     checkbox.disabled = !view.editable;
     checkbox.addEventListener("click", (e) => {
       const pos = getPos();
-      if (pos === undefined) {
-        return;
-      }
-      e.preventDefault();
-      if (!view.editable) {
+      if (pos === undefined || !view.editable) {
+        e.preventDefault();
         return;
       }
       view.dispatch(
         view.state.tr.setNodeAttribute(
           pos,
           "checked",
-          !(node.attrs["checked"] as boolean),
+          !(this.node.attrs["checked"] as boolean),
         ),
       );
+      // The browser toggles the checkbox itself, which must be undone when the
+      // transaction is filtered out. Preventing that instead would make the
+      // browser restore the checkbox after update() has set its new state.
+      checkbox.checked = this.node.attrs["checked"] as boolean;
     });
     checkbox.addEventListener("keydown", (e) => {
       // Enter in a lone input would submit an enclosing form
       if (e.key === "Enter") {
         e.preventDefault();
       }
+      this.handleArrowKey(e);
     });
 
     this.checkboxContainer = doc.createElement("span");
@@ -90,14 +105,6 @@ class TaskListItemView implements NodeView {
 
     this.dom = doc.createElement("li");
     this.dom.setAttribute("class", "prosemirror-remark-task-list-item");
-    this.dom.setAttribute(
-      "data-checked",
-      String(node.attrs["checked"] as boolean),
-    );
-    this.dom.setAttribute(
-      "data-spread",
-      String(node.attrs["spread"] as boolean),
-    );
     this.dom.appendChild(this.checkboxContainer);
     this.dom.appendChild(this.contentDOM);
 
@@ -112,10 +119,18 @@ class TaskListItemView implements NodeView {
     this.editableObserver.observe(view.dom, {
       attributeFilter: ["contenteditable"],
     });
+
+    this.render();
   }
 
   public destroy(): void {
     this.editableObserver.disconnect();
+  }
+
+  // Changes to the checkbox, such as disabling it in a read-only editor, aren't
+  // content for ProseMirror to read back
+  public ignoreMutation(mutation: ViewMutationRecord): boolean {
+    return this.checkboxContainer.contains(mutation.target);
   }
 
   // No instanceof checks: in an iframe, events and nodes come from another
@@ -123,9 +138,107 @@ class TaskListItemView implements NodeView {
   public stopEvent(event: Event): boolean {
     return this.checkboxContainer.contains(event.target as Node | null);
   }
+
+  // Updated in place rather than redrawn, so the checkbox keeps the focus
+  // when it's toggled from the keyboard
+  public update(node: ProseMirrorNode): boolean {
+    if (node.type !== this.node.type) {
+      return false;
+    }
+    this.node = node;
+    this.render();
+    return true;
+  }
+
+  private handleArrowKey(e: KeyboardEvent): void {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
+      return;
+    }
+    const pos = this.getPos();
+    if (pos === undefined) {
+      return;
+    }
+    const { doc } = this.view.state;
+    // Built only for the keys that move, not for every key on the checkbox
+    const toText = (): Selection => TextSelection.create(doc, pos + 2);
+    // With nothing above, the checkbox keeps the focus
+    const above = (): Selection | null =>
+      Selection.findFrom(doc.resolve(pos), -1);
+    switch (e.key) {
+      case "ArrowDown":
+        moveFromControl(this.view, e, toText());
+        break;
+      case "ArrowLeft":
+      case "ArrowRight":
+        moveFromControl(
+          this.view,
+          e,
+          isBackwardKey(e.key, this.checkboxContainer) ? above() : toText(),
+        );
+        break;
+      case "ArrowUp":
+        moveFromControl(this.view, e, above());
+        break;
+      default:
+        break;
+    }
+  }
+
+  private render(): void {
+    const checked = this.node.attrs["checked"] as boolean;
+    this.checkbox.checked = checked;
+    if (checked) {
+      this.checkbox.setAttribute("checked", "checked");
+    } else {
+      this.checkbox.removeAttribute("checked");
+    }
+    this.dom.setAttribute("data-checked", String(checked));
+    this.dom.setAttribute(
+      "data-spread",
+      String(this.node.attrs["spread"] as boolean),
+    );
+  }
 }
 
 export class TaskListItemExtension extends NodeExtension<ListItem> {
+  private static focusCheckbox(direction: "left" | "right"): Command {
+    return (state, dispatch, view): boolean => {
+      const { $from, empty } = state.selection;
+      if (
+        view === undefined ||
+        !view.editable ||
+        !empty ||
+        !$from.parent.isTextblock ||
+        $from.node(-1).type.name !== "task_list_item" ||
+        $from.index(-1) !== 0
+      ) {
+        return false;
+      }
+      const checkbox = findControlInput(
+        view,
+        $from.before(-1),
+        "prosemirror-remark-task-list-item-checkbox",
+      );
+      if (
+        checkbox === null ||
+        // A disabled checkbox, e.g. from toDOM without the node view, can't
+        // take focus
+        checkbox.disabled ||
+        // At the start, the key that leaves the text on the checkbox's side.
+        // In an empty paragraph, the checkbox's own side decides.
+        !leavesTextblockStart(
+          view,
+          $from,
+          direction,
+          () => checkbox.parentElement ?? checkbox,
+        )
+      ) {
+        return false;
+      }
+      return !dispatch || focusControlInput(view, checkbox);
+    };
+  }
+
   public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
@@ -163,6 +276,8 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       ...listItemKeymap(proseMirrorSchema.nodes[this.proseMirrorNodeName()], {
         checked: false,
       }),
+      ArrowLeft: TaskListItemExtension.focusCheckbox("left"),
+      ArrowRight: TaskListItemExtension.focusCheckbox("right"),
       Backspace: (state, dispatch, view): boolean => {
         if (!isAtStart(state, view)) {
           return false;

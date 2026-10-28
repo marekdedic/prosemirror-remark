@@ -30,7 +30,11 @@ import {
   normaliseLanguage,
 } from "../utils/codeBlockAttrs";
 import { codeBlockInputRules, fenceOnEnter } from "../utils/codeBlockInput";
-import { isRightToLeft } from "../utils/isRightToLeft";
+import {
+  findControlInput,
+  focusControlInput,
+  leavesTextblockStart,
+} from "../utils/nodeViewControl";
 import { CodeBlockView } from "./CodeBlockView";
 import { TextExtension } from "./TextExtension";
 
@@ -51,39 +55,27 @@ export class CodeBlockExtension extends NodeExtension<Code> {
           ? // The first line of the code, and its first row if it wraps
             !$from.parent.textBetween(0, $from.parentOffset).includes("\n") &&
             view.endOfTextblock("up")
-          : // At the start, the key that leaves the code on its side: ArrowLeft
-            // in left-to-right text, ArrowRight in right-to-left text. In an
-            // empty block both would, so the code's direction decides.
-            $from.parentOffset === 0 &&
-            view.endOfTextblock(direction) &&
-            ($from.parent.content.size > 0 ||
-              direction ===
-                (isRightToLeft(view.domAtPos($from.pos).node)
-                  ? "right"
-                  : "left"));
+          : // At the start, the key that leaves the code on its side. In an
+            // empty block, the code's direction decides.
+            leavesTextblockStart(
+              view,
+              $from,
+              direction,
+              () => view.domAtPos($from.pos).node,
+            );
       if (!atEdge) {
         return false;
       }
-      // No instanceof checks: in an iframe, nodes come from another window
-      // than the global classes
-      const dom = view.nodeDOM($from.before());
-      const input =
-        dom !== null && dom.nodeType === dom.ELEMENT_NODE
-          ? Array.from((dom as Element).children)
-              .find((child) =>
-                child.classList.contains(
-                  "prosemirror-remark-code-block-language",
-                ),
-              )
-              ?.querySelector("input")
-          : null;
-      if (input === null || input === undefined) {
+      const input = findControlInput(
+        view,
+        $from.before(),
+        "prosemirror-remark-code-block-language",
+      );
+      if (input === null) {
         return false;
       }
       if (dispatch) {
-        input.focus();
-        // The field may be hidden, e.g. by the app's CSS
-        if (view.root.activeElement !== input) {
+        if (!focusControlInput(view, input)) {
           return false;
         }
         input.setSelectionRange(input.value.length, input.value.length);

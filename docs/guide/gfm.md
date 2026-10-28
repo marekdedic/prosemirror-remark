@@ -21,7 +21,7 @@ See [Extensions](/reference/extensions#gfm-extensions) for their input rules and
 
 ## Task list checkboxes
 
-Task list items render a checkbox that users can click to check or uncheck the item. This is done by a node view, so pass `pmu.nodeViews()` to your `EditorView` as shown in [Getting started](/guide/getting-started). Without it, the checkboxes are shown but can't be clicked.
+Task list items render a checkbox that users can click to check or uncheck the item. From the keyboard, `ArrowLeft` at the start of the item's text (`ArrowRight` in right-to-left text) moves to the checkbox, and `Space` toggles it. This is done by a node view, so pass `pmu.nodeViews()` to your `EditorView` as shown in [Getting started](/guide/getting-started). Without it, the checkboxes are shown but can't be clicked.
 
 To place the checkbox where the list bullet would be, load the default stylesheet, `prosemirror-remark/style.css`, or write your own rules for the `prosemirror-remark-task-list-item` classes (see [Styling](/guide/getting-started#styling)).
 
