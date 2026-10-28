@@ -139,7 +139,7 @@ Code spans (`` `code` ``).
 
 - **ProseMirror mark:** `code`. Text typed right after a code span isn't code.
 - **HTML:** `<code>`
-- **Input rules:** `` `text` ``.
+- **Input rules:** `` `text` ``, or text between longer backtick runs of equal length to include backticks (```` ``a`b`` ````). When the text both starts and ends with a space, one space is removed from each side (``` `` ` `` ``` is code `` ` ``). The text that's left can't start or end with whitespace.
 - **Keyboard shortcuts:** `` Ctrl-` `` toggles inline code.
 
 ### `LinkExtension`
