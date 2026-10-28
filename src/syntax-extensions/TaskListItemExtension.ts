@@ -9,6 +9,7 @@ import type {
   EditorView,
   NodeView,
   NodeViewConstructor,
+  ViewMutationRecord,
 } from "prosemirror-view";
 import type { Processor } from "unified";
 import type { Node as UnistNode } from "unist";
@@ -124,6 +125,12 @@ class TaskListItemView implements NodeView {
 
   public destroy(): void {
     this.editableObserver.disconnect();
+  }
+
+  // Changes to the checkbox, such as disabling it in a read-only editor, aren't
+  // content for ProseMirror to read back
+  public ignoreMutation(mutation: ViewMutationRecord): boolean {
+    return this.checkboxContainer.contains(mutation.target);
   }
 
   // No instanceof checks: in an iframe, events and nodes come from another

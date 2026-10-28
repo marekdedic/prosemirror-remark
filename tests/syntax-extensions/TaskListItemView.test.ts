@@ -31,6 +31,21 @@ class TopLevelCursor extends Selection {
   }
 }
 
+function createNodeView(markdown: string, doc = document): NodeView {
+  const view = { dom: doc.body } as unknown as EditorView;
+  const nodeViewConstructor = new TaskListItemExtension().proseMirrorNodeView();
+  if (nodeViewConstructor === null) {
+    throw new Error("TaskListItemExtension provides no node view");
+  }
+  return nodeViewConstructor(
+    render(markdown).editor.doc.child(0).child(0),
+    view,
+    () => 1,
+    [],
+    DecorationSet.empty,
+  );
+}
+
 function fakeView(view: object): EditorView {
   return {
     editable: true,
@@ -51,19 +66,7 @@ function inIframe(markdown: string): {
   });
   const iframeDocument = (iframe.contentWindow as unknown as typeof window)
     .document;
-  const view = { dom: iframeDocument.body } as unknown as EditorView;
-  const createNodeView = new TaskListItemExtension().proseMirrorNodeView();
-  if (createNodeView === null) {
-    throw new Error("TaskListItemExtension provides no node view");
-  }
-  const nodeView = createNodeView(
-    render(markdown).editor.doc.child(0).child(0),
-    view,
-    () => 1,
-    [],
-    DecorationSet.empty,
-  );
-  return { iframeDocument, nodeView };
+  return { iframeDocument, nodeView: createNodeView(markdown, iframeDocument) };
 }
 
 function input(fx: NodeViewFixture): HTMLInputElement {
@@ -74,6 +77,22 @@ function keymap(fx: NodeViewFixture): Record<string, Command> {
   return new TaskListItemExtension().proseMirrorKeymap(
     fx.editor.state.schema as Schema<string, string>,
   );
+}
+
+function mutations(
+  nodeView: NodeView,
+  mutate: () => void,
+): Array<MutationRecord> {
+  const observer = new MutationObserver(() => undefined);
+  observer.observe(nodeView.dom, {
+    attributes: true,
+    childList: true,
+    subtree: true,
+  });
+  mutate();
+  const records = observer.takeRecords();
+  observer.disconnect();
+  return records;
 }
 
 function press(
@@ -427,6 +446,27 @@ describe("TaskListItemView", () => {
     expect(nodeView.dom.querySelector("input")?.ownerDocument).toBe(
       iframeDocument,
     );
+  });
+
+  test("ignores the checkbox being disabled", () => {
+    const nodeView = createNodeView("* [ ] Hello\n");
+    const [checkbox] = nodeView.dom.getElementsByTagName("input");
+
+    const [mutation] = mutations(nodeView, () => {
+      checkbox.disabled = true;
+    });
+
+    expect(nodeView.ignoreMutation?.(mutation)).toBe(true);
+  });
+
+  test("lets ProseMirror read mutations of the item content", () => {
+    const nodeView = createNodeView("* [ ] Hello\n");
+
+    const [mutation] = mutations(nodeView, () => {
+      nodeView.contentDOM?.appendChild(document.createTextNode("!"));
+    });
+
+    expect(nodeView.ignoreMutation?.(mutation)).toBe(false);
   });
 
   test("stops ProseMirror from handling events on the checkbox in another window, e.g. an iframe", () => {
