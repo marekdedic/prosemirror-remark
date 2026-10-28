@@ -150,7 +150,6 @@ describe("InlineCodeExtension", () => {
     test.each([
       ["``a`", "\\`\\`a\\`"],
       ["`a``", "\\`a\\`\\`"],
-      ["``a``", "\\`\\`a\\`\\`"],
     ])("does not match the unbalanced code span %j", (input, markdown) => {
       expect(fx).toTransformInlineInput(input, () => [input], markdown);
     });
