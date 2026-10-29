@@ -28,18 +28,19 @@ import {
   domAttrs,
   nodeAttrs,
   normaliseLanguage,
+  normaliseMeta,
 } from "../utils/codeBlockAttrs";
 import { codeBlockInputRules, fenceOnEnter } from "../utils/codeBlockInput";
 import {
   findControlInput,
-  focusControlInput,
   leavesTextblockStart,
 } from "../utils/nodeViewControl";
+import { focusCodeBlockField } from "./CodeBlockField";
 import { CodeBlockView } from "./CodeBlockView";
 import { TextExtension } from "./TextExtension";
 
 export class CodeBlockExtension extends NodeExtension<Code> {
-  private static focusLanguage(direction: "left" | "right" | "up"): Command {
+  private static focusField(direction: "left" | "right" | "up"): Command {
     return (state, dispatch, view): boolean => {
       const { $from, empty } = state.selection;
       if (
@@ -66,21 +67,35 @@ export class CodeBlockExtension extends NodeExtension<Code> {
       if (!atEdge) {
         return false;
       }
-      const input = findControlInput(
-        view,
-        $from.before(),
-        "prosemirror-remark-code-block-language",
-      );
-      if (input === null) {
+      // Up goes to the start of the tab. Leaving the code at its start goes to
+      // the field next to it, or past it if the app hides it.
+      const fields =
+        direction === "up"
+          ? ["prosemirror-remark-code-block-language"]
+          : [
+              "prosemirror-remark-code-block-meta",
+              "prosemirror-remark-code-block-language",
+            ];
+      const inputs = fields
+        .map((field) =>
+          findControlInput(
+            view,
+            $from.before(),
+            "prosemirror-remark-code-block-info",
+            field,
+          ),
+        )
+        .filter((input) => input !== null);
+      if (inputs.length === 0) {
         return false;
       }
-      if (dispatch) {
-        if (!focusControlInput(view, input)) {
-          return false;
-        }
-        input.setSelectionRange(input.value.length, input.value.length);
-      }
-      return true;
+      const caret = (
+        { left: "ArrowLeft", right: "ArrowRight", up: "end" } as const
+      )[direction];
+      return (
+        !dispatch ||
+        inputs.some((input) => focusCodeBlockField(view, input, caret))
+      );
     };
   }
 
@@ -132,9 +147,9 @@ export class CodeBlockExtension extends NodeExtension<Code> {
   ): Record<string, Command> {
     const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
     return {
-      ArrowLeft: CodeBlockExtension.focusLanguage("left"),
-      ArrowRight: CodeBlockExtension.focusLanguage("right"),
-      ArrowUp: CodeBlockExtension.focusLanguage("up"),
+      ArrowLeft: CodeBlockExtension.focusField("left"),
+      ArrowRight: CodeBlockExtension.focusField("right"),
+      ArrowUp: CodeBlockExtension.focusField("up"),
       Enter: chainCommands(
         fenceOnEnter(nodeType),
         CodeBlockExtension.liftOutOfCodeBlock(),
@@ -173,9 +188,9 @@ export class CodeBlockExtension extends NodeExtension<Code> {
           preserveWhitespace: "full",
           tag: "pre",
         },
-        // The node view's language field, which isn't content, if its HTML is
-        // parsed (e.g. saved from the editor's own DOM)
-        { ignore: true, tag: "label.prosemirror-remark-code-block-language" },
+        // The node view's fields, which aren't content, if its HTML is parsed
+        // (e.g. saved from the editor's own DOM)
+        { ignore: true, tag: "div.prosemirror-remark-code-block-info" },
       ],
       toDOM: (node: ProseMirrorNode): DOMOutputSpec => {
         const dom = domAttrs(nodeAttrs(node));
@@ -230,21 +245,17 @@ export class CodeBlockExtension extends NodeExtension<Code> {
  * Markdown can only carry it after a language.
  */
 export function setCodeBlockLanguage(lang: string | null): Command {
-  return (state, dispatch): boolean => {
-    const block = findCodeBlock(state.selection);
-    if (block === null) {
-      return false;
-    }
-    const { node, pos } = block;
-    if (dispatch) {
-      // A toolbar mustn't create empty undo steps
-      const updated = normaliseLanguage(lang);
-      if (updated !== node.attrs["lang"]) {
-        dispatch(state.tr.setNodeAttribute(pos, "lang", updated));
-      }
-    }
-    return true;
-  };
+  return setCodeBlockAttribute("lang", normaliseLanguage(lang));
+}
+
+/**
+ * Sets the meta (the rest of the info string after the language) of the code
+ * block containing the selection. Setting it to `null` (or an empty string)
+ * removes the meta. The language is kept. A code block without a language
+ * keeps its meta, but Markdown can only carry it after a language.
+ */
+export function setCodeBlockMeta(meta: string | null): Command {
+  return setCodeBlockAttribute("meta", normaliseMeta(meta));
 }
 
 function findCodeBlock(
@@ -274,4 +285,23 @@ function languageFromClass(element: Element | null | undefined): string | null {
     }
   }
   return null;
+}
+
+function setCodeBlockAttribute(
+  attribute: keyof CodeBlockAttrs,
+  value: string | null,
+): Command {
+  return (state, dispatch): boolean => {
+    const block = findCodeBlock(state.selection);
+    if (block === null) {
+      return false;
+    }
+    const { node, pos } = block;
+    // A toolbar mustn't create empty undo steps. Apps can set the attributes
+    // directly, so they're compared as they're written out.
+    if (dispatch && value !== nodeAttrs(node)[attribute]) {
+      dispatch(state.tr.setNodeAttribute(pos, attribute, value));
+    }
+    return true;
+  };
 }
