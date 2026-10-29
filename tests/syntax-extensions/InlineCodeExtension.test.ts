@@ -150,8 +150,37 @@ describe("InlineCodeExtension", () => {
     test.each([
       ["``a`", "\\`\\`a\\`"],
       ["`a``", "\\`a\\`\\`"],
-      ["``a``", "\\`\\`a\\`\\`"],
     ])("does not match the unbalanced code span %j", (input, markdown) => {
+      expect(fx).toTransformInlineInput(input, () => [input], markdown);
+    });
+
+    test.each([
+      ["``a`b``", "a`b", "``a`b``"],
+      ["```a``b```", "a``b", "`a``b`"],
+      ["``a```b``", "a```b", "`a```b`"],
+      ["`a``b`", "a``b", "`a``b`"],
+      ["``Test``", "Test", "`Test`"],
+    ])("matches the code span %j", (input, code, markdown) => {
+      expect(fx).toTransformInlineInput(input, (b) => [b.code(code)], markdown);
+    });
+
+    test.each([
+      ["`` ` ``", "`", "`` ` ``"],
+      ["`` `a ``", "`a", "`` `a ``"],
+      ["` a `", "a", "`a`"],
+      ["`` a ``", "a", "`a`"],
+    ])("matches the padded code span %j", (input, code, markdown) => {
+      expect(fx).toTransformInlineInput(input, (b) => [b.code(code)], markdown);
+    });
+
+    test.each([
+      ["``a```", "\\`\\`a\\`\\`\\`"],
+      ["```a``", "\\`\\`\\`a\\`\\`"],
+      ["` a`", "\\` a\\`"],
+      ["`a `", "\\`a \\`"],
+      ["``  a  ``", "\\`\\`  a  \\`\\`"],
+      ["`` ``", "\\`\\` \\`\\`"],
+    ])("does not match the code span %j", (input, markdown) => {
       expect(fx).toTransformInlineInput(input, () => [input], markdown);
     });
 
