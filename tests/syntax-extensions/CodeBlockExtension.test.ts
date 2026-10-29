@@ -8,6 +8,7 @@ import { BreakExtension } from "../../src/syntax-extensions/BreakExtension";
 import {
   CodeBlockExtension,
   setCodeBlockLanguage,
+  setCodeBlockMeta,
 } from "../../src/syntax-extensions/CodeBlockExtension";
 import { HeadingExtension } from "../../src/syntax-extensions/HeadingExtension";
 import { ImageExtension } from "../../src/syntax-extensions/ImageExtension";
@@ -479,6 +480,116 @@ describe("CodeBlockExtension", () => {
     });
   });
 
+  describe("setCodeBlockMeta", () => {
+    test("sets the meta and keeps the language", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.code_block({ lang: "js" }, "He<cursor>llo")],
+        "cursor",
+        setCodeBlockMeta('title="a.js"'),
+        (b) => [b.code_block({ lang: "js", meta: 'title="a.js"' }, "Hello")],
+        '```js title="a.js"\nHello\n```',
+      );
+    });
+
+    test("changes the meta", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.code_block({ lang: "js", meta: "x=1" }, "He<cursor>llo")],
+        "cursor",
+        setCodeBlockMeta("y=2"),
+        (b) => [b.code_block({ lang: "js", meta: "y=2" }, "Hello")],
+        "```js y=2\nHello\n```",
+      );
+    });
+
+    test.each([null, "", " \t"])("removes the meta with %j", (meta) => {
+      expect(fx).toTransformCommand(
+        (b) => [b.code_block({ lang: "js", meta: "x=1" }, "He<cursor>llo")],
+        "cursor",
+        setCodeBlockMeta(meta),
+        (b) => [b.code_block({ lang: "js" }, "Hello")],
+        "```js\nHello\n```",
+      );
+    });
+
+    test("sets the meta without a language, which Markdown can't carry", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.code_block("He<cursor>llo")],
+        "cursor",
+        setCodeBlockMeta("x=1"),
+        (b) => [b.code_block({ meta: "x=1" }, "Hello")],
+        "```\nHello\n```",
+      );
+    });
+
+    test("removes leading spaces and tabs", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.code_block({ lang: "js" }, "He<cursor>llo")],
+        "cursor",
+        setCodeBlockMeta(" \tx=1 "),
+        (b) => [b.code_block({ lang: "js", meta: "x=1 " }, "Hello")],
+        "```js x=1 \nHello\n```",
+      );
+    });
+
+    test("applies to a selected code block", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.code_block({ lang: "js" }, "Hello"), b.p("World")],
+        "start",
+        (state, dispatch) =>
+          setCodeBlockMeta("x=1")(
+            state.apply(
+              state.tr.setSelection(NodeSelection.create(state.doc, 0)),
+            ),
+            dispatch,
+          ),
+        (b) => [
+          b.code_block({ lang: "js", meta: "x=1" }, "Hello"),
+          b.p("World"),
+        ],
+        "```js x=1\nHello\n```\n\nWorld",
+      );
+    });
+
+    test("does not dispatch when nothing changes", () => {
+      const doc = fx.b.doc(
+        fx.b.code_block({ lang: "js", meta: "x=1" }, "Hello"),
+      ) as unknown as ProseMirrorNode;
+      const state = EditorState.create({
+        doc,
+        selection: TextSelection.create(doc, 2),
+      });
+      const dispatch = vi.fn();
+
+      expect(setCodeBlockMeta(" x=1")(state, dispatch)).toBe(true);
+      expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    test("does not dispatch when only an app-set value's normalisation would change", () => {
+      const doc = fx.b.doc(
+        fx.b.code_block({ lang: "js ts", meta: "  x=1" }, "Hello"),
+      ) as unknown as ProseMirrorNode;
+      const state = EditorState.create({
+        doc,
+        selection: TextSelection.create(doc, 2),
+      });
+      const dispatch = vi.fn();
+
+      expect(setCodeBlockMeta("x=1")(state, dispatch)).toBe(true);
+      expect(setCodeBlockLanguage("js")(state, dispatch)).toBe(true);
+      expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    test("does not apply outside a code block", () => {
+      expect(fx).not.toTransformCommand(
+        (b) => [b.p("He<cursor>llo")],
+        "cursor",
+        setCodeBlockMeta("x=1"),
+        (b) => [b.p("Hello")],
+        "Hello",
+      );
+    });
+  });
+
   describe("keymap", () => {
     test("`Mod-Shift-\\` wraps a paragraph", () => {
       expect(fx).toTransformInput(
@@ -756,10 +867,10 @@ describe("CodeBlockExtension", () => {
       ]);
     });
 
-    test("from the node view's own HTML, without the language field", () => {
+    test("from the node view's own HTML, without the fields", () => {
       expect(fx).toParseDOM(
-        '<pre class="prosemirror-remark-code-block" data-language="js"><label class="prosemirror-remark-code-block-language" contenteditable="false"><span class="prosemirror-remark-code-block-language-label">Language:</span><input type="text" value="js"></label><code class="language-js">Hello</code></pre>',
-        (b) => [b.code_block({ lang: "js" }, "Hello")],
+        '<pre class="prosemirror-remark-code-block" data-language="js" data-meta="x=1"><div class="prosemirror-remark-code-block-info" contenteditable="false"><label class="prosemirror-remark-code-block-language"><span class="prosemirror-remark-code-block-language-label">Language:</span><input type="text" value="js"></label><label class="prosemirror-remark-code-block-meta"><span class="prosemirror-remark-code-block-meta-label">Meta:</span><input type="text" value="x=1"></label></div><code class="language-js">Hello</code></pre>',
+        (b) => [b.code_block({ lang: "js", meta: "x=1" }, "Hello")],
       );
     });
 

@@ -46,8 +46,12 @@ export function normaliseLanguage(
   return lang?.split(infoWhitespace).find((word) => word !== "") ?? null;
 }
 
-function normaliseMeta(meta: string | null | undefined): string | null {
-  // The parser drops leading spaces and tabs, but keeps trailing ones
-  const normalised = meta?.replace(/^[\t ]+/u, "") ?? "";
+export function normaliseMeta(meta: string | null | undefined): string | null {
+  const normalised = trimMetaStart(meta ?? "");
   return normalised === "" ? null : normalised;
+}
+
+// The parser drops leading spaces and tabs, but keeps trailing ones
+export function trimMetaStart(meta: string): string {
+  return meta.replace(/^[\t ]+/u, "");
 }

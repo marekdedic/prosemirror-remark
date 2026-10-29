@@ -6,6 +6,7 @@ export { BreakExtension } from "./syntax-extensions/BreakExtension";
 export {
   CodeBlockExtension,
   setCodeBlockLanguage,
+  setCodeBlockMeta,
 } from "./syntax-extensions/CodeBlockExtension";
 export {
   DefinitionExtension,
