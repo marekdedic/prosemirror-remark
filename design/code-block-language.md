@@ -1,6 +1,6 @@
-# Design: code block language
+# Design: code block language and meta
 
-Status: accepted; implemented
+Status: language accepted and implemented; `meta` editing ([#1182](https://github.com/marekdedic/prosemirror-remark/issues/1182)) accepted, not yet implemented
 
 ## Problem
 
@@ -8,19 +8,22 @@ The info string of a fenced code block is lost ([#1119](https://github.com/marek
 
 Preserving the info string fixes the bug. But a language that can only come from loaded Markdown is half a feature: users also need to add, change and remove it while editing.
 
+The same goes for the `meta` (the rest of the info string, `title="a.js"` in ```` ```js title="a.js" ````). It's kept, but the editor gives no way to add, change or remove it: it can't be typed with the fence, and only loaded Markdown, pasted HTML and `setNodeAttribute` set it ([#1182](https://github.com/marekdedic/prosemirror-remark/issues/1182)). See [Meta](#meta).
+
 ## Goals
 
 - `lang` and `meta` survive a parse/serialize round trip, and copy and paste inside the editor.
-- Users can set, change and remove the language in the editor without the app building any UI.
+- Users can set, change and remove the language and the `meta` in the editor without the app building any UI.
 - Users can type a language when creating a code block with ```` ``` ````.
-- Apps can set the language from their own UI (a menu, a picker, a command palette).
+- Apps can set the language and the `meta` from their own UI (a menu, a picker, a command palette).
 - Rendering follows `design/custom-ui.md`: a documented DOM contract, defaults in `style.css`, and node views that apps can replace.
 
 ## Non-goals
 
 - Syntax highlighting. It's a user node view or plugin, keyed on `data-language`.
 - A list of known languages, validation against one, or autocomplete. Markdown accepts any word as a language.
-- Editing `meta` in the default UI. It's kept as is, and apps can change it with `setNodeAttribute`.
+- Understanding the `meta`. It's an opaque string, see [Meta](#meta).
+- Typing a `meta` with the fence, see [Input rules](#input-rules).
 
 ## Design
 
@@ -65,9 +68,11 @@ See [Info string: inputs and outputs](#info-string-inputs-and-outputs) for why e
 2. `data-lang` on the `pre` or its `code` child (Hugo, Chroma).
 3. A `language-*` or `lang-*` class on the `pre`, then on its `code` child (Prism, highlight.js, Prettify, other Markdown renderers). `language-none`, which Prism uses for a block without a language, means no language.
 
-It never reads the `lang` attribute, which is the natural language of the content. The content is all the text in the `pre`: taking only a `code` child would silently drop code from HTML that has one `code` per line or text beside it. A separate rule ignores the node view's language field (`label.prosemirror-remark-code-block-language`), so its "Language:" text doesn't end up in the code if an app parses the editor's own HTML. It takes `meta` from `data-meta`, and both go through the normalisation above.
+It never reads the `lang` attribute, which is the natural language of the content. The content is all the text in the `pre`: taking only a `code` child would silently drop code from HTML that has one `code` per line or text beside it. A separate rule ignores the node view's tab (`div.prosemirror-remark-code-block-info`), so its "Language:" and "Meta:" text doesn't end up in the code if an app parses the editor's own HTML. It takes `meta` from `data-meta`, and both go through the normalisation above.
 
 ### Node view
+
+The [Meta](#meta) section changes this: the tab becomes `.prosemirror-remark-code-block-info`, holding the language field described here and a `meta` field, and the navigation between them and the code changes. Where the two disagree, that section wins.
 
 `CodeBlockExtension` ships a node view, as `TaskListItemExtension` does for its checkbox:
 
@@ -102,6 +107,8 @@ This is the one place where the node view isn't just `toDOM` with behaviour adde
 Apps that want a dropdown, a combobox with known languages, or highlighting replace the node view with `nodeViews: { ...pmu.nodeViews(), code_block: myView }`, as with the task list.
 
 ### Default stylesheet
+
+The [Meta](#meta) section changes the tab's styles: they move to `.prosemirror-remark-code-block-info`, which lays out both fields, see [its stylesheet section](#default-stylesheet-1). Where the two disagree, that section wins.
 
 ```css
 .prosemirror-remark-code-block > code {
@@ -165,7 +172,7 @@ The ```` ``` ```` rule no longer fires on the third backtick. A paragraph turns 
 
 Whether the text is a fence line, and what its language and `meta` are, is decided by the CommonMark parser, see [Fence lines: use the parser](#fence-lines-use-the-parser). Both triggers apply only where a code block may replace the paragraph (not, for example, in the first paragraph of a task list item). They apply only in paragraphs: as in CommonMark, `# ```` ` is a heading, so a heading whose text is a fence stays a heading. `prosemirror-unified` does pass `Enter` to input rules as `"\n"`, but the key then still reaches the keymap and inserts a newline into the new code block, so the input rule matches a space only.
 
-So ```` ``` ```` followed by space or `Enter` makes a code block without a language, and ```` ```js ```` followed by space or `Enter` makes a `js` one, for `~~~` fences and longer fences too. A `meta`, or spaces between the fence and the language, can't be typed, since the first space already converts the paragraph. So both triggers only accept a fence followed by at most one word, with no space or tab after the fence: a paragraph like ```` ``` is how you open a fence ```` is prose, even though CommonMark would read it as a fence with a `meta`. An earlier version also converted such paragraphs on `Enter`, for pasted fence lines with a `meta`, but that turned existing prose into code blocks when the user only meant to start a new paragraph. Typing or pasting a `meta` is part of #1182. Tiptap's code block input rule works the same way.
+So ```` ``` ```` followed by space or `Enter` makes a code block without a language, and ```` ```js ```` followed by space or `Enter` makes a `js` one, for `~~~` fences and longer fences too. A `meta`, or spaces between the fence and the language, can't be typed, since the first space already converts the paragraph. So both triggers only accept a fence followed by at most one word, with no space or tab after the fence: a paragraph like ```` ``` is how you open a fence ```` is prose, even though CommonMark would read it as a fence with a `meta`. An earlier version also converted such paragraphs on `Enter`, for pasted fence lines with a `meta`, but that turned existing prose into code blocks when the user only meant to start a new paragraph. Tiptap's code block input rule works the same way. This stays so with the `meta` field: an `Enter` trigger that accepted a `meta` couldn't tell a fence line from prose that starts with a fence, and the field covers adding a `meta` (see [Meta](#meta)).
 
 Because the fence now converts only after the language, the mark input rules get to see a half-typed fence first. A guard rule keeps them out, see [Fence lines: keep mark input rules out](#fence-lines-keep-mark-input-rules-out). The inline code and strikethrough patterns are also stricter: their content can't start or end with a backtick (respectively a tilde), which is what CommonMark requires of a single-delimiter code span or strikethrough, since such a delimiter would just make the run longer. Tests type the fences into the full `MarkdownExtension` and `GFMExtension`, so these interactions are covered.
 
@@ -292,6 +299,107 @@ CommonMark decodes character references in an info string, so an unescaped `&` w
 1. **Space after a language still converts**, as in Tiptap. A `meta` can't be typed, but it's rarely typed, and this is what users of other editors expect.
 2. **A typed fence line decodes escapes and character references**, because it's Markdown syntax: ```` ```c\# ```` is the language `c#`, as in a Markdown file. Taking it literally would need a second parser path and give different results for the same text depending on how it got into the document.
 3. **`parseDOM` reads the sources listed above.** GitHub's `highlight-source-*` classes on a wrapping `div` name grammars (`source-shell`), not languages, so they're left out.
+
+## Meta
+
+This section adds editing the `meta` to what's described above ([#1182](https://github.com/marekdedic/prosemirror-remark/issues/1182)). The schema, the conversion, `toDOM`, `parseDOM`'s `data-meta` and the normalisation stay as they are. Everything that only applies to the language, such as removing whitespace in the field, stays as it is too.
+
+### Model
+
+- **The `meta` is an opaque string.** Tools disagree on what it contains: Docusaurus reads `title="…"` and `{1,3-5}`, Shiki and the rehype plugins use their own forms (`showLineNumbers`, `mark=…`). Understanding one convention would get the others wrong, so the package only stores, edits and writes the string. Apps parse `meta` or `data-meta` themselves.
+- **A `meta` without a language is kept in the document,** as decided in [Schema](#schema), and is left out of the Markdown, which can only write it after a language. Nothing is remembered outside the document: an earlier node view remembered the `meta` while the language field had focus, which lost it on blur, undo and redo, and missed changes an app made in the meantime. The `meta` field shows that such a `meta` won't be saved, see [Default stylesheet](#default-stylesheet-1).
+
+### Command
+
+A second public export, next to `setCodeBlockLanguage`:
+
+```ts
+export function setCodeBlockMeta(meta: string | null): Command;
+```
+
+It mirrors `setCodeBlockLanguage`: it applies to the code block that contains the selection (or a selected code block), normalises `meta` (`null` or a string that's empty after normalisation removes it), keeps `lang` and the other attributes, returns `false` when the selection isn't in a single code block, and dispatches nothing when the value wouldn't change. It works whether or not the block has a language. The node view's `meta` field commits with the same transaction. No default keybinding.
+
+There's no combined `setCodeBlockInfo(lang, meta)`: an app that sets both runs both commands, which `prosemirror-history` groups into one undo step when they follow each other closely.
+
+### Node view
+
+The tab gets a second field, after the language field. A `label` focuses only its first control, so each field gets its own `label`, and a new wrapper holds both and becomes the tab:
+
+```html
+<pre class="prosemirror-remark-code-block" data-language="js" data-meta="title=a.js">
+  <div class="prosemirror-remark-code-block-info" contenteditable="false">
+    <label class="prosemirror-remark-code-block-language">
+      <span class="prosemirror-remark-code-block-language-label">Language:</span>
+      <input type="text" value="js" placeholder="none" spellcheck="false" dir="auto">
+    </label>
+    <label class="prosemirror-remark-code-block-meta">
+      <span class="prosemirror-remark-code-block-meta-label">Meta:</span>
+      <input type="text" value="title=a.js" placeholder="none" spellcheck="false" dir="auto">
+    </label>
+  </div>
+  <code class="language-js">…</code>  <!-- contentDOM -->
+</pre>
+```
+
+The tab is now `.prosemirror-remark-code-block-info`, not `.prosemirror-remark-code-block-language`. The node view hasn't been released with the old structure, so this changes nothing for users. `parseDOM`'s ignore rule moves to the wrapper (`div.prosemirror-remark-code-block-info`), and `stopEvent` and `ignoreMutation` check the wrapper.
+
+The field is always shown, empty with the placeholder "none" when there's no `meta`, as the language field is. "Meta" is the name mdast, remark and most Markdown tools use. Both texts are English for now; translating them is [#1180](https://github.com/marekdedic/prosemirror-remark/issues/1180).
+
+The field logic that both fields share moves out of `CodeBlockView` into a helper: committing every edit, IME composition, read-only mode, undo and redo going to the editor's history, `Enter`'s default being cancelled, keys with a modifier being left to the field, and resizing. Each field supplies its attribute, its normalisation and its whitespace rule.
+
+Behaviour of the `meta` field, where it differs from the language field:
+
+- **Every edit is committed** with the same transaction as `setCodeBlockMeta` (`setNodeAttribute` on `meta`).
+- **Spaces and tabs can be typed and pasted.** Leading spaces and tabs, which the normalisation removes, are removed from the field as they arrive, keeping the caret in place, so the field always shows what's stored.
+- **Line endings** can't be shown in an `<input>`, whose value drops them. The field shows each one as a space. A `meta` the user doesn't edit keeps its line endings, since the field only commits on an edit. An edit commits what the field shows, so the line endings become spaces. Pasted line endings become spaces too.
+- **`dir="auto"`:** unlike a language name, a `meta` can hold natural-language text, e.g. a Hebrew `title`, so its direction follows its own first strong character.
+
+Moving between the fields and the code. "Forward" and "backward" for `ArrowLeft` and `ArrowRight` follow the tab's direction, and the field edge a key leaves at follows the field's own direction, as in the language field today:
+
+| Where | Key | Goes to |
+|---|---|---|
+| Language field, at the end of its non-empty text, nothing selected | a typed space | `meta` field, at the start |
+| Language field, at its forward edge | forward arrow | `meta` field, at the start |
+| Language field, at its backward edge | backward arrow | block above, at its end |
+| `meta` field, at the start of its text, nothing selected | `Backspace` | language field, at the end |
+| `meta` field, at its backward edge | backward arrow | language field, at the end |
+| `meta` field, at its forward edge | forward arrow | code, at the start |
+| either field | `ArrowUp` | block above, at its end |
+| either field | `ArrowDown`, `Enter`, `Escape` | code, at the start |
+| code, at its very start | backward arrow | `meta` field, at the end |
+| code, first line | `ArrowUp` | language field, at the end |
+
+- **The caret, after an arrow key,** goes to the field's edge on the side the key comes from, which the field's own direction decides: the forward arrow in a left-to-right tab lands at the start of a left-to-right field, but at the end of a right-to-left one, e.g. a `meta` that starts with Hebrew text. Placing it by logical position instead made the next arrow key leave the field at once, so a right-to-left `meta` couldn't be crossed. The table's "start" and "end" are for left-to-right fields. Keymap commands and node view share one helper for it.
+- **The space** is recognised as a `beforeinput` of type `insertText` whose `data` is a single space, not as a keydown, so on-screen keyboards that send no key events work too. A space anywhere else in the language field still does nothing, and so does a space in an empty language field: a `meta` typed after it wouldn't be saved without a language. Text with whitespace in it, from autocomplete or a paste, still inserts only its first word.
+- **`Backspace`** without modifiers at the start of the `meta` field moves without deleting anything, also when the field has text. Some Android keyboards don't report `Backspace` as a key; the backward arrow does the same there.
+- **With no block above,** the keys that go there leave the focus where it is, as now.
+- **From the code,** the backward arrow lands in the `meta` field, the field next to the code, the reverse of leaving the `meta` field forward. `ArrowUp` lands in the language field, as now, so moving up passes through the start of the tab. The existing keymap command tries the fields in order, the `meta` field and then the language field for the backward arrow and only the language field for `ArrowUp`, and keeps its conditions (node view enabled, editor editable, field focusable).
+
+### Default stylesheet
+
+The tab's styles move from `.prosemirror-remark-code-block-language` to `.prosemirror-remark-code-block-info`, including the square corner (`.prosemirror-remark-code-block-info + code`). The rest changes like this:
+
+- **Layout:** the tab lays the two fields out in a row, with a gap between them, and is never wider than the block. A tab wider than its content was considered (the `meta` field taking the rest of the line), but it made every tab as wide as the block, which [the corner tab](#default-stylesheet) avoids.
+- **Long values:** the `meta` field shrinks first, and the language field only once the `meta` field can't. While a field isn't focused, a value too long for the space left ends with an ellipsis (`text-overflow: ellipsis`); while it's focused, the input scrolls as inputs do, so the whole value can be edited.
+- **Focus:** the underline moves from the whole tab to the focused field's `label`, so it shows which field has focus.
+- **A `meta` that won't be saved is greyed out:** `.prosemirror-remark-code-block:not([data-language]) .prosemirror-remark-code-block-meta > input` gets a lower opacity. It relies on the existing `data-language` attribute, so the DOM contract gets no new attribute. Greying was preferred to striking through, which reads as deleted rather than as not saved. It's visual only; telling screen reader users too would need an attribute the node view keeps up to date, and is left for later.
+- **Without the stylesheet,** both fields sit inline before the first line of code, as the language field does now.
+
+### Testing
+
+- **Command:** `setCodeBlockMeta` sets, changes and removes the `meta` with and without a language, normalises it, keeps `lang` and other attributes, and dispatches nothing for an unchanged value, through `toTransformCommand`.
+- **Field:** typing, pasting (with spaces, tabs, leading whitespace and line endings), IME composition, read-only mode, undo and redo, and a `meta` with line endings that isn't edited staying as it is, through `renderNodeView`.
+- **Navigation:** every row of the table above, in a left-to-right and a right-to-left tab, and the space in the middle of the language field doing nothing.
+- **DOM:** `parseDOM` ignoring the editor's own tab, including the "Meta:" text.
+
+### Decisions
+
+1. **The `meta` stays in the document without a language,** and is only left out of the Markdown. Normalising it away needed the node view to remember it, which caused the bugs listed in #1182.
+2. **A second, always visible field** rather than one field for the whole info string. One field would mix two values under one label, and normalisation would fight the user: `js ` reads back as `js`, so the space would disappear as it's typed.
+3. **A new wrapper for the tab,** since two controls can't share one `label`.
+4. **Typing a fence with a `meta` stays impossible,** see [Input rules](#input-rules).
+5. **`setCodeBlockMeta` only,** no combined command.
+6. **The `meta` is opaque.**
 
 ## Testing
 
