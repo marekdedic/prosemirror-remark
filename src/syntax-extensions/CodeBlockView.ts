@@ -13,20 +13,25 @@ import {
   infoWhitespaceGlobal,
   nodeAttrs,
   normaliseLanguage,
+  normaliseMeta,
+  trimMetaStart,
 } from "../utils/codeBlockAttrs";
 import { isMac } from "../utils/isMac";
 import { isRightToLeft } from "../utils/isRightToLeft";
 import { isBackwardKey, moveFromControl } from "../utils/nodeViewControl";
+import { CodeBlockField, type CodeBlockFieldCaret } from "./CodeBlockField";
+
+const lineEnding = /\r\n?|\n/u;
+
+const lineEndingGlobal = /\r\n?|\n/gu;
 
 export class CodeBlockView implements NodeView {
   public readonly contentDOM: HTMLElement;
   public readonly dom: HTMLElement;
-  // While an IME composition is in progress, the field's text isn't committed
-  // and mustn't be overwritten
-  private composing = false;
   private readonly getPos: () => number | undefined;
-  private readonly input: HTMLInputElement;
-  private readonly languageContainer: HTMLElement;
+  private readonly info: HTMLElement;
+  private readonly language: CodeBlockField;
+  private readonly meta: CodeBlockField;
   private node: ProseMirrorNode;
   private readonly view: EditorView;
 
@@ -39,97 +44,65 @@ export class CodeBlockView implements NodeView {
     this.view = view;
     this.getPos = getPos;
 
+    this.language = new CodeBlockField(node, view, getPos, {
+      attribute: "lang",
+      className: "prosemirror-remark-code-block-language",
+      display: (current): string => nodeAttrs(current).lang ?? "",
+      // Of typed text with whitespace (predictive text, autocomplete) or
+      // pasted text only the first word is inserted
+      filterInsertion: (data): string | null =>
+        infoWhitespace.test(data) ? (normaliseLanguage(data) ?? "") : null,
+      label: "Language:",
+      normalise: normaliseLanguage,
+      onBeforeInput: (e): boolean => this.handleLanguageInput(e),
+      onKeyDown: (e): void => {
+        this.handleKeyDown(e, this.language);
+      },
+      strip: (value): string => value.replace(infoWhitespaceGlobal, ""),
+    });
+    this.meta = new CodeBlockField(node, view, getPos, {
+      attribute: "meta",
+      className: "prosemirror-remark-code-block-meta",
+      // An input can't show line endings, so they're shown as spaces
+      display: (current): string =>
+        (nodeAttrs(current).meta ?? "").replace(lineEndingGlobal, " "),
+      filterInsertion: (data): string | null =>
+        lineEnding.test(data) ? data.replace(lineEndingGlobal, " ") : null,
+      label: "Meta:",
+      normalise: normaliseMeta,
+      onKeyDown: (e): void => {
+        this.handleKeyDown(e, this.meta);
+      },
+      strip: trimMetaStart,
+    });
+
     // The editor may be in another window, e.g. an iframe
     const doc = view.dom.ownerDocument;
-    this.input = doc.createElement("input");
-    this.input.setAttribute("type", "text");
-    this.input.setAttribute("placeholder", "none");
-    this.input.setAttribute("spellcheck", "false");
-    // Language names are left-to-right text even in a right-to-left editor,
-    // so the field's direction follows its content
-    this.input.setAttribute("dir", "auto");
-    this.input.addEventListener("beforeinput", (e) => {
-      if (
-        !view.editable ||
-        // Only the editor's history undoes changes to the language
-        e.inputType === "historyUndo" ||
-        e.inputType === "historyRedo"
-      ) {
-        e.preventDefault();
-      } else if (
-        (e.inputType === "insertText" || e.inputType === "insertFromPaste") &&
-        e.data !== null &&
-        infoWhitespace.test(e.data)
-      ) {
-        // A typed space does nothing, and of typed text with one (predictive
-        // text, autocomplete) or pasted text only the first word is inserted
-        e.preventDefault();
-        this.insert(normaliseLanguage(e.data) ?? "");
-      }
-    });
-    this.input.addEventListener("input", (e) => {
-      this.resize();
-      if (!e.isComposing) {
-        this.commit();
-      }
-    });
-    this.input.addEventListener("compositionstart", () => {
-      this.composing = true;
-    });
-    this.input.addEventListener("compositionend", () => {
-      this.composing = false;
-      this.commit();
-    });
-    this.input.addEventListener("keydown", (e) => {
-      this.handleKeyDown(e);
-    });
-    this.input.addEventListener("blur", () => {
-      // Some input methods end a composition on blur without compositionend,
-      // which would otherwise stop the field from syncing for good
-      if (this.composing) {
-        this.composing = false;
-        this.commit();
-      }
-    });
-    // The node view isn't updated when only the editor's editable prop
-    // changes, so the field also catches up when it gets focus, before it can
-    // be typed into or announced
-    this.input.addEventListener("focus", () => {
-      this.syncEditable();
-    });
-
-    const label = doc.createElement("span");
-    label.setAttribute("class", "prosemirror-remark-code-block-language-label");
-    label.textContent = "Language:";
-
-    this.languageContainer = doc.createElement("label");
-    this.languageContainer.setAttribute("contenteditable", "false");
-    this.languageContainer.setAttribute(
-      "class",
-      "prosemirror-remark-code-block-language",
-    );
-    this.languageContainer.appendChild(label);
-    this.languageContainer.appendChild(this.input);
+    this.info = doc.createElement("div");
+    this.info.setAttribute("contenteditable", "false");
+    this.info.setAttribute("class", "prosemirror-remark-code-block-info");
+    this.info.appendChild(this.language.dom);
+    this.info.appendChild(this.meta.dom);
 
     this.contentDOM = doc.createElement("code");
 
     this.dom = doc.createElement("pre");
     this.dom.setAttribute("class", "prosemirror-remark-code-block");
-    this.dom.appendChild(this.languageContainer);
+    this.dom.appendChild(this.info);
     this.dom.appendChild(this.contentDOM);
 
     this.render();
   }
 
   public ignoreMutation(mutation: ViewMutationRecord): boolean {
-    return this.languageContainer.contains(mutation.target);
+    return this.info.contains(mutation.target);
   }
 
   // No instanceof checks: in an iframe, events and nodes come from another
   // window than the global classes
   public stopEvent(event: Event): boolean {
     return (
-      this.languageContainer.contains(event.target as Node | null) &&
+      this.info.contains(event.target as Node | null) &&
       // Undo and redo go to the editor's history, not the field's own
       !(event.type === "keydown" && isHistoryKey(event as KeyboardEvent))
     );
@@ -144,47 +117,7 @@ export class CodeBlockView implements NodeView {
     return true;
   }
 
-  private commit(): void {
-    const pos = this.getPos();
-    const current = normaliseLanguage(this.node.attrs["lang"] as string | null);
-    if (pos === undefined || !this.view.editable) {
-      this.setValue(current ?? "");
-      return;
-    }
-    // Whitespace can arrive by drop or autocorrect, not only by typing, so it's
-    // removed wherever it is, keeping the caret in place
-    const { selectionStart, value } = this.input;
-    const stripped = value.replace(infoWhitespaceGlobal, "");
-    if (stripped !== value) {
-      this.setValue(
-        stripped,
-        value
-          .slice(0, selectionStart ?? value.length)
-          .replace(infoWhitespaceGlobal, "").length,
-      );
-    }
-    const lang = normaliseLanguage(stripped);
-    if (lang !== current) {
-      this.view.dispatch(
-        this.view.state.tr.setNodeAttribute(pos, "lang", lang),
-      );
-    }
-  }
-
-  private handleKeyDown(e: KeyboardEvent): void {
-    // Safari reports the Enter that confirms a composition after the
-    // composition has ended, with the key code 229, as ProseMirror checks too
-    // eslint-disable-next-line @typescript-eslint/no-deprecated -- Nothing else identifies it
-    if (e.isComposing || e.keyCode === 229) {
-      return;
-    }
-    // Enter in a lone input would submit an enclosing form
-    if (e.key === "Enter") {
-      e.preventDefault();
-    }
-    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
-      return;
-    }
+  private handleKeyDown(e: KeyboardEvent, field: CodeBlockField): void {
     const pos = this.getPos();
     if (pos === undefined) {
       return;
@@ -195,16 +128,15 @@ export class CodeBlockView implements NodeView {
     // With nothing above, the field keeps the focus
     const above = (): Selection | null =>
       Selection.findFrom(doc.resolve(pos), -1);
-    let selection: Selection | null;
+    const { selectionEnd, selectionStart, value } = field.input;
     switch (e.key) {
       case "ArrowDown":
       case "Enter":
       case "Escape":
-        selection = toCode();
+        moveFromControl(this.view, e, toCode());
         break;
       case "ArrowLeft":
       case "ArrowRight": {
-        const { selectionEnd, selectionStart, value } = this.input;
         const atStart = selectionStart === 0 && selectionEnd === 0;
         const atEnd =
           selectionStart === value.length && selectionEnd === value.length;
@@ -212,74 +144,80 @@ export class CodeBlockView implements NodeView {
         // Which edge of the field's text the key leaves at follows the field's
         // own direction (left-to-right for most language names), but where it
         // goes follows the tab's, as on the code side: in right-to-left text,
-        // ArrowRight goes backward, to the block above.
-        const atEdge = left === isRightToLeft(this.input) ? atEnd : atStart;
+        // ArrowRight goes backward, towards the block above.
+        const atEdge = left === isRightToLeft(field.input) ? atEnd : atStart;
         if (!atEdge) {
           return;
         }
-        selection = isBackwardKey(e.key, this.languageContainer)
-          ? above()
-          : toCode();
+        const backward = isBackwardKey(e.key, this.info);
+        if (field === this.language) {
+          if (backward) {
+            moveFromControl(this.view, e, above());
+          } else {
+            this.moveToField(e, this.meta, e.key, toCode);
+          }
+        } else if (backward) {
+          this.moveToField(e, this.language, e.key, above);
+        } else {
+          moveFromControl(this.view, e, toCode());
+        }
         break;
       }
       case "ArrowUp":
-        selection = above();
+        moveFromControl(this.view, e, above());
+        break;
+      case "Backspace":
+        if (field === this.meta && selectionStart === 0 && selectionEnd === 0) {
+          this.moveToField(e, this.language, "end", () => null);
+        }
         break;
       default:
-        return;
     }
-    moveFromControl(this.view, e, selection);
   }
 
-  private insert(text: string): void {
-    if (text === "") {
-      return;
+  // A typed space at the end of the language moves on to the meta, as in the
+  // info string. Any other space does nothing, also without a language, where
+  // a meta wouldn't be saved.
+  private handleLanguageInput(e: InputEvent): boolean {
+    const { selectionEnd, selectionStart, value } = this.language.input;
+    if (
+      e.inputType !== "insertText" ||
+      e.data !== " " ||
+      value === "" ||
+      selectionStart !== value.length ||
+      selectionEnd !== value.length
+    ) {
+      return false;
     }
-    this.input.setRangeText(
-      text,
-      this.input.selectionStart ?? this.input.value.length,
-      this.input.selectionEnd ?? this.input.value.length,
-      "end",
-    );
-    this.resize();
-    this.commit();
+    e.preventDefault();
+    this.meta.focus("start");
+    return true;
+  }
+
+  // A field the app hides can't take the focus, which then goes on past it
+  private moveToField(
+    e: KeyboardEvent,
+    field: CodeBlockField,
+    caret: CodeBlockFieldCaret,
+    past: () => Selection | null,
+  ): void {
+    if (field.focus(caret)) {
+      e.preventDefault();
+    } else {
+      moveFromControl(this.view, e, past());
+    }
   }
 
   private render(): void {
-    const attrs = nodeAttrs(this.node);
-    const { lang } = attrs;
-    const dom = domAttrs(attrs);
+    const dom = domAttrs(nodeAttrs(this.node));
     for (const [name, value] of Object.entries(dom.pre)) {
       setOrRemoveAttribute(this.dom, name, value);
     }
     for (const [name, value] of Object.entries(dom.code)) {
       setOrRemoveAttribute(this.contentDOM, name, value);
     }
-    if (!this.composing && this.input.value !== (lang ?? "")) {
-      this.setValue(lang ?? "");
-    } else {
-      this.resize();
-    }
-    this.syncEditable();
-  }
-
-  private resize(): void {
-    this.input.size = Math.max(
-      this.input.value.length,
-      this.input.placeholder.length,
-    );
-  }
-
-  private setValue(value: string, caret?: number): void {
-    this.input.value = value;
-    if (caret !== undefined) {
-      this.input.setSelectionRange(caret, caret);
-    }
-    this.resize();
-  }
-
-  private syncEditable(): void {
-    this.input.readOnly = !this.view.editable;
+    this.language.render(this.node);
+    this.meta.render(this.node);
   }
 }
 

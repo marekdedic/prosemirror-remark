@@ -4,24 +4,26 @@ import type { EditorView } from "prosemirror-view";
 
 import { isRightToLeft } from "./isRightToLeft";
 
-// The input in a node view's control, a child of the node's DOM with the given
-// class
+// The input in a node view's control, reached from the node's DOM through
+// children with the given classes, one per level
 export function findControlInput(
   view: EditorView,
   pos: number,
-  className: string,
+  ...classNames: Array<string>
 ): HTMLInputElement | null {
   // No instanceof checks: in an iframe, nodes come from another window than
   // the global classes
+  let element: Element | undefined;
   const dom = view.nodeDOM(pos);
-  if (dom === null || dom.nodeType !== dom.ELEMENT_NODE) {
-    return null;
+  if (dom !== null && dom.nodeType === dom.ELEMENT_NODE) {
+    element = dom as Element;
   }
-  return (
-    Array.from((dom as Element).children)
-      .find((child) => child.classList.contains(className))
-      ?.querySelector("input") ?? null
-  );
+  for (const className of classNames) {
+    element = Array.from(element?.children ?? []).find((child) =>
+      child.classList.contains(className),
+    );
+  }
+  return element?.querySelector("input") ?? null;
 }
 
 export function focusControlInput(

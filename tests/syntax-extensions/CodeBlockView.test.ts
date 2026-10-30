@@ -7,6 +7,7 @@ import { describe, expect, test, vi } from "vitest";
 import {
   CodeBlockExtension,
   setCodeBlockLanguage,
+  setCodeBlockMeta,
 } from "../../src/syntax-extensions/CodeBlockExtension";
 import { type NodeViewFixture, renderNodeView } from "../utils/node-view";
 
@@ -29,8 +30,17 @@ function keymap(fx: NodeViewFixture): Record<string, Command> {
   );
 }
 
-function paste(fx: NodeViewFixture, text: string): boolean {
-  const field = input(fx);
+function metaInput(fx: NodeViewFixture): HTMLInputElement {
+  return fx.editor.element(
+    ".prosemirror-remark-code-block-meta > input",
+  ) as HTMLInputElement;
+}
+
+function paste(
+  fx: NodeViewFixture,
+  text: string,
+  field: HTMLInputElement = input(fx),
+): boolean {
   const inserted = field.dispatchEvent(
     new InputEvent("beforeinput", {
       cancelable: true,
@@ -54,8 +64,9 @@ function press(
   fx: NodeViewFixture,
   key: string,
   modifiers: KeyboardEventInit = {},
+  field: HTMLInputElement = input(fx),
 ): boolean {
-  return input(fx).dispatchEvent(
+  return field.dispatchEvent(
     new KeyboardEvent("keydown", {
       bubbles: true,
       cancelable: true,
@@ -83,8 +94,17 @@ function typeLanguage(fx: NodeViewFixture, value: string): void {
   input(fx).dispatchEvent(new InputEvent("input", { bubbles: true }));
 }
 
-function typeText(fx: NodeViewFixture, data: string): boolean {
-  return input(fx).dispatchEvent(
+function typeMeta(fx: NodeViewFixture, value: string): void {
+  metaInput(fx).value = value;
+  metaInput(fx).dispatchEvent(new InputEvent("input", { bubbles: true }));
+}
+
+function typeText(
+  fx: NodeViewFixture,
+  data: string,
+  field: HTMLInputElement = input(fx),
+): boolean {
+  return field.dispatchEvent(
     new InputEvent("beforeinput", {
       cancelable: true,
       data,
@@ -146,9 +166,16 @@ describe("CodeBlockView", () => {
   test("renders the field outside of the editable content", () => {
     const fx = render("```js\nHello\n```\n");
 
-    expect(input(fx).parentElement?.getAttribute("contenteditable")).toBe(
-      "false",
-    );
+    expect(
+      fx.editor
+        .element(".prosemirror-remark-code-block-info")
+        .getAttribute("contenteditable"),
+    ).toBe("false");
+    expect(
+      fx.editor
+        .element(".prosemirror-remark-code-block-info")
+        .contains(input(fx)),
+    ).toBe(true);
     expect(fx.editor.element("code").contains(input(fx))).toBe(false);
   });
 
@@ -569,10 +596,12 @@ describe("CodeBlockView", () => {
     },
   );
 
-  test("in a right-to-left tab, `ArrowRight` goes from the code through the field to the block above", () => {
+  test("in a right-to-left tab, `ArrowRight` goes from the code through the fields to the block above", () => {
     const fx = render("Hi\n\n```js\nHello\n```\n");
-    input(fx).parentElement?.style.setProperty("direction", "rtl");
+    fx.editor.element(".prosemirror-remark-code-block-info").style.direction =
+      "rtl";
     input(fx).style.direction = "ltr";
+    metaInput(fx).style.direction = "ltr";
     fx.editor.setSelection(5);
     const view = fakeView({
       domAtPos: (): { node: Node; offset: number } => ({
@@ -584,20 +613,35 @@ describe("CodeBlockView", () => {
     const { ArrowRight: arrowRight } = keymap(fx);
 
     expect(arrowRight(fx.editor.state, () => undefined, view)).toBe(true);
+    expect(document.activeElement).toBe(metaInput(fx));
+
+    expect(press(fx, "ArrowRight", {}, metaInput(fx))).toBe(false);
     expect(document.activeElement).toBe(input(fx));
+    expect(input(fx).selectionStart).toBe(0);
+
+    expect(press(fx, "ArrowRight")).toBe(true);
+
+    input(fx).setSelectionRange(2, 2);
 
     expect(press(fx, "ArrowRight")).toBe(false);
     expect(fx.editor.state.selection.from).toBe(3);
   });
 
-  test("in a right-to-left tab, `ArrowLeft` at the start of a left-to-right field goes to the code", () => {
-    const fx = render("Hi\n\n```js\nHello\n```\n");
-    input(fx).parentElement?.style.setProperty("direction", "rtl");
+  test("in a right-to-left tab, `ArrowLeft` at the start of a left-to-right field goes forward", () => {
+    const fx = render("Hi\n\n```js x=1\nHello\n```\n");
+    fx.editor.element(".prosemirror-remark-code-block-info").style.direction =
+      "rtl";
     input(fx).style.direction = "ltr";
+    metaInput(fx).style.direction = "ltr";
     input(fx).focus();
     input(fx).setSelectionRange(0, 0);
 
     expect(press(fx, "ArrowLeft")).toBe(false);
+    expect(document.activeElement).toBe(metaInput(fx));
+
+    metaInput(fx).setSelectionRange(0, 0);
+
+    expect(press(fx, "ArrowLeft", {}, metaInput(fx))).toBe(false);
     expect(fx.editor.state.selection.from).toBe(5);
   });
 
@@ -629,14 +673,14 @@ describe("CodeBlockView", () => {
     expect(document.activeElement).not.toBe(input(fx));
   });
 
-  test("`ArrowLeft` at the start of the code focuses the field", () => {
-    const fx = render("Hi\n\n```js\nHello\n```\n");
+  test("`ArrowLeft` at the start of the code focuses the meta field", () => {
+    const fx = render("Hi\n\n```js x=1\nHello\n```\n");
     fx.editor.setSelection(5);
 
     fx.editor.type("{ArrowLeft}");
 
-    expect(document.activeElement).toBe(input(fx));
-    expect(input(fx).selectionStart).toBe(2);
+    expect(document.activeElement).toBe(metaInput(fx));
+    expect(metaInput(fx).selectionStart).toBe(3);
   });
 
   test("`ArrowLeft` elsewhere in the code does not focus the field", () => {
@@ -647,13 +691,14 @@ describe("CodeBlockView", () => {
     expect(document.activeElement).not.toBe(input(fx));
   });
 
-  test("`ArrowRight` at the end of the field moves to the start of the code", () => {
-    const fx = render("Hi\n\n```js\nHello\n```\n");
+  test("`ArrowRight` at the end of the field moves to the start of the meta field", () => {
+    const fx = render("Hi\n\n```js x=1\nHello\n```\n");
     input(fx).focus();
     input(fx).setSelectionRange(2, 2);
 
     expect(press(fx, "ArrowRight")).toBe(false);
-    expect(fx.editor.state.selection.from).toBe(5);
+    expect(document.activeElement).toBe(metaInput(fx));
+    expect(metaInput(fx).selectionStart).toBe(0);
   });
 
   test("`ArrowLeft` at the start of the field moves to the end of the previous block", () => {
@@ -793,11 +838,14 @@ describe("CodeBlockView", () => {
     const iframeDocument = (iframe.contentWindow as unknown as typeof window)
       .document;
     const pre = iframeDocument.createElement("pre");
+    const info = iframeDocument.createElement("div");
+    info.className = "prosemirror-remark-code-block-info";
     const label = iframeDocument.createElement("label");
     label.className = "prosemirror-remark-code-block-language";
     const field = iframeDocument.createElement("input");
     label.appendChild(field);
-    pre.appendChild(label);
+    info.appendChild(label);
+    pre.appendChild(info);
     iframeDocument.body.appendChild(pre);
     const view = fakeView({ nodeDOM: (): Node => pre, root: iframeDocument });
     const { ArrowUp: arrowUp } = keymap(fx);
@@ -823,14 +871,14 @@ describe("CodeBlockView", () => {
     ["rtl", "ArrowLeft", false],
     ["rtl", "ArrowRight", true],
   ])(
-    "in an empty %s code block, `%s` focuses the field: %s",
+    "in an empty %s code block, `%s` focuses the meta field: %s",
     (direction, key, focuses) => {
       const fx = render("Hi\n\n```js\n```\n");
       fx.editor.element("code").style.direction = direction;
       fx.editor.setSelection(5);
 
       expect(fx.editor.command(keymap(fx)[key])).toBe(focuses);
-      expect(document.activeElement === input(fx)).toBe(focuses);
+      expect(document.activeElement === metaInput(fx)).toBe(focuses);
     },
   );
 
@@ -841,12 +889,15 @@ describe("CodeBlockView", () => {
     document.body.appendChild(host);
     const root = host.attachShadow({ mode: "open" });
     const pre = document.createElement("pre");
+    const info = document.createElement("div");
+    info.className = "prosemirror-remark-code-block-info";
     const label = document.createElement("label");
     label.className = "prosemirror-remark-code-block-language";
     const field = document.createElement("input");
     field.value = "js";
     label.appendChild(field);
-    pre.appendChild(label);
+    info.appendChild(label);
+    pre.appendChild(info);
     root.appendChild(pre);
     const view = fakeView({ nodeDOM: (): Node => pre, root });
 
@@ -893,5 +944,315 @@ describe("CodeBlockView", () => {
     input(fx).dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
 
     expect(mousedown).not.toHaveBeenCalled();
+  });
+
+  test("renders the meta field", () => {
+    const fx = render("```js x=1\nHello\n```\n");
+
+    expect(metaInput(fx).value).toBe("x=1");
+    expect(metaInput(fx).placeholder).toBe("none");
+    expect(metaInput(fx).getAttribute("dir")).toBe("auto");
+    expect(metaInput(fx).parentElement?.tagName).toBe("LABEL");
+    expect(
+      fx.editor.element(".prosemirror-remark-code-block-meta-label")
+        .textContent,
+    ).toBe("Meta:");
+  });
+
+  test("renders an empty meta field without a meta", () => {
+    expect(metaInput(render("```js\nHello\n```\n")).value).toBe("");
+  });
+
+  test("adding a meta", () => {
+    const fx = render("```js\nHello\n```\n");
+
+    typeMeta(fx, 'title="a b.js"');
+
+    expect(fx.markdown()).toBe('```js title="a b.js"\nHello\n```');
+    expect(fx.editor.element("pre").getAttribute("data-meta")).toBe(
+      'title="a b.js"',
+    );
+  });
+
+  test("removing the meta", () => {
+    const fx = render("```js x=1\nHello\n```\n");
+
+    typeMeta(fx, "");
+
+    expect(fx.markdown()).toBe("```js\nHello\n```");
+    expect(fx.editor.element("pre").hasAttribute("data-meta")).toBe(false);
+  });
+
+  test("a meta without a language is kept, but Markdown can't carry it", () => {
+    const fx = render("```\nHello\n```\n");
+
+    typeMeta(fx, "x=1");
+
+    expect(fx.markdown()).toBe("```\nHello\n```");
+    expect(fx.editor.element("pre").getAttribute("data-meta")).toBe("x=1");
+
+    typeLanguage(fx, "js");
+
+    expect(fx.markdown()).toBe("```js x=1\nHello\n```");
+  });
+
+  test("removes leading spaces and tabs from the meta, keeping the caret", () => {
+    const fx = render("```js\nHello\n```\n");
+    metaInput(fx).value = " \tx 1";
+    metaInput(fx).setSelectionRange(3, 3);
+    metaInput(fx).dispatchEvent(new InputEvent("input", { bubbles: true }));
+
+    expect(metaInput(fx).value).toBe("x 1");
+    expect(metaInput(fx).selectionStart).toBe(1);
+    expect(fx.markdown()).toBe("```js x 1\nHello\n```");
+  });
+
+  test("typed text with spaces is left to the meta field", () => {
+    const fx = render("```js\nHello\n```\n");
+
+    expect(typeText(fx, "a b", metaInput(fx))).toBe(true);
+  });
+
+  test("shows line endings in the meta as spaces, and keeps them until it's edited", () => {
+    const fx = render("```js\nHello\n```\n");
+    fx.editor.command(setCodeBlockMeta("a\nb"));
+    const before = fx.editor.doc;
+
+    expect(metaInput(fx).value).toBe("a b");
+
+    typeMeta(fx, "a b");
+
+    expect(fx.editor.doc.eq(before)).toBe(true);
+
+    typeMeta(fx, "a bc");
+
+    expect(fx.markdown()).toBe("```js a bc\nHello\n```");
+  });
+
+  test.each(["a\nb", "a\r\nb", "a\rb"])(
+    "pasting %j into the meta field inserts a space for the line ending",
+    (text) => {
+      const fx = render("```js\nHello\n```\n");
+
+      expect(paste(fx, text, metaInput(fx))).toBe(false);
+      expect(metaInput(fx).value).toBe("a b");
+      expect(fx.markdown()).toBe("```js a b\nHello\n```");
+    },
+  );
+
+  test("a space typed at the end of the language moves to the start of the meta field", () => {
+    const fx = render("```js x=1\nHello\n```\n");
+    input(fx).focus();
+    input(fx).setSelectionRange(2, 2);
+
+    expect(typeText(fx, " ")).toBe(false);
+    expect(document.activeElement).toBe(metaInput(fx));
+    expect(metaInput(fx).selectionStart).toBe(0);
+    expect(fx.markdown()).toBe("```js x=1\nHello\n```");
+  });
+
+  test("a space typed in an empty language field does nothing", () => {
+    const fx = render("```\nHello\n```\n");
+    input(fx).focus();
+
+    expect(typeText(fx, " ")).toBe(false);
+    expect(document.activeElement).toBe(input(fx));
+    expect(input(fx).value).toBe("");
+  });
+
+  test("a space typed inside the language does nothing", () => {
+    const fx = render("```js x=1\nHello\n```\n");
+    input(fx).focus();
+    input(fx).setSelectionRange(1, 1);
+
+    expect(typeText(fx, " ")).toBe(false);
+    expect(document.activeElement).toBe(input(fx));
+    expect(input(fx).value).toBe("js");
+  });
+
+  test("`Backspace` at the start of the meta field moves to the end of the language field", () => {
+    const fx = render("```js x=1\nHello\n```\n");
+    metaInput(fx).focus();
+    metaInput(fx).setSelectionRange(0, 0);
+
+    expect(press(fx, "Backspace", {}, metaInput(fx))).toBe(false);
+    expect(document.activeElement).toBe(input(fx));
+    expect(input(fx).selectionStart).toBe(2);
+    expect(fx.markdown()).toBe("```js x=1\nHello\n```");
+  });
+
+  test.each([
+    ["inside the meta field", 1, {}],
+    ["with a modifier", 0, { ctrlKey: true }],
+  ])("`Backspace` %s is left to the field", (_, caret, modifiers) => {
+    const fx = render("```js x=1\nHello\n```\n");
+    metaInput(fx).focus();
+    metaInput(fx).setSelectionRange(caret, caret);
+
+    expect(press(fx, "Backspace", modifiers, metaInput(fx))).toBe(true);
+    expect(document.activeElement).toBe(metaInput(fx));
+  });
+
+  test("`ArrowLeft` at the start of the meta field moves to the end of the language field", () => {
+    const fx = render("```js x=1\nHello\n```\n");
+    metaInput(fx).focus();
+    metaInput(fx).setSelectionRange(0, 0);
+
+    expect(press(fx, "ArrowLeft", {}, metaInput(fx))).toBe(false);
+    expect(document.activeElement).toBe(input(fx));
+    expect(input(fx).selectionStart).toBe(2);
+  });
+
+  test("`ArrowRight` at the end of the meta field moves to the start of the code", () => {
+    const fx = render("Hi\n\n```js x=1\nHello\n```\n");
+    metaInput(fx).focus();
+    metaInput(fx).setSelectionRange(3, 3);
+
+    expect(press(fx, "ArrowRight", {}, metaInput(fx))).toBe(false);
+    expect(fx.editor.state.selection.from).toBe(5);
+    expect(document.activeElement).not.toBe(metaInput(fx));
+  });
+
+  test("`ArrowRight` inside the meta field is left to the field", () => {
+    const fx = render("```js x=1\nHello\n```\n");
+    metaInput(fx).focus();
+    metaInput(fx).setSelectionRange(1, 1);
+
+    expect(press(fx, "ArrowRight", {}, metaInput(fx))).toBe(true);
+    expect(document.activeElement).toBe(metaInput(fx));
+  });
+
+  test.each(["Enter", "Escape", "ArrowDown"])(
+    "`%s` in the meta field moves to the start of the code",
+    (key) => {
+      const fx = render("Hi\n\n```js x=1\nHello\n```\n");
+      metaInput(fx).focus();
+
+      expect(press(fx, key, {}, metaInput(fx))).toBe(false);
+      expect(fx.editor.state.selection.from).toBe(5);
+    },
+  );
+
+  test("`ArrowUp` in the meta field moves to the end of the previous block", () => {
+    const fx = render("Hi\n\n```js x=1\nHello\n```\n");
+    metaInput(fx).focus();
+
+    expect(press(fx, "ArrowUp", {}, metaInput(fx))).toBe(false);
+    expect(fx.editor.state.selection.from).toBe(3);
+  });
+
+  test("skips a meta field that can't take focus", () => {
+    const fx = render("Hi\n\n```js\nHello\n```\n");
+    metaInput(fx).disabled = true;
+    input(fx).focus();
+    input(fx).setSelectionRange(2, 2);
+
+    expect(press(fx, "ArrowRight")).toBe(false);
+    expect(fx.editor.state.selection.from).toBe(5);
+
+    fx.editor.type("{ArrowLeft}");
+
+    expect(document.activeElement).toBe(input(fx));
+  });
+
+  test("makes the meta field read-only in a read-only editor", () => {
+    const fx = render("```ts x=1\nHello\n```\n", { editable: () => false });
+
+    expect(metaInput(fx).readOnly).toBe(true);
+    expect(typeText(fx, "y", metaInput(fx))).toBe(false);
+
+    typeMeta(fx, "y=2");
+
+    expect(fx.markdown()).toBe("```ts x=1\nHello\n```");
+    expect(metaInput(fx).value).toBe("x=1");
+  });
+
+  test("`ArrowRight` enters a right-to-left meta at its left edge, and crosses it", () => {
+    const fx = render("Hi\n\n```js שלום\nHello\n```\n");
+    metaInput(fx).style.direction = "rtl";
+    input(fx).focus();
+    input(fx).setSelectionRange(2, 2);
+
+    expect(press(fx, "ArrowRight")).toBe(false);
+    expect(document.activeElement).toBe(metaInput(fx));
+    expect(metaInput(fx).selectionStart).toBe(4);
+
+    expect(press(fx, "ArrowRight", {}, metaInput(fx))).toBe(true);
+
+    metaInput(fx).setSelectionRange(0, 0);
+
+    expect(press(fx, "ArrowRight", {}, metaInput(fx))).toBe(false);
+    expect(fx.editor.state.selection.from).toBe(5);
+  });
+
+  test("`ArrowLeft` from the code enters a right-to-left meta at its right edge", () => {
+    const fx = render("Hi\n\n```js שלום\nHello\n```\n");
+    metaInput(fx).style.direction = "rtl";
+    fx.editor.setSelection(5);
+
+    fx.editor.type("{ArrowLeft}");
+
+    expect(document.activeElement).toBe(metaInput(fx));
+    expect(metaInput(fx).selectionStart).toBe(0);
+    expect(press(fx, "ArrowLeft", {}, metaInput(fx))).toBe(true);
+  });
+
+  test("`ArrowLeft` from a right-to-left meta enters the language at its right edge", () => {
+    const fx = render("```js שלום\nHello\n```\n");
+    metaInput(fx).style.direction = "rtl";
+    metaInput(fx).focus();
+    metaInput(fx).setSelectionRange(4, 4);
+
+    expect(press(fx, "ArrowLeft", {}, metaInput(fx))).toBe(false);
+    expect(document.activeElement).toBe(input(fx));
+    expect(input(fx).selectionStart).toBe(2);
+  });
+
+  test("a composition in the meta field is committed when it ends", () => {
+    const fx = render("```js\nHello\n```\n");
+    metaInput(fx).focus();
+
+    metaInput(fx).dispatchEvent(new CompositionEvent("compositionstart"));
+    metaInput(fx).value = "a あ";
+    metaInput(fx).dispatchEvent(new InputEvent("input", { isComposing: true }));
+
+    expect(fx.markdown()).toBe("```js\nHello\n```");
+
+    metaInput(fx).dispatchEvent(new CompositionEvent("compositionend"));
+
+    expect(fx.markdown()).toBe("```js a あ\nHello\n```");
+  });
+
+  test("pasting tabs and leading whitespace into the meta field keeps the tabs inside", () => {
+    const fx = render("```js\nHello\n```\n");
+
+    expect(paste(fx, " \tx\ty", metaInput(fx))).toBe(true);
+    expect(metaInput(fx).value).toBe("x\ty");
+    expect(fx.markdown()).toBe("```js x\ty\nHello\n```");
+  });
+
+  test.each(["historyUndo", "historyRedo"])(
+    "prevents the meta field's own %s",
+    (inputType) => {
+      const fx = render("```js x=1\nHello\n```\n");
+
+      expect(
+        metaInput(fx).dispatchEvent(
+          new InputEvent("beforeinput", { cancelable: true, inputType }),
+        ),
+      ).toBe(false);
+    },
+  );
+
+  test("lets ProseMirror handle undo in the meta field", () => {
+    const handleKeyDown = vi.fn(() => false);
+    const fx = render("```js x=1\nHello\n```\n", { handleKeyDown });
+
+    press(fx, "z", { ctrlKey: true }, metaInput(fx));
+
+    expect(handleKeyDown).toHaveBeenCalledExactlyOnceWith(
+      expect.anything(),
+      expect.any(KeyboardEvent),
+    );
   });
 });
