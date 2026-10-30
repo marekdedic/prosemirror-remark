@@ -78,8 +78,7 @@
     "micromark-extension-gfm-task-list-item": "^2.0.1",
     "prosemirror-commands": "^1.5.1",
     "prosemirror-inputrules": "^1.4.0",
-    "prosemirror-schema-list": "^1.2.2",
-    "prosemirror-transform": "^1.12.2",
+    "prosemirror-schema-list": "^1.6.0",
     "remark-parse": "^11.0.0",
     "remark-stringify": "^11.0.0",
     "unified": "^11.0.4"

@@ -18,7 +18,6 @@ export default defineConfig({
         "prosemirror-model",
         "prosemirror-schema-list",
         "prosemirror-state",
-        "prosemirror-transform",
         "prosemirror-unified",
         "remark-parse",
         "remark-stringify",
