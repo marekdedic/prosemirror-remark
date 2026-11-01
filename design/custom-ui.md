@@ -144,5 +144,5 @@ See `design/code-block-language.md`.
 
 ### Future cases
 
-- **Tight/loose lists.** Lists get the classes `prosemirror-remark-bullet-list` and `prosemirror-remark-ordered-list`. The default stylesheet uses them with the existing `data-spread` attribute to remove paragraph margins in tight lists, so they look like rendered Markdown. The rule must also reach task list items, whose paragraphs sit inside the content `div` rather than directly in the `li`. A toggle is a command, not a rendering concern.
+- **Tight/loose lists.** See `design/list-looseness.md`.
 - **Links.** Extra attributes come from a DOM attribute hook if anyone asks for one. Showing or editing the `href` is a user mark view or editor plugin.
