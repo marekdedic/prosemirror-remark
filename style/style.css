@@ -6,31 +6,60 @@
   padding: 0.75em 1em;
 }
 
-.prosemirror-remark-code-block-language + code {
+.prosemirror-remark-code-block-info + code {
   /* eslint-disable-next-line css/use-baseline -- Older browsers keep a rounded corner under the tab, which is only cosmetic */
   border-start-start-radius: 0; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Older browsers keep a rounded corner under the tab, which is only cosmetic */
 }
 
-.prosemirror-remark-code-block-language {
+.prosemirror-remark-code-block-info {
   background: rgb(127 127 127 / 12%);
   border-radius: 0.375em 0.375em 0 0;
-  display: table;
+  box-sizing: border-box;
+  display: flex;
   font-size: 0.8em;
   line-height: 1;
-  padding: 0.5em 1.25em 0.4em;
+  max-width: 100%;
+  padding: 0 1.25em;
+
+  /* eslint-disable-next-line css/use-baseline -- Only Edge 18 lacks it, and the browserslist excludes it */
+  width: max-content; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Firefox only lacks other keywords, such as stretch */
 }
 
-.prosemirror-remark-code-block-language-label {
+.prosemirror-remark-code-block-language,
+.prosemirror-remark-code-block-meta {
+  display: flex;
+  padding: 0.5em 0 0.4em;
+}
+
+.prosemirror-remark-code-block-language {
+  min-width: 0;
+}
+
+/* The meta shrinks first, the language only once the meta can't */
+.prosemirror-remark-code-block-meta {
+  flex: 0 1000 auto;
+
+  /* eslint-disable-next-line css/use-baseline -- Only Chrome 66-68 lack it, and lose just the gap before the field */
+  margin-inline-start: 1.25em; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Only Chrome 66-68 lack it, and lose just the gap before the field */
+  min-width: 0;
+}
+
+.prosemirror-remark-code-block-language-label,
+.prosemirror-remark-code-block-meta-label {
+  flex: none;
+
   /* eslint-disable-next-line css/use-baseline -- Only Chrome 66-68 lack it, and lose just the gap after the label */
   margin-inline-end: 0.5em; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Only Chrome 66-68 lack it, and lose just the gap after the label */
   opacity: 0.55;
 }
 
-.prosemirror-remark-code-block-language > input {
+.prosemirror-remark-code-block-language > input,
+.prosemirror-remark-code-block-meta > input {
   background: transparent;
   border: none;
   color: inherit;
   font: inherit;
+  min-width: 0;
 
   /* eslint-disable-next-line css/use-baseline -- Only outlines following border-radius are newer, and this draws none */
   outline: none;
@@ -43,10 +72,18 @@
   text-align: match-parent;
 }
 
-/* eslint-disable-next-line css/use-baseline -- Only Edge 18 lacks it, and the browserslist excludes it */
-.prosemirror-remark-code-block-language:focus-within {
+.prosemirror-remark-code-block-language > input:not(:focus),
+.prosemirror-remark-code-block-meta > input:not(:focus) {
+  text-overflow: ellipsis;
+}
+
+/* eslint-disable css/use-baseline -- Only Edge 18 lacks it, and the browserslist excludes it */
+.prosemirror-remark-code-block-language:focus-within,
+.prosemirror-remark-code-block-meta:focus-within {
   box-shadow: inset 0 -2px rgb(127 127 127 / 50%);
 }
+
+/* eslint-enable css/use-baseline */
 
 .prosemirror-remark-task-list-item {
   list-style: none;
@@ -69,4 +106,11 @@
 
 .prosemirror-remark-task-list-item-checkbox > input:not(:disabled) {
   cursor: pointer;
+}
+
+/* A meta without a language isn't saved to Markdown */
+.prosemirror-remark-code-block:not([data-language])
+  .prosemirror-remark-code-block-meta
+  > input {
+  opacity: 0.55;
 }
