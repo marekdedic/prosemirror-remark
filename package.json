@@ -104,7 +104,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-regexp": "^3.3.1",
     "jiti": "^2.7.0",
-    "jsdom": "^30.0.1",
+    "jsdom": "^31.0.0",
     "mdast-util-from-markdown": "^2.0.0",
     "mdast-util-to-markdown": "^2.2.1",
     "micromark": "^4.0.3",
