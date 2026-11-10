@@ -20,3 +20,7 @@ updates:
         patterns:
           - vitest
           - "@vitest/coverage-v8"
+      stylelint:
+        patterns:
+          - stylelint
+          - stylelint-config-standard
