@@ -1233,7 +1233,7 @@ describe("TaskListExtension", () => {
         "cursor",
         "{Enter}",
         (b) => [b.ul(b.taskListItem(b.p("Hello")), b.taskListItem(b.p()))],
-        "* [ ] Hello\n*",
+        "* [ ] Hello\n* [ ] &#x20;",
       );
     });
 
@@ -1257,7 +1257,7 @@ describe("TaskListExtension", () => {
         "cursor",
         "{Enter}",
         (b) => [b.ul(b.li(b.p("Hello")), b.taskListItem(b.p()))],
-        "* Hello\n*",
+        "* Hello\n* [ ] &#x20;",
       );
     });
 
