@@ -21,6 +21,8 @@
 | Reference link              | `[text][id]` with `[id]: https://example.com` | `[text](https://example.com)` |
 | Reference image             | `![alt][id]` with `[id]: image.png`         | `![alt](image.png)`            |
 
+A loose list is written with a blank line between all its items and between all the blocks in its items, even if the original only had some of them. Both render the same.
+
 Reference-style links and images are resolved when parsing, so they come back out as inline links and images, and the definitions are dropped. A reference without a matching definition isn't a link in Markdown, so it stays plain text.
 
 ## Spec conformance
