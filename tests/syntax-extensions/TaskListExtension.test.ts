@@ -604,6 +604,36 @@ describe("TaskListExtension", () => {
       );
     });
 
+    test("`[ ]` followed by `Enter` turns an empty item into a task item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("<cursor>")))],
+        "cursor",
+        "[[ ]{Enter}",
+        (b) => [b.ul(b.taskListItem({ checked: false }, b.p()))],
+        "* [ ] &#x20;",
+      );
+    });
+
+    test("`[ ]` followed by `Enter` before text splits the item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("[ ]<cursor>foo")))],
+        "cursor",
+        "{Enter}",
+        (b) => [b.ul(b.li(b.p("[ ]")), b.li(b.p("foo")))],
+        "* \\[ ]\n* foo",
+      );
+    });
+
+    test("`[ ]` followed by `Enter` with a selection splits the item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("[ ]<from>foo<to> bar")))],
+        { anchor: "from", head: "to" },
+        "{Enter}",
+        (b) => [b.ul(b.li(b.p("[ ]")), b.li(b.p(" bar")))],
+        "* \\[ ]\n* &#x20;bar",
+      );
+    });
+
     test("`Enter` in the only task item of a list, which is empty, keeps the list", () => {
       expect(fx).toTransformInput(
         (b) => [b.ul(b.taskListItem({ checked: false }, b.p("<cursor>")))],
