@@ -38,6 +38,7 @@ import {
   leavesTextblockStart,
   moveFromControl,
 } from "../utils/nodeViewControl";
+import { typedSpace } from "../utils/typedSpace";
 import { uniqueId } from "../utils/uniqueId";
 
 class TaskListItemView implements NodeView {
@@ -252,7 +253,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       // than being split or lifted out of the list, as with a space.
       // Elsewhere, Enter splits the item as usual.
       new EnterInputRule(
-        /^\[(?<checked>[\sx]?)\][\s\S]$/iu,
+        new RegExp(`^\\[(?<checked>[\\sx]?)\\](?:${typedSpace}|\\n)$`, "iu"),
         (state, match, start, end) => {
           const $start = state.doc.resolve(start);
           if (
