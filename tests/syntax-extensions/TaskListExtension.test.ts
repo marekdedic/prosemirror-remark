@@ -14,7 +14,7 @@ function renderedTaskList(
   checked: boolean,
   { id = "prosemirror-remark-task-list-item-content-1", spread = false } = {},
 ): string {
-  return `<ul data-spread="${String(spread)}"><li class="prosemirror-remark-task-list-item" data-checked="${String(checked)}"><span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false"><input aria-labelledby="${id}" ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><div class="prosemirror-remark-task-list-item-content" id="${id}"><p>a</p></div></li></ul>`;
+  return `<ul class="prosemirror-remark-bullet-list" data-spread="${String(spread)}"><li class="prosemirror-remark-task-list-item" data-checked="${String(checked)}"><span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false"><input aria-labelledby="${id}" ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><div class="prosemirror-remark-task-list-item-content" id="${id}"><p>a</p></div></li></ul>`;
 }
 
 function renderedTaskListPattern(checked: boolean, spread = false): RegExp {

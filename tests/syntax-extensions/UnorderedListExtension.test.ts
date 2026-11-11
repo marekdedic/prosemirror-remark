@@ -606,14 +606,14 @@ describe("UnorderedListExtension", () => {
     test("renders a `<ul>`", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ul(b.li(b.p("Hello")))],
-        '<ul data-spread="false"><li><p>Hello</p></li></ul>',
+        '<ul class="prosemirror-remark-bullet-list" data-spread="false"><li><p>Hello</p></li></ul>',
       );
     });
 
     test("renders a spread `<ul>`", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ul({ spread: true }, b.li(b.p("Hello")))],
-        '<ul data-spread="true"><li><p>Hello</p></li></ul>',
+        '<ul class="prosemirror-remark-bullet-list" data-spread="true"><li><p>Hello</p></li></ul>',
       );
     });
   });

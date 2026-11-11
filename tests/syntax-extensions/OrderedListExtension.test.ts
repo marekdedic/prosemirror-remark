@@ -535,14 +535,14 @@ describe("OrderedListExtension", () => {
     test("renders an `<ol>`", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ol({ start: 5 }, b.li(b.p("Hello")))],
-        '<ol data-spread="false" start="5"><li><p>Hello</p></li></ol>',
+        '<ol class="prosemirror-remark-ordered-list" data-spread="false" start="5"><li><p>Hello</p></li></ol>',
       );
     });
 
     test("renders a spread `<ol>`", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ol({ spread: true, start: 5 }, b.li(b.p("Hello")))],
-        '<ol data-spread="true" start="5"><li><p>Hello</p></li></ol>',
+        '<ol class="prosemirror-remark-ordered-list" data-spread="true" start="5"><li><p>Hello</p></li></ol>',
       );
     });
   });

@@ -83,6 +83,7 @@ export class OrderedListExtension extends NodeExtension<List> {
       toDOM: (node: ProseMirrorNode): DOMOutputSpec => [
         "ol",
         {
+          class: "prosemirror-remark-ordered-list",
           "data-spread": node.attrs["spread"] as boolean,
           start: node.attrs["start"] as number,
         },

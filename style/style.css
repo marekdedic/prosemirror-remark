@@ -114,3 +114,17 @@
   > input {
   opacity: 0.55;
 }
+
+/* Tight lists look like rendered Markdown, where their items' paragraphs have no margins */
+.prosemirror-remark-bullet-list[data-spread="false"] > li > p,
+.prosemirror-remark-ordered-list[data-spread="false"] > li > p,
+.prosemirror-remark-bullet-list[data-spread="false"]
+  > li
+  > .prosemirror-remark-task-list-item-content
+  > p,
+.prosemirror-remark-ordered-list[data-spread="false"]
+  > li
+  > .prosemirror-remark-task-list-item-content
+  > p {
+  margin: 0;
+}
