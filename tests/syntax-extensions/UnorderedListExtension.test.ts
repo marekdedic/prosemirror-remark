@@ -442,6 +442,16 @@ describe("UnorderedListExtension", () => {
         "* a\n* b",
       );
     });
+
+    test("`-` followed by `Enter` stays text", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        "-{Enter}",
+        (b) => [b.p("-"), b.p()],
+        "\\-\n",
+      );
+    });
   });
 
   describe("keymap", () => {

@@ -162,6 +162,16 @@ describe("BlockquoteExtension", () => {
         "> Hello World!",
       );
     });
+
+    test("`>` followed by `Enter` stays text", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        ">{Enter}",
+        (b) => [b.p(">"), b.p()],
+        "\\>\n",
+      );
+    });
   });
 
   test("parses DOM", () => {

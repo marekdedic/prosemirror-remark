@@ -74,6 +74,11 @@ export class HeadingExtension extends NodeExtension<Heading> {
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
+      // Unlike the blockquote and list rules, this one also applies on Enter
+      // (\s matches the line ending Enter is passed as). There, Enter in the
+      // new empty block would lift it out again, undoing the rule. Here, `#`
+      // followed by Enter gives an empty heading and a new paragraph after it,
+      // which stays.
       textblockTypeInputRule(
         /^\s{0,3}(?<hashes>#{1,6})\s$/u,
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],

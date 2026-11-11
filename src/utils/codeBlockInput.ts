@@ -7,6 +7,7 @@ import remarkParse from "remark-parse";
 import { type Processor, unified } from "unified";
 
 import { type CodeBlockAttrs, codeBlockAttrs } from "./codeBlockAttrs";
+import { typedSpace } from "./typedSpace";
 
 // A line that starts like an opening fence. Whether it is one is up to the
 // parser, see parseFenceLine.
@@ -20,11 +21,6 @@ const typeableFenceLine = new RegExp(
   `${fenceStart.source}[^\\t\\n\\r \\ufffc]*$`,
   "u",
 );
-
-// A typed space, which browsers may turn into a non-breaking one when input is
-// read back from the DOM. Not \s, which would match the line ending Enter is
-// passed to the input rules as.
-const typedSpace = "[ \\u00a0]";
 
 // A fence followed by a language and a space, which converts the paragraph
 const fenceOnSpace = new RegExp(
