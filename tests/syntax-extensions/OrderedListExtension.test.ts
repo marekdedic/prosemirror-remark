@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
+import { setListSpread } from "../../src/syntax-extensions/ListItemExtension";
 import { OrderedListExtension } from "../../src/syntax-extensions/OrderedListExtension";
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { createExtensionFixture } from "../utils/fixture";
@@ -499,6 +500,20 @@ describe("OrderedListExtension", () => {
         "{Delete}",
         (b) => [b.ol(b.li(b.p("a")), b.li(b.p("b")))],
         "1. a\n2. b",
+      );
+    });
+  });
+
+  describe("setListSpread", () => {
+    test("keeps the start", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.ol({ start: 3 }, b.li(b.p("a<cursor>")), b.li(b.p("b")))],
+        "cursor",
+        setListSpread(true),
+        (b) => [
+          b.ol({ spread: true, start: 3 }, b.li(b.p("a")), b.li(b.p("b"))),
+        ],
+        "3. a\n\n4. b",
       );
     });
   });
