@@ -82,7 +82,7 @@ Horizontal rules, also called thematic breaks (`---`, `***`, `___`).
 
 - **ProseMirror node:** `horizontal_rule`
 - **HTML:** `<div><hr></div>`
-- **Input rules:** `---`, `***` or `___` followed by `Enter` inserts a horizontal rule.
+- **Input rules:** a paragraph containing only `---`, `***` or `___`, followed by `Enter` at its end, turns into a horizontal rule, with the cursor in a new paragraph after it.
 - **Keyboard shortcuts:** `Mod-_` inserts a horizontal rule.
 
 ## Lists
