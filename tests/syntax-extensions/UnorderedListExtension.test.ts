@@ -1,8 +1,20 @@
-import type { Node as ProseMirrorNode } from "prosemirror-model";
+import type { List } from "mdast";
 
+import { history, undo } from "prosemirror-history";
+import {
+  type NodeSpec,
+  type Node as ProseMirrorNode,
+  Slice,
+} from "prosemirror-model";
 import { EditorState, NodeSelection, TextSelection } from "prosemirror-state";
+import { ReplaceStep } from "prosemirror-transform";
+import { NodeExtension } from "prosemirror-unified";
+import { EditorView } from "prosemirror-view";
 import { describe, expect, test, vi } from "vitest";
+import { renderProseMirror } from "vitest-prosemirror";
 
+import { BlockquoteExtension } from "../../src/syntax-extensions/BlockquoteExtension";
+import { HorizontalRuleExtension } from "../../src/syntax-extensions/HorizontalRuleExtension";
 import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
 import {
   listSpreadAt,
@@ -12,6 +24,32 @@ import { OrderedListExtension } from "../../src/syntax-extensions/OrderedListExt
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
+
+class PlainListExtension extends NodeExtension<List> {
+  public override proseMirrorNodeName(): string {
+    return "plain_list";
+  }
+
+  public override proseMirrorNodeSpec(): NodeSpec {
+    return { content: "list_item+", group: "block" };
+  }
+
+  public override proseMirrorNodeToUnistNodes(): Array<List> {
+    return [];
+  }
+
+  public override unistNodeName(): "list" {
+    return "list";
+  }
+
+  public override unistNodeToProseMirrorNodes(): Array<ProseMirrorNode> {
+    return [];
+  }
+
+  public override unistToProseMirrorTest(): boolean {
+    return false;
+  }
+}
 
 describe("UnorderedListExtension", () => {
   const fx = createExtensionFixture(new UnorderedListExtension());
@@ -878,6 +916,315 @@ describe("UnorderedListExtension", () => {
         '<ul class="prosemirror-remark-bullet-list" data-spread="true"><li><p>Hello</p></li></ul>',
       );
     });
+  });
+});
+
+describe("UnorderedListExtension normalising looseness", () => {
+  const fx = createExtensionFixture(new UnorderedListExtension(), [
+    new BlockquoteExtension(),
+    new HorizontalRuleExtension(),
+    new OrderedListExtension(),
+  ]);
+
+  test("`Backspace` at the start of an item makes the list loose", () => {
+    expect(fx).toTransformInput(
+      (b) => [b.ul(b.li(b.p("a")), b.li(b.p("<cursor>b")))],
+      "cursor",
+      "{Backspace}",
+      (b) => [b.ul({ spread: true }, b.li(b.p("a"), b.p("b")))],
+      "* a\n\n  b",
+    );
+  });
+
+  test("a list type without `spread` is left alone", () => {
+    const fxPlain = createExtensionFixture(new UnorderedListExtension(), [
+      new PlainListExtension(),
+    ]);
+    const { nodes } = fxPlain.schema;
+    const doc = nodes["doc"].create(
+      null,
+      nodes["plain_list"].create(
+        null,
+        nodes["regular_list_item"].create(
+          null,
+          nodes["paragraph"].create(null, fxPlain.schema.text("a")),
+        ),
+      ),
+    );
+    const state = EditorState.create({ doc, plugins: fxPlain.pmu.plugins() });
+    const tr = state.tr.insert(
+      4,
+      nodes["paragraph"].create(null, fxPlain.schema.text("b")),
+    );
+    const appended = fxPlain.pmu
+      .plugins()
+      .map((plugin) =>
+        plugin.spec.appendTransaction?.([tr], state, state.apply(tr)),
+      )
+      .filter((result) => result !== undefined && result !== null);
+
+    expect(appended).toStrictEqual([]);
+  });
+
+  test("inserting a paragraph into an item makes the list loose", () => {
+    expect(fx).toTransformCommand(
+      (b) => [b.ul(b.li(b.p("a<cursor>")), b.li(b.p("c")))],
+      "cursor",
+      (state, dispatch) => {
+        dispatch?.(
+          state.tr.insert(
+            state.selection.$from.after(),
+            fx.b.p("b") as unknown as ProseMirrorNode,
+          ),
+        );
+        return true;
+      },
+      (b) => [b.ul({ spread: true }, b.li(b.p("a"), b.p("b")), b.li(b.p("c")))],
+      "* a\n\n  b\n\n* c",
+    );
+  });
+
+  test("a horizontal rule after a paragraph in an item makes the list loose", () => {
+    expect(fx).toTransformCommand(
+      (b) => [b.ul(b.li(b.p("a<cursor>")), b.li(b.p("c")))],
+      "cursor",
+      (state, dispatch) => {
+        dispatch?.(
+          state.tr.insert(
+            state.selection.$from.after(),
+            fx.b.hr() as unknown as ProseMirrorNode,
+          ),
+        );
+        return true;
+      },
+      (b) => [b.ul({ spread: true }, b.li(b.p("a"), b.hr()), b.li(b.p("c")))],
+      "* a\n\n  ---\n\n* c",
+    );
+  });
+
+  test("a second blockquote in an item makes the list loose", () => {
+    expect(fx).toTransformCommand(
+      (b) => [b.ul(b.li(b.blockquote(b.p("a<cursor>"))), b.li(b.p("c")))],
+      "cursor",
+      (state, dispatch) => {
+        dispatch?.(
+          state.tr.insert(
+            state.selection.$from.after(-1),
+            fx.b.blockquote(fx.b.p("b")) as unknown as ProseMirrorNode,
+          ),
+        );
+        return true;
+      },
+      (b) => [
+        b.ul(
+          { spread: true },
+          b.li(b.blockquote(b.p("a")), b.blockquote(b.p("b"))),
+          b.li(b.p("c")),
+        ),
+      ],
+      "* > a\n\n  > b\n\n* c",
+    );
+  });
+
+  test("changing the start of a nested list makes the list loose", () => {
+    expect(fx).toTransformCommand(
+      (b) => [
+        b.ul(b.li(b.p("a<cursor>"), b.ol(b.li(b.p("b")))), b.li(b.p("c"))),
+      ],
+      "cursor",
+      (state, dispatch) => {
+        dispatch?.(state.tr.setNodeAttribute(5, "start", 3));
+        return true;
+      },
+      (b) => [
+        b.ul(
+          { spread: true },
+          b.li(b.p("a"), b.ol({ start: 3 }, b.li(b.p("b")))),
+          b.li(b.p("c")),
+        ),
+      ],
+      "* a\n\n  3. b\n\n* c",
+    );
+  });
+
+  test("a step with an out-of-range `pos` doesn't break the plugin", () => {
+    expect(fx).toTransformCommand(
+      (b) => [b.ul(b.li(b.p("a<cursor>")), b.li(b.p("b")))],
+      "cursor",
+      (state, dispatch) => {
+        dispatch?.(
+          state.tr.step(
+            Object.assign(new ReplaceStep(1, 1, Slice.empty), { pos: 1000 }),
+          ),
+        );
+        return true;
+      },
+      (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
+      "* a\n* b",
+    );
+  });
+
+  test("a read-only editor isn't changed when it's created", async () => {
+    expect.assertions(1);
+
+    const doc = fx.b.doc(
+      fx.b.ul(fx.b.li(fx.b.p("a"), fx.b.p("b")), fx.b.li(fx.b.p("c"))),
+    ) as unknown as ProseMirrorNode;
+    const editor = renderProseMirror(doc, {
+      editorProps: { editable: () => false, plugins: fx.pmu.plugins() },
+    });
+    await Promise.resolve();
+
+    expect(editor.doc).toEqualProseMirrorNode(doc);
+  });
+
+  test("a read-only editor is made loose when it becomes editable", async () => {
+    expect.assertions(2);
+
+    const doc = fx.b.doc(
+      fx.b.ul(fx.b.li(fx.b.p("a"), fx.b.p("b")), fx.b.li(fx.b.p("c"))),
+    ) as unknown as ProseMirrorNode;
+    const view: EditorView = new EditorView(document.createElement("div"), {
+      editable: () => false,
+      state: EditorState.create({ doc, plugins: fx.pmu.plugins() }),
+    });
+    await Promise.resolve();
+
+    expect(view.state.doc.firstChild?.attrs["spread"]).toBe(false);
+
+    view.setProps({ editable: () => true });
+    await Promise.resolve();
+
+    expect(view.state.doc.firstChild?.attrs["spread"]).toBe(true);
+
+    view.destroy();
+  });
+
+  test("starting a nested list leaves the list tight", () => {
+    expect(fx).toTransformInput(
+      (b) => [b.ul(b.li(b.p("a<cursor>")))],
+      "cursor",
+      "{Enter}{Tab}b",
+      (b) => [b.ul(b.li(b.p("a"), b.ul(b.li(b.p("b")))))],
+      "* a\n  * b",
+    );
+  });
+
+  test("making a document loose when the editor is created works with a `dispatchTransaction` that uses the view", async () => {
+    expect.assertions(1);
+
+    const doc = fx.b.doc(
+      fx.b.ul(fx.b.li(fx.b.p("a"), fx.b.p("b")), fx.b.li(fx.b.p("c"))),
+    ) as unknown as ProseMirrorNode;
+    const view: EditorView = new EditorView(document.createElement("div"), {
+      dispatchTransaction: (tr): void => {
+        view.updateState(view.state.apply(tr));
+      },
+      state: EditorState.create({ doc, plugins: fx.pmu.plugins() }),
+    });
+    await Promise.resolve();
+
+    expect(view.state.doc.firstChild?.attrs["spread"]).toBe(true);
+
+    view.destroy();
+  });
+
+  test("a document whose content can't be tight is made loose when the editor is created", async () => {
+    expect.assertions(2);
+
+    const editor = renderProseMirror(
+      fx.b.doc(
+        fx.b.ul(fx.b.li(fx.b.p("a"), fx.b.p("b")), fx.b.li(fx.b.p("c"))),
+      ) as unknown as ProseMirrorNode,
+      { editorProps: { plugins: [history(), ...fx.pmu.plugins()] } },
+    );
+    await Promise.resolve();
+
+    expect(editor.doc).toEqualProseMirrorNode(
+      fx.b.doc(
+        fx.b.ul(
+          { spread: true },
+          fx.b.li(fx.b.p("a"), fx.b.p("b")),
+          fx.b.li(fx.b.p("c")),
+        ),
+      ) as unknown as ProseMirrorNode,
+    );
+    expect(editor.command(undo)).toBe(false);
+  });
+
+  test("one undo reverts both the edit and the looseness", () => {
+    const before = fx.b.doc(
+      fx.b.ul(fx.b.li(fx.b.p("a")), fx.b.li(fx.b.p("<cursor>b"))),
+    ) as unknown as ProseMirrorNode;
+    const editor = renderProseMirror(before, {
+      editorProps: { plugins: [history(), ...fx.pmu.plugins()] },
+    });
+    editor.setSelection("cursor");
+    editor.type("{Backspace}");
+
+    expect(editor.doc).toEqualProseMirrorNode(
+      fx.b.doc(
+        fx.b.ul({ spread: true }, fx.b.li(fx.b.p("a"), fx.b.p("b"))),
+      ) as unknown as ProseMirrorNode,
+    );
+    expect(editor.command(undo)).toBe(true);
+    expect(editor.doc).toEqualProseMirrorNode(before);
+  });
+
+  test("a nested list made loose leaves its parent tight", () => {
+    expect(fx).toTransformInput(
+      (b) => [
+        b.ul(
+          b.li(b.p("a"), b.ul(b.li(b.p("b")), b.li(b.p("<cursor>c")))),
+          b.li(b.p("d")),
+        ),
+      ],
+      "cursor",
+      "{Backspace}",
+      (b) => [
+        b.ul(
+          b.li(b.p("a"), b.ul({ spread: true }, b.li(b.p("b"), b.p("c")))),
+          b.li(b.p("d")),
+        ),
+      ],
+      "* a\n  * b\n\n    c\n* d",
+    );
+  });
+
+  test("joining two tight lists into one item makes the list loose", () => {
+    expect(fx).toTransformInput(
+      (b) => [b.ul(b.li(b.p("a"))), b.ul(b.li(b.p("<cursor>b")))],
+      "cursor",
+      "{Backspace}{Backspace}",
+      (b) => [b.ul({ spread: true }, b.li(b.p("a"), b.p("b")))],
+      "* a\n\n  b",
+    );
+  });
+
+  test("a loose list stays loose when its content could be tight again", () => {
+    expect(fx).toTransformInput(
+      (b) => [
+        b.ul(
+          { spread: true },
+          b.li(b.p("a"), b.p("<cursor>b")),
+          b.li(b.p("c")),
+        ),
+      ],
+      "cursor",
+      "{Backspace}",
+      (b) => [b.ul({ spread: true }, b.li(b.p("ab")), b.li(b.p("c")))],
+      "* ab\n\n* c",
+    );
+  });
+
+  test("leaves lists whose content can be tight alone", () => {
+    expect(fx).toTransformInput(
+      (b) => [b.ul(b.li(b.p("a"), b.blockquote(b.p("<cursor>")))), b.p("c")],
+      "cursor",
+      "b",
+      (b) => [b.ul(b.li(b.p("a"), b.blockquote(b.p("b")))), b.p("c")],
+      "* a\n  > b\n\nc",
+    );
   });
 });
 

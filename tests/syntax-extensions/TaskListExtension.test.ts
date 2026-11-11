@@ -720,10 +720,12 @@ describe("TaskListExtension", () => {
 
     test("does not apply in a non-first paragraph of a list item", () => {
       expect(fx).toTransformInput(
-        (b) => [b.ul(b.li(b.p("Hello"), b.p("<cursor>World")))],
+        (b) => [
+          b.ul({ spread: true }, b.li(b.p("Hello"), b.p("<cursor>World"))),
+        ],
         "cursor",
         "[[ ] ",
-        (b) => [b.ul(b.li(b.p("Hello"), b.p("[ ] World")))],
+        (b) => [b.ul({ spread: true }, b.li(b.p("Hello"), b.p("[ ] World")))],
         "* Hello\n\n  \\[ ] World",
       );
     });
@@ -799,10 +801,14 @@ describe("TaskListExtension", () => {
 
     test("keeps the cursor in an item with multiple paragraphs", () => {
       expect(fx).toTransformInput(
-        (b) => [b.ul(b.li(b.p("<cursor>Hello"), b.p("World")))],
+        (b) => [
+          b.ul({ spread: true }, b.li(b.p("<cursor>Hello"), b.p("World"))),
+        ],
         "cursor",
         "[[ ] X",
-        (b) => [b.ul(b.taskListItem(b.p("XHello"), b.p("World")))],
+        (b) => [
+          b.ul({ spread: true }, b.taskListItem(b.p("XHello"), b.p("World"))),
+        ],
         "* [ ] XHello\n\n  World",
       );
     });
@@ -879,20 +885,30 @@ describe("TaskListExtension", () => {
 
     test("`Backspace` keeps the cursor in an item with multiple paragraphs", () => {
       expect(fx).toTransformInput(
-        (b) => [b.ul(b.taskListItem(b.p("<cursor>Hello"), b.p("World")))],
+        (b) => [
+          b.ul(
+            { spread: true },
+            b.taskListItem(b.p("<cursor>Hello"), b.p("World")),
+          ),
+        ],
         "cursor",
         "{Backspace}X",
-        (b) => [b.ul(b.li(b.p("XHello"), b.p("World")))],
+        (b) => [b.ul({ spread: true }, b.li(b.p("XHello"), b.p("World")))],
         "* XHello\n\n  World",
       );
     });
 
     test("`Backspace` at the start of a non-first paragraph of a task item joins the paragraphs", () => {
       expect(fx).toTransformInput(
-        (b) => [b.ul(b.taskListItem(b.p("Hello"), b.p("<cursor>World")))],
+        (b) => [
+          b.ul(
+            { spread: true },
+            b.taskListItem(b.p("Hello"), b.p("<cursor>World")),
+          ),
+        ],
         "cursor",
         "{Backspace}",
-        (b) => [b.ul(b.taskListItem(b.p("HelloWorld")))],
+        (b) => [b.ul({ spread: true }, b.taskListItem(b.p("HelloWorld")))],
         "* [ ] HelloWorld",
       );
     });
@@ -912,7 +928,7 @@ describe("TaskListExtension", () => {
         (b) => [b.ul(b.li(b.p("Hello")), b.li(b.p("<cursor>World")))],
         "cursor",
         "{Backspace}",
-        (b) => [b.ul(b.li(b.p("Hello"), b.p("World")))],
+        (b) => [b.ul({ spread: true }, b.li(b.p("Hello"), b.p("World")))],
         "* Hello\n\n  World",
       );
     });
@@ -1360,7 +1376,9 @@ describe("TaskListExtension", () => {
         (b) => [b.ul(b.taskListItem(b.p("Hello")), b.li(b.p("<cursor>World")))],
         "cursor",
         "{Backspace}",
-        (b) => [b.ul(b.taskListItem(b.p("Hello"), b.p("World")))],
+        (b) => [
+          b.ul({ spread: true }, b.taskListItem(b.p("Hello"), b.p("World"))),
+        ],
         "* [ ] Hello\n\n  World",
       );
     });

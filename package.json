@@ -112,6 +112,7 @@
     "micromark-util-types": "^2.0.0",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.0.0",
+    "prosemirror-history": "^1.5.1",
     "prosemirror-model": "^1.25.4",
     "prosemirror-state": "^1.4.4",
     "prosemirror-test-builder": "^1.1.1",
