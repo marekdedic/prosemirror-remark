@@ -604,6 +604,16 @@ describe("TaskListExtension", () => {
       );
     });
 
+    test("`Enter` in the only task item of a list, which is empty, keeps the list", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.taskListItem({ checked: false }, b.p("<cursor>")))],
+        "cursor",
+        "{Enter}",
+        (b) => [b.ul(b.taskListItem({ checked: false }, b.p())), b.p()],
+        "* [ ] &#x20;\n",
+      );
+    });
+
     test("`[x] ` turns a regular item into a checked task item", () => {
       expect(fx).toTransformInput(
         (b) => [b.ul(b.li(b.p("<cursor>Hello")), b.li(b.p("World")))],

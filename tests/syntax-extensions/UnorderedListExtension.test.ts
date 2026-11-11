@@ -452,6 +452,16 @@ describe("UnorderedListExtension", () => {
         "\\-\n",
       );
     });
+
+    test("`- ` followed by `Enter` keeps the list", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        "- {Enter}",
+        (b) => [b.ul(b.li(b.p())), b.p()],
+        "*\n",
+      );
+    });
   });
 
   describe("keymap", () => {
@@ -472,6 +482,46 @@ describe("UnorderedListExtension", () => {
         "{Enter}",
         (b) => [b.ul(b.li(b.p("Hel")), b.li(b.p("lo")))],
         "* Hel\n* lo",
+      );
+    });
+
+    test("`Enter` in the only item of a list, which is empty, keeps the list", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("<cursor>")))],
+        "cursor",
+        "{Enter}",
+        (b) => [b.ul(b.li(b.p())), b.p()],
+        "*\n",
+      );
+    });
+
+    test("`Enter` in the only item of a list, which is empty, moves to an empty paragraph after it", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("<cursor>"))), b.p(), b.p("a")],
+        "cursor",
+        "{Enter}b",
+        (b) => [b.ul(b.li(b.p())), b.p("b"), b.p("a")],
+        "*\n\nb\n\na",
+      );
+    });
+
+    test("`Enter` in an empty last item of a longer list leaves the list", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.p("<cursor>")))],
+        "cursor",
+        "{Enter}",
+        (b) => [b.ul(b.li(b.p("a"))), b.p()],
+        "* a\n",
+      );
+    });
+
+    test("`Enter` in the only item of a nested list, which is empty, lifts it", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul(b.li(b.p("a"), b.ul(b.li(b.p("<cursor>")))))],
+        "cursor",
+        "{Enter}",
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.p()))],
+        "* a\n*",
       );
     });
 

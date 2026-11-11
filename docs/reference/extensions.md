@@ -90,7 +90,7 @@ In Markdown, a list is either tight or loose: in a loose list, the items are sep
 
 All list items share the keyboard shortcuts:
 
-- `Enter` starts a new item, or, in an empty nested item, moves it out to the outer list.
+- `Enter` starts a new item. In an empty item, it moves the item out to the outer list if the list is nested, leaves the list if the item is its last one, and, if the item is the list's only one, keeps the list and starts a new paragraph after it.
 - `Tab` nests the item in the previous one.
 - `Shift-Tab` moves the item out to the outer list, or out of the list if it isn't nested.
 
