@@ -72,7 +72,10 @@ export class UnorderedListExtension extends NodeExtension<List> {
       ],
       toDOM: (node: ProseMirrorNode): DOMOutputSpec => [
         "ul",
-        { "data-spread": node.attrs["spread"] as boolean },
+        {
+          class: "prosemirror-remark-bullet-list",
+          "data-spread": node.attrs["spread"] as boolean,
+        },
         0,
       ],
     };
