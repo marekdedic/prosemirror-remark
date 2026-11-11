@@ -359,6 +359,26 @@ describe("OrderedListExtension", () => {
       expect(fx).toTransformBlockInput("1. ", (b) => [b.ol(b.li(b.p()))], "1.");
     });
 
+    test("`1.` followed by `Enter` stays text", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        "1.{Enter}",
+        (b) => [b.p("1."), b.p()],
+        "1\\.\n",
+      );
+    });
+
+    test("`1. ` followed by `Enter` keeps the list", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        "1. {Enter}",
+        (b) => [b.ol(b.li(b.p())), b.p()],
+        "1.\n",
+      );
+    });
+
     test("`1. ` with content", () => {
       expect(fx).toTransformBlockInput(
         "1. Hello World!",

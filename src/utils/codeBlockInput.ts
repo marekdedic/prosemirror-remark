@@ -1,12 +1,15 @@
 import type { Root } from "mdast";
 import type { NodeType, ResolvedPos } from "prosemirror-model";
-import type { Command, EditorState, Transaction } from "prosemirror-state";
+import type { EditorState, Transaction } from "prosemirror-state";
 
 import { InputRule } from "prosemirror-inputrules";
+import { EnterInputRule } from "prosemirror-unified";
 import remarkParse from "remark-parse";
 import { type Processor, unified } from "unified";
 
 import { type CodeBlockAttrs, codeBlockAttrs } from "./codeBlockAttrs";
+import { isAtEndOfTextblock } from "./isAtEndOfTextblock";
+import { typedSpace, typedSpaceCharacters } from "./typedSpace";
 
 // A line that starts like an opening fence. Whether it is one is up to the
 // parser, see parseFenceLine.
@@ -15,39 +18,40 @@ const fenceStart = /^ {0,3}(?:`{3}|~{3})/u;
 // A fence followed by at most one word, which is all that can be typed: the
 // first space already converts the paragraph. Text with a space or tab after
 // the fence is prose, even if CommonMark would read it as a fence with a meta.
-// A line break, image or hard break (see paragraphText) ends the line early.
+// A line break, image or hard break (U+FFFC in the text the input rules see)
+// ends the line early.
 const typeableFenceLine = new RegExp(
   `${fenceStart.source}[^\\t\\n\\r \\ufffc]*$`,
   "u",
 );
 
-// A typed space, which browsers may turn into a non-breaking one when input is
-// read back from the DOM. Not \s, which would match the line ending Enter is
-// passed to the input rules as.
-const typedSpace = "[ \\u00a0]";
-
-// A fence followed by a language and a space, which converts the paragraph
-const fenceOnSpace = new RegExp(
-  `${fenceStart.source}[^\\t \\u00a0]*${typedSpace}$`,
+// A fence followed by a language and a space, or a fence line followed by
+// Enter, which converts the paragraph if it is a typeable fence line. Before a
+// typed space, the language can't contain a non-breaking space, as browsers may
+// produce one for a typed space. Before Enter, it can, as CommonMark reads it.
+const fenceLineEnd = new RegExp(
+  `${fenceStart.source}(?:[^\\t${typedSpaceCharacters}]*${typedSpace}|.*\\n)$`,
   "u",
 );
 
-// Anything typed into a paragraph that starts like a fence, including Enter
-const fenceLineInput = new RegExp(`${fenceStart.source}.*\\n?$`, "u");
+// Anything typed into a paragraph that starts like a fence, except Enter
+const fenceLineInput = new RegExp(`${fenceStart.source}.*$`, "u");
 
 let markdownParser: Processor<Root> | undefined = undefined;
 
 export function codeBlockInputRules(nodeType: NodeType): Array<InputRule> {
   return [
     // Like textblockTypeInputRule, but only for a whole paragraph that is a
-    // fence line, as with Enter
-    new InputRule(fenceOnSpace, (state, match, start, end) => {
+    // fence line. On Enter, it replaces what Enter does, so the block isn't
+    // split after it, and runs before the mark input rules, which would strip
+    // delimiters from the language.
+    new EnterInputRule(fenceLineEnd, (state, match, start, end) => {
       // Typed text of any length (e.g. "js " from autocomplete) is read as
       // part of the line
       const attrs = typedFenceAttrs(state, match, start, end, nodeType);
       return attrs === null
         ? null
-        : toCodeBlock(state.tr, start, end, nodeType, attrs);
+        : toCodeBlock(state.tr, start, end, nodeType, attrs).scrollIntoView();
     }),
     // While a paragraph is a fence line, typed text is inserted as it is, so
     // that the mark input rules after this one don't strip delimiters from
@@ -56,20 +60,8 @@ export function codeBlockInputRules(nodeType: NodeType): Array<InputRule> {
       fenceLineInput,
       (state, match, start, end) => {
         const typed = typedIntoParagraph(state, match, start, end);
-        if (typed === null) {
-          return null;
-        }
-        if (typed === "\n") {
-          // Enter only needs guarding where fenceOnEnter converts the fence,
-          // so this is the same check. Prosemirror-unified passes Enter to
-          // the input rules as a line ending and then runs the keymap
-          // anyway, which converts the fence; an empty transaction keeps
-          // the mark rules from running first.
-          return typedFenceAttrs(state, match, start, end, nodeType) === null
-            ? null
-            : state.tr;
-        }
-        return canBecomeCodeBlock(state.doc.resolve(end), nodeType) &&
+        return typed !== null &&
+          canBecomeCodeBlock(state.doc.resolve(end), nodeType) &&
           parseFenceLine(match[0]) !== null
           ? state.tr.insertText(typed, end)
           : null;
@@ -89,59 +81,11 @@ export function codeBlockInputRules(nodeType: NodeType): Array<InputRule> {
   ];
 }
 
-export function fenceOnEnter(nodeType: NodeType): Command {
-  return (state, dispatch): boolean => {
-    const { $from, empty } = state.selection;
-    const attrs = empty ? fenceParagraphAttrs($from, nodeType) : null;
-    if (attrs === null) {
-      return false;
-    }
-    if (dispatch) {
-      dispatch(
-        toCodeBlock(
-          state.tr,
-          $from.start(),
-          $from.pos,
-          nodeType,
-          attrs,
-        ).scrollIntoView(),
-      );
-    }
-    return true;
-  };
-}
-
 function canBecomeCodeBlock($pos: ResolvedPos, nodeType: NodeType): boolean {
   return (
     // A heading whose text is a fence stays a heading, as in CommonMark
     $pos.parent.type.name === "paragraph" &&
     $pos.node(-1).canReplaceWith($pos.index(-1), $pos.indexAfter(-1), nodeType)
-  );
-}
-
-// `line` is the text the paragraph is about to have, if not its current text
-function fenceParagraphAttrs(
-  $pos: ResolvedPos,
-  nodeType: NodeType,
-  line?: string,
-): CodeBlockAttrs | null {
-  if (
-    !canBecomeCodeBlock($pos, nodeType) ||
-    $pos.parentOffset !== $pos.parent.content.size
-  ) {
-    return null;
-  }
-  return parseFenceLine(line ?? paragraphText($pos));
-}
-
-// The paragraph's text, with a placeholder for images and hard breaks, which
-// stop it from being a fence line
-function paragraphText($pos: ResolvedPos): string {
-  return $pos.parent.textBetween(
-    0,
-    $pos.parent.content.size,
-    undefined,
-    "\ufffc",
   );
 }
 
@@ -172,8 +116,9 @@ function toCodeBlock(
   return tr.delete(from, to).setBlockType(from, from, nodeType, attrs);
 }
 
-// The attributes for the fence line an input rule's match completes, the
-// match's last character being the space or line ending that ends the line
+// The attributes for the fence line an input rule's match completes at the end
+// of the paragraph, the match's last character being the space or line ending
+// that ends the line
 function typedFenceAttrs(
   state: EditorState,
   match: RegExpMatchArray,
@@ -181,13 +126,11 @@ function typedFenceAttrs(
   end: number,
   nodeType: NodeType,
 ): CodeBlockAttrs | null {
-  return typedIntoParagraph(state, match, start, end) === null
-    ? null
-    : fenceParagraphAttrs(
-        state.doc.resolve(end),
-        nodeType,
-        match[0].slice(0, -1),
-      );
+  return typedIntoParagraph(state, match, start, end) !== null &&
+    isAtEndOfTextblock(state, end) &&
+    canBecomeCodeBlock(state.doc.resolve(end), nodeType)
+    ? parseFenceLine(match[0].slice(0, -1))
+    : null;
 }
 
 // The text an input rule's match adds to a paragraph, if the match covers the

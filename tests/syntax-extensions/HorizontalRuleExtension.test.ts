@@ -99,10 +99,24 @@ describe("HorizontalRuleExtension", () => {
       ["  ***{Enter}"],
       ["   ***{Enter}"],
     ])("matches %j", (input) => {
+      expect(fx).toTransformBlockInput(input, (b) => [b.hr(), b.p()], "---\n");
+    });
+
+    test("the cursor moves to the paragraph after the rule", () => {
       expect(fx).toTransformBlockInput(
-        input,
-        (b) => [b.p(), b.hr(), b.p()],
-        "\n\n---\n",
+        "---{Enter}a",
+        (b) => [b.hr(), b.p("a")],
+        "---\n\na",
+      );
+    });
+
+    test("`Enter` in the middle of the line splits it", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("---<cursor>a")],
+        "cursor",
+        "{Enter}",
+        (b) => [b.p("---"), b.p("a")],
+        "\\---\n\na",
       );
     });
 

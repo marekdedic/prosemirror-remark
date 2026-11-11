@@ -1,4 +1,5 @@
 import type { BlockContent, DefinitionContent, ListItem } from "mdast";
+import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   NodeSpec,
@@ -19,11 +20,15 @@ import {
   gfmTaskListItemToMarkdown,
 } from "mdast-util-gfm-task-list-item";
 import { gfmTaskListItem } from "micromark-extension-gfm-task-list-item";
-import { InputRule } from "prosemirror-inputrules";
 import { type Command, Selection, TextSelection } from "prosemirror-state";
-import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
+import {
+  createProseMirrorNode,
+  EnterInputRule,
+  NodeExtension,
+} from "prosemirror-unified";
 
 import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
+import { isAtEndOfTextblock } from "../utils/isAtEndOfTextblock";
 import { isAtStart } from "../utils/isAtStart";
 import { listItemKeymap } from "../utils/listItemKeymap";
 import {
@@ -33,6 +38,7 @@ import {
   leavesTextblockStart,
   moveFromControl,
 } from "../utils/nodeViewControl";
+import { typedSpace } from "../utils/typedSpace";
 import { uniqueId } from "../utils/uniqueId";
 
 class TaskListItemView implements NodeView {
@@ -243,14 +249,18 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
-      new InputRule(
-        /^\[(?<checked>[\sx]?)\][\s\S]$/iu,
+      // On Enter at the end of the paragraph, the item stays as it is rather
+      // than being split or lifted out of the list, as with a space.
+      // Elsewhere, Enter splits the item as usual.
+      new EnterInputRule(
+        new RegExp(`^\\[(?<checked>[\\sx]?)\\](?:${typedSpace}|\\n)$`, "iu"),
         (state, match, start, end) => {
           const $start = state.doc.resolve(start);
           if (
             $start.node(-1).type.name !== "regular_list_item" ||
             $start.parent.type.name !== "paragraph" ||
-            $start.index(-1) !== 0
+            $start.index(-1) !== 0 ||
+            (match[0].endsWith("\n") && !isAtEndOfTextblock(state, end))
           ) {
             return null;
           }

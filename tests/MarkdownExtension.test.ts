@@ -457,7 +457,7 @@ test.each([
   ["~~~a`b`{Enter}Hello", "```a&#x60;b&#x60;\nHello\n```\n"],
 ])("typing %j creates a code block", (input, markdown) => {
   const editor = renderProseMirror(pmu.parse(""), {
-    editorProps: { plugins: [pmu.inputRulesPlugin(), pmu.keymapPlugin()] },
+    editorProps: { plugins: pmu.plugins() },
   });
 
   editor.type(input);

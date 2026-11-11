@@ -1,4 +1,5 @@
 import type { Heading, PhrasingContent } from "mdast";
+import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   NodeSpec,
@@ -8,14 +9,15 @@ import type {
 import type { Command } from "prosemirror-state";
 
 import { setBlockType } from "prosemirror-commands";
-import { type InputRule, textblockTypeInputRule } from "prosemirror-inputrules";
 import {
   createProseMirrorNode,
+  EnterInputRule,
   type Extension,
   NodeExtension,
 } from "prosemirror-unified";
 
 import { isAtStart } from "../utils/isAtStart";
+import { replaceParagraphOnEnter } from "../utils/replaceParagraphOnEnter";
 import { ParagraphExtension } from "./ParagraphExtension";
 import { TextExtension } from "./TextExtension";
 
@@ -74,10 +76,33 @@ export class HeadingExtension extends NodeExtension<Heading> {
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
-      textblockTypeInputRule(
+      // Like textblockTypeInputRule on a space. Unlike the blockquote and list
+      // rules, this one also applies on Enter (\s matches the line ending Enter
+      // is passed as), as an empty heading followed by a new paragraph. There,
+      // Enter in the new empty block would lift it out again, undoing the
+      // rule. On Enter, it replaces the paragraph itself, so that the following
+      // Enter handling can't lift the heading out of a list or blockquote, and
+      // applies only at the end of the line.
+      new EnterInputRule(
         /^\s{0,3}(?<hashes>#{1,6})\s$/u,
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-        (match) => ({ level: match.groups?.["hashes"].length }),
+        (state, match, start, end) => {
+          const nodeType = proseMirrorSchema.nodes[this.proseMirrorNodeName()];
+          const attrs = { level: match.groups?.["hashes"].length };
+          if (match[0].endsWith("\n")) {
+            return replaceParagraphOnEnter(state, start, end, nodeType, attrs);
+          }
+          const $start = state.doc.resolve(start);
+          if (
+            !$start
+              .node(-1)
+              .canReplaceWith($start.index(-1), $start.indexAfter(-1), nodeType)
+          ) {
+            return null;
+          }
+          return state.tr
+            .delete(start, end)
+            .setBlockType(start, start, nodeType, attrs);
+        },
       ),
     ];
   }

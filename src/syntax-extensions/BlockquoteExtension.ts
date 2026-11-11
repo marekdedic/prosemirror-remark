@@ -11,13 +11,15 @@ import { wrapIn } from "prosemirror-commands";
 import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
+import { typedSpace } from "../utils/typedSpace";
+
 export class BlockquoteExtension extends NodeExtension<Blockquote> {
   public override proseMirrorInputRules(
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
       wrappingInputRule(
-        /^\s{0,3}>\s$/u,
+        new RegExp(`^\\s{0,3}>${typedSpace}$`, "u"),
         proseMirrorSchema.nodes[this.proseMirrorNodeName()],
       ),
     ];

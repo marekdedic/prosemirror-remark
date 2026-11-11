@@ -718,65 +718,78 @@ describe("CodeBlockExtension", () => {
     );
   });
 
-  describe("reports keymap applicability", () => {
-    test("`Enter` after a fence where a code block isn't allowed does not apply", () => {
-      expect(fxInContext).toReportKeymapApplicability(
+  describe("converts a fence on `Enter`", () => {
+    test("not where a code block isn't allowed", () => {
+      expect(fxInContext).toTransformInput(
         (b) => [b.ul(b.task_list_item(b.p("```js<cursor>")))],
         "cursor",
-        "Enter",
-        false,
+        "{Enter}",
+        (b) => [
+          b.ul(
+            b.task_list_item(b.p("```js")),
+            b.task_list_item({ checked: false }, b.p()),
+          ),
+        ],
+        "* [ ] \\`\\`\\`js\n* [ ] &#x20;",
       );
     });
 
-    test("`Enter` after a fence following an image does not apply", () => {
-      expect(fxInContext).toReportKeymapApplicability(
+    test("not after an image", () => {
+      expect(fxInContext).toTransformInput(
         (b) => [b.p(b.img({ src: "a.png" }), "```js<cursor>")],
         "cursor",
-        "Enter",
-        false,
+        "{Enter}",
+        (b) => [b.p(b.img({ src: "a.png" }), "```js"), b.p()],
+        "![](a.png)\\`\\`\\`js\n",
       );
     });
 
-    test("`Enter` after a fence following a hard break does not apply", () => {
-      expect(fxInContext).toReportKeymapApplicability(
+    test("not after a hard break", () => {
+      expect(fxInContext).toTransformInput(
         (b) => [b.p(b.br(), "```js<cursor>")],
         "cursor",
-        "Enter",
-        false,
+        "{Enter}",
+        (b) => [b.p(b.br(), "```js"), b.p()],
+        "\\\n\\`\\`\\`js\n",
       );
     });
 
     test.each([
-      ["a tab", "\t"],
-      ["a non-breaking space", "\u00a0"],
-      ["four spaces", "    "],
-    ])("`Enter` after a fence indented by %s does not apply", (_, indent) => {
-      expect(fxInContext).toReportKeymapApplicability(
+      ["a tab", "\t", "&#x9;"],
+      ["a non-breaking space", "\u00a0", "\u00a0"],
+      ["four spaces", "    ", "&#x20;   "],
+    ])("not when indented by %s", (_, indent, indentMarkdown) => {
+      expect(fxInContext).toTransformInput(
         (b) => [b.p(`${indent}\`\`\`js<cursor>`)],
         "cursor",
-        "Enter",
-        false,
+        "{Enter}",
+        (b) => [b.p(`${indent}\`\`\`js`), b.p()],
+        `${indentMarkdown}\\\`\\\`\\\`js\n`,
       );
     });
 
-    test("`Enter` after a fence indented by three spaces applies", () => {
-      expect(fxInContext).toReportKeymapApplicability(
+    test("when indented by three spaces", () => {
+      expect(fxInContext).toTransformInput(
         (b) => [b.p("   ```js<cursor>")],
         "cursor",
-        "Enter",
-        true,
+        "{Enter}",
+        (b) => [b.code_block({ lang: "js" })],
+        "```js\n```",
       );
     });
 
-    test("`Enter` after a fence in a paragraph applies", () => {
-      expect(fxInContext).toReportKeymapApplicability(
-        (b) => [b.p("```js<cursor>")],
+    test("not in the middle of the line", () => {
+      expect(fxInContext).toTransformInput(
+        (b) => [b.p("```<cursor>js")],
         "cursor",
-        "Enter",
-        true,
+        "{Enter}",
+        (b) => [b.p("```"), b.p("js")],
+        "\\`\\`\\`\n\njs",
       );
     });
+  });
 
+  describe("reports keymap applicability", () => {
     test("`Enter` applies after two trailing newlines", () => {
       expect(fx).toReportKeymapApplicability(
         (b) => [b.code_block("Hello\n\n<cursor>")],

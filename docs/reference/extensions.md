@@ -37,7 +37,7 @@ ATX headings (`# Heading`) and setext headings (`Heading` underlined with `===` 
 
 - **ProseMirror node:** `heading`, with the attribute `level` (1–6). Headings contain formatted text, but no images or line breaks.
 - **HTML:** `<h1>`–`<h6>`
-- **Input rules:** `# ` to `###### ` turns the paragraph into a heading of that level.
+- **Input rules:** `# ` to `###### ` turns the paragraph into a heading of that level. `#` to `######` followed by `Enter` at the end of the line gives an empty heading and a new paragraph after it.
 - **Keyboard shortcuts:**
   - `Shift-Mod-1` to `Shift-Mod-6` turn the current block into a heading of that level.
   - `Tab` and `Shift-Tab` increase and decrease the heading's level.
@@ -64,10 +64,11 @@ Fenced (```` ``` ````, `~~~`) and indented code blocks. Includes `TextExtension`
   - `<label class="prosemirror-remark-code-block-meta">`, containing the text "Meta:" (in a `<span class="prosemirror-remark-code-block-meta-label">`) and an `<input>` for the `meta`. Typing in it changes the `meta`, and clearing it removes the `meta`. Line endings in a `meta` are shown as spaces, and become spaces when it's edited. The default stylesheet greys out a `meta` in a code block without a language, which won't be saved to Markdown. `Backspace` at the start of the field moves to the end of the language field.
 
   `ArrowRight` at the end of the language field moves to the `meta` field, and at the end of the `meta` field to the start of the code. `ArrowLeft` at the start of the `meta` field moves to the language field, and at the start of the language field to the block above, if there is one. `Enter`, `Escape` and `ArrowDown` in either field go to the start of the code, and `ArrowUp` to the block above. In a right-to-left tab, `ArrowLeft` and `ArrowRight` swap. A field hidden by the app's styles is skipped. In a read-only editor, the fields are read-only. Pass `pmu.nodeViews()` to your `EditorView` to enable it. In a right-to-left editor, set the direction of code blocks on the `pre`, not the `code`: the tab follows the `pre`'s direction and the block's square corner the `code`'s.
-- **Input rules:** ```` ``` ```` or `~~~`, optionally followed by a language, then a space turns the paragraph into a code block. Four spaces turn it into a code block without a language.
-- **Keyboard shortcuts:**
-  - `Enter` at the end of a paragraph containing only ```` ``` ```` or `~~~`, optionally followed by a language, turns it into a code block. Text after a space, such as a `meta`, makes the paragraph ordinary text, so pressing `Enter` after it just starts a new paragraph. The line is read as CommonMark reads an opening fence, including backslash escapes and character references (```` ```c\# ```` is the language `c#`).
+- **Input rules:**
+  - ```` ``` ```` or `~~~`, optionally followed by a language, then a space or `Enter` at the end of the paragraph turns the paragraph into a code block. Text after a space, such as a `meta`, makes the paragraph ordinary text, so pressing `Enter` after it just starts a new paragraph. The line is read as CommonMark reads an opening fence, including backslash escapes and character references (```` ```c\# ```` is the language `c#`).
+  - Four spaces turn the paragraph into a code block without a language.
   - While a paragraph is an opening fence, the inline formatting input rules don't apply in it, so a language like `foo_bar_baz` can be typed.
+- **Keyboard shortcuts:**
   - `Shift-Mod-\` turns the current block into a code block.
   - Pressing `Enter` three times at the end of a code block leaves it: the two empty lines are removed and a new paragraph starts below.
   - `ArrowLeft` at the very start of a code block (`ArrowRight` in right-to-left code) moves to its `meta` field, and `ArrowUp` on its first line to its language field, when the node view is enabled.
@@ -81,7 +82,7 @@ Horizontal rules, also called thematic breaks (`---`, `***`, `___`).
 
 - **ProseMirror node:** `horizontal_rule`
 - **HTML:** `<div><hr></div>`
-- **Input rules:** `---`, `***` or `___` followed by `Enter` inserts a horizontal rule.
+- **Input rules:** a paragraph containing only `---`, `***` or `___`, followed by `Enter` at its end, turns into a horizontal rule, with the cursor in a new paragraph after it.
 - **Keyboard shortcuts:** `Mod-_` inserts a horizontal rule.
 
 ## Lists
@@ -90,7 +91,7 @@ In Markdown, a list is either tight or loose: in a loose list, the items are sep
 
 All list items share the keyboard shortcuts:
 
-- `Enter` starts a new item, or, in an empty nested item, moves it out to the outer list.
+- `Enter` starts a new item. In an empty item, it moves the item out to the outer list if the list is nested, leaves the list if the item is its last one, and, if the item is the list's only one, keeps the list and starts a new paragraph after it.
 - `Tab` nests the item in the previous one.
 - `Shift-Tab` moves the item out to the outer list, or out of the list if it isn't nested.
 
@@ -143,7 +144,7 @@ Italic text, called emphasis in Markdown (`*italic*`, `_italic_`).
 
 Code spans (`` `code` ``).
 
-- **ProseMirror mark:** `code`. Text typed right after a code span isn't code.
+- **ProseMirror mark:** `code`, marked as code in its spec. Text typed right after a code span isn't code.
 - **HTML:** `<code>`
 - **Input rules:** `` `text` ``, or text between longer backtick runs of equal length to include backticks (```` ``a`b`` ````). When the text both starts and ends with a space, one space is removed from each side (``` `` ` `` ``` is code `` ` ``). The text that's left can't start or end with whitespace.
 - **Keyboard shortcuts:** `` Ctrl-` `` toggles inline code.
@@ -209,7 +210,7 @@ Task list items (`- [ ] task`, `- [x] done`). Use it together with `UnorderedLis
 - **ProseMirror node:** `task_list_item`, with the attributes `checked` and `spread`, containing a paragraph followed by any blocks. It's in the `list_item` group, so it can be mixed with regular items in one list.
 - **HTML:** `<li class="prosemirror-remark-task-list-item" data-checked="…" data-spread="…">` containing a non-editable `<span class="prosemirror-remark-task-list-item-checkbox">` with an `<input type="checkbox" aria-labelledby="…">`, followed by a `<div class="prosemirror-remark-task-list-item-content" id="…">` with the content. The checkbox is labelled by the content, so screen readers announce the item's text with it; the `id` is generated and unique within the page. Styled by the default stylesheet, `prosemirror-remark/style.css`.
 - **Node view:** makes the checkbox clickable. `ArrowDown` and `ArrowRight` on the checkbox go to the start of the item's text, and `ArrowUp` and `ArrowLeft` to the block above, if there is one (in right-to-left text, `ArrowLeft` goes to the text and `ArrowRight` to the block above). Pass `pmu.nodeViews()` to your `EditorView` to enable it.
-- **Input rules:** `[ ] ` or `[] ` at the start of a list item turns it into an unchecked task item, and `[x] ` or `[X] ` into a checked one.
+- **Input rules:** `[ ] ` or `[] ` at the start of a list item turns it into an unchecked task item, and `[x] ` or `[X] ` into a checked one. `Enter` instead of the space does the same, and the cursor stays in the item.
 - **Keyboard shortcuts:**
   - The [list item shortcuts](#lists). `Enter` starts a new, unchecked task item.
   - `Backspace` at the start of a task item turns it back into a regular list item.

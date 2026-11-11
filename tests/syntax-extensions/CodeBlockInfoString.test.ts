@@ -36,7 +36,7 @@ function enter(line: string): ProseMirrorNode | null {
     fx.b.doc(fx.b.p(line)) as unknown as ProseMirrorNode,
     {
       editorProps: {
-        plugins: [fx.pmu.inputRulesPlugin(), fx.pmu.keymapPlugin()],
+        plugins: fx.pmu.plugins(),
       },
     },
   );
@@ -112,23 +112,6 @@ const awkwardValues: Array<Attrs> = [
 ];
 
 describe("CodeBlockExtension info string", () => {
-  test.each([
-    ["at the end of the paragraph", 6, true],
-    ["inside the paragraph", 4, false],
-  ])(
-    "`Enter` in a fence line %s is guarded only at the end",
-    (_, pos, guarded) => {
-      const plugin = fx.pmu.inputRulesPlugin();
-      const editor = renderProseMirror(
-        fx.b.doc(fx.b.p("```js")) as unknown as ProseMirrorNode,
-        { editorProps: { plugins: [plugin] } },
-      );
-      editor.setSelection(pos);
-
-      expect(handleTextInput(editor, plugin, pos, pos, "\n")).toBe(guarded);
-    },
-  );
-
   test("text ending in a space inserted in one go converts the fence", () => {
     const plugin = fx.pmu.inputRulesPlugin();
     const editor = renderProseMirror(

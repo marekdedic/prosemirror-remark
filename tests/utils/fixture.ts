@@ -114,7 +114,8 @@ export function createExtensionFixture<UNode extends UnistNode>(
       convertNode(
         node: UnistNode,
         context: Record<string, unknown>,
-      ): Array<ProseMirrorNode>;
+        source: string | undefined,
+      ): { nodes: Array<ProseMirrorNode> } | null;
     };
   };
 
@@ -130,7 +131,11 @@ export function createExtensionFixture<UNode extends UnistNode>(
       return paragraph.children;
     },
     convertUnistNode: (node, context) =>
-      internals.unistToProseMirrorConverter.convertNode(node, context),
+      internals.unistToProseMirrorConverter.convertNode(
+        node,
+        context,
+        undefined,
+      )?.nodes ?? [],
     extension,
     pmu,
     resolveNodes: (spec): Array<ProseMirrorNode> => {

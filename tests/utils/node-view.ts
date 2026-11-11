@@ -25,11 +25,7 @@ export function renderNodeView(
     editorProps: {
       ...editorProps,
       nodeViews: pmu.nodeViews(),
-      plugins: [
-        pmu.inputRulesPlugin(),
-        pmu.keymapPlugin(),
-        ...(editorProps.plugins ?? []),
-      ],
+      plugins: [...(editorProps.plugins ?? []), ...pmu.plugins()],
     },
   });
   return {
