@@ -27,7 +27,7 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
   ): Array<InputRule> {
     return [
       new MarkInputRule(
-        /(?<!`)(?<delimiter>`+)(?!`)(?<padding> ?)(?=\S)(?<content>(?:[^`]|(?!\k<delimiter>(?!`))`+(?!`))+)(?<=\S)\k<padding>\k<delimiter>(?<trailing>[^`])$/u,
+        /(?<opening>(?<!`)(?<delimiter>`+)(?!`)(?<padding> ?)(?=\S))(?<content>(?:[^`]|(?!\k<delimiter>(?!`))`+(?!`))+)(?<closing>(?<=\S)\k<padding>\k<delimiter>)(?<trailing>[^`])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
       ),
     ];

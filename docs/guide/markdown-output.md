@@ -36,10 +36,6 @@ The test suite checks every example from the [CommonMark spec](https://spec.comm
 
 When parsing drops something, it logs a warning to the console.
 
-### Copy and paste
-
-Pasting HTML, for example from a web page or another editor, keeps the formatting that the editor supports. Pasting plain text inserts it as it is, so Markdown pasted as plain text isn't converted: `**bold**` stays as literal asterisks.
-
 ### By design
 
 - **Links without any text**, such as `[](https://example.com)`, are dropped when parsing, because a ProseMirror mark needs content to attach to. As they're invisible in the editor anyway, this is an accepted limitation.

@@ -114,7 +114,7 @@ function runEditorInput(
   try {
     const editor = renderProseMirror(before, {
       editorProps: {
-        plugins: [fx.pmu.inputRulesPlugin(), fx.pmu.keymapPlugin()],
+        plugins: fx.pmu.plugins(),
       },
     });
     editor.setSelection(selection);

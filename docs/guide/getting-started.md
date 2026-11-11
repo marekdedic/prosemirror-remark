@@ -37,7 +37,7 @@ const pmu = new ProseMirrorUnified([new MarkdownExtension()]);
 const view = new EditorView(document.querySelector("#editor")!, {
   state: EditorState.create({
     doc: pmu.parse("# Hello\n\nThis is **Markdown**."),
-    plugins: [pmu.inputRulesPlugin(), pmu.keymapPlugin()],
+    plugins: pmu.plugins(),
     schema: pmu.schema(),
   }),
   nodeViews: pmu.nodeViews(),
@@ -53,7 +53,7 @@ The adapter gives you everything the editor needs:
 - `schema()`: the ProseMirror schema with every node and mark the extensions provide.
 - `parse(markdown)`: turns a Markdown string into a ProseMirror document, here used for the initial content.
 - `serialize(doc)`: turns the editor's document back into Markdown, here logged on every change.
-- `inputRulesPlugin()` and `keymapPlugin()`: plugins with the extensions' [input rules and keyboard shortcuts](/reference/extensions), such as typing `## ` to start a heading or pressing `Mod-b` for bold.
+- `plugins()`: every plugin the editor needs, in the right order: the extensions' [input rules and keyboard shortcuts](/reference/extensions), such as typing `## ` to start a heading or pressing `Mod-b` for bold, pasting plain text as Markdown, and ProseMirror's base keymap. A keymap of your own goes before them.
 - `nodeViews()`: the extensions' node views, such as the field for editing a [code block's language](/reference/extensions#codeblockextension) or the clickable checkboxes of [GFM task lists](/guide/gfm).
 
 See the [prosemirror-unified API reference](https://marekdedic.github.io/prosemirror-unified/guide/api) for details on each method.

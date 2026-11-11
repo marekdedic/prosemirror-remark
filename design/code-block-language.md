@@ -366,7 +366,7 @@ CommonMark decodes character references in an info string, so an unescaped `&` w
 
 ## Testing
 
-`toTransformCommand` joins the declarative matchers in `tests/utils/matchers.ts` for commands. `renderNodeView` installs the input-rule and keymap plugins so that node view tests can exercise the keys that move between the code and the fields. jsdom has no layout, so `endOfTextblock` is always `true` there; the newline check is what the tests cover. Tests set directions with inline styles.
+`toTransformCommand` joins the declarative matchers in `tests/utils/matchers.ts` for commands. `renderNodeView` installs `pmu.plugins()` so that node view tests can exercise the keys that move between the code and the fields. jsdom has no layout, so `endOfTextblock` is always `true` there; the newline check is what the tests cover. Tests set directions with inline styles.
 
 - **Differential:** for every opening fence line in the CommonMark spec's fenced code examples, plus the cases above, `Enter` gives the attributes the parser gives if the line is a fence followed by at most one word, and doesn't convert otherwise.
 - **Round trip:** a table of awkward values (`&` with and without a reference, backslashes, backticks, tildes, NBSP, line endings and trailing spaces in `meta`, non-ASCII) survives Markdown and `toDOM`/`parseDOM`.

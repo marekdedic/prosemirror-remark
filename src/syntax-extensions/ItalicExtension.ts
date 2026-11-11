@@ -25,12 +25,14 @@ export class ItalicExtension extends MarkExtension<Emphasis> {
   ): Array<InputRule> {
     return [
       new MarkInputRule(
-        /(?<!\*)\*(?<content>[^\s*](?:.*\S)?)\*(?<trailing>[^*])$/u,
+        /(?<opening>(?<!\*)\*)(?<content>[^\s*](?:.*\S)?)(?<closing>\*)(?<trailing>[^*])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
+        { allowLeafNodes: true },
       ),
       new MarkInputRule(
-        /(?<!_)_(?<content>[^\s_](?:.*\S)?)_(?<trailing>[^_])$/u,
+        /(?<opening>(?<!_)_)(?<content>[^\s_](?:.*\S)?)(?<closing>_)(?<trailing>[^_])$/u,
         proseMirrorSchema.marks[this.proseMirrorMarkName()],
+        { allowLeafNodes: true },
       ),
     ];
   }
