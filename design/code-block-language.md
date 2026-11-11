@@ -242,10 +242,12 @@ The `code` element, not the `pre`, draws the block: a background and padding, so
 
 A paragraph turns into a code block when its whole text is an opening fence followed by:
 
-- **a space:** an input rule like `textblockTypeInputRule`, which fires when the space follows a fence and a language with no whitespace in between, at the end of the paragraph.
-- **`Enter`:** a keymap command, chained before `liftOutOfCodeBlock`, which runs at the end of a paragraph that is a fence line.
+- **a space:** fires when the space follows a fence and a language with no whitespace in between, at the end of the paragraph.
+- **`Enter`:** fires at the end of a paragraph that is a fence line.
 
-Whether the text is a fence line, and what its language is, is decided by the CommonMark parser, see [Fence lines: use the parser](#fence-lines-use-the-parser). Both triggers apply only where a code block may replace the paragraph (not, for example, in the first paragraph of a task list item). They apply only in paragraphs: as in CommonMark, `# ```` ` is a heading, so a heading whose text is a fence stays a heading. `prosemirror-unified` does pass `Enter` to input rules as `"\n"`, but the key then still reaches the keymap and inserts a newline into the new code block, so the input rule matches a space only.
+Both are one `EnterInputRule` from `prosemirror-unified`, like `textblockTypeInputRule` otherwise. `prosemirror-unified` passes `Enter` to the input rules as `"\n"`; as an `EnterInputRule`, the rule replaces what `Enter` does when it applies, so the key doesn't go on to split the new code block, and on `Enter` it runs before all plain input rules.
+
+Whether the text is a fence line, and what its language is, is decided by the CommonMark parser, see [Fence lines: use the parser](#fence-lines-use-the-parser). Both triggers apply only where a code block may replace the paragraph (not, for example, in the first paragraph of a task list item). They apply only in paragraphs: as in CommonMark, `# ```` ` is a heading, so a heading whose text is a fence stays a heading.
 
 So ```` ``` ```` followed by space or `Enter` makes a code block without a language, and ```` ```js ```` followed by space or `Enter` makes a `js` one, for `~~~` fences and longer fences too. ```` ``` ```` alone doesn't convert: converting on the third backtick would leave no way to type a language.
 
@@ -305,14 +307,14 @@ The fields' own rules use the same definitions: the language field removes white
 
 #### Fence lines: use the parser
 
-`fenceOnEnter` and the space input rule don't match their own patterns. A helper checks that the text is a fence followed by at most one word, then parses it with remark (`unified().use(remarkParse)`, created once) and accepts it only if the result is a single fenced `code` node:
+The fence input rule doesn't match its own pattern. A helper checks that the text is a fence followed by at most one word, then parses it with remark (`unified().use(remarkParse)`, created once) and accepts it only if the result is a single fenced `code` node:
 
 ```ts
 function parseFenceLine(text: string): CodeBlockAttrs | null;
 ```
 
 - **Fenced versus indented:** an unclosed fence parses to a `code` node with an empty value. Indented code (four spaces or a tab) parses to a `code` node whose value is the line, so it's rejected.
-- **The text is read with `textBetween(…, "￼")`:** an image or hard break becomes a placeholder that stops the line from being a fence.
+- **Images and hard breaks:** the input rules see them as U+FFFC, a placeholder that stops the line from being a fence.
 - **Space trigger:** fires when the typed text ends in a space (it may be longer, e.g. "js " inserted by autocomplete), the cursor is at the end of the paragraph's text, the text before it has no whitespace after the fence's indent, and `parseFenceLine` accepts it. The language comes from the parser.
 - **`Enter` trigger:** fires at the end of a paragraph that `parseFenceLine` accepts. Since that's a fence followed by at most one word, there's never a `meta`.
 
@@ -334,10 +336,10 @@ Parsing one line costs microseconds, and it only happens when the line starts wi
 
 While a paragraph's text is a fence line, typing in it must not trigger the inline code, emphasis, strong or strikethrough input rules, which would strip delimiters from the language before the fence converts (`~~~a~b~c`, ```` ```foo_bar_baz ````).
 
-`CodeBlockExtension` adds a guard input rule after its own fence rules. When the paragraph's text so far plus the typed text is a fence line according to `parseFenceLine`, the guard inserts the typed text itself and returns that transaction (with `undoable: false`). The typed text may be longer than one character, e.g. from autocomplete; a line ending (`Enter`) is handled as described below. It does so only if the document up to the cursor is exactly what the input rules saw before the typed text: an input method that replaces a range (autocorrect, spellcheck, Android keyboards) breaks that, and its input is left to the default handling, so the guard can't reproduce it wrongly. Input rules run in order and the first one that returns a transaction wins, so the mark rules never see it. A line that stops being a fence, e.g. ```` ``` a`b ````, isn't guarded, so inline code works there as CommonMark says it should.
+`CodeBlockExtension` adds a guard input rule after its own fence rules. When the paragraph's text so far plus the typed text is a fence line according to `parseFenceLine`, the guard inserts the typed text itself and returns that transaction (with `undoable: false`). The typed text may be longer than one character, e.g. from autocomplete. `Enter` isn't guarded, see below. It does so only if the document up to the cursor is exactly what the input rules saw before the typed text: an input method that replaces a range (autocorrect, spellcheck, Android keyboards) breaks that, and its input is left to the default handling, so the guard can't reproduce it wrongly. Input rules run in order and the first one that returns a transaction wins, so the mark rules never see it. A line that stops being a fence, e.g. ```` ``` a`b ````, isn't guarded, so inline code works there as CommonMark says it should.
 
-- **Line endings:** `prosemirror-unified` passes `Enter` to the input rules as `"\n"` and then runs the keymap too. Only `Enter` at the end of the paragraph, where it converts the fence, is guarded, so `Enter` elsewhere doesn't dispatch an extra transaction. A guard that inserted `"\n"` would insert two line breaks, and a guard that ignored it would let a mark rule fire on a closing delimiter at the end of the language (```` ```a*b* ```` + `Enter` would become the language `ab`). So for `"\n"` the guard returns an empty transaction: the input counts as handled, so the mark rules don't run, and the keymap then converts the fence.
-- **Order:** this relies on the guard running before the mark extensions' input rules. `prosemirror-unified` always runs node extensions' input rules before mark extensions', whatever order the extensions are listed in, so it holds for every extension list, `LinkExtension` included. A test lists the mark extensions first to make sure.
+- **Line endings:** `prosemirror-unified` passes `Enter` to the input rules as `"\n"`. Where it converts the fence, the fence rule, an `EnterInputRule`, runs before every plain input rule, so a mark rule can't fire on a closing delimiter at the end of the language first (```` ```a*b* ```` + `Enter` would become the language `ab`). The guard doesn't match `"\n"`, so `Enter` elsewhere goes on as usual.
+- **Order:** for typed text, this relies on the guard running before the mark extensions' input rules. `prosemirror-unified` always runs node extensions' input rules before mark extensions', whatever order the extensions are listed in, so it holds for every extension list, `LinkExtension` included. A test lists the mark extensions first to make sure.
 
 #### Serialization: escape `&`
 

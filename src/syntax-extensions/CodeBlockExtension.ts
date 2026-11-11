@@ -8,7 +8,7 @@ import type {
 } from "prosemirror-model";
 import type { NodeViewConstructor } from "prosemirror-view";
 
-import { chainCommands, setBlockType } from "prosemirror-commands";
+import { setBlockType } from "prosemirror-commands";
 import {
   type Command,
   type EditorState,
@@ -30,7 +30,7 @@ import {
   normaliseLanguage,
   normaliseMeta,
 } from "../utils/codeBlockAttrs";
-import { codeBlockInputRules, fenceOnEnter } from "../utils/codeBlockInput";
+import { codeBlockInputRules } from "../utils/codeBlockInput";
 import {
   findControlInput,
   leavesTextblockStart,
@@ -150,10 +150,7 @@ export class CodeBlockExtension extends NodeExtension<Code> {
       ArrowLeft: CodeBlockExtension.focusField("left"),
       ArrowRight: CodeBlockExtension.focusField("right"),
       ArrowUp: CodeBlockExtension.focusField("up"),
-      Enter: chainCommands(
-        fenceOnEnter(nodeType),
-        CodeBlockExtension.liftOutOfCodeBlock(),
-      ),
+      Enter: CodeBlockExtension.liftOutOfCodeBlock(),
       "Shift-Mod-\\": setBlockType(nodeType),
     };
   }
