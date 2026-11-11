@@ -1,11 +1,17 @@
 import { describe, expect, test } from "vitest";
 
+import { BlockquoteExtension } from "../../src/syntax-extensions/BlockquoteExtension";
 import { HeadingExtension } from "../../src/syntax-extensions/HeadingExtension";
+import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
 describe("HeadingExtension", () => {
   const fx = createExtensionFixture(new HeadingExtension());
+  const fxInContainers = createExtensionFixture(new HeadingExtension(), [
+    new BlockquoteExtension(),
+    new UnorderedListExtension(),
+  ]);
 
   test("handles the `heading` unist node", () => {
     expect(fx).toHandleUnistNode("heading");
@@ -207,6 +213,44 @@ describe("HeadingExtension", () => {
         );
       },
     );
+
+    test("`#` followed by `Enter` gives an empty heading", () => {
+      expect(fx).toTransformBlockInput(
+        "#{Enter}a",
+        (b) => [b.heading({ level: 1 }), b.p("a")],
+        "#\n\na",
+      );
+    });
+
+    test("`#` followed by `Enter` in a blockquote stays in it", () => {
+      expect(fxInContainers).toTransformInput(
+        (b) => [b.blockquote(b.p("#<cursor>"))],
+        "cursor",
+        "{Enter}a",
+        (b) => [b.blockquote(b.heading({ level: 1 }), b.p("a"))],
+        "> #\n>\n> a",
+      );
+    });
+
+    test("`#` followed by `Enter` in a list item stays in it", () => {
+      expect(fxInContainers).toTransformInput(
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.p("#<cursor>")))],
+        "cursor",
+        "{Enter}b",
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.heading({ level: 1 }), b.p("b")))],
+        "* a\n* #\n  b",
+      );
+    });
+
+    test("`Enter` in the middle of the line splits it", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("#<cursor>a")],
+        "cursor",
+        "{Enter}",
+        (b) => [b.p("#"), b.p("a")],
+        "\\#\n\na",
+      );
+    });
 
     test("rejects seven `#`", () => {
       expect(fx).toTransformBlockInput(

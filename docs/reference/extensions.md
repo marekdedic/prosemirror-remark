@@ -37,7 +37,7 @@ ATX headings (`# Heading`) and setext headings (`Heading` underlined with `===` 
 
 - **ProseMirror node:** `heading`, with the attribute `level` (1–6). Headings contain formatted text, but no images or line breaks.
 - **HTML:** `<h1>`–`<h6>`
-- **Input rules:** `# ` to `###### ` turns the paragraph into a heading of that level.
+- **Input rules:** `# ` to `###### ` turns the paragraph into a heading of that level. `#` to `######` followed by `Enter` at the end of the line gives an empty heading and a new paragraph after it.
 - **Keyboard shortcuts:**
   - `Shift-Mod-1` to `Shift-Mod-6` turn the current block into a heading of that level.
   - `Tab` and `Shift-Tab` increase and decrease the heading's level.
