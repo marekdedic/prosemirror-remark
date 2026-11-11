@@ -1,6 +1,13 @@
-import { describe, expect, test } from "vitest";
+import type { Node as ProseMirrorNode } from "prosemirror-model";
+
+import { EditorState, NodeSelection, TextSelection } from "prosemirror-state";
+import { describe, expect, test, vi } from "vitest";
 
 import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
+import {
+  listSpreadAt,
+  setListSpread,
+} from "../../src/syntax-extensions/ListItemExtension";
 import { OrderedListExtension } from "../../src/syntax-extensions/OrderedListExtension";
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { createExtensionFixture } from "../utils/fixture";
@@ -572,6 +579,261 @@ describe("UnorderedListExtension", () => {
         (b) => [b.ul(b.li(b.p("a")), b.li(b.p()), b.li(b.p("b")))],
         "* a\n*\n* b",
       );
+    });
+  });
+
+  describe("setListSpread", () => {
+    test("makes a tight list loose", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.ul(b.li(b.p("a<cursor>")), b.li(b.p("b")))],
+        "cursor",
+        setListSpread(true),
+        (b) => [b.ul({ spread: true }, b.li(b.p("a")), b.li(b.p("b")))],
+        "* a\n\n* b",
+      );
+    });
+
+    test("makes a loose list tight", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.ul({ spread: true }, b.li(b.p("a<cursor>")), b.li(b.p("b")))],
+        "cursor",
+        setListSpread(false),
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
+        "* a\n* b",
+      );
+    });
+
+    test("applies to the innermost list", () => {
+      expect(fx).toTransformCommand(
+        (b) => [
+          b.ul(
+            b.li(b.p("a"), b.ul(b.li(b.p("b<cursor>")), b.li(b.p("c")))),
+            b.li(b.p("d")),
+          ),
+        ],
+        "cursor",
+        setListSpread(true),
+        (b) => [
+          b.ul(
+            b.li(
+              b.p("a"),
+              b.ul({ spread: true }, b.li(b.p("b")), b.li(b.p("c"))),
+            ),
+            b.li(b.p("d")),
+          ),
+        ],
+        "* a\n  * b\n\n  * c\n* d",
+      );
+    });
+
+    test("applies to the list containing the whole selection", () => {
+      expect(fx).toTransformCommand(
+        (b) => [
+          b.ul(
+            b.li(b.p("a"), b.ul(b.li(b.p("<start>b")), b.li(b.p("c")))),
+            b.li(b.p("d<end>")),
+          ),
+        ],
+        { anchor: "start", head: "end" },
+        setListSpread(true),
+        (b) => [
+          b.ul(
+            { spread: true },
+            b.li(b.p("a"), b.ul(b.li(b.p("b")), b.li(b.p("c")))),
+            b.li(b.p("d")),
+          ),
+        ],
+        "* a\n\n  * b\n  * c\n\n* d",
+      );
+    });
+
+    test("applies to a selected list", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b"))), b.p("c")],
+        "start",
+        (state, dispatch) =>
+          setListSpread(true)(
+            state.apply(
+              state.tr.setSelection(NodeSelection.create(state.doc, 0)),
+            ),
+            dispatch,
+          ),
+        (b) => [
+          b.ul({ spread: true }, b.li(b.p("a")), b.li(b.p("b"))),
+          b.p("c"),
+        ],
+        "* a\n\n* b\n\nc",
+      );
+    });
+
+    test("applies to the list containing a selected item", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.ul(b.li(b.p("a"), b.ul(b.li(b.p("b")))), b.li(b.p("c")))],
+        "start",
+        (state, dispatch) =>
+          setListSpread(true)(
+            state.apply(
+              state.tr.setSelection(NodeSelection.create(state.doc, 1)),
+            ),
+            dispatch,
+          ),
+        (b) => [
+          b.ul(
+            { spread: true },
+            b.li(b.p("a"), b.ul(b.li(b.p("b")))),
+            b.li(b.p("c")),
+          ),
+        ],
+        "* a\n\n  * b\n\n* c",
+      );
+    });
+
+    test("does not apply outside a list", () => {
+      expect(fx).not.toTransformCommand(
+        (b) => [b.p("a<cursor>"), b.ul(b.li(b.p("b")), b.li(b.p("c")))],
+        "cursor",
+        setListSpread(true),
+        (b) => [b.p("a"), b.ul(b.li(b.p("b")), b.li(b.p("c")))],
+        "a\n\n* b\n* c",
+      );
+    });
+
+    test("does not apply to a selection across two lists", () => {
+      expect(fx).not.toTransformCommand(
+        (b) => [
+          b.ul(b.li(b.p("<start>a")), b.li(b.p("b"))),
+          b.p("c"),
+          b.ul(b.li(b.p("d")), b.li(b.p("e<end>"))),
+        ],
+        { anchor: "start", head: "end" },
+        setListSpread(true),
+        (b) => [
+          b.ul(b.li(b.p("a")), b.li(b.p("b"))),
+          b.p("c"),
+          b.ul(b.li(b.p("d")), b.li(b.p("e"))),
+        ],
+        "* a\n* b\n\nc\n\n* d\n* e",
+      );
+    });
+
+    test("does not make a list tight when its content can't be tight", () => {
+      expect(fx).not.toTransformCommand(
+        (b) => [
+          b.ul(
+            { spread: true },
+            b.li(b.p("a<cursor>"), b.p("b")),
+            b.li(b.p("c")),
+          ),
+        ],
+        "cursor",
+        setListSpread(false),
+        (b) => [
+          b.ul({ spread: true }, b.li(b.p("a"), b.p("b")), b.li(b.p("c"))),
+        ],
+        "* a\n\n  b\n\n* c",
+      );
+    });
+
+    test("makes a list with a single block loose, written tight", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.ul(b.li(b.p("a<cursor>")))],
+        "cursor",
+        setListSpread(true),
+        (b) => [b.ul({ spread: true }, b.li(b.p("a")))],
+        "* a",
+      );
+    });
+
+    test("a loose list with a single block is written loose once it has a second item", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.ul({ spread: true }, b.li(b.p("a<cursor>")))],
+        "cursor",
+        "{Enter}b",
+        (b) => [b.ul({ spread: true }, b.li(b.p("a")), b.li(b.p("b")))],
+        "* a\n\n* b",
+      );
+    });
+
+    test("makes a list with a single item with several blocks loose", () => {
+      expect(fx).toTransformCommand(
+        (b) => [b.ul(b.li(b.p("a<cursor>"), b.ul(b.li(b.p("b")))))],
+        "cursor",
+        setListSpread(true),
+        (b) => [b.ul({ spread: true }, b.li(b.p("a"), b.ul(b.li(b.p("b")))))],
+        "* a\n\n  * b",
+      );
+    });
+
+    test("does not dispatch when nothing changes", () => {
+      const doc = fx.b.doc(
+        fx.b.ul({ spread: true }, fx.b.li(fx.b.p("a")), fx.b.li(fx.b.p("b"))),
+      ) as unknown as ProseMirrorNode;
+      const state = EditorState.create({
+        doc,
+        selection: TextSelection.create(doc, 3),
+      });
+      const dispatch = vi.fn();
+
+      expect(setListSpread(true)(state, dispatch)).toBe(true);
+      expect(dispatch).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("listSpreadAt", () => {
+    test.each([
+      ["a tight list", false, false],
+      ["a loose list", true, true],
+    ])("reports %s", (_, spread, expected) => {
+      const doc = fx.b.doc(
+        fx.b.ul({ spread }, fx.b.li(fx.b.p("a")), fx.b.li(fx.b.p("b"))),
+      ) as unknown as ProseMirrorNode;
+
+      expect(
+        listSpreadAt(
+          EditorState.create({ doc, selection: TextSelection.create(doc, 3) }),
+        ),
+      ).toBe(expected);
+    });
+
+    test("reports the innermost list", () => {
+      const doc = fx.b.doc(
+        fx.b.ul(
+          { spread: true },
+          fx.b.li(fx.b.p("a"), fx.b.ul(fx.b.li(fx.b.p("b")))),
+          fx.b.li(fx.b.p("c")),
+        ),
+      ) as unknown as ProseMirrorNode;
+
+      expect(
+        listSpreadAt(
+          EditorState.create({ doc, selection: TextSelection.create(doc, 9) }),
+        ),
+      ).toBe(false);
+    });
+
+    test("reports a tight list whose content can't be tight as loose", () => {
+      const doc = fx.b.doc(
+        fx.b.ul(fx.b.li(fx.b.p("a"), fx.b.p("b")), fx.b.li(fx.b.p("c"))),
+      ) as unknown as ProseMirrorNode;
+
+      expect(
+        listSpreadAt(
+          EditorState.create({ doc, selection: TextSelection.create(doc, 3) }),
+        ),
+      ).toBe(true);
+    });
+
+    test("reports `null` outside a list", () => {
+      const doc = fx.b.doc(
+        fx.b.p("a"),
+        fx.b.ul(fx.b.li(fx.b.p("b"))),
+      ) as unknown as ProseMirrorNode;
+
+      expect(
+        listSpreadAt(
+          EditorState.create({ doc, selection: TextSelection.create(doc, 1) }),
+        ),
+      ).toBeNull();
     });
   });
 

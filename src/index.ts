@@ -27,7 +27,11 @@ export {
   LinkReferenceExtension,
   type LinkReferenceExtensionContext,
 } from "./syntax-extensions/LinkReferenceExtension";
-export { ListItemExtension } from "./syntax-extensions/ListItemExtension";
+export {
+  ListItemExtension,
+  listSpreadAt,
+  setListSpread,
+} from "./syntax-extensions/ListItemExtension";
 export { OrderedListExtension } from "./syntax-extensions/OrderedListExtension";
 export { ParagraphExtension } from "./syntax-extensions/ParagraphExtension";
 export { RootExtension } from "./syntax-extensions/RootExtension";
