@@ -199,10 +199,6 @@ class TaskListItemView implements NodeView {
       this.checkbox.removeAttribute("checked");
     }
     this.dom.setAttribute("data-checked", String(checked));
-    this.dom.setAttribute(
-      "data-spread",
-      String(this.node.attrs["spread"] as boolean),
-    );
   }
 }
 
@@ -269,10 +265,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
             .setNodeMarkup(
               $start.before(-1),
               proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-              {
-                checked: match.groups?.["checked"].toLowerCase() === "x",
-                spread: $start.node(-1).attrs["spread"] as boolean,
-              },
+              { checked: match.groups?.["checked"].toLowerCase() === "x" },
             );
         },
         { inCodeMark: false },
@@ -307,7 +300,6 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
           state.tr.setNodeMarkup(
             $anchor.before(-1),
             proseMirrorSchema.nodes["regular_list_item"],
-            { spread: $anchor.node(-1).attrs["spread"] as boolean },
           ),
         );
         return true;
@@ -321,15 +313,13 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
-      attrs: { checked: { default: false }, spread: { default: false } },
+      attrs: { checked: { default: false } },
       content: "paragraph block*",
       defining: true,
       group: "list_item",
       parseDOM: [
         {
-          getAttrs: (
-            dom: Node | string,
-          ): false | { checked: boolean; spread: boolean } => {
+          getAttrs: (dom: Node | string): false | { checked: boolean } => {
             // No instanceof check: the DOM may come from another window, e.g.
             // an iframe
             const checkbox = (
@@ -340,11 +330,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
             if (checkbox === null) {
               return false;
             }
-            return {
-              checked: checkbox.checked,
-              spread:
-                (dom as HTMLElement).getAttribute("data-spread") === "true",
-            };
+            return { checked: checkbox.checked };
           },
           priority: 60,
           tag: "li",
@@ -358,7 +344,6 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
           {
             class: "prosemirror-remark-task-list-item",
             "data-checked": node.attrs["checked"] as boolean,
-            "data-spread": node.attrs["spread"] as boolean,
           },
           [
             "span",
@@ -396,7 +381,8 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       {
         checked: node.attrs["checked"] as boolean,
         children: convertedChildren,
-        spread: node.attrs["spread"] as boolean,
+        // The list sets its own looseness on its items
+        spread: false,
         type: this.unistNodeName(),
       },
     ];
@@ -431,7 +417,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
       this.proseMirrorNodeName(),
       proseMirrorSchema,
       convertedChildren,
-      { checked: node.checked, spread: node.spread === true },
+      { checked: node.checked },
     );
   }
 

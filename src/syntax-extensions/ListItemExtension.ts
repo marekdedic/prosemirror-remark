@@ -25,34 +25,23 @@ export class ListItemExtension extends NodeExtension<ListItem> {
 
   public override proseMirrorNodeSpec(): NodeSpec {
     return {
-      attrs: { spread: { default: false } },
       content: "block+",
       defining: true,
       group: "list_item",
-      parseDOM: [
-        {
-          getAttrs: (dom: Node | string): { spread: boolean } => ({
-            spread: (dom as HTMLElement).getAttribute("data-spread") === "true",
-          }),
-          tag: "li",
-        },
-      ],
-      toDOM: (node: ProseMirrorNode): DOMOutputSpec => [
-        "li",
-        { "data-spread": node.attrs["spread"] as boolean },
-        0,
-      ],
+      parseDOM: [{ tag: "li" }],
+      toDOM: (): DOMOutputSpec => ["li", 0],
     };
   }
 
   public override proseMirrorNodeToUnistNodes(
-    node: ProseMirrorNode,
+    _node: ProseMirrorNode,
     convertedChildren: Array<BlockContent | DefinitionContent>,
   ): Array<ListItem> {
     return [
       {
         children: convertedChildren,
-        spread: node.attrs["spread"] as boolean,
+        // The list sets its own looseness on its items
+        spread: false,
         type: this.unistNodeName(),
       },
     ];
@@ -63,7 +52,7 @@ export class ListItemExtension extends NodeExtension<ListItem> {
   }
 
   public override unistNodeToProseMirrorNodes(
-    node: ListItem,
+    _node: ListItem,
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
@@ -71,7 +60,6 @@ export class ListItemExtension extends NodeExtension<ListItem> {
       this.proseMirrorNodeName(),
       proseMirrorSchema,
       convertedChildren,
-      { spread: node.spread === true },
     );
   }
 
