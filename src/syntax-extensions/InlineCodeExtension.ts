@@ -58,6 +58,7 @@ export class InlineCodeExtension extends MarkExtension<InlineCode> {
 
   public override proseMirrorMarkSpec(): MarkSpec {
     return {
+      code: true,
       inclusive: false,
       parseDOM: [{ tag: "code" }],
       toDOM: (): DOMOutputSpec => ["code", 0],
