@@ -14,7 +14,7 @@ function renderedTaskList(
   checked: boolean,
   { id = "prosemirror-remark-task-list-item-content-1", spread = false } = {},
 ): string {
-  return `<ul data-spread="false"><li class="prosemirror-remark-task-list-item" data-checked="${String(checked)}" data-spread="${String(spread)}"><span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false"><input aria-labelledby="${id}" ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><div class="prosemirror-remark-task-list-item-content" id="${id}"><p>a</p></div></li></ul>`;
+  return `<ul data-spread="${String(spread)}"><li class="prosemirror-remark-task-list-item" data-checked="${String(checked)}"><span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false"><input aria-labelledby="${id}" ${checked ? 'checked="checked" ' : ""}disabled="disabled" type="checkbox"></span><div class="prosemirror-remark-task-list-item-content" id="${id}"><p>a</p></div></li></ul>`;
 }
 
 function renderedTaskListPattern(checked: boolean, spread = false): RegExp {
@@ -169,14 +169,14 @@ describe("TaskListExtension", () => {
       );
     });
 
-    test("spread list item", () => {
+    test("loose because of a spread list item", () => {
       expect(fx).toConvertUnistNode(
         {
           children: [{ children: [], spread: true, type: "listItem" }],
           ordered: false,
           type: "list",
         },
-        (b) => [b.ul(b.li({ spread: true }, b.p()))],
+        (b) => [b.ul({ spread: true }, b.li(b.p()))],
       );
     });
 
@@ -303,10 +303,6 @@ describe("TaskListExtension", () => {
       expect(fx).toMatchProseMirrorNode((b) => b.ul(b.li()));
     });
 
-    test("matches a `ul` with a spread list item", () => {
-      expect(fx).toMatchProseMirrorNode((b) => b.ul(b.li({ spread: true })));
-    });
-
     test("matches a `ul` with an unchecked task item", () => {
       expect(fx).toMatchProseMirrorNode((b) =>
         b.ul(b.taskListItem({ checked: false })),
@@ -418,17 +414,7 @@ describe("TaskListExtension", () => {
 
     test("spread checked task item", () => {
       expect(fx).toConvertProseMirrorNode(
-        (b) =>
-          b.ul(
-            { spread: true },
-            b.taskListItem(
-              {
-                checked: true,
-                spread: true,
-              },
-              b.p(),
-            ),
-          ),
+        (b) => b.ul({ spread: true }, b.taskListItem({ checked: true }, b.p())),
         [
           {
             children: [
@@ -447,12 +433,12 @@ describe("TaskListExtension", () => {
       );
     });
 
-    test("tight list with a spread regular item next to task items", () => {
+    test("tight list with a regular item with several children next to task items", () => {
       expect(fx).toConvertProseMirrorNode(
         (b) =>
           b.ul(
             b.taskListItem({ checked: false }, b.p()),
-            b.li({ spread: true }, b.p(), b.p()),
+            b.li(b.p(), b.p()),
             b.taskListItem({ checked: true }, b.p()),
           ),
         [
@@ -469,7 +455,7 @@ describe("TaskListExtension", () => {
                   { children: [], type: "paragraph" },
                   { children: [], type: "paragraph" },
                 ],
-                spread: true,
+                spread: false,
                 type: "listItem",
               },
               {
@@ -487,13 +473,10 @@ describe("TaskListExtension", () => {
       );
     });
 
-    test("tight list with a spread task item", () => {
+    test("tight list with a task item with several children", () => {
       expect(fx).toConvertProseMirrorNode(
         (b) =>
-          b.ul(
-            b.li(b.p()),
-            b.taskListItem({ checked: true, spread: true }, b.p(), b.p()),
-          ),
+          b.ul(b.li(b.p()), b.taskListItem({ checked: true }, b.p(), b.p())),
         [
           {
             children: [
@@ -508,7 +491,7 @@ describe("TaskListExtension", () => {
                   { children: [], type: "paragraph" },
                   { children: [], type: "paragraph" },
                 ],
-                spread: true,
+                spread: false,
                 type: "listItem",
               },
             ],
@@ -995,22 +978,21 @@ describe("TaskListExtension", () => {
       );
     });
 
-    test("`Enter` in a spread task item creates a spread one", () => {
+    test("`Enter` in a task item in a spread list keeps it spread", () => {
       expect(fx).toTransformInput(
         (b) => [
           b.ul(
-            b.taskListItem(
-              { checked: true, spread: true },
-              b.p("Hel<cursor>lo"),
-            ),
+            { spread: true },
+            b.taskListItem({ checked: true }, b.p("Hel<cursor>lo")),
           ),
         ],
         "cursor",
         "{Enter}",
         (b) => [
           b.ul(
-            b.taskListItem({ checked: true, spread: true }, b.p("Hel")),
-            b.taskListItem({ spread: true }, b.p("lo")),
+            { spread: true },
+            b.taskListItem({ checked: true }, b.p("Hel")),
+            b.taskListItem(b.p("lo")),
           ),
         ],
         "* [x] Hel\n\n* [ ] lo",
@@ -1443,11 +1425,11 @@ describe("TaskListExtension", () => {
       );
     });
 
-    test("parses a spread task item", () => {
+    test("parses a list with a spread task item as spread", () => {
       expect(fx).toParseDOM(
         '<ul><li data-spread="true"><input type="checkbox" checked><p>a</p></li></ul>',
         (b) => [
-          b.ul(b.taskListItem({ checked: true, spread: true }, b.p("a"))),
+          b.ul({ spread: true }, b.taskListItem({ checked: true }, b.p("a"))),
         ],
       );
     });
@@ -1503,9 +1485,9 @@ describe("TaskListExtension", () => {
       );
     });
 
-    test("renders a spread task item", () => {
+    test("renders a task item in a spread list", () => {
       expect(fx).toRenderDOM(
-        (b) => [b.ul(b.taskListItem({ spread: true }, b.p("a")))],
+        (b) => [b.ul({ spread: true }, b.taskListItem(b.p("a")))],
         renderedTaskListPattern(false, true),
       );
     });

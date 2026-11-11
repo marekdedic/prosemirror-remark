@@ -120,7 +120,7 @@ A control that a node view adds (see the DOM contract) is part of the editor, so
 ### Task list items (implemented)
 
 ```html
-<li class="prosemirror-remark-task-list-item" data-checked="true" data-spread="false">
+<li class="prosemirror-remark-task-list-item" data-checked="true">
   <span class="prosemirror-remark-task-list-item-checkbox" contenteditable="false">
     <input type="checkbox" aria-labelledby="prosemirror-remark-task-list-item-content-1" checked>
   </span>

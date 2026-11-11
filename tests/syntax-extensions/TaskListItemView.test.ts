@@ -150,18 +150,12 @@ describe("TaskListItemView", () => {
     ).toBe("checked");
   });
 
-  test("renders the spread of a tight item", () => {
+  test("renders no spread on the item", () => {
     expect(
-      render("* [ ] Hello\n").editor.element("li").getAttribute("data-spread"),
-    ).toBe("false");
-  });
-
-  test("renders the spread of a spread item", () => {
-    expect(
-      render("* [ ] Hello\n\n  World\n")
+      render("* [ ] a\n\n* [ ] b\n")
         .editor.element("li")
-        .getAttribute("data-spread"),
-    ).toBe("true");
+        .hasAttribute("data-spread"),
+    ).toBe(false);
   });
 
   test.each([
@@ -282,16 +276,6 @@ describe("TaskListItemView", () => {
       expect(fx.editor.element("li").getAttribute("data-checked")).toBe(data);
     },
   );
-
-  test("follows the spread set elsewhere", () => {
-    const fx = render("* [ ] Hello\n");
-    fx.editor.command((state, dispatch) => {
-      dispatch?.(state.tr.setNodeAttribute(1, "spread", true));
-      return true;
-    });
-
-    expect(fx.editor.element("li").getAttribute("data-spread")).toBe("true");
-  });
 
   test("is replaced when the item stops being a task item", () => {
     const fx = render("* [ ] Hello\n");

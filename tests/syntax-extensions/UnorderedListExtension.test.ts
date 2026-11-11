@@ -96,14 +96,18 @@ describe("UnorderedListExtension", () => {
       );
     });
 
-    test("with a spread list item", () => {
+    test("loose because of a spread list item", () => {
       expect(fx).toConvertUnistNode(
         {
-          children: [{ children: [], spread: true, type: "listItem" }],
+          children: [
+            { children: [], type: "listItem" },
+            { children: [], spread: true, type: "listItem" },
+          ],
           ordered: false,
+          spread: false,
           type: "list",
         },
-        (b) => [b.ul(b.li({ spread: true }, b.p()))],
+        (b) => [b.ul({ spread: true }, b.li(b.p()), b.li(b.p()))],
       );
     });
 
@@ -174,10 +178,6 @@ describe("UnorderedListExtension", () => {
       expect(fx).toMatchProseMirrorNode((b) => b.ul(b.li()));
     });
 
-    test("matches a `ul` with a spread list item", () => {
-      expect(fx).toMatchProseMirrorNode((b) => b.ul(b.li({ spread: true })));
-    });
-
     test("matches a `ul` with content", () => {
       expect(fx).toMatchProseMirrorNode((b) => b.ul(b.li(b.p("Hello World!"))));
     });
@@ -212,26 +212,6 @@ describe("UnorderedListExtension", () => {
             children: [
               {
                 children: [{ children: [], type: "paragraph" }],
-                spread: false,
-                type: "listItem",
-              },
-            ],
-            ordered: false,
-            spread: true,
-            type: "list",
-          },
-        ],
-      );
-    });
-
-    test("spread list with spread item", () => {
-      expect(fx).toConvertProseMirrorNode(
-        (b) => b.ul({ spread: true }, b.li({ spread: true }, b.p())),
-        [
-          {
-            children: [
-              {
-                children: [{ children: [], type: "paragraph" }],
                 spread: true,
                 type: "listItem",
               },
@@ -244,63 +224,34 @@ describe("UnorderedListExtension", () => {
       );
     });
 
-    test("tight list with spread item with several children", () => {
+    test("tight list with an item with several children", () => {
       expect(fx).toConvertProseMirrorNode(
-        (b) => b.ul(b.li({ spread: true }, b.p(), b.p())),
+        (b) => b.ul(b.li(b.p(), b.ul(b.li(b.p())))),
         [
           {
             children: [
               {
                 children: [
                   { children: [], type: "paragraph" },
-                  { children: [], type: "paragraph" },
+                  {
+                    children: [
+                      {
+                        children: [{ children: [], type: "paragraph" }],
+                        spread: false,
+                        type: "listItem",
+                      },
+                    ],
+                    ordered: false,
+                    spread: false,
+                    type: "list",
+                  },
                 ],
-                spread: true,
-                type: "listItem",
-              },
-            ],
-            ordered: false,
-            spread: false,
-            type: "list",
-          },
-        ],
-      );
-    });
-
-    test("tight list with spread item with a single child", () => {
-      expect(fx).toConvertProseMirrorNode(
-        (b) => b.ul(b.li({ spread: true }, b.p())),
-        [
-          {
-            children: [
-              {
-                children: [{ children: [], type: "paragraph" }],
-                spread: true,
-                type: "listItem",
-              },
-            ],
-            ordered: false,
-            spread: true,
-            type: "list",
-          },
-        ],
-      );
-    });
-
-    test("spread list with tight item", () => {
-      expect(fx).toConvertProseMirrorNode(
-        (b) => b.ul({ spread: true }, b.li({ spread: false }, b.p())),
-        [
-          {
-            children: [
-              {
-                children: [{ children: [], type: "paragraph" }],
                 spread: false,
                 type: "listItem",
               },
             ],
             ordered: false,
-            spread: true,
+            spread: false,
             type: "list",
           },
         ],
@@ -543,17 +494,12 @@ describe("UnorderedListExtension", () => {
       );
     });
 
-    test("`Enter` in a spread list item creates a spread one", () => {
+    test("`Enter` in a spread list keeps it spread", () => {
       expect(fx).toTransformInput(
-        (b) => [b.ul(b.li({ spread: true }, b.p("Hel<cursor>lo")))],
+        (b) => [b.ul({ spread: true }, b.li(b.p("Hel<cursor>lo")))],
         "cursor",
         "{Enter}",
-        (b) => [
-          b.ul(
-            b.li({ spread: true }, b.p("Hel")),
-            b.li({ spread: true }, b.p("lo")),
-          ),
-        ],
+        (b) => [b.ul({ spread: true }, b.li(b.p("Hel")), b.li(b.p("lo")))],
         "* Hel\n\n* lo",
       );
     });
@@ -643,10 +589,10 @@ describe("UnorderedListExtension", () => {
       );
     });
 
-    test("parses a spread `<li>`", () => {
+    test("parses a `<ul>` with a spread `<li>` as spread", () => {
       expect(fx).toParseDOM(
-        '<ul><li data-spread="true"><p>Hello</p></li></ul>',
-        (b) => [b.ul(b.li({ spread: true }, b.p("Hello")))],
+        '<ul><li><p>a</p></li><li data-spread="true"><p>b</p></li></ul>',
+        (b) => [b.ul({ spread: true }, b.li(b.p("a")), b.li(b.p("b")))],
       );
     });
 
@@ -660,14 +606,14 @@ describe("UnorderedListExtension", () => {
     test("renders a `<ul>`", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ul(b.li(b.p("Hello")))],
-        '<ul data-spread="false"><li data-spread="false"><p>Hello</p></li></ul>',
+        '<ul data-spread="false"><li><p>Hello</p></li></ul>',
       );
     });
 
-    test("renders a spread `<li>`", () => {
+    test("renders a spread `<ul>`", () => {
       expect(fx).toRenderDOM(
-        (b) => [b.ul(b.li({ spread: true }, b.p("Hello")))],
-        '<ul data-spread="false"><li data-spread="true"><p>Hello</p></li></ul>',
+        (b) => [b.ul({ spread: true }, b.li(b.p("Hello")))],
+        '<ul data-spread="true"><li><p>Hello</p></li></ul>',
       );
     });
   });

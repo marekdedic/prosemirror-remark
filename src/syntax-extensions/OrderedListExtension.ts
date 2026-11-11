@@ -16,7 +16,11 @@ import {
   NodeExtension,
 } from "prosemirror-unified";
 
-import { isListSpread } from "../utils/isListSpread";
+import {
+  isUnistListLoose,
+  itemsWithListSpread,
+  parseListSpread,
+} from "../utils/listSpread";
 import { skipInCodeMark } from "../utils/skipInCodeMark";
 import { typedSpace } from "../utils/typedSpace";
 import { ListItemExtension } from "./ListItemExtension";
@@ -69,8 +73,7 @@ export class OrderedListExtension extends NodeExtension<List> {
           ): { spread: boolean; start: number } => {
             const start = (dom as HTMLElement).getAttribute("start");
             return {
-              spread:
-                (dom as HTMLElement).getAttribute("data-spread") === "true",
+              spread: parseListSpread(dom as HTMLElement),
               start: start === null ? 1 : parseInt(start, 10),
             };
           },
@@ -92,13 +95,10 @@ export class OrderedListExtension extends NodeExtension<List> {
     node: ProseMirrorNode,
     convertedChildren: Array<ListContent>,
   ): Array<List> {
-    const spread = isListSpread(
-      node.attrs["spread"] as boolean,
-      convertedChildren,
-    );
+    const spread = node.attrs["spread"] as boolean;
     return [
       {
-        children: convertedChildren,
+        children: itemsWithListSpread(convertedChildren, spread),
         ordered: true,
         spread,
         start: node.attrs["start"] as number,
@@ -121,7 +121,7 @@ export class OrderedListExtension extends NodeExtension<List> {
       proseMirrorSchema,
       convertedChildren,
       {
-        spread: node.spread,
+        spread: isUnistListLoose(node),
         start: node.start ?? 1,
       },
     );

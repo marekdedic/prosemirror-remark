@@ -384,19 +384,31 @@ test.each([
 
 test.each([
   [
-    "unordered",
-    b.ul(b.li(b.p("a")), b.li({ spread: true }, b.p("b")), b.li(b.p("c"))),
+    "items separated by blank lines",
+    "- a\n- b\n\n- c\n",
+    b.ul({ spread: true }, b.li(b.p("a")), b.li(b.p("b")), b.li(b.p("c"))),
     "* a\n\n* b\n\n* c\n",
   ],
   [
-    "ordered",
-    b.ol(b.li(b.p("a")), b.li({ spread: true }, b.p("b")), b.li(b.p("c"))),
-    "1. a\n\n2. b\n\n3. c\n",
+    "blocks in an item separated by a blank line",
+    "- a\n\n  b\n- c\n",
+    b.ul({ spread: true }, b.li(b.p("a"), b.p("b")), b.li(b.p("c"))),
+    "* a\n\n  b\n\n* c\n",
   ],
-])("tight %s list with a spread single-paragraph item", (_, list, markdown) => {
-  expect(pmu.serialize(b.doc(list) as unknown as ProseMirrorNode)).toBe(
-    markdown,
-  );
+  [
+    "a blank line in a nested list",
+    "- a\n  - b\n\n  - c\n- d\n",
+    b.ul(
+      b.li(b.p("a"), b.ul({ spread: true }, b.li(b.p("b")), b.li(b.p("c")))),
+      b.li(b.p("d")),
+    ),
+    "* a\n  * b\n\n  * c\n* d\n",
+  ],
+])("list loose because of %s", (_, markdown, list, serialized) => {
+  const doc = b.doc(list) as unknown as ProseMirrorNode;
+
+  expect(pmu.parse(markdown)).toEqualProseMirrorNode(doc);
+  expect(pmu.serialize(doc)).toBe(serialized);
 });
 
 test.each([
@@ -416,7 +428,7 @@ test.each([
 ])("tight list item with %s", (_, content) => {
   const tight = b.doc(b.ul(b.li(...content))) as unknown as ProseMirrorNode;
   const spread = b.doc(
-    b.ul(b.li({ spread: true }, ...content)),
+    b.ul({ spread: true }, b.li(...content)),
   ) as unknown as ProseMirrorNode;
 
   expect(pmu.parse(pmu.serialize(tight))).toEqualProseMirrorNode(spread);

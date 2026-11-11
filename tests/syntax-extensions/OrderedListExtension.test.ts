@@ -119,14 +119,18 @@ describe("OrderedListExtension", () => {
       );
     });
 
-    test("with a spread list item", () => {
+    test("loose because of a spread list item", () => {
       expect(fx).toConvertUnistNode(
         {
-          children: [{ children: [], spread: true, type: "listItem" }],
+          children: [
+            { children: [], type: "listItem" },
+            { children: [], spread: true, type: "listItem" },
+          ],
           ordered: true,
+          spread: false,
           type: "list",
         },
-        (b) => [b.ol(b.li({ spread: true }, b.p()))],
+        (b) => [b.ol({ spread: true }, b.li(b.p()), b.li(b.p()))],
       );
     });
 
@@ -171,10 +175,6 @@ describe("OrderedListExtension", () => {
       expect(fx).toMatchProseMirrorNode((b) => b.ol(b.li()));
     });
 
-    test("matches an `ol` with a spread list item", () => {
-      expect(fx).toMatchProseMirrorNode((b) => b.ol(b.li({ spread: true })));
-    });
-
     test("matches an `ol` with content", () => {
       expect(fx).toMatchProseMirrorNode((b) => b.ol(b.li(b.p("Hello World!"))));
     });
@@ -210,7 +210,7 @@ describe("OrderedListExtension", () => {
             children: [
               {
                 children: [{ children: [], type: "paragraph" }],
-                spread: false,
+                spread: true,
                 type: "listItem",
               },
             ],
@@ -231,7 +231,7 @@ describe("OrderedListExtension", () => {
             children: [
               {
                 children: [{ children: [], type: "paragraph" }],
-                spread: false,
+                spread: true,
                 type: "listItem",
               },
             ],
@@ -244,86 +244,35 @@ describe("OrderedListExtension", () => {
       );
     });
 
-    test("spread list with spread item", () => {
+    test("tight list with an item with several children", () => {
       expect(fx).toConvertProseMirrorNode(
-        (b) => b.ol({ spread: true }, b.li({ spread: true }, b.p())),
-        [
-          {
-            children: [
-              {
-                children: [{ children: [], type: "paragraph" }],
-                spread: true,
-                type: "listItem",
-              },
-            ],
-            ordered: true,
-            spread: true,
-            start: 1,
-            type: "list",
-          },
-        ],
-      );
-    });
-
-    test("tight list with spread item with several children", () => {
-      expect(fx).toConvertProseMirrorNode(
-        (b) => b.ol(b.li({ spread: true }, b.p(), b.p())),
+        (b) => b.ol(b.li(b.p(), b.ol(b.li(b.p())))),
         [
           {
             children: [
               {
                 children: [
                   { children: [], type: "paragraph" },
-                  { children: [], type: "paragraph" },
+                  {
+                    children: [
+                      {
+                        children: [{ children: [], type: "paragraph" }],
+                        spread: false,
+                        type: "listItem",
+                      },
+                    ],
+                    ordered: true,
+                    spread: false,
+                    start: 1,
+                    type: "list",
+                  },
                 ],
-                spread: true,
-                type: "listItem",
-              },
-            ],
-            ordered: true,
-            spread: false,
-            start: 1,
-            type: "list",
-          },
-        ],
-      );
-    });
-
-    test("tight list with spread item with a single child", () => {
-      expect(fx).toConvertProseMirrorNode(
-        (b) => b.ol(b.li({ spread: true }, b.p())),
-        [
-          {
-            children: [
-              {
-                children: [{ children: [], type: "paragraph" }],
-                spread: true,
-                type: "listItem",
-              },
-            ],
-            ordered: true,
-            spread: true,
-            start: 1,
-            type: "list",
-          },
-        ],
-      );
-    });
-
-    test("spread list with tight item", () => {
-      expect(fx).toConvertProseMirrorNode(
-        (b) => b.ol({ spread: true }, b.li({ spread: false }, b.p())),
-        [
-          {
-            children: [
-              {
-                children: [{ children: [], type: "paragraph" }],
                 spread: false,
                 type: "listItem",
               },
             ],
             ordered: true,
-            spread: true,
+            spread: false,
             start: 1,
             type: "list",
           },
@@ -574,24 +523,26 @@ describe("OrderedListExtension", () => {
       );
     });
 
-    test("parses a spread `<li>`", () => {
+    test("parses an `<ol>` with a spread `<li>` as spread", () => {
       expect(fx).toParseDOM(
-        '<ol><li data-spread="true"><p>Hello</p></li></ol>',
-        (b) => [b.ol({ start: 1 }, b.li({ spread: true }, b.p("Hello")))],
+        '<ol><li><p>a</p></li><li data-spread="true"><p>b</p></li></ol>',
+        (b) => [
+          b.ol({ spread: true, start: 1 }, b.li(b.p("a")), b.li(b.p("b"))),
+        ],
       );
     });
 
     test("renders an `<ol>`", () => {
       expect(fx).toRenderDOM(
         (b) => [b.ol({ start: 5 }, b.li(b.p("Hello")))],
-        '<ol data-spread="false" start="5"><li data-spread="false"><p>Hello</p></li></ol>',
+        '<ol data-spread="false" start="5"><li><p>Hello</p></li></ol>',
       );
     });
 
-    test("renders a spread `<li>`", () => {
+    test("renders a spread `<ol>`", () => {
       expect(fx).toRenderDOM(
-        (b) => [b.ol({ start: 5 }, b.li({ spread: true }, b.p("Hello")))],
-        '<ol data-spread="false" start="5"><li data-spread="true"><p>Hello</p></li></ol>',
+        (b) => [b.ol({ spread: true, start: 5 }, b.li(b.p("Hello")))],
+        '<ol data-spread="true" start="5"><li><p>Hello</p></li></ol>',
       );
     });
   });
