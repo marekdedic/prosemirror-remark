@@ -87,7 +87,14 @@ Horizontal rules, also called thematic breaks (`---`, `***`, `___`).
 
 ## Lists
 
-In Markdown, a list is either tight or loose: in a loose list, the items are separated by blank lines. Lists and list items keep this in their `spread` attribute, rendered as `data-spread="true"` or `"false"`, so that the Markdown keeps its layout.
+In Markdown, a list is either tight or loose. A loose list has blank lines between its items, or between the blocks of one of its items, and renders each item's text as a paragraph with its margins. Lists keep this in their `spread` attribute, rendered as `data-spread="true"` or `"false"`. Items don't have one: looseness belongs to the whole list, as in CommonMark, and each nested list has its own. The default stylesheet removes the margins of paragraphs directly in the items of a tight list, so it looks like rendered Markdown.
+
+Some content can't be tight, such as an item with two paragraphs, which `Backspace` at the start of an item creates by joining it with the previous one. Writing it to Markdown needs a blank line, which makes the list loose. When an edit creates such content, or an editable editor is created with a document that has it (or a read-only one with it is made editable), the list becomes loose, so the editor shows what the Markdown will say. In the second case, this is a transaction that changes the document right after it's loaded, kept out of the undo history. It doesn't become tight again when that content is removed. This needs the plugins from `pmu.plugins()`.
+
+Both kinds of lists share these commands, for example for a toolbar:
+
+- `setListSpread(spread)` makes the list containing the selection loose (`true`) or tight (`false`). The list is the innermost one containing the whole selection, or a selected list, and lists nested in it keep their own looseness. It doesn't apply to making a list tight when its content can't be tight. A list with a single item containing a single block can be made loose, but Markdown can't say so: it's written as tight until it has a second item or block.
+- `listSpreadAt(state)` returns whether the list containing the selection is loose, or `null` outside a list. A list whose content can't be tight counts as loose, even in a read-only editor, which doesn't make it loose.
 
 All list items share the keyboard shortcuts:
 
@@ -100,7 +107,7 @@ All list items share the keyboard shortcuts:
 Bullet lists (`- item`, `* item`, `+ item`). Includes `ListItemExtension`.
 
 - **ProseMirror node:** `bullet_list`, with the attribute `spread`.
-- **HTML:** `<ul data-spread="…">`
+- **HTML:** `<ul class="prosemirror-remark-bullet-list" data-spread="…">`. Styled by the default stylesheet, `prosemirror-remark/style.css`.
 - **Input rules:** `- `, `* ` or `+ ` wraps the paragraph in a bullet list.
 - **Keyboard shortcuts:** `Shift-Mod-8` wraps the selection in a bullet list.
 
@@ -109,7 +116,7 @@ Bullet lists (`- item`, `* item`, `+ item`). Includes `ListItemExtension`.
 Ordered lists (`1. item`, `1) item`). Includes `ListItemExtension`.
 
 - **ProseMirror node:** `ordered_list`, with the attributes `start` (the first item's number) and `spread`.
-- **HTML:** `<ol start="…" data-spread="…">`
+- **HTML:** `<ol class="prosemirror-remark-ordered-list" start="…" data-spread="…">`. Styled by the default stylesheet, `prosemirror-remark/style.css`.
 - **Input rules:** a number followed by `. ` wraps the paragraph in an ordered list starting at that number. If it continues the numbering of the list just above, it's added to that list instead.
 - **Keyboard shortcuts:** `Shift-Mod-9` wraps the selection in an ordered list.
 
@@ -117,8 +124,8 @@ Ordered lists (`1. item`, `1) item`). Includes `ListItemExtension`.
 
 The items of both bullet and ordered lists. Included by `UnorderedListExtension` and `OrderedListExtension`.
 
-- **ProseMirror node:** `regular_list_item`, with the attribute `spread`, containing one or more blocks. It's in the `list_item` group, together with `task_list_item`.
-- **HTML:** `<li data-spread="…">`
+- **ProseMirror node:** `regular_list_item`, containing one or more blocks. It's in the `list_item` group, together with `task_list_item`.
+- **HTML:** `<li>`
 
 ## Inline formatting
 
@@ -207,8 +214,8 @@ Strikethrough text (`~~text~~`, `~text~`).
 
 Task list items (`- [ ] task`, `- [x] done`). Use it together with `UnorderedListExtension` or `OrderedListExtension`.
 
-- **ProseMirror node:** `task_list_item`, with the attributes `checked` and `spread`, containing a paragraph followed by any blocks. It's in the `list_item` group, so it can be mixed with regular items in one list.
-- **HTML:** `<li class="prosemirror-remark-task-list-item" data-checked="…" data-spread="…">` containing a non-editable `<span class="prosemirror-remark-task-list-item-checkbox">` with an `<input type="checkbox" aria-labelledby="…">`, followed by a `<div class="prosemirror-remark-task-list-item-content" id="…">` with the content. The checkbox is labelled by the content, so screen readers announce the item's text with it; the `id` is generated and unique within the page. Styled by the default stylesheet, `prosemirror-remark/style.css`.
+- **ProseMirror node:** `task_list_item`, with the attribute `checked`, containing a paragraph followed by any blocks. It's in the `list_item` group, so it can be mixed with regular items in one list.
+- **HTML:** `<li class="prosemirror-remark-task-list-item" data-checked="…">` containing a non-editable `<span class="prosemirror-remark-task-list-item-checkbox">` with an `<input type="checkbox" aria-labelledby="…">`, followed by a `<div class="prosemirror-remark-task-list-item-content" id="…">` with the content. The checkbox is labelled by the content, so screen readers announce the item's text with it; the `id` is generated and unique within the page. Styled by the default stylesheet, `prosemirror-remark/style.css`.
 - **Node view:** makes the checkbox clickable. `ArrowDown` and `ArrowRight` on the checkbox go to the start of the item's text, and `ArrowUp` and `ArrowLeft` to the block above, if there is one (in right-to-left text, `ArrowLeft` goes to the text and `ArrowRight` to the block above). Pass `pmu.nodeViews()` to your `EditorView` to enable it.
 - **Input rules:** `[ ] ` or `[] ` at the start of a list item turns it into an unchecked task item, and `[x] ` or `[X] ` into a checked one. `Enter` instead of the space does the same, and the cursor stays in the item.
 - **Keyboard shortcuts:**
