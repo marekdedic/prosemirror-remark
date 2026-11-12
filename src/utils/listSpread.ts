@@ -1,7 +1,7 @@
 import type { List, ListContent } from "mdast";
-import type { NodeType, Node as ProseMirrorNode } from "prosemirror-model";
+import type { Node as ProseMirrorNode } from "prosemirror-model";
 
-import { isListItem } from "./listItemKeymap";
+import { isList, isListItem } from "./listNodes";
 
 // A regular list item containing only an empty paragraph, which is written as
 // a bare marker. A task item isn't, as it's written with its checkbox.
@@ -13,13 +13,6 @@ export function isEmptyListItem(item: ProseMirrorNode): boolean {
     item.firstChild?.type.name === "paragraph" &&
     item.firstChild.content.size === 0
   );
-}
-
-// A list is a node whose content is list items, so that subclasses with other
-// node names are recognised too.
-export function isList(type: NodeType): boolean {
-  const item = type.contentMatch.defaultType;
-  return item !== null && isListItem(item);
 }
 
 // Whether the list's content can't be written as tight Markdown, which would

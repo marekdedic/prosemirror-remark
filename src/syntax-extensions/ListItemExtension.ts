@@ -19,11 +19,8 @@ import {
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import { listItemKeymap } from "../utils/listItemKeymap";
-import {
-  isEmptyListItem,
-  isList,
-  isLoosenessForced,
-} from "../utils/listSpread";
+import { isList } from "../utils/listNodes";
+import { isEmptyListItem, isLoosenessForced } from "../utils/listSpread";
 
 export class ListItemExtension extends NodeExtension<ListItem> {
   public override proseMirrorKeymap(
