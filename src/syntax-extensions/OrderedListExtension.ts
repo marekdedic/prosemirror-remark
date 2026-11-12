@@ -17,6 +17,7 @@ import {
 } from "prosemirror-unified";
 
 import { isListSpread } from "../utils/isListSpread";
+import { skipInCodeMark } from "../utils/skipInCodeMark";
 import { typedSpace } from "../utils/typedSpace";
 import { ListItemExtension } from "./ListItemExtension";
 
@@ -29,13 +30,15 @@ export class OrderedListExtension extends NodeExtension<List> {
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
-      wrappingInputRule(
-        new RegExp(`^\\s{0,3}(?<start>\\d+)\\.${typedSpace}$`, "u"),
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
-        (match) => ({ start: Number(match.groups?.["start"]) }),
-        (match, node) =>
-          node.childCount + (node.attrs["start"] as number) ===
-          Number(match.groups?.["start"]),
+      skipInCodeMark(
+        wrappingInputRule(
+          new RegExp(`^\\s{0,3}(?<start>\\d+)\\.${typedSpace}$`, "u"),
+          proseMirrorSchema.nodes[this.proseMirrorNodeName()],
+          (match) => ({ start: Number(match.groups?.["start"]) }),
+          (match, node) =>
+            node.childCount + (node.attrs["start"] as number) ===
+            Number(match.groups?.["start"]),
+        ),
       ),
     ];
   }

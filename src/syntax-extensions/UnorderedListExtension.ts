@@ -17,6 +17,7 @@ import {
 } from "prosemirror-unified";
 
 import { isListSpread } from "../utils/isListSpread";
+import { skipInCodeMark } from "../utils/skipInCodeMark";
 import { typedSpace } from "../utils/typedSpace";
 import { ListItemExtension } from "./ListItemExtension";
 
@@ -29,9 +30,11 @@ export class UnorderedListExtension extends NodeExtension<List> {
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
-      wrappingInputRule(
-        new RegExp(`^\\s{0,3}[*+-]${typedSpace}$`, "u"),
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
+      skipInCodeMark(
+        wrappingInputRule(
+          new RegExp(`^\\s{0,3}[*+-]${typedSpace}$`, "u"),
+          proseMirrorSchema.nodes[this.proseMirrorNodeName()],
+        ),
       ),
     ];
   }

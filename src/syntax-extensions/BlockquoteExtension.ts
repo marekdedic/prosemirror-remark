@@ -11,6 +11,7 @@ import { wrapIn } from "prosemirror-commands";
 import { type InputRule, wrappingInputRule } from "prosemirror-inputrules";
 import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
+import { skipInCodeMark } from "../utils/skipInCodeMark";
 import { typedSpace } from "../utils/typedSpace";
 
 export class BlockquoteExtension extends NodeExtension<Blockquote> {
@@ -18,9 +19,11 @@ export class BlockquoteExtension extends NodeExtension<Blockquote> {
     proseMirrorSchema: Schema<string, string>,
   ): Array<InputRule> {
     return [
-      wrappingInputRule(
-        new RegExp(`^\\s{0,3}>${typedSpace}$`, "u"),
-        proseMirrorSchema.nodes[this.proseMirrorNodeName()],
+      skipInCodeMark(
+        wrappingInputRule(
+          new RegExp(`^\\s{0,3}>${typedSpace}$`, "u"),
+          proseMirrorSchema.nodes[this.proseMirrorNodeName()],
+        ),
       ),
     ];
   }
