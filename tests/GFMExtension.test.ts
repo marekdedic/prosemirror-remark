@@ -186,6 +186,8 @@ const listBlocks: Array<[string, BuiltNode]> = [
   ["a blockquote ending in a list", b.blockquote(b.ul(b.li(b.p("n"))))],
   ["a bullet list", b.ul(b.li(b.p("n")))],
   ["a bullet list ending in a code block", b.ul(b.li(b.code_block("c")))],
+  ["a bullet list ending in an empty item", b.ul(b.li(b.p("n")), b.li(b.p()))],
+  ["a bullet list ending in an empty task item", b.ul(b.taskListItem(b.p()))],
   ["an ordered list", b.ol(b.li(b.p("n")))],
   ["an ordered list starting at 3", b.ol({ start: 3 }, b.li(b.p("n")))],
 ];

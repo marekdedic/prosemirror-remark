@@ -236,7 +236,7 @@ describe("UnorderedListExtension", () => {
           {
             children: [
               {
-                children: [{ children: [], type: "paragraph" }],
+                children: [],
                 spread: false,
                 type: "listItem",
               },
@@ -256,7 +256,7 @@ describe("UnorderedListExtension", () => {
           {
             children: [
               {
-                children: [{ children: [], type: "paragraph" }],
+                children: [],
                 spread: true,
                 type: "listItem",
               },
@@ -281,7 +281,7 @@ describe("UnorderedListExtension", () => {
                   {
                     children: [
                       {
-                        children: [{ children: [], type: "paragraph" }],
+                        children: [],
                         spread: false,
                         type: "listItem",
                       },
@@ -363,6 +363,26 @@ describe("UnorderedListExtension", () => {
             type: "list",
           },
         ],
+      );
+    });
+
+    test("an empty nested item after a paragraph is kept in Markdown", () => {
+      const doc = fx.b.doc(
+        fx.b.ul(
+          fx.b.li(fx.b.p("a"), fx.b.ul(fx.b.li(fx.b.p()))),
+          fx.b.li(fx.b.p("z")),
+        ),
+      ) as unknown as ProseMirrorNode;
+
+      expect(fx.pmu.serialize(doc)).toBe("* a\n\n  *\n* z\n");
+      expect(fx.pmu.parse(fx.pmu.serialize(doc))).toEqualProseMirrorNode(
+        fx.b.doc(
+          fx.b.ul(
+            { spread: true },
+            fx.b.li(fx.b.p("a"), fx.b.ul(fx.b.li(fx.b.p()))),
+            fx.b.li(fx.b.p("z")),
+          ),
+        ) as unknown as ProseMirrorNode,
       );
     });
   });

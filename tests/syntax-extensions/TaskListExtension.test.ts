@@ -336,7 +336,7 @@ describe("TaskListExtension", () => {
           {
             children: [
               {
-                children: [{ children: [], type: "paragraph" }],
+                children: [],
                 spread: false,
                 type: "listItem",
               },
@@ -481,7 +481,7 @@ describe("TaskListExtension", () => {
           {
             children: [
               {
-                children: [{ children: [], type: "paragraph" }],
+                children: [],
                 spread: false,
                 type: "listItem",
               },

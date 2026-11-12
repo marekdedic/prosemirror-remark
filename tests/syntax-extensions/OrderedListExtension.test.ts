@@ -189,7 +189,7 @@ describe("OrderedListExtension", () => {
           {
             children: [
               {
-                children: [{ children: [], type: "paragraph" }],
+                children: [],
                 spread: false,
                 type: "listItem",
               },
@@ -210,7 +210,7 @@ describe("OrderedListExtension", () => {
           {
             children: [
               {
-                children: [{ children: [], type: "paragraph" }],
+                children: [],
                 spread: true,
                 type: "listItem",
               },
@@ -231,7 +231,7 @@ describe("OrderedListExtension", () => {
           {
             children: [
               {
-                children: [{ children: [], type: "paragraph" }],
+                children: [],
                 spread: true,
                 type: "listItem",
               },
@@ -257,7 +257,7 @@ describe("OrderedListExtension", () => {
                   {
                     children: [
                       {
-                        children: [{ children: [], type: "paragraph" }],
+                        children: [],
                         spread: false,
                         type: "listItem",
                       },
