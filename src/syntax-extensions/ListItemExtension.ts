@@ -20,7 +20,7 @@ import { createProseMirrorNode, NodeExtension } from "prosemirror-unified";
 
 import { listItemKeymap } from "../utils/listItemKeymap";
 import { isList } from "../utils/listNodes";
-import { isEmptyListItem, isLoosenessForced } from "../utils/listSpread";
+import { isLoosenessForced, withoutEmptyParagraphs } from "../utils/listSpread";
 
 export class ListItemExtension extends NodeExtension<ListItem> {
   public override proseMirrorKeymap(
@@ -49,10 +49,10 @@ export class ListItemExtension extends NodeExtension<ListItem> {
   ): Array<ListItem> {
     return [
       {
-        // An empty item has no children, as when it's parsed. Only then does
-        // mdast-util-to-markdown know that an empty item can't interrupt a
-        // paragraph, and separate them with a blank line.
-        children: isEmptyListItem(node) ? [] : convertedChildren,
+        // An empty item then has no children, as when it's parsed. Only then
+        // does mdast-util-to-markdown know that an empty item can't interrupt
+        // a paragraph, and separate them with a blank line.
+        children: withoutEmptyParagraphs(node, convertedChildren),
         // The list sets its own looseness on its items
         spread: false,
         type: this.unistNodeName(),

@@ -1,28 +1,16 @@
-import type { List, ListContent } from "mdast";
+import type { BlockContent, DefinitionContent, List, ListContent } from "mdast";
 import type { Node as ProseMirrorNode } from "prosemirror-model";
 
 import { isList, isListItem } from "./listNodes";
-
-// A regular list item containing only an empty paragraph, which is written as
-// a bare marker. A task item isn't, as it's written with its checkbox.
-export function isEmptyListItem(item: ProseMirrorNode): boolean {
-  return (
-    isListItem(item.type) &&
-    !("checked" in item.attrs) &&
-    item.childCount === 1 &&
-    item.firstChild?.type.name === "paragraph" &&
-    item.firstChild.content.size === 0
-  );
-}
 
 // Whether the list's content can't be written as tight Markdown, which would
 // then be read back as a loose list. Mirrors `join` in mdast-util-to-markdown
 // for the stringify options of `MarkdownExtension`.
 export function isLoosenessForced(list: ProseMirrorNode): boolean {
   for (let i = 0; i < list.childCount; i++) {
-    const item = list.child(i);
-    for (let j = 1; j < item.childCount; j++) {
-      if (needsBlankLine(item.child(j - 1), item.child(j))) {
+    const blocks = writtenBlocks(list.child(i));
+    for (let j = 1; j < blocks.length; j++) {
+      if (needsBlankLine(blocks[j - 1], blocks[j])) {
         return true;
       }
     }
@@ -60,21 +48,49 @@ export function parseListSpread(dom: HTMLElement): boolean {
   );
 }
 
+// Filters the converted children rather than the item's, since an extension
+// may convert a node to any number of unist nodes
+export function withoutEmptyParagraphs(
+  item: ProseMirrorNode,
+  children: Array<BlockContent | DefinitionContent>,
+): Array<BlockContent | DefinitionContent> {
+  return children.filter((child, index) =>
+    isWritten(
+      item,
+      index,
+      child.type === "paragraph" && child.children.length === 0,
+    ),
+  );
+}
+
 function endsInParagraph(node: ProseMirrorNode): boolean {
   if (node.type.name === "paragraph") {
     return true;
   }
-  // Written as a bare marker, which nothing can continue
-  if (isEmptyListItem(node)) {
-    return false;
+  if (isListItem(node.type)) {
+    // An item whose only content isn't written ends in a bare marker, which
+    // nothing can continue
+    const blocks = writtenBlocks(node);
+    return blocks.length > 0 && endsInParagraph(blocks[blocks.length - 1]);
   }
-  const containsBlocks =
-    node.type.name === "blockquote" ||
-    isList(node.type) ||
-    isListItem(node.type);
   return (
-    containsBlocks && node.lastChild !== null && endsInParagraph(node.lastChild)
+    (node.type.name === "blockquote" || isList(node.type)) &&
+    node.lastChild !== null &&
+    endsInParagraph(node.lastChild)
   );
+}
+
+// Markdown has no way to write an empty paragraph in a list item, so they're
+// left out: an item starts with at most one blank line, so writing one as
+// nothing would end the item, and elsewhere it would add a blank line that
+// makes the list loose. A task item's first paragraph is written with its
+// checkbox, so it's kept.
+function isWritten(
+  item: ProseMirrorNode,
+  index: number,
+  isEmptyParagraph: boolean,
+): boolean {
+  return !isEmptyParagraph || (index === 0 && "checked" in item.attrs);
 }
 
 function needsBlankLine(
@@ -97,4 +113,20 @@ function needsBlankLine(
   }
   // Two blockquotes would be one
   return left.type.name === "blockquote" && right.type.name === "blockquote";
+}
+
+function writtenBlocks(item: ProseMirrorNode): Array<ProseMirrorNode> {
+  const blocks: Array<ProseMirrorNode> = [];
+  item.forEach((child, _offset, index) => {
+    if (
+      isWritten(
+        item,
+        index,
+        child.type.name === "paragraph" && child.content.size === 0,
+      )
+    ) {
+      blocks.push(child);
+    }
+  });
+  return blocks;
 }

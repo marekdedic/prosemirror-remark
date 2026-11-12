@@ -31,6 +31,7 @@ import { buildUnifiedExtension } from "../utils/buildUnifiedExtension";
 import { isAtEndOfTextblock } from "../utils/isAtEndOfTextblock";
 import { isAtStart } from "../utils/isAtStart";
 import { listItemKeymap } from "../utils/listItemKeymap";
+import { withoutEmptyParagraphs } from "../utils/listSpread";
 import {
   findControlInput,
   focusControlInput,
@@ -380,7 +381,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     return [
       {
         checked: node.attrs["checked"] as boolean,
-        children: convertedChildren,
+        children: withoutEmptyParagraphs(node, convertedChildren),
         // The list sets its own looseness on its items
         spread: false,
         type: this.unistNodeName(),

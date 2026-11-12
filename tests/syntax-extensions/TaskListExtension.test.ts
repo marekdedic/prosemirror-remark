@@ -438,7 +438,7 @@ describe("TaskListExtension", () => {
         (b) =>
           b.ul(
             b.taskListItem({ checked: false }, b.p()),
-            b.li(b.p(), b.p()),
+            b.li(b.p("a"), b.p()),
             b.taskListItem({ checked: true }, b.p()),
           ),
         [
@@ -452,8 +452,10 @@ describe("TaskListExtension", () => {
               },
               {
                 children: [
-                  { children: [], type: "paragraph" },
-                  { children: [], type: "paragraph" },
+                  {
+                    children: [{ type: "text", value: "a" }],
+                    type: "paragraph",
+                  },
                 ],
                 spread: false,
                 type: "listItem",
@@ -487,10 +489,7 @@ describe("TaskListExtension", () => {
               },
               {
                 checked: true,
-                children: [
-                  { children: [], type: "paragraph" },
-                  { children: [], type: "paragraph" },
-                ],
+                children: [{ children: [], type: "paragraph" }],
                 spread: false,
                 type: "listItem",
               },
