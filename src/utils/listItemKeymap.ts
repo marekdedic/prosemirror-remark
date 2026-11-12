@@ -12,9 +12,7 @@ import {
   type Transaction,
 } from "prosemirror-state";
 
-export function isListItem(type: NodeType): boolean {
-  return type.spec.group?.split(" ").includes("list_item") === true;
-}
+import { isListItem } from "./listNodes";
 
 export function listItemKeymap(
   itemType: NodeType,
