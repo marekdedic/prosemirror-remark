@@ -17,6 +17,7 @@ import { BlockquoteExtension } from "../../src/syntax-extensions/BlockquoteExten
 import { HorizontalRuleExtension } from "../../src/syntax-extensions/HorizontalRuleExtension";
 import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
 import {
+  ListItemExtension,
   listSpreadAt,
   setListSpread,
 } from "../../src/syntax-extensions/ListItemExtension";
@@ -271,13 +272,16 @@ describe("UnorderedListExtension", () => {
 
     test("tight list with an item with several children", () => {
       expect(fx).toConvertProseMirrorNode(
-        (b) => b.ul(b.li(b.p(), b.ul(b.li(b.p())))),
+        (b) => b.ul(b.li(b.p("a"), b.ul(b.li(b.p())))),
         [
           {
             children: [
               {
                 children: [
-                  { children: [], type: "paragraph" },
+                  {
+                    children: [{ type: "text", value: "a" }],
+                    type: "paragraph",
+                  },
                   {
                     children: [
                       {
@@ -352,6 +356,85 @@ describe("UnorderedListExtension", () => {
                     ordered: false,
                     spread: false,
                     type: "list",
+                  },
+                ],
+                spread: false,
+                type: "listItem",
+              },
+            ],
+            ordered: false,
+            spread: false,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("leaves out empty paragraphs at the start of an item", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.ul(b.li(b.p(), b.p(), b.p("b"))),
+        [
+          {
+            children: [
+              {
+                children: [
+                  {
+                    children: [{ type: "text", value: "b" }],
+                    type: "paragraph",
+                  },
+                ],
+                spread: false,
+                type: "listItem",
+              },
+            ],
+            ordered: false,
+            spread: false,
+            type: "list",
+          },
+        ],
+      );
+    });
+
+    test("leaves out empty paragraphs by their converted unist nodes", () => {
+      expect(
+        new ListItemExtension().proseMirrorNodeToUnistNodes(
+          fx.b.li(fx.b.p(), fx.b.p("b")) as unknown as ProseMirrorNode,
+          [
+            {
+              children: [{ type: "text", value: "b" }],
+              type: "paragraph",
+            },
+          ],
+        ),
+      ).toStrictEqual([
+        {
+          children: [
+            {
+              children: [{ type: "text", value: "b" }],
+              type: "paragraph",
+            },
+          ],
+          spread: false,
+          type: "listItem",
+        },
+      ]);
+    });
+
+    test("leaves out empty paragraphs anywhere in an item", () => {
+      expect(fx).toConvertProseMirrorNode(
+        (b) => b.ul(b.li(b.p("a"), b.p(), b.p("b"), b.p())),
+        [
+          {
+            children: [
+              {
+                children: [
+                  {
+                    children: [{ type: "text", value: "a" }],
+                    type: "paragraph",
+                  },
+                  {
+                    children: [{ type: "text", value: "b" }],
+                    type: "paragraph",
                   },
                 ],
                 spread: false,
@@ -953,6 +1036,16 @@ describe("UnorderedListExtension normalising looseness", () => {
       "{Backspace}",
       (b) => [b.ul({ spread: true }, b.li(b.p("a"), b.p("b")))],
       "* a\n\n  b",
+    );
+  });
+
+  test("`Backspace` twice in a new empty item leaves the list tight", () => {
+    expect(fx).toTransformInput(
+      (b) => [b.ul(b.li(b.p("a")), b.li(b.p("<cursor>")), b.li(b.p("b")))],
+      "cursor",
+      "{Backspace}{Backspace}",
+      (b) => [b.ul(b.li(b.p("a")), b.li(b.p("b")))],
+      "* a\n* b",
     );
   });
 

@@ -40,6 +40,7 @@ When parsing drops something, it logs a warning to the console.
 
 ### By design
 
+- **Empty paragraphs in a list item** are left out, because Markdown can't write them: an item can start with at most one blank line, and elsewhere the extra blank lines would make the list loose. An item starting with them starts with the block after them. A task item keeps its first paragraph, which is written after the checkbox.
 - **Links without any text**, such as `[](https://example.com)`, are dropped when parsing, because a ProseMirror mark needs content to attach to. As they're invisible in the editor anyway, this is an accepted limitation.
 - **Emphasis nested inside emphasis of the same type**, such as `*(*foo*)*` or `__foo __bar__ baz__`, collapses into a single level when parsing, because a ProseMirror text node can carry each mark only once. As the nested and collapsed forms render identically, this is an accepted limitation.
 - The GFM spec autolinks `ftp://` addresses, but github.com and micromark don't, so neither does this package.

@@ -479,10 +479,47 @@ test.each([
   expect(pmu.serialize(editor.doc)).toBe(markdown);
 });
 
+test.each([
+  [
+    "a tight list",
+    b.ul(b.li(b.p(), b.p("b")), b.li(b.p("z"))),
+    "* b\n* z\n",
+    b.ul(b.li(b.p("b")), b.li(b.p("z"))),
+  ],
+  [
+    "a loose list",
+    b.ul({ spread: true }, b.li(b.p(), b.ul(b.li(b.p("n")))), b.li(b.p("z"))),
+    "* * n\n\n* z\n",
+    b.ul({ spread: true }, b.li(b.ul(b.li(b.p("n")))), b.li(b.p("z"))),
+  ],
+])(
+  "an item starting with an empty paragraph in %s keeps its content",
+  (_, list, markdown, parsed) => {
+    const doc = b.doc(list) as unknown as ProseMirrorNode;
+
+    expect(pmu.serialize(doc)).toBe(markdown);
+    expect(pmu.parse(markdown)).toEqualProseMirrorNode(
+      b.doc(parsed) as unknown as ProseMirrorNode,
+    );
+  },
+);
+
 type ListItemWith = (first: BuiltNode, second: BuiltNode) => BuiltNode;
 
 const listItems: Array<[string, ListItemWith]> = [
   ["a list item", (first, second): BuiltNode => b.li(first, second)],
+  [
+    "a list item starting with an empty paragraph",
+    (first, second): BuiltNode => b.li(b.p(), first, second),
+  ],
+  [
+    "a list item with an empty paragraph between them",
+    (first, second): BuiltNode => b.li(first, b.p(), second),
+  ],
+  [
+    "a list item ending in an empty paragraph",
+    (first, second): BuiltNode => b.li(first, second, b.p()),
+  ],
 ];
 
 const listBlocks: Array<[string, BuiltNode]> = [

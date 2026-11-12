@@ -171,6 +171,18 @@ type ListItemWith = (first: BuiltNode, second: BuiltNode) => BuiltNode;
 const listItems: Array<[string, ListItemWith]> = [
   ["a list item", (first, second): BuiltNode => b.li(first, second)],
   [
+    "a list item starting with an empty paragraph",
+    (first, second): BuiltNode => b.li(b.p(), first, second),
+  ],
+  [
+    "a list item with an empty paragraph between them",
+    (first, second): BuiltNode => b.li(first, b.p(), second),
+  ],
+  [
+    "a list item ending in an empty paragraph",
+    (first, second): BuiltNode => b.li(first, second, b.p()),
+  ],
+  [
     "a task list item",
     (first, second): BuiltNode => b.taskListItem(b.p("t"), first, second),
   ],

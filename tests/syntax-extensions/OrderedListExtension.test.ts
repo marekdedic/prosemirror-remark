@@ -247,13 +247,16 @@ describe("OrderedListExtension", () => {
 
     test("tight list with an item with several children", () => {
       expect(fx).toConvertProseMirrorNode(
-        (b) => b.ol(b.li(b.p(), b.ol(b.li(b.p())))),
+        (b) => b.ol(b.li(b.p("a"), b.ol(b.li(b.p())))),
         [
           {
             children: [
               {
                 children: [
-                  { children: [], type: "paragraph" },
+                  {
+                    children: [{ type: "text", value: "a" }],
+                    type: "paragraph",
+                  },
                   {
                     children: [
                       {
