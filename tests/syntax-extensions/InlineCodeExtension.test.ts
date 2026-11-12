@@ -1,8 +1,11 @@
 import { describe, expect, test } from "vitest";
 
+import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
 import { BreakExtension } from "../../src/syntax-extensions/BreakExtension";
 import { ImageExtension } from "../../src/syntax-extensions/ImageExtension";
 import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
+import { ItalicExtension } from "../../src/syntax-extensions/ItalicExtension";
+import { StrikethroughExtension } from "../../src/syntax-extensions/StrikethroughExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
@@ -10,6 +13,12 @@ describe("InlineCodeExtension", () => {
   const fx = createExtensionFixture(new InlineCodeExtension(), [
     new BreakExtension(),
     new ImageExtension(),
+  ]);
+
+  const fxWithMarks = createExtensionFixture(new InlineCodeExtension(), [
+    new ItalicExtension(),
+    new BoldExtension(),
+    new StrikethroughExtension(),
   ]);
 
   test("handles the `inlineCode` unist node", () => {
@@ -189,6 +198,76 @@ describe("InlineCodeExtension", () => {
         "`Test`{Enter}",
         (b) => [b.code("Test")],
         "`Test`",
+      );
+    });
+  });
+
+  describe("Markdown inside inline code", () => {
+    test.each([
+      ["*a* ", "`x*a* y`"],
+      ["**a** ", "`x**a** y`"],
+      ["~a~ ", "`x~a~ y`"],
+      ["`a` ", "``x`a` y``"],
+    ])("typing %j stays text", (input, markdown) => {
+      expect(fxWithMarks).toTransformInput(
+        (b) => [b.p(b.code("x<cursor>y"))],
+        "cursor",
+        input,
+        (b) => [b.p(b.code(`x${input}y`))],
+        markdown,
+      );
+    });
+
+    test("a delimiter inside inline code with the other one outside stays text", () => {
+      expect(fxWithMarks).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        "`x*y` z* ",
+        (b) => [b.p(b.code("x*y"), " z* ")],
+        "`x*y` z\\*&#x20;",
+      );
+    });
+
+    test("a closing delimiter inside inline code stays text", () => {
+      expect(fxWithMarks).toTransformInput(
+        (b) => [b.p("*a ", b.code("b*"), "<cursor>")],
+        "cursor",
+        " ",
+        (b) => [b.p("*a ", b.code("b*"), " ")],
+        "\\*a `b*`&#x20;",
+      );
+    });
+
+    test("bold can still be typed around it", () => {
+      expect(fxWithMarks).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        "**`x`** ",
+        (b) => [b.p(b.strong(b.code("x")), " ")],
+        "**`x`**&#x20;",
+      );
+    });
+
+    test("italic can still be typed around it", () => {
+      expect(fxWithMarks).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        "*a `b` c* ",
+        (b) => [b.p(b.em("a ", b.code("b"), " c"), " ")],
+        "*a `b` c*&#x20;",
+      );
+    });
+
+    test.each([
+      ["*a*", "`x*a*y`"],
+      ["**a** b", "`x**a** by`"],
+    ])("pasting %j stays text", (text, markdown) => {
+      expect(fxWithMarks).toTransformPaste(
+        (b) => [b.p(b.code("x<cursor>y"))],
+        "cursor",
+        text,
+        (b) => [b.p(b.code(`x${text}y`))],
+        markdown,
       );
     });
   });

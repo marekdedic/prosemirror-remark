@@ -539,6 +539,29 @@ expect.extend({
       this,
     );
   },
+
+  toTransformPaste(
+    this: MatcherState,
+    fx: ExtensionFixture<UnistLike>,
+    before: Build<Array<BuiltNode>>,
+    selection: TesterSelection,
+    text: string,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): SyncMatcherResult {
+    return runEditorInput(
+      fx,
+      fx.b.doc(...before(fx.b)) as unknown as ProseMirrorNode,
+      selection,
+      (editor) => {
+        editor.paste(text);
+        return { message: () => "expected the paste to apply", pass: true };
+      },
+      fx.schema.nodes["doc"].create({}, fx.resolveNodes(after(fx.b))),
+      markdownOutput,
+      this,
+    );
+  },
 });
 
 interface ExtensionMatchers<R> {
@@ -592,6 +615,13 @@ interface ExtensionMatchers<R> {
     before: Build<Array<BuiltNode>>,
     selection: TesterSelection,
     editorInput: string,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): R;
+  toTransformPaste(
+    before: Build<Array<BuiltNode>>,
+    selection: TesterSelection,
+    text: string,
     after: Build<Array<BuiltNode>>,
     markdownOutput: string,
   ): R;
