@@ -70,7 +70,7 @@ export function codeBlockInputRules(nodeType: NodeType): Array<InputRule> {
           ? state.tr.insertText(typed, end)
           : null;
       },
-      { undoable: false },
+      { inCodeMark: false, undoable: false },
     ),
     // Like textblockTypeInputRule, but only in a paragraph, as with fences.
     // Text after the spaces becomes the code, as in CommonMark.
@@ -81,6 +81,7 @@ export function codeBlockInputRules(nodeType: NodeType): Array<InputRule> {
         canBecomeCodeBlock(state.doc.resolve(start), nodeType)
           ? toCodeBlock(state.tr, start, end, nodeType)
           : null,
+      { inCodeMark: false },
     ),
   ];
 }

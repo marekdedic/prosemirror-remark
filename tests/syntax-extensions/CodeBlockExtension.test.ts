@@ -410,6 +410,26 @@ describe("CodeBlockExtension", () => {
         "` ```js `&#x20;",
       );
     });
+
+    test("inline code of three spaces followed by a space stays inline code", () => {
+      expect(fxMarksFirst).toTransformInput(
+        (b) => [b.p(b.code("   "), "<cursor>")],
+        "cursor",
+        " ",
+        (b) => [b.p(b.code("   "), " ")],
+        "`   `&#x20;",
+      );
+    });
+
+    test("marks can be typed after inline code ```` ``` ````", () => {
+      expect(fxMarksFirst).toTransformInput(
+        (b) => [b.p(b.code("```"), "<cursor>")],
+        "cursor",
+        "*a*b",
+        (b) => [b.p(b.code("```"), b.em("a"), "b")],
+        "` ``` `*a*b",
+      );
+    });
   });
 
   describe("setCodeBlockLanguage", () => {
