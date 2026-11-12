@@ -45,14 +45,18 @@ export function codeBlockInputRules(nodeType: NodeType): Array<InputRule> {
     // fence line. On Enter, it replaces what Enter does, so the block isn't
     // split after it, and runs before the mark input rules, which would strip
     // delimiters from the language.
-    new EnterInputRule(fenceLineEnd, (state, match, start, end) => {
-      // Typed text of any length (e.g. "js " from autocomplete) is read as
-      // part of the line
-      const attrs = typedFenceAttrs(state, match, start, end, nodeType);
-      return attrs === null
-        ? null
-        : toCodeBlock(state.tr, start, end, nodeType, attrs).scrollIntoView();
-    }),
+    new EnterInputRule(
+      fenceLineEnd,
+      (state, match, start, end) => {
+        // Typed text of any length (e.g. "js " from autocomplete) is read as
+        // part of the line
+        const attrs = typedFenceAttrs(state, match, start, end, nodeType);
+        return attrs === null
+          ? null
+          : toCodeBlock(state.tr, start, end, nodeType, attrs).scrollIntoView();
+      },
+      { inCodeMark: false },
+    ),
     // While a paragraph is a fence line, typed text is inserted as it is, so
     // that the mark input rules after this one don't strip delimiters from
     // the language
@@ -66,7 +70,7 @@ export function codeBlockInputRules(nodeType: NodeType): Array<InputRule> {
           ? state.tr.insertText(typed, end)
           : null;
       },
-      { undoable: false },
+      { inCodeMark: false, undoable: false },
     ),
     // Like textblockTypeInputRule, but only in a paragraph, as with fences.
     // Text after the spaces becomes the code, as in CommonMark.
@@ -77,6 +81,7 @@ export function codeBlockInputRules(nodeType: NodeType): Array<InputRule> {
         canBecomeCodeBlock(state.doc.resolve(start), nodeType)
           ? toCodeBlock(state.tr, start, end, nodeType)
           : null,
+      { inCodeMark: false },
     ),
   ];
 }

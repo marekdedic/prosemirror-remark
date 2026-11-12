@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
 import { HorizontalRuleExtension } from "../../src/syntax-extensions/HorizontalRuleExtension";
+import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
 import { ItalicExtension } from "../../src/syntax-extensions/ItalicExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
@@ -11,6 +12,10 @@ describe("HorizontalRuleExtension", () => {
     new BoldExtension(),
     new ItalicExtension(),
   ]);
+  const fxWithInlineCode = createExtensionFixture(
+    new HorizontalRuleExtension(),
+    [new InlineCodeExtension()],
+  );
 
   test("handles the `thematicBreak` unist node", () => {
     expect(fx).toHandleUnistNode("thematicBreak");
@@ -167,6 +172,19 @@ describe("HorizontalRuleExtension", () => {
         "**\\*bold italic**\\*",
       );
     });
+
+    test.each([["***"], ["---"], ["___"]])(
+      "inline code %j followed by `Enter` stays inline code",
+      (line) => {
+        expect(fxWithInlineCode).toTransformInput(
+          (b) => [b.p(b.code(line), "<cursor>")],
+          "cursor",
+          "{Enter}a",
+          (b) => [b.p(b.code(line)), b.p("a")],
+          `\`${line}\`\n\na`,
+        );
+      },
+    );
   });
 
   test("parses DOM", () => {

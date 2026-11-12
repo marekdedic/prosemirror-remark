@@ -103,6 +103,7 @@ export class HeadingExtension extends NodeExtension<Heading> {
             .delete(start, end)
             .setBlockType(start, start, nodeType, attrs);
         },
+        { inCodeMark: false },
       ),
     ];
   }

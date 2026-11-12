@@ -1,11 +1,15 @@
 import { describe, expect, test } from "vitest";
 
 import { BlockquoteExtension } from "../../src/syntax-extensions/BlockquoteExtension";
+import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
 describe("BlockquoteExtension", () => {
   const fx = createExtensionFixture(new BlockquoteExtension());
+  const fxWithInlineCode = createExtensionFixture(new BlockquoteExtension(), [
+    new InlineCodeExtension(),
+  ]);
 
   test("handles the `blockquote` unist node", () => {
     expect(fx).toHandleUnistNode("blockquote");
@@ -170,6 +174,16 @@ describe("BlockquoteExtension", () => {
         ">{Enter}",
         (b) => [b.p(">"), b.p()],
         "\\>\n",
+      );
+    });
+
+    test("inline code `>` followed by a space stays inline code", () => {
+      expect(fxWithInlineCode).toTransformInput(
+        (b) => [b.p(b.code(">"), "<cursor>")],
+        "cursor",
+        " ",
+        (b) => [b.p(b.code(">"), " ")],
+        "`>`&#x20;",
       );
     });
   });

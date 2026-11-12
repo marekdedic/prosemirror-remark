@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { BlockquoteExtension } from "../../src/syntax-extensions/BlockquoteExtension";
 import { HeadingExtension } from "../../src/syntax-extensions/HeadingExtension";
+import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
 import { ListItemExtension } from "../../src/syntax-extensions/ListItemExtension";
 import { OrderedListExtension } from "../../src/syntax-extensions/OrderedListExtension";
 import { TaskListItemExtension } from "../../src/syntax-extensions/TaskListItemExtension";
@@ -34,6 +35,14 @@ describe("TaskListExtension", () => {
     new ListItemExtension(),
     new TaskListItemExtension(),
   ]);
+  const fxWithInlineCode = createExtensionFixture(
+    new UnorderedListExtension(),
+    [
+      new InlineCodeExtension(),
+      new ListItemExtension(),
+      new TaskListItemExtension(),
+    ],
+  );
 
   test("handles the `list` unist node", () => {
     expect(fx).toHandleUnistNode("list");
@@ -814,6 +823,32 @@ describe("TaskListExtension", () => {
         "* [ ] XHello\n\n  World",
       );
     });
+
+    test.each([["[ ]"], ["[x]"]])(
+      "inline code %j followed by a space stays inline code",
+      (box) => {
+        expect(fxWithInlineCode).toTransformInput(
+          (b) => [b.ul(b.li(b.p(b.code(box), "<cursor>")))],
+          "cursor",
+          " ",
+          (b) => [b.ul(b.li(b.p(b.code(box), " ")))],
+          `* \`${box}\`&#x20;`,
+        );
+      },
+    );
+
+    test.each([["[ ]"], ["[x]"]])(
+      "inline code %j followed by `Enter` stays inline code",
+      (box) => {
+        expect(fxWithInlineCode).toTransformInput(
+          (b) => [b.ul(b.li(b.p(b.code(box), "<cursor>")))],
+          "cursor",
+          "{Enter}a",
+          (b) => [b.ul(b.li(b.p(b.code(box))), b.li(b.p("a")))],
+          `* \`${box}\`\n* a`,
+        );
+      },
+    );
   });
 
   describe("keymap", () => {

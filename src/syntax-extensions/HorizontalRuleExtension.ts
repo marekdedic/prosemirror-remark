@@ -33,6 +33,7 @@ export class HorizontalRuleExtension extends NodeExtension<ThematicBreak> {
             end,
             proseMirrorSchema.nodes[this.proseMirrorNodeName()],
           ),
+        { inCodeMark: false },
       ),
     ];
   }

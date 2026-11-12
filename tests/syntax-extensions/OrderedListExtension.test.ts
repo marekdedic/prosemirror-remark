@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 
+import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
 import { OrderedListExtension } from "../../src/syntax-extensions/OrderedListExtension";
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { createExtensionFixture } from "../utils/fixture";
@@ -7,6 +8,9 @@ import "../utils/matchers";
 
 describe("OrderedListExtension", () => {
   const fx = createExtensionFixture(new OrderedListExtension());
+  const fxWithInlineCode = createExtensionFixture(new OrderedListExtension(), [
+    new InlineCodeExtension(),
+  ]);
 
   test("handles the `list` unist node", () => {
     expect(fx).toHandleUnistNode("list");
@@ -460,6 +464,19 @@ describe("OrderedListExtension", () => {
         "1. a\n2. b\n3. c",
       );
     });
+
+    test.each([["1."], ["12."]])(
+      "inline code %j followed by a space stays inline code",
+      (marker) => {
+        expect(fxWithInlineCode).toTransformInput(
+          (b) => [b.p(b.code(marker), "<cursor>")],
+          "cursor",
+          " ",
+          (b) => [b.p(b.code(marker), " ")],
+          `\`${marker}\`&#x20;`,
+        );
+      },
+    );
   });
 
   describe("keymap", () => {

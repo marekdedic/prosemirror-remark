@@ -374,6 +374,62 @@ describe("CodeBlockExtension", () => {
         "```\nHello World!\n```",
       );
     });
+
+    test.each([
+      ["```js", "` ```js `"],
+      ["~~~", "`~~~`"],
+    ])(
+      "inline code %j followed by `Enter` stays inline code",
+      (line, markdown) => {
+        expect(fxMarksFirst).toTransformInput(
+          (b) => [b.p(b.code(line), "<cursor>")],
+          "cursor",
+          "{Enter}a",
+          (b) => [b.p(b.code(line)), b.p("a")],
+          `${markdown}\n\na`,
+        );
+      },
+    );
+
+    test("a fence followed by inline code and `Enter` stays a paragraph", () => {
+      expect(fxMarksFirst).toTransformInput(
+        (b) => [b.p("```", b.code("js"), "<cursor>")],
+        "cursor",
+        "{Enter}a",
+        (b) => [b.p("```", b.code("js")), b.p("a")],
+        "\\`\\`\\``js`\n\na",
+      );
+    });
+
+    test("inline code ```` ```js ```` followed by a space stays inline code", () => {
+      expect(fxMarksFirst).toTransformInput(
+        (b) => [b.p(b.code("```js"), "<cursor>")],
+        "cursor",
+        " ",
+        (b) => [b.p(b.code("```js"), " ")],
+        "` ```js `&#x20;",
+      );
+    });
+
+    test("inline code of three spaces followed by a space stays inline code", () => {
+      expect(fxMarksFirst).toTransformInput(
+        (b) => [b.p(b.code("   "), "<cursor>")],
+        "cursor",
+        " ",
+        (b) => [b.p(b.code("   "), " ")],
+        "`   `&#x20;",
+      );
+    });
+
+    test("marks can be typed after inline code ```` ``` ````", () => {
+      expect(fxMarksFirst).toTransformInput(
+        (b) => [b.p(b.code("```"), "<cursor>")],
+        "cursor",
+        "*a*b",
+        (b) => [b.p(b.code("```"), b.em("a"), "b")],
+        "` ``` `*a*b",
+      );
+    });
   });
 
   describe("setCodeBlockLanguage", () => {
