@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { BlockquoteExtension } from "../../src/syntax-extensions/BlockquoteExtension";
 import { HeadingExtension } from "../../src/syntax-extensions/HeadingExtension";
+import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
@@ -11,6 +12,9 @@ describe("HeadingExtension", () => {
   const fxInContainers = createExtensionFixture(new HeadingExtension(), [
     new BlockquoteExtension(),
     new UnorderedListExtension(),
+  ]);
+  const fxWithInlineCode = createExtensionFixture(new HeadingExtension(), [
+    new InlineCodeExtension(),
   ]);
 
   test("handles the `heading` unist node", () => {
@@ -257,6 +261,26 @@ describe("HeadingExtension", () => {
         "####### Hello World!",
         (b) => [b.p("####### Hello World!")],
         "\\####### Hello World!",
+      );
+    });
+
+    test("inline code `#` followed by a space stays inline code", () => {
+      expect(fxWithInlineCode).toTransformInput(
+        (b) => [b.p(b.code("#"), "<cursor>")],
+        "cursor",
+        " ",
+        (b) => [b.p(b.code("#"), " ")],
+        "`#`&#x20;",
+      );
+    });
+
+    test("inline code `#` followed by `Enter` stays inline code", () => {
+      expect(fxWithInlineCode).toTransformInput(
+        (b) => [b.p(b.code("#"), "<cursor>")],
+        "cursor",
+        "{Enter}a",
+        (b) => [b.p(b.code("#")), b.p("a")],
+        "`#`\n\na",
       );
     });
   });

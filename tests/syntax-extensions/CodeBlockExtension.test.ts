@@ -374,6 +374,42 @@ describe("CodeBlockExtension", () => {
         "```\nHello World!\n```",
       );
     });
+
+    test.each([
+      ["```js", "` ```js `"],
+      ["~~~", "`~~~`"],
+    ])(
+      "inline code %j followed by `Enter` stays inline code",
+      (line, markdown) => {
+        expect(fxMarksFirst).toTransformInput(
+          (b) => [b.p(b.code(line), "<cursor>")],
+          "cursor",
+          "{Enter}a",
+          (b) => [b.p(b.code(line)), b.p("a")],
+          `${markdown}\n\na`,
+        );
+      },
+    );
+
+    test("a fence followed by inline code and `Enter` stays a paragraph", () => {
+      expect(fxMarksFirst).toTransformInput(
+        (b) => [b.p("```", b.code("js"), "<cursor>")],
+        "cursor",
+        "{Enter}a",
+        (b) => [b.p("```", b.code("js")), b.p("a")],
+        "\\`\\`\\``js`\n\na",
+      );
+    });
+
+    test("inline code ```` ```js ```` followed by a space stays inline code", () => {
+      expect(fxMarksFirst).toTransformInput(
+        (b) => [b.p(b.code("```js"), "<cursor>")],
+        "cursor",
+        " ",
+        (b) => [b.p(b.code("```js"), " ")],
+        "` ```js `&#x20;",
+      );
+    });
   });
 
   describe("setCodeBlockLanguage", () => {

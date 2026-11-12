@@ -275,6 +275,7 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
               },
             );
         },
+        { inCodeMark: false },
       ),
     ];
   }
