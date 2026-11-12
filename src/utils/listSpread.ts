@@ -3,6 +3,18 @@ import type { NodeType, Node as ProseMirrorNode } from "prosemirror-model";
 
 import { isListItem } from "./listItemKeymap";
 
+// A regular list item containing only an empty paragraph, which is written as
+// a bare marker. A task item isn't, as it's written with its checkbox.
+export function isEmptyListItem(item: ProseMirrorNode): boolean {
+  return (
+    isListItem(item.type) &&
+    !("checked" in item.attrs) &&
+    item.childCount === 1 &&
+    item.firstChild?.type.name === "paragraph" &&
+    item.firstChild.content.size === 0
+  );
+}
+
 // A list is a node whose content is list items, so that subclasses with other
 // node names are recognised too.
 export function isList(type: NodeType): boolean {
@@ -58,6 +70,10 @@ export function parseListSpread(dom: HTMLElement): boolean {
 function endsInParagraph(node: ProseMirrorNode): boolean {
   if (node.type.name === "paragraph") {
     return true;
+  }
+  // Written as a bare marker, which nothing can continue
+  if (isEmptyListItem(node)) {
+    return false;
   }
   const containsBlocks =
     node.type.name === "blockquote" ||
