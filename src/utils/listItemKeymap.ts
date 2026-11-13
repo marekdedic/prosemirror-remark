@@ -12,6 +12,8 @@ import {
   type Transaction,
 } from "prosemirror-state";
 
+import { isListItem } from "./listNodes";
+
 export function listItemKeymap(
   itemType: NodeType,
   newItemAttrs?: Attrs,
@@ -86,10 +88,6 @@ function isInEmptyNestedListItem({
     isListItem($from.node(-3).type) &&
     $from.indexAfter(-2) === $from.node(-2).childCount
   );
-}
-
-function isListItem(type: NodeType): boolean {
-  return type.spec.group?.split(" ").includes("list_item") === true;
 }
 
 function splitListItemWithAttrs(itemType: NodeType, attrs: Attrs): Command {

@@ -16,7 +16,11 @@ import {
   NodeExtension,
 } from "prosemirror-unified";
 
-import { isListSpread } from "../utils/isListSpread";
+import {
+  isUnistListLoose,
+  itemsWithListSpread,
+  parseListSpread,
+} from "../utils/listSpread";
 import { skipInCodeMark } from "../utils/skipInCodeMark";
 import { typedSpace } from "../utils/typedSpace";
 import { ListItemExtension } from "./ListItemExtension";
@@ -61,14 +65,17 @@ export class UnorderedListExtension extends NodeExtension<List> {
       parseDOM: [
         {
           getAttrs: (dom: Node | string): { spread: boolean } => ({
-            spread: (dom as HTMLElement).getAttribute("data-spread") === "true",
+            spread: parseListSpread(dom as HTMLElement),
           }),
           tag: "ul",
         },
       ],
       toDOM: (node: ProseMirrorNode): DOMOutputSpec => [
         "ul",
-        { "data-spread": node.attrs["spread"] as boolean },
+        {
+          class: "prosemirror-remark-bullet-list",
+          "data-spread": node.attrs["spread"] as boolean,
+        },
         0,
       ],
     };
@@ -78,13 +85,10 @@ export class UnorderedListExtension extends NodeExtension<List> {
     node: ProseMirrorNode,
     convertedChildren: Array<ListContent>,
   ): Array<List> {
-    const spread = isListSpread(
-      node.attrs["spread"] as boolean,
-      convertedChildren,
-    );
+    const spread = node.attrs["spread"] as boolean;
     return [
       {
-        children: convertedChildren,
+        children: itemsWithListSpread(convertedChildren, spread),
         ordered: false,
         spread,
         type: this.unistNodeName(),
@@ -105,9 +109,7 @@ export class UnorderedListExtension extends NodeExtension<List> {
       this.proseMirrorNodeName(),
       proseMirrorSchema,
       convertedChildren,
-      {
-        spread: node.spread,
-      },
+      { spread: isUnistListLoose(node) },
     );
   }
 
