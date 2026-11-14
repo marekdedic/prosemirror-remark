@@ -1,11 +1,13 @@
 import type { Node as ProseMirrorNode } from "prosemirror-model";
 
+import { EditorState, TextSelection } from "prosemirror-state";
 import { ProseMirrorUnified } from "prosemirror-unified";
 import { expect, test } from "vitest";
 import { renderProseMirror } from "vitest-prosemirror";
 
 import { MarkdownExtension } from "../src/MarkdownExtension";
-import { createBuilders } from "./utils/fixture";
+import { setListSpread } from "../src/syntax-extensions/ListItemExtension";
+import { type BuiltNode, createBuilders } from "./utils/fixture";
 
 const pmu = new ProseMirrorUnified([new MarkdownExtension()]);
 const b = createBuilders(pmu.schema());
@@ -384,19 +386,31 @@ test.each([
 
 test.each([
   [
-    "unordered",
-    b.ul(b.li(b.p("a")), b.li({ spread: true }, b.p("b")), b.li(b.p("c"))),
+    "items separated by blank lines",
+    "- a\n- b\n\n- c\n",
+    b.ul({ spread: true }, b.li(b.p("a")), b.li(b.p("b")), b.li(b.p("c"))),
     "* a\n\n* b\n\n* c\n",
   ],
   [
-    "ordered",
-    b.ol(b.li(b.p("a")), b.li({ spread: true }, b.p("b")), b.li(b.p("c"))),
-    "1. a\n\n2. b\n\n3. c\n",
+    "blocks in an item separated by a blank line",
+    "- a\n\n  b\n- c\n",
+    b.ul({ spread: true }, b.li(b.p("a"), b.p("b")), b.li(b.p("c"))),
+    "* a\n\n  b\n\n* c\n",
   ],
-])("tight %s list with a spread single-paragraph item", (_, list, markdown) => {
-  expect(pmu.serialize(b.doc(list) as unknown as ProseMirrorNode)).toBe(
-    markdown,
-  );
+  [
+    "a blank line in a nested list",
+    "- a\n  - b\n\n  - c\n- d\n",
+    b.ul(
+      b.li(b.p("a"), b.ul({ spread: true }, b.li(b.p("b")), b.li(b.p("c")))),
+      b.li(b.p("d")),
+    ),
+    "* a\n  * b\n\n  * c\n* d\n",
+  ],
+])("list loose because of %s", (_, markdown, list, serialized) => {
+  const doc = b.doc(list) as unknown as ProseMirrorNode;
+
+  expect(pmu.parse(markdown)).toEqualProseMirrorNode(doc);
+  expect(pmu.serialize(doc)).toBe(serialized);
 });
 
 test.each([
@@ -416,7 +430,7 @@ test.each([
 ])("tight list item with %s", (_, content) => {
   const tight = b.doc(b.ul(b.li(...content))) as unknown as ProseMirrorNode;
   const spread = b.doc(
-    b.ul(b.li({ spread: true }, ...content)),
+    b.ul({ spread: true }, b.li(...content)),
   ) as unknown as ProseMirrorNode;
 
   expect(pmu.parse(pmu.serialize(tight))).toEqualProseMirrorNode(spread);
@@ -464,3 +478,88 @@ test.each([
 
   expect(pmu.serialize(editor.doc)).toBe(markdown);
 });
+
+test.each([
+  [
+    "a tight list",
+    b.ul(b.li(b.p(), b.p("b")), b.li(b.p("z"))),
+    "* b\n* z\n",
+    b.ul(b.li(b.p("b")), b.li(b.p("z"))),
+  ],
+  [
+    "a loose list",
+    b.ul({ spread: true }, b.li(b.p(), b.ul(b.li(b.p("n")))), b.li(b.p("z"))),
+    "* * n\n\n* z\n",
+    b.ul({ spread: true }, b.li(b.ul(b.li(b.p("n")))), b.li(b.p("z"))),
+  ],
+])(
+  "an item starting with an empty paragraph in %s keeps its content",
+  (_, list, markdown, parsed) => {
+    const doc = b.doc(list) as unknown as ProseMirrorNode;
+
+    expect(pmu.serialize(doc)).toBe(markdown);
+    expect(pmu.parse(markdown)).toEqualProseMirrorNode(
+      b.doc(parsed) as unknown as ProseMirrorNode,
+    );
+  },
+);
+
+type ListItemWith = (first: BuiltNode, second: BuiltNode) => BuiltNode;
+
+const listItems: Array<[string, ListItemWith]> = [
+  ["a list item", (first, second): BuiltNode => b.li(first, second)],
+  [
+    "a list item starting with an empty paragraph",
+    (first, second): BuiltNode => b.li(b.p(), first, second),
+  ],
+  [
+    "a list item with an empty paragraph between them",
+    (first, second): BuiltNode => b.li(first, b.p(), second),
+  ],
+  [
+    "a list item ending in an empty paragraph",
+    (first, second): BuiltNode => b.li(first, second, b.p()),
+  ],
+];
+
+const listBlocks: Array<[string, BuiltNode]> = [
+  ["a paragraph", b.p("x")],
+  ["a heading", b.heading("h")],
+  ["a code block", b.code_block("c")],
+  ["a horizontal rule", b.hr()],
+  ["a blockquote", b.blockquote(b.p("q"))],
+  ["a blockquote ending in a code block", b.blockquote(b.code_block("c"))],
+  ["a blockquote ending in a list", b.blockquote(b.ul(b.li(b.p("n"))))],
+  ["a bullet list", b.ul(b.li(b.p("n")))],
+  ["a bullet list ending in a code block", b.ul(b.li(b.code_block("c")))],
+  ["a bullet list ending in an empty item", b.ul(b.li(b.p("n")), b.li(b.p()))],
+  ["an ordered list", b.ol(b.li(b.p("n")))],
+  ["an ordered list starting at 3", b.ol({ start: 3 }, b.li(b.p("n")))],
+];
+
+test.each(
+  listBlocks.flatMap(([firstName, first]) =>
+    listBlocks.flatMap(([secondName, second]) =>
+      listItems.map(
+        ([itemName, item]) =>
+          [firstName, secondName, itemName, item(first, second)] as const,
+      ),
+    ),
+  ),
+)(
+  "%s followed by %s in %s can't be tight exactly when it's read back loose",
+  (_first, _second, _item, item) => {
+    const list = b.doc(
+      b.ul(item, b.li(b.p("z"))),
+    ) as unknown as ProseMirrorNode;
+    const state = EditorState.create({
+      doc: list,
+      selection: TextSelection.create(list, list.content.size - 3),
+    });
+    const loose = pmu.parse(pmu.serialize(list)).firstChild?.attrs[
+      "spread"
+    ] as boolean;
+
+    expect(setListSpread(false)(state)).toBe(!loose);
+  },
+);
