@@ -150,6 +150,33 @@ test.each([
 );
 
 test.each([
+  ["an empty unchecked task item", b.ul(b.taskListItem(b.p()))],
+  [
+    "an empty checked task item",
+    b.ul(b.taskListItem({ checked: true }, b.p())),
+  ],
+  [
+    "an empty task item with a nested list",
+    b.ul(b.taskListItem(b.p(), b.ul(b.li(b.p("a"))))),
+  ],
+  [
+    "an empty task item followed by a paragraph",
+    b.ul({ spread: true }, b.taskListItem(b.p(), b.p("a"))),
+  ],
+  ["a task item with a bold space", b.ul(b.taskListItem(b.p(b.strong(" "))))],
+])("%s round-trips", (_, built) => {
+  const node = b.doc(built) as unknown as ProseMirrorNode;
+
+  expect(pmu.parse(pmu.serialize(node))).toEqualProseMirrorNode(node);
+});
+
+test("an encoded space after a definition is an empty task item", () => {
+  expect(pmu.parse("- [ref]: /url\n  [ ] &#x20;\n")).toEqualProseMirrorNode(
+    b.doc(b.ul(b.taskListItem(b.p()))) as unknown as ProseMirrorNode,
+  );
+});
+
+test.each([
   ["~~~a~b~c Hello", "```a~b~c\nHello\n```\n"],
   ["~~~a`b`c Hello", "```a&#x60;b&#x60;c\nHello\n```\n"],
   ["~~~a~~b~~c Hello", "```a~~b~~c\nHello\n```\n"],

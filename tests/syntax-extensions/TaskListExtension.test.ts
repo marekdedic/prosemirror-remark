@@ -169,6 +169,100 @@ describe("TaskListExtension", () => {
       );
     });
 
+    test.each([false, true])(
+      "task item with checked %s whose text is a single space is empty",
+      (checked) => {
+        expect(fx).toConvertUnistNode(
+          {
+            children: [
+              {
+                checked,
+                children: [
+                  {
+                    children: [{ type: "text", value: " " }],
+                    type: "paragraph",
+                  },
+                ],
+                type: "listItem",
+              },
+            ],
+            ordered: false,
+            type: "list",
+          },
+          (b) => [b.ul(b.taskListItem({ checked }, b.p()))],
+        );
+      },
+    );
+
+    test("task item whose text is a single space keeps its other children", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              checked: false,
+              children: [
+                {
+                  children: [{ type: "text", value: " " }],
+                  type: "paragraph",
+                },
+                {
+                  children: [{ type: "text", value: "Hello" }],
+                  type: "paragraph",
+                },
+              ],
+              type: "listItem",
+            },
+          ],
+          ordered: false,
+          type: "list",
+        },
+        (b) => [b.ul(b.taskListItem({ checked: false }, b.p(), b.p("Hello")))],
+      );
+    });
+
+    test("task item whose text is two spaces keeps them", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              checked: false,
+              children: [
+                {
+                  children: [{ type: "text", value: "  " }],
+                  type: "paragraph",
+                },
+              ],
+              type: "listItem",
+            },
+          ],
+          ordered: false,
+          type: "list",
+        },
+        (b) => [b.ul(b.taskListItem({ checked: false }, b.p("  ")))],
+      );
+    });
+
+    test("regular list item whose text is a single space keeps it", () => {
+      expect(fx).toConvertUnistNode(
+        {
+          children: [
+            {
+              children: [
+                {
+                  children: [{ type: "text", value: " " }],
+                  type: "paragraph",
+                },
+              ],
+              type: "listItem",
+            },
+          ],
+          ordered: false,
+          type: "list",
+        },
+        (b) => [b.ul(b.li(b.p(" ")))],
+      );
+    });
+
     test("loose because of a spread list item", () => {
       expect(fx).toConvertUnistNode(
         {

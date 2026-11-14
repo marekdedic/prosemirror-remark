@@ -414,10 +414,16 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
     proseMirrorSchema: Schema<string, string>,
     convertedChildren: Array<ProseMirrorNode>,
   ): Array<ProseMirrorNode> {
+    const paragraph = proseMirrorSchema.nodes["paragraph"];
+    const index = isEncodedEmpty(node)
+      ? convertedChildren.findIndex((child) => child.type === paragraph)
+      : -1;
     return createProseMirrorNode(
       this.proseMirrorNodeName(),
       proseMirrorSchema,
-      convertedChildren,
+      convertedChildren.map((child, i) =>
+        i === index ? paragraph.create() : child,
+      ),
       { checked: node.checked },
     );
   }
@@ -433,4 +439,18 @@ export class TaskListItemExtension extends NodeExtension<ListItem> {
 
 function contentId(): string {
   return uniqueId("prosemirror-remark-task-list-item-content");
+}
+
+// A check needs content after it, so mdast-util-gfm-task-list-item writes an
+// empty paragraph as an encoded space. Trailing spaces in Markdown are
+// stripped, so a lone space can only be written encoded too, and it's read as
+// the empty paragraph.
+function isEncodedEmpty(item: ListItem): boolean {
+  const paragraph = item.children.find((child) => child.type !== "definition");
+  return (
+    paragraph?.type === "paragraph" &&
+    paragraph.children.length === 1 &&
+    paragraph.children[0].type === "text" &&
+    paragraph.children[0].value === " "
+  );
 }
