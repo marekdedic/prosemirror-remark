@@ -16,14 +16,11 @@ import {
   normaliseMeta,
   trimMetaStart,
 } from "../utils/codeBlockAttrs";
-import { isMac } from "../utils/isMac";
 import { isRightToLeft } from "../utils/isRightToLeft";
+import { lineEnding, lineEndingGlobal } from "../utils/lineEnding";
+import { isHistoryKey } from "../utils/modShortcut";
 import { isBackwardKey, moveFromControl } from "../utils/nodeViewControl";
 import { CodeBlockField, type CodeBlockFieldCaret } from "./CodeBlockField";
-
-const lineEnding = /\r\n?|\n/u;
-
-const lineEndingGlobal = /\r\n?|\n/gu;
 
 export class CodeBlockView implements NodeView {
   public readonly contentDOM: HTMLElement;
@@ -219,21 +216,6 @@ export class CodeBlockView implements NodeView {
     this.language.render(this.node);
     this.meta.render(this.node);
   }
-}
-
-function isHistoryKey(event: KeyboardEvent): boolean {
-  // On non-Latin layouts, the key is identified by its position, as
-  // ProseMirror's keymap does
-  const key = /^[\x20-\x7e]$/u.test(event.key)
-    ? event.key.toLowerCase()
-    : event.code.replace(/^Key/u, "").toLowerCase();
-  // Mod is Cmd on macOS and Ctrl elsewhere, as in ProseMirror's keymap
-  const mod = isMac()
-    ? event.metaKey && !event.ctrlKey
-    : event.ctrlKey && !event.metaKey;
-  return (
-    mod && !event.altKey && (key === "z" || (key === "y" && !event.shiftKey))
-  );
 }
 
 function setOrRemoveAttribute(
