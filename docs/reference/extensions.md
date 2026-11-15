@@ -161,7 +161,35 @@ Code spans (`` `code` ``).
 Inline links (`[text](https://example.com "title")`) and autolinks (`<https://example.com>`).
 
 - **ProseMirror mark:** `link`, with the attributes `href` and `title`. Text typed right after a link isn't part of it.
+- **Links whose text is their URL:** editing the text of an autolink (`<https://example.com>`, `<foo@bar.com>` or GFM's `www.example.com`) changes its URL along with it, in the same form, as long as the text is still a valid autolink. This needs the plugins from `pmu.plugins()`, and works with the link editor turned off too.
 - **HTML:** `<a href="…" title="…">`
+- **Link editor:** a popover for the link at the selection, shown above the link whenever the caret is inside it, without taking the focus from the text. It's inserted into the page right after the editor, outside the editable content:
+  ```html
+  <div class="prosemirror-remark-link-editor" role="group" aria-label="Link">
+    <label class="prosemirror-remark-link-editor-href">
+      <span class="prosemirror-remark-link-editor-href-label">URL:</span>
+      <input type="text" inputmode="url" dir="ltr" placeholder="none" autocomplete="off" spellcheck="false">
+    </label>
+    <label class="prosemirror-remark-link-editor-title">
+      <span class="prosemirror-remark-link-editor-title-label">Title:</span>
+      <input type="text" dir="auto" placeholder="none" autocomplete="off">
+    </label>
+    <a class="prosemirror-remark-link-editor-open" href="…" target="_blank" rel="noopener noreferrer">Open</a>
+    <button type="button" class="prosemirror-remark-link-editor-remove">Remove</button>
+  </div>
+  ```
+  - Typing in a field changes the link right away, in the editor's undo history. Clearing the URL keeps the link (`[text]()`), and clearing the title removes it. Line endings and surrounding whitespace aren't saved in the URL.
+  - With a selection that isn't a link, `Mod-k` opens the popover with empty fields, and typing a URL adds a link over the selection. Editing the URL never changes the link's text, except at an empty caret: there, typing a URL inserts it as a link, and further edits change the inserted text along with it until the popover is closed. The title field is disabled until there's a link.
+  - "Open" links to the URL in a new tab, only for `http:`, `https:` and `mailto:` URLs and relative ones. For any other URL, such as `javascript:`, it has no `href` and `aria-disabled="true"`. "Remove" removes the link, or, as `removeLink()` does, the links within a selection.
+  - `Mod-k` focuses the URL field. In the popover, `Enter`, `Escape` and `Mod-k` return to the text, `ArrowDown` moves from the URL to the title and `ArrowUp` back, and undo and redo use the editor's history.
+  - The popover is hidden while neither the editor nor the popover has the focus, and in a read-only editor.
+  - The default stylesheet, `prosemirror-remark/style.css`, places it above the link with margins from where it's inserted, which the popover sets as `--prosemirror-remark-link-editor-x` and `--prosemirror-remark-link-editor-y`, and keeps it within the editor's width. Without it, the popover is a plain block below the editor.
+  - Turn it off with `new LinkExtension({ editor: false })`, for example to build your own link UI with the commands below. Pass your instance after the bundle, such as `new ProseMirrorUnified([new GFMExtension(), new LinkExtension({ editor: false })])`.
+- **Keyboard shortcuts:** `Mod-k` opens the link editor. It isn't bound with the link editor turned off.
+- **Commands:**
+  - `setLink({ href, title })` sets the URL and title of the link at the selection. Outside a link, it adds a link over a non-empty selection, or inserts the URL as a link at an empty caret. With an empty URL, it doesn't apply outside a link. It never changes the text of an existing link. Leaving out `title` keeps the link's title. It doesn't apply where links can't be, such as in a code block.
+  - `removeLink()` removes the link at the selection, or every link in a non-empty selection.
+  - `openLinkEditor()` focuses the link editor's URL field. It doesn't apply where links can't be, or when the editor is turned off or read-only. When checked without a view, as menus do, it only checks whether it could apply.
 
 ### `LinkReferenceExtension`
 

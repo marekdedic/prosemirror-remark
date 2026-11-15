@@ -146,6 +146,6 @@ See `design/code-block-language.md`.
 
 See `design/list-looseness.md`.
 
-### Future cases
+### Links (implemented)
 
-- **Links.** Extra attributes come from a DOM attribute hook if anyone asks for one. Adding and editing links is proposed in `design/link-editing.md`.
+See `design/link-editing.md`. Extra attributes on the link itself come from a DOM attribute hook if anyone asks for one.

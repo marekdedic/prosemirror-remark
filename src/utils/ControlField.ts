@@ -76,18 +76,20 @@ export class ControlField {
       this.commit();
     });
     this.input.addEventListener("keydown", (e) => {
-      // Safari reports the Enter that confirms a composition after the
-      // composition has ended, with the key code 229, as ProseMirror checks
-      // too
-      // eslint-disable-next-line @typescript-eslint/no-deprecated -- Nothing else identifies it
-      if (e.isComposing || e.keyCode === 229) {
+      if (isCompositionKey(e)) {
         return;
       }
       // Enter in a lone input would submit an enclosing form
       if (e.key === "Enter") {
         e.preventDefault();
       }
-      if (!e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+      // Shift-Enter does what Enter does, rather than nothing
+      if (
+        !e.altKey &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        (!e.shiftKey || e.key === "Enter")
+      ) {
         options.onKeyDown(e);
       }
     });
@@ -184,4 +186,12 @@ export class ControlField {
   private syncEditable(): void {
     this.input.readOnly = !this.view.editable;
   }
+}
+
+// Whether the key is part of an IME composition. Safari reports the Enter that
+// confirms a composition after the composition has ended, with the key code
+// 229, as ProseMirror checks too.
+export function isCompositionKey(e: KeyboardEvent): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated -- Nothing else identifies it
+  return e.isComposing || e.keyCode === 229;
 }

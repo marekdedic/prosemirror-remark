@@ -11,7 +11,11 @@ import { describe, expect, onTestFinished, test, vi } from "vitest";
 import { ListItemExtension } from "../../src/syntax-extensions/ListItemExtension";
 import { TaskListItemExtension } from "../../src/syntax-extensions/TaskListItemExtension";
 import { UnorderedListExtension } from "../../src/syntax-extensions/UnorderedListExtension";
-import { type NodeViewFixture, renderNodeView } from "../utils/node-view";
+import {
+  type NodeViewFixture,
+  pressKey,
+  renderNodeView,
+} from "../utils/node-view";
 
 class TopLevelCursor extends Selection {
   public constructor($pos: ResolvedPos) {
@@ -101,14 +105,7 @@ function press(
   modifiers: KeyboardEventInit = {},
   target: Element = fx.editor.element("input"),
 ): boolean {
-  return target.dispatchEvent(
-    new KeyboardEvent("keydown", {
-      bubbles: true,
-      cancelable: true,
-      key,
-      ...modifiers,
-    }),
-  );
+  return pressKey(target, key, modifiers);
 }
 
 function render(

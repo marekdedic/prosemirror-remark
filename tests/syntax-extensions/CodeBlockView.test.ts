@@ -9,7 +9,12 @@ import {
   setCodeBlockLanguage,
   setCodeBlockMeta,
 } from "../../src/syntax-extensions/CodeBlockExtension";
-import { type NodeViewFixture, renderNodeView } from "../utils/node-view";
+import {
+  type NodeViewFixture,
+  pasteText,
+  pressKey,
+  renderNodeView,
+} from "../utils/node-view";
 
 function fakeView(view: object): EditorView {
   return {
@@ -41,23 +46,7 @@ function paste(
   text: string,
   field: HTMLInputElement = input(fx),
 ): boolean {
-  const inserted = field.dispatchEvent(
-    new InputEvent("beforeinput", {
-      cancelable: true,
-      data: text,
-      inputType: "insertFromPaste",
-    }),
-  );
-  if (inserted) {
-    field.setRangeText(
-      text,
-      field.selectionStart ?? field.value.length,
-      field.selectionEnd ?? field.value.length,
-      "end",
-    );
-    field.dispatchEvent(new InputEvent("input", { bubbles: true }));
-  }
-  return inserted;
+  return pasteText(field, text);
 }
 
 function press(
@@ -66,14 +55,7 @@ function press(
   modifiers: KeyboardEventInit = {},
   field: HTMLInputElement = input(fx),
 ): boolean {
-  return field.dispatchEvent(
-    new KeyboardEvent("keydown", {
-      bubbles: true,
-      cancelable: true,
-      key,
-      ...modifiers,
-    }),
-  );
+  return pressKey(field, key, modifiers);
 }
 
 function render(
@@ -570,6 +552,15 @@ describe("CodeBlockView", () => {
       expect(press(fx, "Enter", modifiers)).toBe(false);
     },
   );
+
+  test("`Shift-Enter` leaves the field as `Enter` does", () => {
+    const fx = render("```js\nHello\n```\n");
+    input(fx).focus();
+
+    press(fx, "Enter", { shiftKey: true });
+
+    expect(fx.view.hasFocus()).toBe(true);
+  });
 
   test("`Enter` with a modifier stays in the field", () => {
     const fx = render("```js\nHello\n```\n");

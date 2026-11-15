@@ -20,6 +20,7 @@ import { isRightToLeft } from "../utils/isRightToLeft";
 import { lineEnding, lineEndingGlobal } from "../utils/lineEnding";
 import { isHistoryKey } from "../utils/modShortcut";
 import { isBackwardKey, moveFromControl } from "../utils/nodeViewControl";
+import { setOrRemoveAttribute } from "../utils/setOrRemoveAttribute";
 import { CodeBlockField, type CodeBlockFieldCaret } from "./CodeBlockField";
 
 export class CodeBlockView implements NodeView {
@@ -215,17 +216,5 @@ export class CodeBlockView implements NodeView {
     }
     this.language.render(this.node);
     this.meta.render(this.node);
-  }
-}
-
-function setOrRemoveAttribute(
-  element: HTMLElement,
-  name: string,
-  value: string | null,
-): void {
-  if (value === null) {
-    element.removeAttribute(name);
-  } else {
-    element.setAttribute(name, value);
   }
 }

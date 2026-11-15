@@ -128,3 +128,124 @@
   > p {
   margin: 0;
 }
+
+/* The link editor stays where it's inserted, after the editor, and is moved to the link by the margins its view sets. It looks like the code block's tab, made opaque, as it covers text. */
+.prosemirror-remark-link-editor {
+  align-items: center;
+  background:
+    linear-gradient(rgb(127 127 127 / 12%), rgb(127 127 127 / 12%)),
+    Canvas;
+  border-radius: 0.375em;
+  box-shadow: 0 0.125em 0.375em rgb(0 0 0 / 12%);
+  color: CanvasText;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.8em;
+  line-height: 1;
+
+  /* eslint-disable-next-line css/use-baseline -- Only Chrome 66-68 lack it, and place the popover at the start of the line below the editor instead */
+  margin-inline-start: var(--prosemirror-remark-link-editor-x, 0); /* stylelint-disable-line plugin/no-unsupported-browser-features -- Only Chrome 66-68 lack it, and place the popover at the start of the line below the editor instead */
+  margin-top: var(--prosemirror-remark-link-editor-y, 0);
+  padding: 0 1.25em;
+
+  /* eslint-disable-next-line css/use-baseline -- Only Chrome 66-68 lack it, and keep the wider gap after the buttons */
+  padding-inline-end: 0.3em; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Only Chrome 66-68 lack it, and keep the wider gap after the buttons */
+  position: absolute;
+  z-index: 10;
+}
+
+.prosemirror-remark-link-editor[hidden] {
+  display: none;
+}
+
+.prosemirror-remark-link-editor-href,
+.prosemirror-remark-link-editor-title {
+  /* eslint-disable-next-line css/use-baseline -- Only Edge 18 lacks it, and the browserslist excludes it */
+  align-items: baseline;
+  display: flex;
+
+  /* eslint-disable-next-line css/use-baseline -- Only Chrome 66-68 lack it, and lose just the gaps between the controls */
+  margin-inline-end: 1.25em; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Only Chrome 66-68 lack it, and lose just the gaps between the controls */
+  padding: 0.5em 0 0.4em;
+}
+
+.prosemirror-remark-link-editor-href-label,
+.prosemirror-remark-link-editor-title-label {
+  flex: none;
+
+  /* eslint-disable-next-line css/use-baseline -- Only Chrome 66-68 lack it, and lose just the gap after the label */
+  margin-inline-end: 0.5em; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Only Chrome 66-68 lack it, and lose just the gap after the label */
+  opacity: 0.55;
+}
+
+/* stylelint-disable no-descending-specificity -- These select the link editor's inputs, never the code block's */
+.prosemirror-remark-link-editor-href > input,
+.prosemirror-remark-link-editor-title > input {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  min-width: 0;
+
+  /* eslint-disable-next-line css/use-baseline -- Only outlines following border-radius are newer, and this draws none */
+  outline: none;
+  padding: 0;
+}
+
+.prosemirror-remark-link-editor-href > input {
+  width: 16em;
+}
+
+.prosemirror-remark-link-editor-title > input {
+  width: 10em;
+}
+
+.prosemirror-remark-link-editor-href > input:not(:focus),
+.prosemirror-remark-link-editor-title > input:not(:focus) {
+  text-overflow: ellipsis;
+}
+
+.prosemirror-remark-link-editor-title > input:disabled {
+  opacity: 0.55;
+}
+
+/* stylelint-enable no-descending-specificity */
+
+/* eslint-disable css/use-baseline -- Only Edge 18 lacks it, and the browserslist excludes it */
+.prosemirror-remark-link-editor-href:focus-within,
+.prosemirror-remark-link-editor-title:focus-within {
+  box-shadow: inset 0 -2px rgb(127 127 127 / 50%);
+}
+
+/* eslint-enable css/use-baseline */
+
+/* The actions are small buttons in the popover's grey */
+.prosemirror-remark-link-editor-open,
+.prosemirror-remark-link-editor-remove {
+  background: rgb(127 127 127 / 12%);
+  border: 1px solid rgb(127 127 127 / 35%);
+  border-radius: 0.25em;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  margin-bottom: 0.3em;
+  margin-top: 0.3em;
+  padding: 0.2em 0.6em;
+  text-decoration: none;
+}
+
+.prosemirror-remark-link-editor-open {
+  /* eslint-disable-next-line css/use-baseline -- Only Chrome 66-68 lack it, and lose just the gap between the buttons */
+  margin-inline-end: 0.5em; /* stylelint-disable-line plugin/no-unsupported-browser-features -- Only Chrome 66-68 lack it, and lose just the gap between the buttons */
+}
+
+.prosemirror-remark-link-editor-open[aria-disabled="true"],
+.prosemirror-remark-link-editor-remove:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.prosemirror-remark-link-editor-open[href]:hover,
+.prosemirror-remark-link-editor-remove:enabled:hover {
+  background: rgb(127 127 127 / 25%);
+}
