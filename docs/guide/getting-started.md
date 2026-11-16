@@ -7,20 +7,20 @@ Install prosemirror-remark together with prosemirror-unified and the ProseMirror
 ::: code-group
 
 ```sh [npm]
-npm install prosemirror-remark prosemirror-unified prosemirror-model prosemirror-state prosemirror-view
+npm install prosemirror-remark prosemirror-unified prosemirror-history prosemirror-model prosemirror-state prosemirror-view
 ```
 
 ```sh [pnpm]
-pnpm add prosemirror-remark prosemirror-unified prosemirror-model prosemirror-state prosemirror-view
+pnpm add prosemirror-remark prosemirror-unified prosemirror-history prosemirror-model prosemirror-state prosemirror-view
 ```
 
 ```sh [yarn]
-yarn add prosemirror-remark prosemirror-unified prosemirror-model prosemirror-state prosemirror-view
+yarn add prosemirror-remark prosemirror-unified prosemirror-history prosemirror-model prosemirror-state prosemirror-view
 ```
 
 :::
 
-prosemirror-unified, prosemirror-model and prosemirror-state are peer dependencies, so your project shares one copy of them with prosemirror-remark.
+prosemirror-unified, prosemirror-history, prosemirror-model and prosemirror-state are peer dependencies, so your project shares one copy of them with prosemirror-remark.
 
 ## Setting up an editor
 

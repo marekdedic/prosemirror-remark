@@ -1,4 +1,9 @@
-import type { Mark, MarkType, ResolvedPos } from "prosemirror-model";
+import type {
+  Mark,
+  MarkType,
+  Node as ProseMirrorNode,
+  ResolvedPos,
+} from "prosemirror-model";
 import type { EditorState } from "prosemirror-state";
 
 import { showsHref } from "./autolinkText";
@@ -72,7 +77,19 @@ export function linkAtSelection(state: EditorState): LinkAtSelection {
     }
     return { applies, range: linkRange(mark, $from, $to) };
   }
-  const linkable = linkableContent(state, type);
+  const { from, ranges, to } = state.selection;
+  // A selection of several ranges, such as of table cells, isn't in one link
+  if (ranges.length > 1) {
+    return {
+      applies: ranges.some(
+        (range) =>
+          linkableContent(state.doc, range.$from.pos, range.$to.pos, type) !==
+          null,
+      ),
+      range: null,
+    };
+  }
+  const linkable = linkableContent(state.doc, from, to, type);
   if (linkable === null) {
     return { applies: false, range: null };
   }
@@ -130,15 +147,16 @@ export function linkRange(
   return { from, mark, to };
 }
 
-// The content in the selection that can be linked, as by addMark. Null if
+// The content between from and to that can be linked, as by addMark. Null if
 // there's none.
 function linkableContent(
-  state: EditorState,
+  doc: ProseMirrorNode,
+  from: number,
+  to: number,
   type: MarkType,
 ): LinkableContent | null {
   const found: Partial<LinkableContent> = {};
-  const { from, to } = state.selection;
-  state.doc.nodesBetween(from, to, (node, pos, parent) => {
+  doc.nodesBetween(from, to, (node, pos, parent) => {
     if (node.isInline && parent?.type.allowsMarkType(type) === true) {
       if (found.from === undefined) {
         found.from = pos;

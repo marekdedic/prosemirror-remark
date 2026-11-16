@@ -1,11 +1,21 @@
 import type { Node as ProseMirrorNode } from "prosemirror-model";
+import type { Mappable } from "prosemirror-transform";
 
-import { EditorState, TextSelection } from "prosemirror-state";
+import {
+  EditorState,
+  Selection,
+  SelectionRange,
+  TextSelection,
+  type Transaction,
+} from "prosemirror-state";
 import { describe, expect, test, vi } from "vitest";
 
 import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
+import { BreakExtension } from "../../src/syntax-extensions/BreakExtension";
 import { CodeBlockExtension } from "../../src/syntax-extensions/CodeBlockExtension";
+import { ExtendedAutolinkExtension } from "../../src/syntax-extensions/ExtendedAutolinkExtension";
 import { ImageExtension } from "../../src/syntax-extensions/ImageExtension";
+import { InlineCodeExtension } from "../../src/syntax-extensions/InlineCodeExtension";
 import {
   LinkExtension,
   openLinkEditor,
@@ -14,6 +24,32 @@ import {
 } from "../../src/syntax-extensions/LinkExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
+
+class RangesSelection extends Selection {
+  public constructor(ranges: Array<SelectionRange>) {
+    super(ranges[0].$from, ranges[0].$to, ranges);
+  }
+
+  public override eq(other: Selection): boolean {
+    return other === this;
+  }
+
+  public override map(doc: ProseMirrorNode, mapping: Mappable): Selection {
+    return new RangesSelection(
+      this.ranges.map(
+        (range) =>
+          new SelectionRange(
+            doc.resolve(mapping.map(range.$from.pos)),
+            doc.resolve(mapping.map(range.$to.pos)),
+          ),
+      ),
+    );
+  }
+
+  public override toJSON(): unknown {
+    return { type: "ranges" };
+  }
+}
 
 describe("LinkExtension", () => {
   const fx = createExtensionFixture(new LinkExtension(), []);
@@ -182,8 +218,8 @@ describe("LinkExtension", () => {
     ).toStrictEqual(["Mod-k"]);
   });
 
-  test("provides the link editor plugin", () => {
-    expect(fx.extension.proseMirrorPlugins(fx.schema)).toHaveLength(2);
+  test("provides the URL syncing, link editor and paste plugins", () => {
+    expect(fx.extension.proseMirrorPlugins(fx.schema)).toHaveLength(3);
   });
 
   test("provides no keymap with the link editor turned off", () => {
@@ -192,10 +228,16 @@ describe("LinkExtension", () => {
     ).toStrictEqual({});
   });
 
-  test("provides only the URL syncing plugin with the link editor turned off", () => {
+  test("provides no link editor plugin with the link editor turned off", () => {
     expect(
       new LinkExtension({ editor: false }).proseMirrorPlugins(),
-    ).toHaveLength(1);
+    ).toHaveLength(2);
+  });
+
+  test("provides no paste plugin with linkOnPaste turned off", () => {
+    expect(
+      new LinkExtension({ linkOnPaste: false }).proseMirrorPlugins(),
+    ).toHaveLength(2);
   });
 
   describe("setLink", () => {
@@ -503,6 +545,56 @@ describe("LinkExtension", () => {
         (b) => [b.code_block("code")],
         "```\ncode\n```",
       );
+    });
+
+    test("replaces the link in each range of a selection of several ranges", () => {
+      const doc = fx.b.doc(
+        fx.b.p(fx.b.link({ href: "https://b.test" }, "one"), " two"),
+        fx.b.p("three four"),
+      ) as unknown as ProseMirrorNode;
+      const state = EditorState.create({
+        doc,
+        selection: new RangesSelection([
+          new SelectionRange(doc.resolve(1), doc.resolve(4)),
+          new SelectionRange(doc.resolve(10), doc.resolve(15)),
+        ]),
+      });
+      const dispatch = vi.fn<(tr: Transaction) => void>();
+
+      expect(setLink({ href: "https://a.test" })(state, dispatch)).toBe(true);
+      expect(
+        dispatch.mock.calls[0][0].doc.eq(
+          fx.b.doc(
+            fx.b.p(fx.b.link({ href: "https://a.test" }, "one"), " two"),
+            fx.b.p(fx.b.link({ href: "https://a.test" }, "three"), " four"),
+          ) as unknown as ProseMirrorNode,
+        ),
+      ).toBe(true);
+    });
+
+    test("links only the ranges of a selection of several ranges", () => {
+      const doc = fx.b.doc(
+        fx.b.p("one two"),
+        fx.b.p("three four"),
+      ) as unknown as ProseMirrorNode;
+      const state = EditorState.create({
+        doc,
+        selection: new RangesSelection([
+          new SelectionRange(doc.resolve(1), doc.resolve(4)),
+          new SelectionRange(doc.resolve(10), doc.resolve(15)),
+        ]),
+      });
+      const dispatch = vi.fn<(tr: Transaction) => void>();
+
+      expect(setLink({ href: "https://a.test" })(state, dispatch)).toBe(true);
+      expect(
+        dispatch.mock.calls[0][0].doc.eq(
+          fx.b.doc(
+            fx.b.p(fx.b.link({ href: "https://a.test" }, "one"), " two"),
+            fx.b.p(fx.b.link({ href: "https://a.test" }, "three"), " four"),
+          ) as unknown as ProseMirrorNode,
+        ),
+      ).toBe(true);
     });
   });
 
@@ -835,6 +927,35 @@ describe("LinkExtension", () => {
   });
 
   describe("removeLink", () => {
+    test("removes only the links in the ranges of a selection of several ranges", () => {
+      const doc = fx.b.doc(
+        fx.b.p(
+          fx.b.link({ href: "https://a.test" }, "one"),
+          " ",
+          fx.b.link({ href: "https://a.test" }, "two"),
+        ),
+        fx.b.p(fx.b.link({ href: "https://a.test" }, "three")),
+      ) as unknown as ProseMirrorNode;
+      const state = EditorState.create({
+        doc,
+        selection: new RangesSelection([
+          new SelectionRange(doc.resolve(1), doc.resolve(4)),
+          new SelectionRange(doc.resolve(10), doc.resolve(15)),
+        ]),
+      });
+      const dispatch = vi.fn<(tr: Transaction) => void>();
+
+      expect(removeLink()(state, dispatch)).toBe(true);
+      expect(
+        dispatch.mock.calls[0][0].doc.eq(
+          fx.b.doc(
+            fx.b.p("one ", fx.b.link({ href: "https://a.test" }, "two")),
+            fx.b.p("three"),
+          ) as unknown as ProseMirrorNode,
+        ),
+      ).toBe(true);
+    });
+
     test("removes the link at the caret", () => {
       expect(fx).toTransformCommand(
         (b) => [b.p("a ", b.link({ href: "https://a.test" }, "li<cursor>nk"))],
@@ -874,6 +995,356 @@ describe("LinkExtension", () => {
         removeLink(),
         (b) => [b.p("text")],
         "text",
+      );
+    });
+  });
+
+  describe("pasting a URL", () => {
+    const fxAutolink = createExtensionFixture(new LinkExtension(), [
+      new ExtendedAutolinkExtension(),
+    ]);
+    const fxInlineCode = createExtensionFixture(new LinkExtension(), [
+      new InlineCodeExtension(),
+    ]);
+
+    test.each([
+      ["https://a.test", "https://a.test"],
+      ["www.a.test", "http://www.a.test"],
+      ["a@b.test", "mailto:a@b.test"],
+      [" https://a.test\n", "https://a.test"],
+      ["mailto:a@b.test", "mailto:a@b.test"],
+      ["<https://a.test>", "https://a.test"],
+      ["<a@b.test>", "mailto:a@b.test"],
+      ["https://a.test/a_b_", "https://a.test/a_b_"],
+      ["https://a.test/a?", "https://a.test/a?"],
+      ["https://a.test/a~b~", "https://a.test/a~b~"],
+      ["https://a.test.", "https://a.test."],
+    ])("pasting %j over a selection links it", (text, href) => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        text,
+        (b) => [b.p("a ", b.link({ href }, "link"), " here")],
+        `a [link](${href}) here`,
+      );
+    });
+
+    test("links the selection with a URL ending in an unmatched parenthesis", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        "https://a.test/a)",
+        (b) => [
+          b.p("a ", b.link({ href: "https://a.test/a)" }, "link"), " here"),
+        ],
+        "a [link](https://a.test/a\\)) here",
+      );
+    });
+
+    test("links the selection with GFM autolinks", () => {
+      expect(fxAutolink).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [b.p("a ", b.link({ href: "https://a.test" }, "link"), " here")],
+        "a [link](https://a.test) here",
+      );
+    });
+
+    test("links a selection copied from a page as a link", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        {
+          html: '<a href="https://a.test">https://a.test</a>',
+          text: "https://a.test",
+        },
+        (b) => [b.p("a ", b.link({ href: "https://a.test" }, "link"), " here")],
+        "a [link](https://a.test) here",
+      );
+    });
+
+    test("links a selection with the target of a link copied from a page", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        {
+          html: '<a href="https://r.test/x">https://a.test</a>',
+          text: "https://a.test",
+        },
+        (b) => [
+          b.p("a ", b.link({ href: "https://r.test/x" }, "link"), " here"),
+        ],
+        "a [link](https://r.test/x) here",
+      );
+    });
+
+    test.each([
+      ['<a href=" https://r.test/x\n">https://a.test</a>', "https://r.test/x"],
+      ['<a href="">https://a.test</a>', "https://a.test"],
+      ['<a href=" ">https://a.test</a>', "https://a.test"],
+    ])(
+      "links a selection copied as %j with a cleaned-up target",
+      (html, href) => {
+        expect(fx).toTransformPaste(
+          (b) => [b.p("a <a>link<b> here")],
+          { anchor: "a", head: "b" },
+          { html, text: "https://a.test" },
+          (b) => [b.p("a ", b.link({ href }, "link"), " here")],
+          `a [link](${href}) here`,
+        );
+      },
+    );
+
+    test("keeps the other marks of the selection", () => {
+      expect(fxInContext).toTransformPaste(
+        (b) => [b.p("a <a>", b.strong("bold"), " text<b> here")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [
+          b.p(
+            "a ",
+            b.link({ href: "https://a.test" }, b.strong("bold"), " text"),
+            " here",
+          ),
+        ],
+        "a [**bold** text](https://a.test) here",
+      );
+    });
+
+    test("links a selection across paragraphs", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>one"), b.p("two<b> b")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [
+          b.p("a ", b.link({ href: "https://a.test" }, "one")),
+          b.p(b.link({ href: "https://a.test" }, "two"), " b"),
+        ],
+        "a [one](https://a.test)\n\n[two](https://a.test) b",
+      );
+    });
+
+    test("links the part of a selection outside a code block", () => {
+      expect(fxInContext).toTransformPaste(
+        (b) => [b.p("a <a>text"), b.code_block("co<b>de")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [
+          b.p("a ", b.link({ href: "https://a.test" }, "text")),
+          b.code_block("code"),
+        ],
+        "a [text](https://a.test)\n\n```\ncode\n```",
+      );
+    });
+
+    test.each([
+      ["text", "a text here"],
+      ["https://a.test b", "a https://a.test b here"],
+      ["https://a.test https://b.test", "a https://a.test https://b.test here"],
+      ["ftp://a.test", "a ftp://a.test here"],
+      ["javascript:alert(1)", "a javascript:alert(1) here"],
+      ["TODO:fix", "a TODO:fix here"],
+    ])("pasting %j over a selection replaces it", (text, markdown) => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        text,
+        (b) => [b.p(`a ${text} here`)],
+        markdown,
+      );
+    });
+
+    test("pastes a URL as text at an empty selection", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <cursor>here")],
+        "cursor",
+        "https://a.test",
+        (b) => [b.p("a https://a.testhere")],
+        "a https://a.testhere",
+      );
+    });
+
+    test("pastes a URL over a selection as text in a plain-text paste", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        { plainText: true, text: "https://a.test" },
+        (b) => [b.p("a https://a.test here")],
+        "a https://a.test here",
+      );
+    });
+
+    test("pastes a URL as text in a plain-text paste starting in a code block", () => {
+      expect(fxInContext).toTransformPaste(
+        (b) => [b.code_block("c<a>ode"), b.p("te<b>xt")],
+        { anchor: "a", head: "b" },
+        { plainText: true, text: "https://a.test" },
+        (b) => [b.code_block("chttps://a.testxt")],
+        "```\nchttps://a.testxt\n```",
+      );
+    });
+
+    test("pastes a URL over a selection as text in a plain-text paste with GFM autolinks", () => {
+      expect(fxAutolink).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        { plainText: true, text: "https://a.test" },
+        (b) => [b.p("a https://a.test here")],
+        "a https\\://a.test here",
+      );
+    });
+
+    test("pastes a URL as usual over a selection with a link", () => {
+      expect(fx).toTransformPaste(
+        (b) => [
+          b.p("a <a>b ", b.link({ href: "https://b.test" }, "link"), " c<b> d"),
+        ],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [b.p("a https://a.test d")],
+        "a https://a.test d",
+      );
+    });
+
+    test("pastes a URL as usual over a selection partly covering a link", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>b ", b.link({ href: "https://b.test" }, "li<b>nk"))],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [
+          b.p("a https://a.test", b.link({ href: "https://b.test" }, "nk")),
+        ],
+        "a https://a.test[nk](https://b.test)",
+      );
+    });
+
+    test("pastes a URL as usual over a selection in a link", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p(b.link({ href: "https://b.test" }, "a <a>li<b>nk"))],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [b.p(b.link({ href: "https://b.test" }, "a https://a.testnk"))],
+        "[a https://a.testnk](https://b.test)",
+      );
+    });
+
+    test("pastes an image whose text is its URL over a selection as usual", () => {
+      expect(fxInContext).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        {
+          html: '<img src="https://a.test/i.png">',
+          text: "https://a.test/i.png",
+        },
+        (b) => [b.p("a ", b.img({ src: "https://a.test/i.png" }), " here")],
+        "a ![](https://a.test/i.png) here",
+      );
+    });
+
+    test("pastes rich content whose text is a URL over a selection as usual", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        { html: "<p>Some text</p>", text: "https://a.test" },
+        (b) => [b.p("a Some text here")],
+        "a Some text here",
+      );
+    });
+
+    test("links a selection with a line break that reads as a URL without it", () => {
+      expect(
+        createExtensionFixture(new LinkExtension(), [new BreakExtension()]),
+      ).toTransformPaste(
+        (b) => [b.p("a <a>https://b.test", b.br(), "/x<b> here")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [
+          b.p(
+            "a ",
+            b.link({ href: "https://a.test" }, "https://b.test", b.br(), "/x"),
+            " here",
+          ),
+        ],
+        "a [https://b.test\\\n/x](https://a.test) here",
+      );
+    });
+
+    test("pastes a URL as usual over a selection that is a URL", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>https://b.test<b> here")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [b.p("a https://a.test here")],
+        "a https://a.test here",
+      );
+    });
+
+    test("pastes a URL as usual over a selection that is a mailto: URL", () => {
+      expect(fx).toTransformPaste(
+        (b) => [b.p("a <a>mailto:b@c.test<b> here")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [b.p("a https://a.test here")],
+        "a https://a.test here",
+      );
+    });
+
+    test("pastes a URL as usual over a selection with inline code", () => {
+      expect(fxInlineCode).toTransformPaste(
+        (b) => [b.p("a <a>", b.code("code"), " text<b> here")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [b.p("a https://a.test here")],
+        "a https://a.test here",
+      );
+    });
+
+    test("pastes a URL as text in a code block", () => {
+      expect(fxInContext).toTransformPaste(
+        (b) => [b.code_block("c<a>od<b>e")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [b.code_block("chttps://a.teste")],
+        "```\nchttps://a.teste\n```",
+      );
+    });
+
+    test("pastes a URL as usual with linkOnPaste turned off", () => {
+      expect(
+        createExtensionFixture(new LinkExtension({ linkOnPaste: false }), []),
+      ).toTransformPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [b.p("a https://a.test here")],
+        "a https://a.test here",
+      );
+    });
+
+    test("undo leaves the URL pasted as text", () => {
+      expect(fx).toUndoPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [b.p("a https://a.test here")],
+        "a https://a.test here",
+      );
+    });
+
+    test("undo leaves the URL pasted as an autolink with GFM autolinks", () => {
+      expect(fxAutolink).toUndoPaste(
+        (b) => [b.p("a <a>link<b> here")],
+        { anchor: "a", head: "b" },
+        "https://a.test",
+        (b) => [
+          b.p(
+            "a ",
+            b.link({ href: "https://a.test" }, "https://a.test"),
+            " here",
+          ),
+        ],
+        "a <https://a.test> here",
       );
     });
   });

@@ -2,6 +2,7 @@ import type { Mark } from "prosemirror-model";
 
 import {
   type EditorState,
+  type Selection,
   TextSelection,
   type Transaction,
 } from "prosemirror-state";
@@ -20,6 +21,24 @@ export interface LinkTransaction {
   tr: Transaction;
   // Whether the href was written as the link's text
   writesText: boolean;
+}
+
+// Adds the link over each of the selection's ranges, replacing any links in
+// them, so that a selection of several ranges, such as of table cells, links
+// only what's selected
+export function addLinkToSelection(
+  tr: Transaction,
+  selection: Selection,
+  mark: Mark,
+): Transaction {
+  for (const { $from, $to } of selection.ranges) {
+    tr.removeMark($from.pos, $to.pos, mark.type).addMark(
+      $from.pos,
+      $to.pos,
+      mark,
+    );
+  }
+  return tr;
 }
 
 // Destinations can't contain line endings, and surrounding whitespace comes
@@ -45,11 +64,18 @@ export function removeLinkTransaction(
   if (range !== null) {
     return state.tr.removeMark(range.from, range.to, range.mark);
   }
-  const { empty, from, to } = state.selection;
-  if (empty || !state.doc.rangeHasMark(from, to, type)) {
+  const { selection } = state;
+  const linked = selection.ranges.filter(({ $from, $to }) =>
+    state.doc.rangeHasMark($from.pos, $to.pos, type),
+  );
+  if (selection.empty || linked.length === 0) {
     return null;
   }
-  return state.tr.removeMark(from, to, type);
+  const { tr } = state;
+  for (const { $from, $to } of linked) {
+    tr.removeMark($from.pos, $to.pos, type);
+  }
+  return tr;
 }
 
 // Changes the link on text that was inserted as its href, found by
@@ -100,7 +126,7 @@ export function setLinkTransaction(
       writesText: false,
     };
   }
-  const { empty, from, to } = state.selection;
+  const { empty, from } = state.selection;
   // An empty URL doesn't add a link, but one keeps its link when its URL is
   // cleared
   if (attrs.href === null || attrs.href === "") {
@@ -108,7 +134,7 @@ export function setLinkTransaction(
   }
   if (!empty) {
     return {
-      tr: tr.removeMark(from, to, type).addMark(from, to, mark),
+      tr: addLinkToSelection(tr, state.selection, mark),
       writesText: false,
     };
   }
