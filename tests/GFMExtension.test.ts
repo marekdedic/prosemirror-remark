@@ -257,3 +257,32 @@ test.each(
     expect(setListSpread(false)(state)).toBe(!loose);
   },
 );
+
+test("`Mod-k` edits a bare URL's URL, keeping its text", () => {
+  const editor = renderProseMirror(pmu.parse("see https://a.test now\n"), {
+    editorProps: { plugins: pmu.plugins() },
+  });
+  editor.setSelection(8);
+  editor
+    .element("p")
+    .dispatchEvent(
+      new KeyboardEvent("keydown", { bubbles: true, ctrlKey: true, key: "k" }),
+    );
+  const input = document.activeElement as HTMLInputElement;
+  input.value = "https://b.test";
+  input.dispatchEvent(new InputEvent("input", { bubbles: true }));
+
+  expect(pmu.serialize(editor.doc)).toBe(
+    "see [https://a.test](https://b.test) now\n",
+  );
+});
+
+test("typing in a bare URL changes its URL", () => {
+  const editor = renderProseMirror(pmu.parse("see https://a.test now\n"), {
+    editorProps: { plugins: pmu.plugins() },
+  });
+  editor.setSelection(17);
+  editor.type("x");
+
+  expect(pmu.serialize(editor.doc)).toBe("see <https://a.texst> now\n");
+});

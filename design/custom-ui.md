@@ -20,7 +20,7 @@ The same question will come up for every construct that needs more than a plain 
 
 - A theming system or design tokens.
 - Styling ProseMirror itself (selection, gap cursor, etc.); that belongs to the ProseMirror packages.
-- Editor chrome such as menus or toolbars.
+- Editor chrome such as menus or toolbars. Controls for editing one construct, such as the link popover, are in scope.
 
 ## Prior art: ProseMirror
 
@@ -146,6 +146,6 @@ See `design/code-block-language.md`.
 
 See `design/list-looseness.md`.
 
-### Future cases
+### Links (implemented)
 
-- **Links.** Extra attributes come from a DOM attribute hook if anyone asks for one. Showing or editing the `href` is a user mark view or editor plugin.
+See `design/link-editing.md`. Extra attributes on the link itself come from a DOM attribute hook if anyone asks for one.

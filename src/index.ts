@@ -22,7 +22,13 @@ export {
 } from "./syntax-extensions/ImageReferenceExtension";
 export { InlineCodeExtension } from "./syntax-extensions/InlineCodeExtension";
 export { ItalicExtension } from "./syntax-extensions/ItalicExtension";
-export { LinkExtension } from "./syntax-extensions/LinkExtension";
+export {
+  LinkExtension,
+  type LinkExtensionOptions,
+  openLinkEditor,
+  removeLink,
+  setLink,
+} from "./syntax-extensions/LinkExtension";
 export {
   LinkReferenceExtension,
   type LinkReferenceExtensionContext,
