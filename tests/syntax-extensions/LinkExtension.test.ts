@@ -1,6 +1,13 @@
 import type { Node as ProseMirrorNode } from "prosemirror-model";
+import type { Mappable } from "prosemirror-transform";
 
-import { EditorState, TextSelection } from "prosemirror-state";
+import {
+  EditorState,
+  Selection,
+  SelectionRange,
+  TextSelection,
+  type Transaction,
+} from "prosemirror-state";
 import { describe, expect, test, vi } from "vitest";
 
 import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
@@ -14,6 +21,32 @@ import {
 } from "../../src/syntax-extensions/LinkExtension";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
+
+class RangesSelection extends Selection {
+  public constructor(ranges: Array<SelectionRange>) {
+    super(ranges[0].$from, ranges[0].$to, ranges);
+  }
+
+  public override eq(other: Selection): boolean {
+    return other === this;
+  }
+
+  public override map(doc: ProseMirrorNode, mapping: Mappable): Selection {
+    return new RangesSelection(
+      this.ranges.map(
+        (range) =>
+          new SelectionRange(
+            doc.resolve(mapping.map(range.$from.pos)),
+            doc.resolve(mapping.map(range.$to.pos)),
+          ),
+      ),
+    );
+  }
+
+  public override toJSON(): unknown {
+    return { type: "ranges" };
+  }
+}
 
 describe("LinkExtension", () => {
   const fx = createExtensionFixture(new LinkExtension(), []);
@@ -504,6 +537,56 @@ describe("LinkExtension", () => {
         "```\ncode\n```",
       );
     });
+
+    test("replaces the link in each range of a selection of several ranges", () => {
+      const doc = fx.b.doc(
+        fx.b.p(fx.b.link({ href: "https://b.test" }, "one"), " two"),
+        fx.b.p("three four"),
+      ) as unknown as ProseMirrorNode;
+      const state = EditorState.create({
+        doc,
+        selection: new RangesSelection([
+          new SelectionRange(doc.resolve(1), doc.resolve(4)),
+          new SelectionRange(doc.resolve(10), doc.resolve(15)),
+        ]),
+      });
+      const dispatch = vi.fn<(tr: Transaction) => void>();
+
+      expect(setLink({ href: "https://a.test" })(state, dispatch)).toBe(true);
+      expect(
+        dispatch.mock.calls[0][0].doc.eq(
+          fx.b.doc(
+            fx.b.p(fx.b.link({ href: "https://a.test" }, "one"), " two"),
+            fx.b.p(fx.b.link({ href: "https://a.test" }, "three"), " four"),
+          ) as unknown as ProseMirrorNode,
+        ),
+      ).toBe(true);
+    });
+
+    test("links only the ranges of a selection of several ranges", () => {
+      const doc = fx.b.doc(
+        fx.b.p("one two"),
+        fx.b.p("three four"),
+      ) as unknown as ProseMirrorNode;
+      const state = EditorState.create({
+        doc,
+        selection: new RangesSelection([
+          new SelectionRange(doc.resolve(1), doc.resolve(4)),
+          new SelectionRange(doc.resolve(10), doc.resolve(15)),
+        ]),
+      });
+      const dispatch = vi.fn<(tr: Transaction) => void>();
+
+      expect(setLink({ href: "https://a.test" })(state, dispatch)).toBe(true);
+      expect(
+        dispatch.mock.calls[0][0].doc.eq(
+          fx.b.doc(
+            fx.b.p(fx.b.link({ href: "https://a.test" }, "one"), " two"),
+            fx.b.p(fx.b.link({ href: "https://a.test" }, "three"), " four"),
+          ) as unknown as ProseMirrorNode,
+        ),
+      ).toBe(true);
+    });
   });
 
   describe("editing the text of a link whose text is its URL", () => {
@@ -835,6 +918,35 @@ describe("LinkExtension", () => {
   });
 
   describe("removeLink", () => {
+    test("removes only the links in the ranges of a selection of several ranges", () => {
+      const doc = fx.b.doc(
+        fx.b.p(
+          fx.b.link({ href: "https://a.test" }, "one"),
+          " ",
+          fx.b.link({ href: "https://a.test" }, "two"),
+        ),
+        fx.b.p(fx.b.link({ href: "https://a.test" }, "three")),
+      ) as unknown as ProseMirrorNode;
+      const state = EditorState.create({
+        doc,
+        selection: new RangesSelection([
+          new SelectionRange(doc.resolve(1), doc.resolve(4)),
+          new SelectionRange(doc.resolve(10), doc.resolve(15)),
+        ]),
+      });
+      const dispatch = vi.fn<(tr: Transaction) => void>();
+
+      expect(removeLink()(state, dispatch)).toBe(true);
+      expect(
+        dispatch.mock.calls[0][0].doc.eq(
+          fx.b.doc(
+            fx.b.p("one ", fx.b.link({ href: "https://a.test" }, "two")),
+            fx.b.p("three"),
+          ) as unknown as ProseMirrorNode,
+        ),
+      ).toBe(true);
+    });
+
     test("removes the link at the caret", () => {
       expect(fx).toTransformCommand(
         (b) => [b.p("a ", b.link({ href: "https://a.test" }, "li<cursor>nk"))],
