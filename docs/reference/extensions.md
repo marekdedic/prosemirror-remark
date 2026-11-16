@@ -161,6 +161,7 @@ Code spans (`` `code` ``).
 Inline links (`[text](https://example.com "title")`) and autolinks (`<https://example.com>`).
 
 - **ProseMirror mark:** `link`, with the attributes `href` and `title`. Text typed right after a link isn't part of it.
+- **Input rules:** `[text](url)` and `[text](url "title")`, including a URL in angle brackets (`[text](<a b>)`). Unlike the inline formatting rules, it applies when you type the closing `)`. It applies only if the text reads as a link in Markdown, so a URL with parentheses (`https://en.wikipedia.org/wiki/Foo_(bar)`) becomes a link at its last `)`, and an escaped `\[` or an image (`![text](url)`) doesn't become one. The text between the brackets keeps its formatting. Reference-style links and autolinks aren't converted.
 - **Links whose text is their URL:** editing the text of an autolink (`<https://example.com>`, `<foo@bar.com>` or GFM's `www.example.com`) changes its URL along with it, in the same form, as long as the text is still a valid autolink. This needs the plugins from `pmu.plugins()`, and works with the link editor turned off too.
 - **HTML:** `<a href="…" title="…">`
 - **Link editor:** a popover for the link at the selection, shown above the link whenever the caret is inside it, without taking the focus from the text. It's inserted into the page right after the editor, outside the editable content:

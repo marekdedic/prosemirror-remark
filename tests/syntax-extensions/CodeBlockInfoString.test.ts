@@ -1,18 +1,13 @@
-import type { Plugin } from "prosemirror-state";
-
 import { tests } from "commonmark-spec";
 import { DOMSerializer, type Node as ProseMirrorNode } from "prosemirror-model";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
 import { describe, expect, test } from "vitest";
-import {
-  parseHTML,
-  type ProseMirrorEditor,
-  renderProseMirror,
-} from "vitest-prosemirror";
+import { parseHTML, renderProseMirror } from "vitest-prosemirror";
 
 import { CodeBlockExtension } from "../../src/syntax-extensions/CodeBlockExtension";
 import { createExtensionFixture } from "../utils/fixture";
+import { handleTextInput } from "../utils/input";
 
 interface Attrs {
   lang: string | null;
@@ -43,27 +38,6 @@ function enter(line: string): ProseMirrorNode | null {
   editor.setSelection("end");
   editor.type("{Enter}");
   return editor.doc.firstChild;
-}
-
-function handleTextInput(
-  editor: ProseMirrorEditor,
-  plugin: Plugin,
-  from: number,
-  to: number,
-  text: string,
-): boolean {
-  return editor.command((state, _dispatch, view) =>
-    view === undefined
-      ? false
-      : (plugin.props.handleTextInput?.call(
-          plugin,
-          view,
-          from,
-          to,
-          text,
-          () => state.tr,
-        ) ?? false),
-  );
 }
 
 const lines = [

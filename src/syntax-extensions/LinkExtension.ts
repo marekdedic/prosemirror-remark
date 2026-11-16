@@ -1,4 +1,5 @@
 import type { Link, PhrasingContent } from "mdast";
+import type { InputRule } from "prosemirror-inputrules";
 import type {
   DOMOutputSpec,
   Mark,
@@ -12,6 +13,7 @@ import { MarkExtension } from "prosemirror-unified";
 
 import { addMarkToNodes } from "../utils/addMarkToNodes";
 import { linkHrefSyncPlugin } from "../utils/linkHrefSync";
+import { linkInputRule } from "../utils/linkInputRule";
 import { linkPastePlugin } from "../utils/linkPaste";
 import { linkAtSelection, linkAttrs } from "../utils/linkRange";
 import {
@@ -61,6 +63,12 @@ export class LinkExtension extends MarkExtension<Link> {
       }),
       children: convertedNodes,
     };
+  }
+
+  public override proseMirrorInputRules(
+    proseMirrorSchema: Schema<string, string>,
+  ): Array<InputRule> {
+    return [linkInputRule(proseMirrorSchema.marks[this.proseMirrorMarkName()])];
   }
 
   public override proseMirrorKeymap(): Record<string, Command> {

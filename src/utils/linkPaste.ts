@@ -1,15 +1,12 @@
 import type { Root, RootContent } from "mdast";
-import type {
-  MarkType,
-  Node as ProseMirrorNode,
-  Slice,
-} from "prosemirror-model";
+import type { MarkType, Slice } from "prosemirror-model";
 import type { EditorView } from "prosemirror-view";
 import type { Processor } from "unified";
 
 import { closeHistory } from "prosemirror-history";
 import { type EditorState, Plugin } from "prosemirror-state";
 
+import { hasCodeMark } from "./hasCodeMark";
 import { linkTextWritten } from "./linkHrefSync";
 import { linkAtSelection, linkMarkType } from "./linkRange";
 import { addLinkToSelection, normaliseHref } from "./linkTransaction";
@@ -125,12 +122,6 @@ function clipboardText(data: DataTransfer): string {
     }
   }
   return data.getData("text/uri-list").replace(/\r?\n/gu, " ");
-}
-
-function hasCodeMark(doc: ProseMirrorNode, from: number, to: number): boolean {
-  return Object.values(doc.type.schema.marks).some(
-    (type) => type.spec.code === true && doc.rangeHasMark(from, to, type),
-  );
 }
 
 // Whether the selected text is a URL. A selection across textblocks has a
