@@ -1,5 +1,6 @@
-import type { Command } from "prosemirror-state";
+import type { Command, Plugin } from "prosemirror-state";
 
+import { history, undo } from "prosemirror-history";
 import {
   DOMParser,
   DOMSerializer,
@@ -15,6 +16,7 @@ import {
 import { expect, type MatcherState, type SyncMatcherResult, vi } from "vitest";
 import {
   parseHTML,
+  type PasteInput,
   type ProseMirrorEditor,
   renderProseMirror,
   type TesterSelection,
@@ -109,12 +111,13 @@ function runEditorInput(
   after: ProseMirrorNode,
   markdownOutput: string,
   ctx: MatcherState,
+  plugins: Array<Plugin> = [],
 ): SyncMatcherResult {
   const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
   try {
     const editor = renderProseMirror(before, {
       editorProps: {
-        plugins: fx.pmu.plugins(),
+        plugins: [...fx.pmu.plugins(), ...plugins],
       },
     });
     editor.setSelection(selection);
@@ -545,7 +548,7 @@ expect.extend({
     fx: ExtensionFixture<UnistLike>,
     before: Build<Array<BuiltNode>>,
     selection: TesterSelection,
-    text: string,
+    content: PasteInput,
     after: Build<Array<BuiltNode>>,
     markdownOutput: string,
   ): SyncMatcherResult {
@@ -554,12 +557,39 @@ expect.extend({
       fx.b.doc(...before(fx.b)) as unknown as ProseMirrorNode,
       selection,
       (editor) => {
-        editor.paste(text);
+        editor.paste(content);
         return { message: () => "expected the paste to apply", pass: true };
       },
       fx.schema.nodes["doc"].create({}, fx.resolveNodes(after(fx.b))),
       markdownOutput,
       this,
+    );
+  },
+
+  toUndoPaste(
+    this: MatcherState,
+    fx: ExtensionFixture<UnistLike>,
+    before: Build<Array<BuiltNode>>,
+    selection: TesterSelection,
+    content: PasteInput,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): SyncMatcherResult {
+    return runEditorInput(
+      fx,
+      fx.b.doc(...before(fx.b)) as unknown as ProseMirrorNode,
+      selection,
+      (editor) => {
+        editor.paste(content);
+        if (!editor.command(undo)) {
+          return { message: () => "expected undo to apply", pass: false };
+        }
+        return { message: () => "expected undo not to apply", pass: true };
+      },
+      fx.schema.nodes["doc"].create({}, fx.resolveNodes(after(fx.b))),
+      markdownOutput,
+      this,
+      [history()],
     );
   },
 });
@@ -621,7 +651,14 @@ interface ExtensionMatchers<R> {
   toTransformPaste(
     before: Build<Array<BuiltNode>>,
     selection: TesterSelection,
-    text: string,
+    content: PasteInput,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): R;
+  toUndoPaste(
+    before: Build<Array<BuiltNode>>,
+    selection: TesterSelection,
+    content: PasteInput,
     after: Build<Array<BuiltNode>>,
     markdownOutput: string,
   ): R;

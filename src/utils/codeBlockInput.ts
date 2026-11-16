@@ -1,14 +1,12 @@
-import type { Root } from "mdast";
 import type { NodeType, ResolvedPos } from "prosemirror-model";
 import type { EditorState, Transaction } from "prosemirror-state";
 
 import { InputRule } from "prosemirror-inputrules";
 import { EnterInputRule } from "prosemirror-unified";
-import remarkParse from "remark-parse";
-import { type Processor, unified } from "unified";
 
 import { type CodeBlockAttrs, codeBlockAttrs } from "./codeBlockAttrs";
 import { isAtEndOfTextblock } from "./isAtEndOfTextblock";
+import { markdownParser } from "./markdownParser";
 import { typedSpace, typedSpaceCharacters } from "./typedSpace";
 
 // A line that starts like an opening fence. Whether it is one is up to the
@@ -36,8 +34,6 @@ const fenceLineEnd = new RegExp(
 
 // Anything typed into a paragraph that starts like a fence, except Enter
 const fenceLineInput = new RegExp(`${fenceStart.source}.*$`, "u");
-
-let markdownParser: Processor<Root> | undefined = undefined;
 
 export function codeBlockInputRules(nodeType: NodeType): Array<InputRule> {
   return [
@@ -100,8 +96,7 @@ function parseFenceLine(text: string): CodeBlockAttrs | null {
   if (!typeableFenceLine.test(text)) {
     return null;
   }
-  markdownParser ??= unified().use(remarkParse);
-  const { children } = markdownParser.parse(`${text}\n`);
+  const { children } = markdownParser().parse(`${text}\n`);
   const [node] = children;
   // Indented code has the line as its value, an unclosed fence has none
   if (children.length !== 1 || node.type !== "code" || node.value !== "") {

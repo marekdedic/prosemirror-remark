@@ -12,6 +12,7 @@ import { MarkExtension } from "prosemirror-unified";
 
 import { addMarkToNodes } from "../utils/addMarkToNodes";
 import { linkHrefSyncPlugin } from "../utils/linkHrefSync";
+import { linkPastePlugin } from "../utils/linkPaste";
 import { linkAtSelection, linkAttrs } from "../utils/linkRange";
 import {
   normaliseHref,
@@ -31,14 +32,21 @@ export interface LinkExtensionOptions {
    * Defaults to `true`.
    */
   editor?: boolean;
+  /**
+   * Whether pasting a URL over a selection links the selection instead of
+   * replacing it. Defaults to `true`.
+   */
+  linkOnPaste?: boolean;
 }
 
 export class LinkExtension extends MarkExtension<Link> {
   private readonly editor: boolean;
+  private readonly linkOnPaste: boolean;
 
   public constructor(options: LinkExtensionOptions = {}) {
     super();
     this.editor = options.editor ?? true;
+    this.linkOnPaste = options.linkOnPaste ?? true;
   }
 
   public override processConvertedUnistNodes(
@@ -86,7 +94,11 @@ export class LinkExtension extends MarkExtension<Link> {
   }
 
   public override proseMirrorPlugins(): Array<Plugin> {
-    return [linkHrefSyncPlugin(), ...(this.editor ? [linkEditorPlugin()] : [])];
+    return [
+      linkHrefSyncPlugin(),
+      ...(this.editor ? [linkEditorPlugin()] : []),
+      ...(this.linkOnPaste ? [linkPastePlugin()] : []),
+    ];
   }
 
   public override unistNodeName(): "link" {

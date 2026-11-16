@@ -14,6 +14,7 @@ export default defineConfig({
     rolldownOptions: {
       external: [
         "prosemirror-commands",
+        "prosemirror-history",
         "prosemirror-inputrules",
         "prosemirror-model",
         "prosemirror-schema-list",
