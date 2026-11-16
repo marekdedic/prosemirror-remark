@@ -5,11 +5,21 @@ import type {
   Node as ProseMirrorNode,
 } from "prosemirror-model";
 import type { EditorState } from "prosemirror-state";
+import type { Processor } from "unified";
 
 import { InputRule } from "prosemirror-inputrules";
 
 import { hasCodeMark, hasStoredCodeMark } from "./hasCodeMark";
 import { markdownInlineParser } from "./markdownParser";
+
+// A link the text ends with, with offsets into the text
+interface ParsedLink {
+  // The offset of the end of the link's text, null if it has none
+  contentEnd: number | null;
+  end: number;
+  mark: Mark;
+  start: number;
+}
 
 // The text typed into a textblock
 interface TypedInput {
@@ -22,17 +32,18 @@ interface TypedInput {
   typed: string;
 }
 
-// Typing the ")" that ends an inline link, such as [text](url "title"), turns
-// the text into a link. Whether the text before the cursor ends in a complete
-// link is up to the parser, so that a URL with balanced parentheses, a title
-// with a ")" or a destination in angle brackets doesn't fire early, and so that
-// escapes and character references in the URL and title are resolved. An
-// escaped "[" or an image doesn't fire, nor does a link with inline code in its
-// syntax, or where the link can't be added. The text between the brackets
-// keeps its marks.
+// Typing the ")" that ends an inline link, such as [text](url "title"), or the
+// ">" that ends an autolink, such as <https://example.com>, turns the text into
+// a link. Whether the text before the cursor ends in a complete link is up to
+// the parser, so that a URL with balanced parentheses, a title with a ")" or a
+// destination in angle brackets doesn't fire early, and so that escapes and
+// character references in the URL and title are resolved. An escaped "[" or
+// "<", an image or inline HTML doesn't fire, nor does a link with inline code
+// or another link in its syntax, or where the link can't be added. The text
+// between the brackets keeps its marks.
 export function linkInputRule(markType: MarkType): InputRule {
   return new InputRule(
-    /\]\((?:(?!\]\().)*\)$/u,
+    /(?:\]\((?:(?!\]\().)*\)|<[^\s<>]+>)$/u,
     (state, match, start, end) => {
       if (hasStoredCodeMark(state)) {
         return null;
@@ -41,26 +52,28 @@ export function linkInputRule(markType: MarkType): InputRule {
       if (input === null) {
         return null;
       }
-      const range = parseTrailingLink(input.text);
-      if (range === null) {
+      const link = parseLastLink(markdownInlineParser(), input.text, markType);
+      if (
+        link?.end !== input.text.length ||
+        link.contentEnd === null ||
+        input.textblockStart + link.contentEnd > input.from
+      ) {
         return null;
       }
-      const from = input.textblockStart + range.from;
-      const to = input.textblockStart + range.labelEnd;
-      const mark = markType.create({ href: range.href, title: range.title });
+      const from = input.textblockStart + link.start;
+      const to = input.textblockStart + link.contentEnd;
       if (
-        to > input.from ||
         state.doc.rangeHasMark(from, input.from, markType) ||
         hasCodeMark(state.doc, from, from + 1) ||
         hasCodeMark(state.doc, to, input.from) ||
-        !markApplies(state.doc, from + 1, to, mark)
+        !markApplies(state.doc, from + 1, to, link.mark)
       ) {
         return null;
       }
       return state.tr
         .delete(to, end)
         .delete(from, from + 1)
-        .addMark(from, to - 1, mark);
+        .addMark(from, to - 1, link.mark);
     },
     { inCodeMark: false },
   );
@@ -84,18 +97,17 @@ function markApplies(
   return applies;
 }
 
-// The inline link the text ends with, with the offsets of its "[" and "]".
-// Null if it doesn't end with one, or the link has no text.
-function parseTrailingLink(text: string): {
-  from: number;
-  href: string;
-  labelEnd: number;
-  title: string | null;
-} | null {
-  // The text is read as the content of a textblock, so that none of its lines
-  // is read as e.g. a heading or a list. A blank line still ends a paragraph,
-  // so a link the text ends with is in the last one.
-  const { children: blocks } = markdownInlineParser().parse(text);
+// The link the text ends with, with offsets into the text. The text is read as
+// the content of a textblock, so that none of its lines is read as e.g. a
+// heading or a list.
+function parseLastLink(
+  parser: Processor<Root>,
+  text: string,
+  markType: MarkType,
+): ParsedLink | null {
+  // A blank line ends a paragraph even without block constructs, so a link
+  // the text ends with is in the last one
+  const { children: blocks } = parser.parse(text);
   const paragraph = blocks[blocks.length - 1] as
     Root["children"][number] | undefined;
   if (paragraph?.type !== "paragraph") {
@@ -103,7 +115,9 @@ function parseTrailingLink(text: string): {
   }
   const link = paragraph.children[paragraph.children.length - 1] as
     PhrasingContent | undefined;
-  if (link?.type !== "link" || link.position?.end.offset !== text.length) {
+  const start = link?.position?.start.offset;
+  const end = link?.position?.end.offset;
+  if (link?.type !== "link" || start === undefined || end === undefined) {
     return null;
   }
   // A URL or title can't hold an inline node, such as a hard break or an
@@ -111,18 +125,13 @@ function parseTrailingLink(text: string): {
   if (`${link.url}${link.title ?? ""}`.includes("\ufffc")) {
     return null;
   }
-  const from = link.position.start.offset;
-  const labelEnd = (
-    link.children[link.children.length - 1] as PhrasingContent | undefined
-  )?.position?.end.offset;
-  if (from === undefined || labelEnd === undefined) {
-    return null;
-  }
+  const lastChild = link.children[link.children.length - 1] as
+    PhrasingContent | undefined;
   return {
-    from,
-    href: link.url,
-    labelEnd,
-    title: link.title ?? null,
+    contentEnd: lastChild?.position?.end.offset ?? null,
+    end,
+    mark: markType.create({ href: link.url, title: link.title ?? null }),
+    start,
   };
 }
 

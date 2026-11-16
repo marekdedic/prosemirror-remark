@@ -348,6 +348,10 @@ describe("LinkExtension", () => {
       ["\\[text](https://a.test)", "\\\\\\[text]\\(https://a.test)"],
       ["![text](https://a.test)", "!\\[text]\\(https://a.test)"],
       ["[text][id]", "\\[text]\\[id]"],
+      ["<www.a.test>", "\\<www.a.test>"],
+      ["<a.test>", "\\<a.test>"],
+      ["\\<https://a.test>", "\\\\\\<https://a.test>"],
+      ["<br/>", "\\<br/>"],
     ] as const)("does not match %s", (input, md) => {
       expect(fx).toTransformInput(
         (b) => [b.p("<cursor>")],
@@ -355,6 +359,22 @@ describe("LinkExtension", () => {
         input.replace(/\[/gu, "[["),
         () => [fx.b.p(input)],
         md,
+      );
+    });
+
+    test("matches an autolink", () => {
+      expect(fx).toTransformInlineInput(
+        "<https://a.test>",
+        (b) => [b.link({ href: "https://a.test" }, "https://a.test")],
+        "<https://a.test>",
+      );
+    });
+
+    test("matches an email autolink", () => {
+      expect(fx).toTransformInlineInput(
+        "<a@b.test>",
+        (b) => [b.link({ href: "mailto:a@b.test" }, "a@b.test")],
+        "<a@b.test>",
       );
     });
 
