@@ -1,15 +1,12 @@
 import type { Root, RootContent } from "mdast";
-import type {
-  MarkType,
-  Node as ProseMirrorNode,
-  Slice,
-} from "prosemirror-model";
+import type { MarkType, Slice } from "prosemirror-model";
 import type { EditorView } from "prosemirror-view";
 import type { Processor } from "unified";
 
 import { closeHistory } from "prosemirror-history";
 import { type EditorState, Plugin } from "prosemirror-state";
 
+import { hasCodeMark } from "./hasCodeMark";
 import { linkTextWritten } from "./linkHrefSync";
 import { linkAtSelection, linkMarkType } from "./linkRange";
 import { addLinkToSelection, normaliseHref } from "./linkTransaction";
@@ -91,8 +88,9 @@ export function linkPastePlugin(): Plugin {
         return pasteLink(
           view,
           slice,
-          (html ? pastedLinkHref(slice, linkMarkType(view.state)) : null) ??
-            href,
+          (html
+            ? pastedLinkHref(slice, linkMarkType(view.state.schema))
+            : null) ?? href,
         );
       },
     },
@@ -102,7 +100,7 @@ export function linkPastePlugin(): Plugin {
 // Whether a pasted URL can link the selection: one that isn't empty, can be
 // linked and has no link or inline code
 function canLinkSelection(state: EditorState): boolean {
-  const type = linkMarkType(state);
+  const type = linkMarkType(state.schema);
   const { selection } = state;
   return (
     type !== undefined &&
@@ -125,12 +123,6 @@ function clipboardText(data: DataTransfer): string {
     }
   }
   return data.getData("text/uri-list").replace(/\r?\n/gu, " ");
-}
-
-function hasCodeMark(doc: ProseMirrorNode, from: number, to: number): boolean {
-  return Object.values(doc.type.schema.marks).some(
-    (type) => type.spec.code === true && doc.rangeHasMark(from, to, type),
-  );
 }
 
 // Whether the selected text is a URL. A selection across textblocks has a
@@ -178,7 +170,7 @@ function pastedLinkHref(
 // with the link on it
 function pasteLink(view: EditorView, slice: Slice, href: string): boolean {
   const { state } = view;
-  const type = linkMarkType(state);
+  const type = linkMarkType(state.schema);
   if (type === undefined) {
     return false;
   }

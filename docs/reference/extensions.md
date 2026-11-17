@@ -161,6 +161,7 @@ Code spans (`` `code` ``).
 Inline links (`[text](https://example.com "title")`) and autolinks (`<https://example.com>`).
 
 - **ProseMirror mark:** `link`, with the attributes `href` and `title`. Text typed right after a link isn't part of it.
+- **Input rules:** `[text](url)` and `[text](url "title")`, including a URL in angle brackets (`[text](<a b>)`), and autolinks (`<https://example.com>`, `<foo@bar.com>`). Unlike the inline formatting rules, they apply when you type the closing `)` or `>`. They apply only if the text reads as a link in Markdown, so a URL with parentheses (`https://en.wikipedia.org/wiki/Foo_(bar)`) becomes a link at its last `)`, and an escaped `\[` or `\<`, an image (`![text](url)`) or inline HTML doesn't become one. The text between the brackets keeps its formatting. Reference-style links aren't converted.
 - **Links whose text is their URL:** editing the text of an autolink (`<https://example.com>`, `<foo@bar.com>` or GFM's `www.example.com`) changes its URL along with it, in the same form, as long as the text is still a valid autolink. This needs the plugins from `pmu.plugins()`, and works with the link editor turned off too.
 - **HTML:** `<a href="…" title="…">`
 - **Link editor:** a popover for the link at the selection, shown above the link whenever the caret is inside it, without taking the focus from the text. It's inserted into the page right after the editor, outside the editable content:
@@ -261,3 +262,5 @@ Task list items (`- [ ] task`, `- [x] done`). Use it together with `UnorderedLis
 Links written without angle brackets (`www.example.com`, `https://example.com`, `contact@example.com`). Use it together with `LinkExtension`.
 
 These become ordinary `link` marks, so there's no ProseMirror mark of its own. They come back out as inline links, see [Markdown output](/guide/markdown-output#output-style).
+
+- **Input rules:** typing a space or `Enter` after such a link turns it into one. Punctuation that GFM leaves out of the link, such as a final `.` or a closing `)`, stays text. It doesn't apply to inline code or text that's already a link.

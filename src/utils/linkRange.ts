@@ -3,6 +3,7 @@ import type {
   MarkType,
   Node as ProseMirrorNode,
   ResolvedPos,
+  Schema,
 } from "prosemirror-model";
 import type { EditorState } from "prosemirror-state";
 
@@ -45,7 +46,7 @@ export function insertedLinkRange(
   state: EditorState,
   inserted: TextRange,
 ): LinkRange | null {
-  const type = linkMarkType(state);
+  const type = linkMarkType(state.schema);
   const { doc } = state;
   if (type === undefined || inserted.to > doc.content.size) {
     return null;
@@ -63,7 +64,7 @@ export function insertedLinkRange(
 // when everything in it that can be linked, as by addMark, is, and the run is
 // found around that content rather than the selection's ends.
 export function linkAtSelection(state: EditorState): LinkAtSelection {
-  const type = linkMarkType(state);
+  const type = linkMarkType(state.schema);
   if (type === undefined) {
     return { applies: false, range: null };
   }
@@ -117,8 +118,8 @@ export function linkAttrs(range: LinkRange | null): LinkAttrs {
   };
 }
 
-export function linkMarkType(state: EditorState): MarkType | undefined {
-  return state.schema.marks["link"];
+export function linkMarkType(schema: Schema): MarkType | undefined {
+  return schema.marks["link"];
 }
 
 // The run of content carrying the mark that extends from $start back and from
