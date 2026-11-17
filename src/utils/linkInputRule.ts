@@ -10,13 +10,19 @@ import type { Processor } from "unified";
 import { InputRule } from "prosemirror-inputrules";
 
 import { hasCodeMark, hasStoredCodeMark } from "./hasCodeMark";
-import { markdownInlineParser } from "./markdownParser";
+import {
+  markdownInlineAutolinkLiteralParser,
+  markdownInlineParser,
+} from "./markdownParser";
+import { typedSpaceCharacters } from "./typedSpace";
 
 // A link the text ends with, with offsets into the text
 interface ParsedLink {
   // The offset of the end of the link's text, null if it has none
   contentEnd: number | null;
   end: number;
+  // Whether the link is a GFM autolink literal: its source is its text
+  isLiteral: boolean;
   mark: Mark;
   start: number;
 }
@@ -32,6 +38,61 @@ interface TypedInput {
   typed: string;
 }
 
+// Typing a space or Enter after a GFM autolink literal, such as
+// www.example.com, https://example.com or contact@example.com, turns it into a
+// link. Where the literal ends is up to the parser, so that trailing
+// punctuation isn't part of it. The text is only parsed when its last word has
+// what every kind of literal has: "www.", "http://", "https://" or an "@",
+// which mailto: and xmpp: literals have too.
+export function autolinkLiteralInputRule(markType: MarkType): InputRule {
+  return new InputRule(
+    new RegExp(
+      `(?:www\\.|https?://|@)[^\\s\\ufffc]*[${typedSpaceCharacters}\\n]$`,
+      "iu",
+    ),
+    (state, match, start, end) => {
+      if (hasStoredCodeMark(state)) {
+        return null;
+      }
+      const input = typedInput(state, match, start, end);
+      if (input === null || (input.typed === "\n" && input.from !== end)) {
+        return null;
+      }
+      const text = input.text.slice(0, input.text.length - input.typed.length);
+      const link = parseLastLink(
+        markdownInlineAutolinkLiteralParser(),
+        text,
+        markType,
+      );
+      // Only punctuation that GFM leaves out of the literal can follow it. A
+      // literal that is the URL of an inline link being typed is left for the
+      // inline link's input rule.
+      if (
+        link?.isLiteral !== true ||
+        /[\s\ufffc]/u.test(text.slice(link.end)) ||
+        /\]\(\s*<?$/u.test(text.slice(0, link.start))
+      ) {
+        return null;
+      }
+      const from = input.textblockStart + link.start;
+      const to = input.textblockStart + link.end;
+      if (
+        state.doc.rangeHasMark(from, to, markType) ||
+        hasCodeMark(state.doc, from, to) ||
+        !markApplies(state.doc, from, to, link.mark)
+      ) {
+        return null;
+      }
+      const tr = state.tr;
+      if (input.typed !== "\n") {
+        tr.insertText(input.typed, input.from, end);
+      }
+      return tr.addMark(from, to, link.mark);
+    },
+    { inCodeMark: false },
+  );
+}
+
 // Typing the ")" that ends an inline link, such as [text](url "title"), or the
 // ">" that ends an autolink, such as <https://example.com>, turns the text into
 // a link. Whether the text before the cursor ends in a complete link is up to
@@ -39,8 +100,9 @@ interface TypedInput {
 // destination in angle brackets doesn't fire early, and so that escapes and
 // character references in the URL and title are resolved. An escaped "[" or
 // "<", an image or inline HTML doesn't fire, nor does a link with inline code
-// or another link in its syntax, or where the link can't be added. The text
-// between the brackets keeps its marks.
+// in its syntax, or whose syntax starts or ends in a link. The text between
+// the brackets keeps its marks, except links, which a link can't contain, such
+// as autolink literals typed in it.
 export function linkInputRule(markType: MarkType): InputRule {
   return new InputRule(
     /(?:\]\((?:(?!\]\().)*\)|<[^\s<>]+>)$/u,
@@ -63,7 +125,8 @@ export function linkInputRule(markType: MarkType): InputRule {
       const from = input.textblockStart + link.start;
       const to = input.textblockStart + link.contentEnd;
       if (
-        state.doc.rangeHasMark(from, input.from, markType) ||
+        state.doc.rangeHasMark(from, from + 1, markType) ||
+        state.doc.rangeHasMark(input.from - 1, input.from, markType) ||
         hasCodeMark(state.doc, from, from + 1) ||
         hasCodeMark(state.doc, to, input.from) ||
         !markApplies(state.doc, from + 1, to, link.mark)
@@ -97,9 +160,9 @@ function markApplies(
   return applies;
 }
 
-// The link the text ends with, with offsets into the text. The text is read as
-// the content of a textblock, so that none of its lines is read as e.g. a
-// heading or a list.
+// The link the text ends with, either last or followed only by text, with
+// offsets into the text. The text is read as the content of a textblock, so
+// that none of its lines is read as e.g. a heading or a list.
 function parseLastLink(
   parser: Processor<Root>,
   text: string,
@@ -113,11 +176,28 @@ function parseLastLink(
   if (paragraph?.type !== "paragraph") {
     return null;
   }
-  const link = paragraph.children[paragraph.children.length - 1] as
-    PhrasingContent | undefined;
-  const start = link?.position?.start.offset;
-  const end = link?.position?.end.offset;
-  if (link?.type !== "link" || start === undefined || end === undefined) {
+  const { children } = paragraph;
+  const last = children[children.length - 1] as PhrasingContent | undefined;
+  const trailing =
+    last?.type === "text" && children.length > 1 ? last : undefined;
+  const link = trailing === undefined ? last : children[children.length - 2];
+  if (link?.type !== "link") {
+    return null;
+  }
+  const [firstChild] = link.children;
+  const literal =
+    link.children.length === 1 && firstChild.type === "text"
+      ? firstChild.value
+      : null;
+  // An autolink literal after a "[" that isn't closed has no position. It is
+  // the last occurrence of its text, as only text without whitespace follows
+  const lastIndex = literal === null ? -1 : text.lastIndexOf(literal);
+  const start =
+    link.position?.start.offset ?? (lastIndex === -1 ? null : lastIndex);
+  const end =
+    link.position?.end.offset ??
+    (start === null || literal === null ? null : start + literal.length);
+  if (start === null || end === null) {
     return null;
   }
   // A URL or title can't hold an inline node, such as a hard break or an
@@ -130,6 +210,7 @@ function parseLastLink(
   return {
     contentEnd: lastChild?.position?.end.offset ?? null,
     end,
+    isLiteral: literal === text.slice(start, end),
     mark: markType.create({ href: link.url, title: link.title ?? null }),
     start,
   };

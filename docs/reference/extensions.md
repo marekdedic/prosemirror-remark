@@ -262,3 +262,5 @@ Task list items (`- [ ] task`, `- [x] done`). Use it together with `UnorderedLis
 Links written without angle brackets (`www.example.com`, `https://example.com`, `contact@example.com`). Use it together with `LinkExtension`.
 
 These become ordinary `link` marks, so there's no ProseMirror mark of its own. They come back out as inline links, see [Markdown output](/guide/markdown-output#output-style).
+
+- **Input rules:** typing a space or `Enter` after such a link turns it into one. Punctuation that GFM leaves out of the link, such as a final `.` or a closing `)`, stays text. It doesn't apply to inline code or text that's already a link.

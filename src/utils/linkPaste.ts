@@ -88,8 +88,9 @@ export function linkPastePlugin(): Plugin {
         return pasteLink(
           view,
           slice,
-          (html ? pastedLinkHref(slice, linkMarkType(view.state)) : null) ??
-            href,
+          (html
+            ? pastedLinkHref(slice, linkMarkType(view.state.schema))
+            : null) ?? href,
         );
       },
     },
@@ -99,7 +100,7 @@ export function linkPastePlugin(): Plugin {
 // Whether a pasted URL can link the selection: one that isn't empty, can be
 // linked and has no link or inline code
 function canLinkSelection(state: EditorState): boolean {
-  const type = linkMarkType(state);
+  const type = linkMarkType(state.schema);
   const { selection } = state;
   return (
     type !== undefined &&
@@ -169,7 +170,7 @@ function pastedLinkHref(
 // with the link on it
 function pasteLink(view: EditorView, slice: Slice, href: string): boolean {
   const { state } = view;
-  const type = linkMarkType(state);
+  const type = linkMarkType(state.schema);
   if (type === undefined) {
     return false;
   }

@@ -18,7 +18,7 @@ export function linkHrefSyncPlugin(): Plugin {
       oldState,
       newState,
     ): Transaction | null => {
-      const type = linkMarkType(newState);
+      const type = linkMarkType(newState.schema);
       if (type === undefined || !transactions.some((tr) => tr.docChanged)) {
         return null;
       }
