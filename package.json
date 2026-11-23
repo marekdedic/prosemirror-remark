@@ -90,7 +90,7 @@
     "@eslint/css": "^2.0.1",
     "@eslint/js": "^10.0.1",
     "@eslint/json": "^2.0.0",
-    "@eslint/markdown": "^8.0.0",
+    "@eslint/markdown": "^9.0.0",
     "@microsoft/api-extractor": "^7.34.9",
     "@types/node": "^26.0.0",
     "@vitest/coverage-v8": "^5.0.0",
