@@ -1,6 +1,11 @@
-import type { Node as ProseMirrorNode } from "prosemirror-model";
 import type { Mappable } from "prosemirror-transform";
 
+import { inputRules } from "prosemirror-inputrules";
+import {
+  type DOMOutputSpec,
+  type Node as ProseMirrorNode,
+  Schema,
+} from "prosemirror-model";
 import {
   EditorState,
   Selection,
@@ -9,6 +14,7 @@ import {
   type Transaction,
 } from "prosemirror-state";
 import { describe, expect, test, vi } from "vitest";
+import { renderProseMirror } from "vitest-prosemirror";
 
 import { BoldExtension } from "../../src/syntax-extensions/BoldExtension";
 import { BreakExtension } from "../../src/syntax-extensions/BreakExtension";
@@ -22,6 +28,7 @@ import {
   removeLink,
   setLink,
 } from "../../src/syntax-extensions/LinkExtension";
+import { linkInputRule } from "../../src/utils/linkInputRule";
 import { createExtensionFixture } from "../utils/fixture";
 import "../utils/matchers";
 
@@ -238,6 +245,369 @@ describe("LinkExtension", () => {
     expect(
       new LinkExtension({ linkOnPaste: false }).proseMirrorPlugins(),
     ).toHaveLength(2);
+  });
+
+  describe("input rule", () => {
+    test("matches an inline link", () => {
+      expect(fx).toTransformInlineInput(
+        "[[text](https://a.test)",
+        (b) => [b.link({ href: "https://a.test" }, "text")],
+        "[text](https://a.test)",
+      );
+    });
+
+    test("matches an inline link with a title", () => {
+      expect(fx).toTransformInlineInput(
+        '[[text](https://a.test "A title")',
+        (b) => [b.link({ href: "https://a.test", title: "A title" }, "text")],
+        '[text](https://a.test "A title")',
+      );
+    });
+
+    test("matches a title containing a closing parenthesis", () => {
+      expect(fx).toTransformInlineInput(
+        '[[text](https://a.test "a)b")',
+        (b) => [b.link({ href: "https://a.test", title: "a)b" }, "text")],
+        '[text](https://a.test "a)b")',
+      );
+    });
+
+    test("matches a URL with balanced parentheses", () => {
+      expect(fx).toTransformInlineInput(
+        "[[text](https://a.test/Foo_(bar))",
+        (b) => [b.link({ href: "https://a.test/Foo_(bar)" }, "text")],
+        "[text](https://a.test/Foo_\\(bar\\))",
+      );
+    });
+
+    test("matches a destination in angle brackets", () => {
+      expect(fx).toTransformInlineInput(
+        "[[text](<a b>)",
+        (b) => [b.link({ href: "a b" }, "text")],
+        "[text](<a b>)",
+      );
+    });
+
+    test("resolves character references in the URL and title", () => {
+      expect(fx).toTransformInlineInput(
+        '[[text](https://a.test?a&amp;b "&quot;")',
+        (b) => [b.link({ href: "https://a.test?a&b", title: '"' }, "text")],
+        '[text](https://a.test?a\\&b "\\"")',
+      );
+    });
+
+    test("matches link text with brackets", () => {
+      expect(fx).toTransformInlineInput(
+        "[[a [[b] c](https://a.test)",
+        (b) => [b.link({ href: "https://a.test" }, "a [b] c")],
+        "[a \\[b\\] c](https://a.test)",
+      );
+    });
+
+    test("matches only the last link", () => {
+      expect(fx).toTransformInlineInput(
+        "[[a [[b](https://a.test)",
+        (b) => ["[a ", b.link({ href: "https://a.test" }, "b")],
+        "\\[a [b](https://a.test)",
+      );
+    });
+
+    test("matches in a paragraph that starts like a block", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("# <cursor>")],
+        "cursor",
+        "[[text](https://a.test)",
+        (b) => [b.p("# ", b.link({ href: "https://a.test" }, "text"))],
+        "\\# [text](https://a.test)",
+      );
+    });
+
+    test("keeps marks in the link text", () => {
+      expect(fxInContext).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        "[[a **bold** text](https://a.test)",
+        (b) => [
+          b.p(
+            b.link({ href: "https://a.test" }, "a ", b.strong("bold"), " text"),
+          ),
+        ],
+        "[a **bold** text](https://a.test)",
+      );
+    });
+
+    test.each([
+      ["[text](https://a.test", "\\[text]\\(https://a.test"],
+      [
+        "[text](https://a.test/Foo_(bar)",
+        "\\[text]\\(https://a.test/Foo\\_(bar)",
+      ],
+      ['[text](https://a.test "a)', '\\[text]\\(https://a.test "a)'],
+      ["[text](a b)", "\\[text]\\(a b)"],
+      ["[](https://a.test)", "\\[]\\(https://a.test)"],
+      ["\\[text](https://a.test)", "\\\\\\[text]\\(https://a.test)"],
+      ["![text](https://a.test)", "!\\[text]\\(https://a.test)"],
+      ["[text][id]", "\\[text]\\[id]"],
+      ["<www.a.test>", "\\<www.a.test>"],
+      ["<a.test>", "\\<a.test>"],
+      ["\\<https://a.test>", "\\\\\\<https://a.test>"],
+      ["<br/>", "\\<br/>"],
+    ] as const)("does not match %s", (input, md) => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        input.replace(/\[/gu, "[["),
+        () => [fx.b.p(input)],
+        md,
+      );
+    });
+
+    test("matches an autolink", () => {
+      expect(fx).toTransformInlineInput(
+        "<https://a.test>",
+        (b) => [b.link({ href: "https://a.test" }, "https://a.test")],
+        "<https://a.test>",
+      );
+    });
+
+    test("matches an email autolink", () => {
+      expect(fx).toTransformInlineInput(
+        "<a@b.test>",
+        (b) => [b.link({ href: "mailto:a@b.test" }, "a@b.test")],
+        "<a@b.test>",
+      );
+    });
+
+    test("matches when the closing parenthesis replaces a selection", () => {
+      expect(fx).toTransformInput(
+        (b) => [b.p("[text](https://a.test<a>xyz<b>")],
+        { anchor: "a", head: "b" },
+        ")",
+        (b) => [b.p(b.link({ href: "https://a.test" }, "text"))],
+        "[text](https://a.test)",
+      );
+    });
+
+    test("matches a title across a hard break", () => {
+      expect(
+        createExtensionFixture(new LinkExtension(), [new BreakExtension()]),
+      ).toTransformInput(
+        (b) => [b.p('[text](https://a.test "a', b.br(), 'b"<cursor>')],
+        "cursor",
+        ")",
+        (b) => [b.p(b.link({ href: "https://a.test", title: "a\nb" }, "text"))],
+        '[text](https://a.test "a\nb")',
+      );
+    });
+
+    test("keeps inline code in the link text", () => {
+      const fxWithCode = createExtensionFixture(new LinkExtension(), [
+        new InlineCodeExtension(),
+      ]);
+
+      expect(fxWithCode).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        "[[`code`](https://a.test)",
+        (b) => [b.p(b.link({ href: "https://a.test" }, b.code("code")))],
+        "[`code`](https://a.test)",
+      );
+    });
+
+    test("matches link text with inline code holding a bracket", () => {
+      const fxWithCode = createExtensionFixture(new LinkExtension(), [
+        new InlineCodeExtension(),
+      ]);
+
+      expect(fxWithCode).toTransformInput(
+        (b) => [b.p("<cursor>")],
+        "cursor",
+        "[[see `]` here](https://a.test)",
+        (b) => [
+          b.p(b.link({ href: "https://a.test" }, "see ", b.code("]"), " here")),
+        ],
+        "[see `]` here](https://a.test)",
+      );
+    });
+
+    test("does not match when the link text starts in inline code", () => {
+      const fxWithCode = createExtensionFixture(new LinkExtension(), [
+        new InlineCodeExtension(),
+      ]);
+
+      expect(fxWithCode).toTransformInput(
+        (b) => [b.p(b.code("[a"), "<cursor>")],
+        "cursor",
+        "](https://a.test)",
+        (b) => [b.p(b.code("[a"), "](https://a.test)")],
+        "`[a`]\\(https://a.test)",
+      );
+    });
+
+    test("matches after a line that starts like a block", () => {
+      expect(fx).toTransformTextInput(
+        (b) => [b.p("foo\n- bar [text](https://a.test<cursor>")],
+        "cursor",
+        ")",
+        (b) => [b.p("foo\n- bar ", b.link({ href: "https://a.test" }, "text"))],
+        "foo\n\\- bar [text](https://a.test)",
+      );
+    });
+
+    test("does not match where links aren't allowed", () => {
+      const schema = new Schema<string, string>({
+        marks: {
+          link: {
+            attrs: { href: {}, title: { default: null } },
+            toDOM: (): DOMOutputSpec => ["a", 0],
+          },
+        },
+        nodes: {
+          doc: { content: "paragraph" },
+          paragraph: {
+            content: "text*",
+            marks: "",
+            toDOM: (): DOMOutputSpec => ["p", 0],
+          },
+          text: {},
+        },
+      });
+      const editor = renderProseMirror(
+        schema.nodes["doc"].create(null, schema.nodes["paragraph"].create()),
+        {
+          editorProps: {
+            plugins: [
+              inputRules({ rules: [linkInputRule(schema.marks["link"])] }),
+            ],
+          },
+        },
+      );
+      editor.setSelection("end");
+      editor.type("[[text](https://a.test)");
+
+      expect(editor.doc.textContent).toBe("[text](https://a.test)");
+    });
+
+    test("does not match when the end of the link text excludes links", () => {
+      const schema = new Schema<string, string>({
+        marks: {
+          link: {
+            attrs: { href: {}, title: { default: null } },
+            toDOM: (): DOMOutputSpec => ["a", 0],
+          },
+          unlinkable: {
+            excludes: "link",
+            toDOM: (): DOMOutputSpec => ["span", 0],
+          },
+        },
+        nodes: {
+          doc: { content: "paragraph" },
+          paragraph: { content: "text*", toDOM: (): DOMOutputSpec => ["p", 0] },
+          text: {},
+        },
+      });
+      const editor = renderProseMirror(
+        schema.nodes["doc"].create(
+          null,
+          schema.nodes["paragraph"].create(null, [
+            schema.text("[a"),
+            schema.text("b", [schema.marks["unlinkable"].create()]),
+            schema.text("](https://a.test"),
+          ]),
+        ),
+        {
+          editorProps: {
+            plugins: [
+              inputRules({ rules: [linkInputRule(schema.marks["link"])] }),
+            ],
+          },
+        },
+      );
+      editor.setSelection("end");
+      editor.type(")");
+
+      expect(editor.doc.textContent).toBe("[ab](https://a.test)");
+    });
+
+    test("matches after a blank line", () => {
+      expect(fx).toTransformTextInput(
+        (b) => [b.p("foo\n\n[text](https://a.test<cursor>")],
+        "cursor",
+        ")",
+        (b) => [b.p("foo\n\n", b.link({ href: "https://a.test" }, "text"))],
+        "foo&#xA;&#xA;[text](https://a.test)",
+      );
+    });
+
+    test("does not match when inline code is toggled for the closing parenthesis", () => {
+      const fxWithCode = createExtensionFixture(new LinkExtension(), [
+        new InlineCodeExtension(),
+      ]);
+      const editor = renderProseMirror(
+        fxWithCode.b.doc(
+          fxWithCode.b.p("[text](https://a.test"),
+        ) as unknown as ProseMirrorNode,
+        { editorProps: { plugins: fxWithCode.pmu.plugins() } },
+      );
+      editor.setSelection("end");
+      editor.command((state, dispatch) => {
+        dispatch?.(state.tr.addStoredMark(state.schema.marks["code"].create()));
+        return true;
+      });
+      editor.type(")");
+
+      expect(editor.doc).toEqualProseMirrorNode(
+        fxWithCode.b.doc(
+          fxWithCode.b.p("[text](https://a.test", fxWithCode.b.code(")")),
+        ) as unknown as ProseMirrorNode,
+      );
+    });
+
+    test("matches after inline code with a closing bracket and parenthesis", () => {
+      const fxWithCode = createExtensionFixture(new LinkExtension(), [
+        new InlineCodeExtension(),
+      ]);
+
+      expect(fxWithCode).toTransformInput(
+        (b) => [b.p(b.code("a](b"), " <cursor>")],
+        "cursor",
+        "[[text](https://a.test)",
+        (b) => [
+          b.p(b.code("a](b"), " ", b.link({ href: "https://a.test" }, "text")),
+        ],
+        "`a](b` [text](https://a.test)",
+      );
+    });
+
+    test("does not match an image in the URL", () => {
+      expect(fxInContext).toTransformInput(
+        (b) => [
+          b.p(
+            "[text](https://a",
+            b.img({ alt: "", src: "i.png" }),
+            "b<cursor>",
+          ),
+        ],
+        "cursor",
+        ")",
+        (b) => [
+          b.p("[text](https://a", b.img({ alt: "", src: "i.png" }), "b)"),
+        ],
+        "\\[text]\\(https://a![](i.png)b)",
+      );
+    });
+
+    test("does not match inside a link", () => {
+      expect(fx).toTransformInput(
+        (b) => [
+          b.p(b.link({ href: "https://b.test" }, "x [text](a<cursor> y")),
+        ],
+        "cursor",
+        ")",
+        (b) => [b.p(b.link({ href: "https://b.test" }, "x [text](a) y"))],
+        "[x \\[text\\](a) y](https://b.test)",
+      );
+    });
   });
 
   describe("setLink", () => {

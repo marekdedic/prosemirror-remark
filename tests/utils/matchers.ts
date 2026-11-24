@@ -29,6 +29,8 @@ import type {
   UnistLike,
 } from "./fixture";
 
+import { handleTextInput } from "./input";
+
 type Build<T> = (b: TestBuilders) => T;
 
 type InlineMarkdownOutput = { intraword: string; spaced: string } | string;
@@ -566,6 +568,38 @@ expect.extend({
     );
   },
 
+  toTransformTextInput(
+    this: MatcherState,
+    fx: ExtensionFixture<UnistLike>,
+    before: Build<Array<BuiltNode>>,
+    selection: TesterSelection,
+    text: string,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): SyncMatcherResult {
+    return runEditorInput(
+      fx,
+      fx.b.doc(...before(fx.b)) as unknown as ProseMirrorNode,
+      selection,
+      (editor) => {
+        const { to } = editor.state.selection;
+        return {
+          message: () => "expected an input rule to apply",
+          pass: handleTextInput(
+            editor,
+            fx.pmu.inputRulesPlugin(),
+            to,
+            to,
+            text,
+          ),
+        };
+      },
+      fx.schema.nodes["doc"].create({}, fx.resolveNodes(after(fx.b))),
+      markdownOutput,
+      this,
+    );
+  },
+
   toUndoPaste(
     this: MatcherState,
     fx: ExtensionFixture<UnistLike>,
@@ -652,6 +686,13 @@ interface ExtensionMatchers<R> {
     before: Build<Array<BuiltNode>>,
     selection: TesterSelection,
     content: PasteInput,
+    after: Build<Array<BuiltNode>>,
+    markdownOutput: string,
+  ): R;
+  toTransformTextInput(
+    before: Build<Array<BuiltNode>>,
+    selection: TesterSelection,
+    text: string,
     after: Build<Array<BuiltNode>>,
     markdownOutput: string,
   ): R;

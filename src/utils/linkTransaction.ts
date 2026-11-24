@@ -57,7 +57,7 @@ export function removeLinkTransaction(
   state: EditorState,
   { range }: LinkAtSelection = linkAtSelection(state),
 ): Transaction | null {
-  const type = linkMarkType(state);
+  const type = linkMarkType(state.schema);
   if (type === undefined) {
     return null;
   }
@@ -114,7 +114,7 @@ export function setLinkTransaction(
   selectText: boolean,
   { applies, range }: LinkAtSelection = linkAtSelection(state),
 ): LinkTransaction | null {
-  const type = linkMarkType(state);
+  const type = linkMarkType(state.schema);
   if (type === undefined || !applies) {
     return null;
   }
